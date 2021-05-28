@@ -59,7 +59,7 @@
                 (doto (.createElement js/document "script")
                   (-> (.setAttribute "id" js-script))
                   (-> (.setAttribute "class" "dynamicjs"))
-                  (-> (.setAttribute "src" (str "js/" js-script)))))
+                  (-> (.setAttribute "src" js-script))))
   ^{:key (str js-script)} [:div])
 
 (defn format-content [content]
