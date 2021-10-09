@@ -11,13 +11,10 @@
                  [cljsjs/slate "0.33.6-0"]
                  [cljsjs/slate-react "0.12.6-0"]
                  [cljsjs/slate-html-serializer "0.6.3-0"]
-                 [org.slf4j/slf4j-nop "1.7.30"]
                  [day8.re-frame/http-fx "0.2.3"]
                  [hickory "0.7.1"]
                  [nubank/matcher-combinators "3.1.4" :scope "test"]
                  [org.clojure/clojurescript "1.10.597"]
-                 [org.clojure/core.async "1.0.567"
-                  :exclusions [org.clojure/tools.reader]]
                  [re-frame "0.12.0"]
                  [reagent "0.10.0"]
                  [ring "1.8.0"]
