@@ -37,7 +37,7 @@
                         [com.bhauman/rebel-readline-cljs "0.1.4"]
                         [com.bhauman/cljs-test-display "0.1.1"]]
          :plugins      [[lein-ring "0.12.5"]]
-         :source-paths ["src/andrewslai/cljs"]
+         :source-paths ["test" "src/andrewslai/cljs"]
          :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
 
    :prod {:dependencies [[com.bhauman/figwheel-main "0.2.12"]]
