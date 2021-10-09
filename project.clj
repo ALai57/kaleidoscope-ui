@@ -1,6 +1,7 @@
 (defproject org.clojars.alai57/andrewslai-frontend "0.0.2-SNAPSHOT"
   :description "Front end for the andrewslai blogging app"
   :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/clojurescript "1.10.773"]
                  [org.clojars.alai57/andrewslai "0.0.33"]
                  [clj-commons/secretary "1.2.4"]
                  [cljs-ajax "0.8.0"]
@@ -14,7 +15,6 @@
                  [day8.re-frame/http-fx "0.2.3"]
                  [hickory "0.7.1"]
                  [nubank/matcher-combinators "3.1.4" :scope "test"]
-                 [org.clojure/clojurescript "1.10.597"]
                  [re-frame "1.2.0"]
                  [reagent "1.0.0"]]
 
