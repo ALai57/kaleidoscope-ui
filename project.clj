@@ -2,7 +2,6 @@
   :description "Front end for the andrewslai blogging app"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojars.alai57/andrewslai "0.0.33"]
-                 [cheshire "5.10.0"]
                  [clj-commons/secretary "1.2.4"]
                  [cljs-ajax "0.8.0"]
                  [cljsjs/react "16.13.0-0"]
@@ -15,7 +14,6 @@
                  [org.slf4j/slf4j-nop "1.7.30"]
                  [day8.re-frame/http-fx "0.2.3"]
                  [hickory "0.7.1"]
-                 [honeysql "0.9.10"]
                  [metosin/spec-tools "0.10.3"]
                  [nubank/matcher-combinators "3.1.4" :scope "test"]
                  [org.clojure/clojurescript "1.10.597"]
@@ -28,7 +26,6 @@
                  [ring/ring-json "0.5.0"]
                  [com.bhauman/figwheel-main "0.2.12"]
                  [sablono "0.8.6"]
-                 [slingshot "0.12.2"]
                  [com.taoensso/timbre "4.10.0"]]
 
   :plugins [[lein-shell "0.5.0"]]
@@ -36,7 +33,7 @@
   :clean-targets ^{:protect false} [:target-path "resources/public/js/compiled"]
 
   :aliases {"fig"       ["trampoline" "run" "-m" "figwheel.main"]
-            "fig:build" ["trampoline" "run" "-m" "figwheel.main" "-b" "dev" "-r"]
+            "fig:repl"  ["trampoline" "run" "-m" "figwheel.main" "-b" "dev" "-r"]
             "fig:dev"   ["run" "-m" "figwheel.main" "-bo" "dev"]
             "fig:min"   ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]
             "fig:prod"  ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "prod"]}
