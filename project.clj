@@ -15,20 +15,18 @@
                  [hickory "0.7.1"]
                  [nubank/matcher-combinators "3.1.4" :scope "test"]
                  [org.clojure/clojurescript "1.10.597"]
-                 [re-frame "0.12.0"]
-                 [reagent "0.10.0"]
-                 [ring "1.8.0"]
-                 [com.bhauman/figwheel-main "0.2.12"]]
+                 [re-frame "1.2.0"]
+                 [reagent "1.0.0"]]
 
   :plugins [[lein-shell "0.5.0"]]
 
   :clean-targets ^{:protect false} [:target-path "resources/public/js/compiled"]
 
-  :aliases {"fig"       ["trampoline" "run" "-m" "figwheel.main"]
-            "fig:repl"  ["trampoline" "run" "-m" "figwheel.main" "-b" "dev" "-r"]
-            "fig:dev"   ["run" "-m" "figwheel.main" "-bo" "dev"]
-            "fig:min"   ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]
-            "fig:prod"  ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "prod"]}
+  :aliases {"fig"      ["trampoline" "run" "-m" "figwheel.main"]
+            "fig:repl" ["trampoline" "run" "-m" "figwheel.main" "-b" "dev" "-r"]
+            "fig:dev"  ["run" "-m" "figwheel.main" "-bo" "dev"]
+            "fig:min"  ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]
+            "fig:prod" ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "prod"]}
 
   :profiles
   {:dev {:dependencies [[binaryage/devtools "1.0.0"]
@@ -38,13 +36,13 @@
                         [com.bhauman/figwheel-main "0.2.12"]
                         [com.bhauman/rebel-readline-cljs "0.1.4"]
                         [com.bhauman/cljs-test-display "0.1.1"]]
-         :plugins [[lein-ring "0.12.5"]]
+         :plugins      [[lein-ring "0.12.5"]]
          :source-paths ["src/andrewslai/cljs"]
          :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
 
    :prod {:dependencies [[com.bhauman/figwheel-main "0.2.12"]]
           :source-paths ["src/andrewslai/cljs"]
-          :prep-tasks ["fig:prod" ["shell" "rm" "-rf" "./resources/public/js/compiled/out_prod"]]}}
+          :prep-tasks   ["fig:prod" ["shell" "rm" "-rf" "./resources/public/js/compiled/out_prod"]]}}
 
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
