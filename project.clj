@@ -25,8 +25,7 @@
                  [ring/ring-mock "0.4.0" :scope "test"]
                  [ring/ring-json "0.5.0"]
                  [com.bhauman/figwheel-main "0.2.12"]
-                 [sablono "0.8.6"]
-                 [com.taoensso/timbre "4.10.0"]]
+                 [sablono "0.8.6"]]
 
   :plugins [[lein-shell "0.5.0"]]
 
