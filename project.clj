@@ -2,11 +2,17 @@
   :description "Front end for the andrewslai blogging app"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.773"]
-                 [org.clojars.alai57/andrewslai "0.0.33"]
+                 [org.clojars.alai57/andrewslai "0.0.46" :exclusions [org.clojure/spec.alpha
+                                                                      org.clojure/tools.reader]]
+
+                 ;; Resolve conflicts
+                 [com.cognitect/transit-clj "1.0.324"]
+
                  [clj-commons/secretary "1.2.4"]
-                 [cljs-ajax "0.8.0"]
-                 [cljsjs/react "16.13.0-0"]
-                 [cljsjs/react-dom "16.13.0-0"]
+                 [cljs-ajax "0.8.1"]
+                 [cljsjs/react "17.0.1-0"]
+                 [cljsjs/react-dom "17.0.1-0"]
+                 [cljsjs/react-dom-server "17.0.1-0"]
                  [cljsjs/react-bootstrap "1.0.0-beta.14-0"] ;; latest release
                  [cljsjs/react-pose "1.6.4-1"]
                  [cljsjs/slate "0.33.6-0"]
@@ -14,8 +20,10 @@
                  [cljsjs/slate-html-serializer "0.6.3-0"]
                  [day8.re-frame/http-fx "0.2.3"]
                  [hickory "0.7.1"]
-                 [nubank/matcher-combinators "3.1.4" :scope "test"]
+                 [nubank/matcher-combinators "3.1.4" :scope "test" :exclusions [org.clojure/spec.alpha]]
                  [re-frame "1.2.0"]
+                 [com.bhauman/figwheel-main "0.2.14"]
+                 [ring/ring-jetty-adapter "1.9.1"]
                  [reagent "1.0.0"]]
 
   :plugins [[lein-shell "0.5.0"]]
@@ -29,19 +37,15 @@
             "fig:prod" ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "prod"]}
 
   :profiles
-  {:dev {:dependencies [[binaryage/devtools "1.0.0"]
+  {:dev {:dependencies [[binaryage/devtools "1.0.3"]
                         [cider/piggieback "0.4.2"]
-                        [figwheel-sidecar "0.5.19"]
                         [org.clojure/test.check "1.1.0"]
-                        [com.bhauman/figwheel-main "0.2.12"]
                         [com.bhauman/rebel-readline-cljs "0.1.4"]
                         [com.bhauman/cljs-test-display "0.1.1"]]
-         :plugins      [[lein-ring "0.12.5"]]
          :source-paths ["test" "src/andrewslai/cljs"]
          :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
 
-   :prod {:dependencies [[com.bhauman/figwheel-main "0.2.12"]]
-          :source-paths ["src/andrewslai/cljs"]
+   :prod {:source-paths ["src/andrewslai/cljs"]
           :prep-tasks   ["fig:prod" ["shell" "rm" "-rf" "./resources/public/js/compiled/out_prod"]]}}
 
   :release-tasks [["vcs" "assert-committed"]
