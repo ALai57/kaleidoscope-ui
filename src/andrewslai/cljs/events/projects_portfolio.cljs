@@ -1,6 +1,7 @@
 (ns andrewslai.cljs.events.projects-portfolio
   (:require [ajax.core :as ajax]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]))
+            [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
+            [taoensso.timbre :refer-macros [infof info]]))
 
 (defn json-string->clj [s]
   (-> js/JSON
@@ -57,7 +58,6 @@
           projects))
 
 (defn select-organizations-associated-with-project [projects organizations]
-  (println projects)
   (let [associated-organizations (->> projects
                                       (map :organization_names)
                                       flatten
@@ -72,6 +72,7 @@
 ;; that project
 (defn select-portfolio-card
   [{:keys [resume-info] :as db} [_ {:keys [category name] :as card}]]
+  (infof "Selecting Portfolio card: %s %s" category name)
   (let [{:keys [projects organizations skills]} resume-info
 
         associated-projects
@@ -106,6 +107,7 @@
 (reg-event-db
  :reset-portfolio-cards
  (fn [db [_ _]]
+   (info "Resetting Portfolio cards")
    (assoc db :selected-resume-info (:resume-info db))))
 
 (reg-event-db

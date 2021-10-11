@@ -24,7 +24,8 @@
                  [re-frame "1.2.0"]
                  [com.bhauman/figwheel-main "0.2.14"]
                  [ring/ring-jetty-adapter "1.9.1"]
-                 [reagent "1.0.0"]]
+                 [reagent "1.0.0"]
+                 [com.taoensso/timbre "5.1.2"]]
 
   :plugins [[lein-shell "0.5.0"]]
 
