@@ -2,7 +2,7 @@
   :description "Front end for the andrewslai blogging app"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.773"]
-                 [org.clojars.alai57/andrewslai "0.0.46" :exclusions [org.clojure/spec.alpha
+                 [org.clojars.alai57/andrewslai "0.0.53" :exclusions [org.clojure/spec.alpha
                                                                       org.clojure/tools.reader]]
 
                  ;; Resolve conflicts
@@ -37,17 +37,16 @@
             "fig:min"  ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "dev"]
             "fig:prod" ["run" "-m" "figwheel.main" "-O" "advanced" "-bo" "prod"]}
 
-  :profiles
-  {:dev {:dependencies [[binaryage/devtools "1.0.3"]
-                        [cider/piggieback "0.4.2"]
-                        [org.clojure/test.check "1.1.0"]
-                        [com.bhauman/rebel-readline-cljs "0.1.4"]
-                        [com.bhauman/cljs-test-display "0.1.1"]]
-         :source-paths ["test" "src/andrewslai/cljs"]
-         :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
+  :profiles {:dev {:dependencies [[binaryage/devtools "1.0.3"]
+                                  [cider/piggieback "0.4.2"]
+                                  [org.clojure/test.check "1.1.0"]
+                                  [com.bhauman/rebel-readline-cljs "0.1.4"]
+                                  [com.bhauman/cljs-test-display "0.1.1"]]
+                   :source-paths ["test" "src/andrewslai/cljs"]
+                   :repl-options {:nrepl-middleware [cider.piggieback/wrap-cljs-repl]}}
 
-   :prod {:source-paths ["src/andrewslai/cljs"]
-          :prep-tasks   ["fig:prod" ["shell" "rm" "-rf" "./resources/public/js/compiled/out_prod"]]}}
+             :prod {:source-paths ["src/andrewslai/cljs"]
+                    :prep-tasks   ["fig:prod" ["shell" "rm" "-rf" "./resources/public/js/compiled/out_prod"]]}}
 
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
