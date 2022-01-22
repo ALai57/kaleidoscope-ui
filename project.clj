@@ -10,9 +10,11 @@
 
                  [clj-commons/secretary "1.2.4"]
                  [cljs-ajax "0.8.1"]
-                 [cljsjs/react "17.0.1-0"]
-                 [cljsjs/react-dom "17.0.1-0"]
-                 [cljsjs/react-dom-server "17.0.1-0"]
+
+                 ;; Upgrading versions to 17 is breaking, perhaps due to react-pose
+                 [cljsjs/react "16.13.0-0"]
+                 [cljsjs/react-dom "16.13.0-0"]
+                 [cljsjs/react-dom-server "16.13.0-0"]
                  [cljsjs/react-bootstrap "1.0.0-beta.14-0"] ;; latest release
                  [cljsjs/react-pose "1.6.4-1"]
                  [cljsjs/slate "0.33.6-0"]
