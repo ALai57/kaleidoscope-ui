@@ -3,13 +3,22 @@
             [andrewslai.cljc.specs.articles]
             [cljs.spec.alpha :as s]
             [day8.re-frame.http-fx]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]))
+            [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
+            [taoensso.timbre :as timbre
+             :refer-macros [info infof]]))
 
 (defn load-article [db [_ response]]
+  (info "Loading article:" (dissoc response :content))
   (assoc db
          :loading? false
          :active-content response))
 (reg-event-db :load-article load-article)
+
+(defn load-article-failure [db [_ response]]
+  (info "Failed loading article:" response)
+  (assoc db
+         :loading? false
+         :active-content response))
 
 (defn make-article-url [article-name]
   (str "/articles/" (name article-name)))
@@ -22,14 +31,18 @@
                  :format          (ajax/json-response-format)
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-article]
-                 :on-failure      [:load-article]}
+                 :on-failure      [:load-article-failure]}
     :db         (assoc db :loading? true)}))
 
 (defn load-recent-articles [db [_ response]]
-  (assoc db
-         :loading? false
-         :recent-content (filter (partial s/valid? :andrewslai.article/article)
-                                 response)))
+  (infof "Loading recent articles: found %s" (count response))
+  (let [valid-articles (filter (partial s/valid? :andrewslai.article/article)
+                               response)]
+    (infof "Filtered %s articles" (- (count response) (count valid-articles)))
+    (assoc db
+           :loading? false
+           :recent-content (filter (partial s/valid? :andrewslai.article/article)
+                                   response))))
 (reg-event-db :load-recent-articles load-recent-articles)
 
 (reg-event-fx

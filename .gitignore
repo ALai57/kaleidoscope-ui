@@ -6,14 +6,12 @@ figwheel_server.log
 *.env*
 *.lein-repl-history
 .lein-failures
-use_db
 log.txt
 node_modules
 package-lock.json
 package.json
 resources/public/js/compiled/
 resources/public/js/test/
-resources/public/images/*
 
 # EMACS garbage
 *#*#*
