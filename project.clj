@@ -48,6 +48,7 @@
              :prod {:source-paths ["src/andrewslai/cljs"]
                     :prep-tasks   ["fig:prod" ["shell" "rm" "-rf" "./resources/public/js/compiled/out_prod"]]}}
 
+  ;; When ready for a release: create an JS artifact
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
                   ["vcs" "commit"]
