@@ -1,4 +1,4 @@
-(defproject org.clojars.alai57/andrewslai-frontend "0.0.2"
+(defproject org.clojars.alai57/andrewslai-frontend "0.0.3-SNAPSHOT"
   :description "Front end for the andrewslai blogging app"
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.clojure/clojurescript "1.10.773"]
