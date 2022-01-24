@@ -1,0 +1,40 @@
+;; shadow-cljs configuration
+{:source-paths ["src"
+                "test"]
+
+ :dependencies [[org.clojars.alai57/andrewslai "0.0.53"]
+                ;; Resolve conflicts
+                [clj-commons/secretary "1.2.4"]
+                [cljs-ajax "0.8.1"]
+
+                [day8.re-frame/http-fx "0.2.3"]
+                [hickory "0.7.1"]
+                [nubank/matcher-combinators "3.1.4" :scope "test" :exclusions [org.clojure/spec.alpha]]
+                [re-frame "1.2.0"]
+                [ring/ring-jetty-adapter "1.9.1"]
+                [reagent "1.0.0"]
+                [com.taoensso/timbre "5.1.2"]]
+
+ :builds {:app {:target :browser
+
+                :output-dir "resources/public/js/compiled/andrewslai"
+                :asset-path "js/compiled/andrewslai"
+
+                :modules          {:andrewslai {:entries [andrewslai.cljs.core]}}
+                :compiler-options {:static-fns          true
+                                   :infer-externs       :auto
+                                   :externs             ["lib/keycloak/keycloak-externs.js"]
+                                   :optimize-constants  true
+                                   :pretty-print        false
+                                   :optimization        :advanced
+                                   :strip-type-prefixes #{"cljs.pprint"}}
+                ;;:devtools   {:after-load app.main/reload!}}
+
+                ;; Shadow has a pre-built idea that every build has a dev and release configuration
+                :dev     {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "http://172.17.0.1:8080/auth"
+                                            andrewslai.cljs.keycloak/CLIENTID "test-login"
+                                            andrewslai.cljs.keycloak/REALM    "test"}}
+                :release {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "https://keycloak.andrewslai.com/auth"
+                                            andrewslai.cljs.keycloak/REALM    "andrewslai"
+                                            andrewslai.cljs.keycloak/CLIENTID "andrewslai-frontend"}}
+                }}}

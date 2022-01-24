@@ -1,5 +1,5 @@
 (ns andrewslai.cljs.keycloak
-  (:require [keycloak-js :as keycloak-js]
+  (:require ["keycloak-js" :as keycloak-js]
             [re-frame.core :refer [dispatch]]))
 
 (goog-define AUTH_URL "defined-at-compile-time")
@@ -11,7 +11,7 @@
 
 (defn keycloak
   [options]
-  (js/Keycloak (clj->js options)))
+  (keycloak-js (clj->js options)))
 
 (defn initialize!
   ([keycloak-instance]
