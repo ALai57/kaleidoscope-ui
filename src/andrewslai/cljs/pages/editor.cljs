@@ -5,8 +5,8 @@
             [goog.object :as gobj]
             [re-frame.core :refer [dispatch subscribe]]
             [reagent.core :as reagent]
-            [cljsjs.slate-react]
-            [cljsjs.slate]))
+            ["slate-react" :as sr]
+            ["slate" :as slate]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Renderers
@@ -122,7 +122,7 @@
                                      :leaves [{:object "leaf"
                                                :text "Code block\n Hello"}]}]}]}}
        clj->js
-       (.fromJSON js/Slate.Value)))
+       (.fromJSON slate/Value)))
 
 
 (defonce editor-ref-atom (atom nil))
@@ -149,7 +149,7 @@
       :component-did-mount (fn [this] (reset! this-editor this))
       :component-will-unmount (fn [this] (reset! this-editor nil))
       :reagent-render (fn [_]
-                        [:> js/SlateReact.Editor
+                        [:> sr/Editor
                          {:auto-focus true
                           :class-name "slatejs-text-editor"
                           :id "slatejs-editor-instance-1"

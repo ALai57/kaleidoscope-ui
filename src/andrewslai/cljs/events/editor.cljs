@@ -1,5 +1,5 @@
 (ns andrewslai.cljs.events.editor
-  (:require [cljsjs.slate-html-serializer :as shs]
+  (:require ["slate-html-serializer" :as shs]
             [ajax.core :as ajax]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
             [andrewslai.cljs.modals.editor :refer [create-article-failure-modal
@@ -58,7 +58,7 @@
           js/undefined)))}])
 
 (def html-serializer
-  (let [Html (-> js/SlateHtmlSerializer
+  (let [Html (-> shs
                  (js->clj :keywordize-keys true)
                  :default)]
     (-> {:rules html-serializer-rules}
