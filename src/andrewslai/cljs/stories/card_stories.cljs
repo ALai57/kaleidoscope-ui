@@ -15,7 +15,7 @@
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template
   [args]
-  (reagent/as-element [article-cards/make-card (js->clj (helper/->params args))]))
+  (reagent/as-element [article-cards/make-card (helper/->params args)]))
 
 (defn copy-function
   [f]
