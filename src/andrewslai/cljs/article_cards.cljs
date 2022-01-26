@@ -3,7 +3,8 @@
             ["react-bootstrap" :as react-bootstrap]
             [clojure.string :as str]
             [re-frame.core :refer [subscribe]]
-            [reagent.core :refer [adapt-react-class]]))
+            [reagent.core :refer [adapt-react-class]]
+            [reagent-mui.components :refer [card]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Base card
@@ -21,11 +22,12 @@
     "thoughts" "images/nav-bar/andrew-head-icon.svg"
     "images/nav-bar/unknown-user.svg"))
 
+
 (defn make-card
   [{:keys [article_tags title article_url article_id timestamp] :as article}]
   (let [date (first (.split timestamp "T"))]
     ^{:key article_id}
-    [Card {:class "text-white bg-light mb-3 article-card"}
+    [card {:class "text-white bg-light mb-3 article-card"}
      [:div.container-fluid
       [:div.row.flex-items-xs-middle
        [:div.col-sm-3.bg-primary.text-xs-center.card-icon
