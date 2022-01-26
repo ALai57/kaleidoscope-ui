@@ -3,7 +3,8 @@
             [hickory.core :as h]
             [hickory.convert :refer [hickory-to-hiccup]]
             [hickory.select :as hs]
-            [re-frame.core :refer [subscribe]]))
+            [re-frame.core :refer [subscribe]]
+            [reagent-mui.components :refer [box]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions
@@ -72,6 +73,33 @@
 (defn insert-dynamic-js! [content]
   (when-not (empty? content)
     (map format-js content)))
+
+
+(defn hickory-content
+  [s]
+  (->> s
+       h/parse-fragment
+       (map h/as-hickory)
+       first))
+
+(defn ->hiccup
+  [s]
+  (->> s
+       (hickory-content)
+       (hs/select (hs/and (hs/not (hs/tag :script))))
+       (first)
+       (format-content)))
+
+(defn article
+  [{:keys [title author timestamp raw-content]}]
+  [box
+   [:div#goodies
+    [:h2.article-title title]
+    [:div.article-subheading (str "Author: " author)]
+    [:div.article-subheading timestamp]
+    [:div.line]
+    [:br][:br]
+    [:div (->hiccup raw-content)]]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Fully formatted primary content
