@@ -22,30 +22,32 @@
   (.bind f #js {}))
 
 (defn ->story
+  "Copy a function and modify the default arguments.
+  Used to create stories that have default configurations."
   [template default-values]
   (doto (copy-function template)
-    (set! -args default-values)))
+    (set! -args (clj->js default-values))))
 
 (def ^:export Default
-  (->story template #js {:title        "An example with the default image"
-                         :article_tags "unrecognized"}))
+  (->story template {:title        "An example with the default image"
+                     :article_tags "unrecognized"}))
 
 (def ^:export Research
-  (->story template #js {:title        "An example research article"
-                         :article_tags "research"}))
+  (->story template {:title        "An example research article"
+                     :article_tags "research"}))
 
 (def ^:export Thoughts
-  (->story template #js {:title        "An example thoughts article"
-                         :article_tags "thoughts"}))
+  (->story template {:title        "An example thoughts article"
+                     :article_tags "thoughts"}))
 
 (def ^:export Data-Analysis
-  (->story template #js {:title        "An example data-analysis article"
-                         :article_tags "data-analysis"}))
+  (->story template {:title        "An example data-analysis article"
+                     :article_tags "data-analysis"}))
 
 (def ^:export About
-  (->story template #js {:title        "An example about me article"
-                         :article_tags "about"}))
+  (->story template {:title        "An example about me article"
+                     :article_tags "about"}))
 
 (def ^:export Archive
-  (->story template #js {:title        "An example archived article"
-                         :article_tags "archive"}))
+  (->story template {:title        "An example archived article"
+                     :article_tags "archive"}))
