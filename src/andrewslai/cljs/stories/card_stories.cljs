@@ -17,37 +17,26 @@
   [args]
   (reagent/as-element [article-cards/make-card (helper/->params args)]))
 
-(defn copy-function
-  [f]
-  (.bind f #js {}))
-
-(defn ->story
-  "Copy a function and modify the default arguments.
-  Used to create stories that have default configurations."
-  [template default-values]
-  (doto (copy-function template)
-    (set! -args (clj->js default-values))))
-
 (def ^:export Default
-  (->story template {:title        "An example with the default image"
-                     :article_tags "unrecognized"}))
+  (helper/->story template {:title        "An example with the default image"
+                            :article_tags "unrecognized"}))
 
 (def ^:export Research
-  (->story template {:title        "An example research article"
-                     :article_tags "research"}))
+  (helper/->story template {:title        "An example research article"
+                            :article_tags "research"}))
 
 (def ^:export Thoughts
-  (->story template {:title        "An example thoughts article"
-                     :article_tags "thoughts"}))
+  (helper/->story template {:title        "An example thoughts article"
+                            :article_tags "thoughts"}))
 
 (def ^:export Data-Analysis
-  (->story template {:title        "An example data-analysis article"
-                     :article_tags "data-analysis"}))
+  (helper/->story template {:title        "An example data-analysis article"
+                            :article_tags "data-analysis"}))
 
 (def ^:export About
-  (->story template {:title        "An example about me article"
-                     :article_tags "about"}))
+  (helper/->story template {:title        "An example about me article"
+                            :article_tags "about"}))
 
 (def ^:export Archive
-  (->story template {:title        "An example archived article"
+  (helper/->story template {:title        "An example archived article"
                      :article_tags "archive"}))
