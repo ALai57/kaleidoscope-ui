@@ -64,11 +64,11 @@
     [cards/recent-content-display "research"]]])
 
 (defn full-page
-  [article recent-content]
+  [{:keys [article recent-content user]}]
   [:div
-   [nav/primary-nav]
+   [nav/nav user]
    [:div#primary-content [article/article article]]
-   [:div#rcb [cards/recent-content-cards recent-content]]])
+   [:div#rcb [cards/recent-content-cards {:recent-content recent-content}]]])
 
 (defn data-analysis []
   [:div

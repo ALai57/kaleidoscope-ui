@@ -44,6 +44,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Full display of all cards
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn recent-content-cards
+  [args]
+  [:div#recent-content
+   [:div#recent-article-cards.card-group
+    (map make-card (:recent-content args))]])
+
 (defn recent-content-display
   [content-type]
   (let [recent-content @(subscribe [:recent-content])
@@ -51,11 +57,4 @@
                       (filter #(= (:article_tags %1) content-type)
                               recent-content)
                       recent-content)]
-    [:div#recent-content
-     [:div#recent-article-cards.card-group
-      (map make-card the-content)]]))
-
-(defn recent-content-cards
-  [args]
-  [:div
-   (map make-card (:recent-content args))])
+    [recent-content-cards {:recent-content the-content}]))
