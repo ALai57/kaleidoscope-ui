@@ -97,7 +97,7 @@
     [:h2.article-title title]
     [:div.article-subheading (str "Author: " author)]
     [:div.article-subheading timestamp]
-    [:div.line]
+    [:div.divider.py-1.bg-dark]
     [:br][:br]
     [:div (->hiccup raw-content)]]])
 

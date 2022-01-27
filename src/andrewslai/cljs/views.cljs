@@ -63,6 +63,13 @@
    [:div#rcb
     [cards/recent-content-display "research"]]])
 
+(defn full-page
+  [article recent-content]
+  [:div
+   [nav/primary-nav]
+   [:div#primary-content [article/article article]]
+   [:div#rcb [cards/recent-content-cards recent-content]]])
+
 (defn data-analysis []
   [:div
    [nav/primary-nav]

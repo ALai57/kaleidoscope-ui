@@ -54,3 +54,8 @@
     [:div#recent-content
      [:div#recent-article-cards.card-group
       (map make-card the-content)]]))
+
+(defn recent-content-cards
+  [args]
+  [:div
+   (map make-card (:recent-content args))])
