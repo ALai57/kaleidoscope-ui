@@ -12,7 +12,7 @@
 
 (def ^:export default
   (helper/->default {:title     "Article Cards"
-                     :component article-cards/make-card
+                     :component article-cards/article-card
                      :args      example-data}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
@@ -20,7 +20,7 @@
   "The template is a function of arguments because Storybook understands how to
   translate arguments into interactive controls"
   [args]
-  (reagent/as-element [article-cards/make-card (helper/->params args)]))
+  (reagent/as-element [article-cards/article-card (helper/->params args)]))
 
 (def ^:export Default
   (helper/->story template {:title        "An example with the default image"
