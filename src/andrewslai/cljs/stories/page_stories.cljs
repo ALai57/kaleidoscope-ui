@@ -6,19 +6,17 @@
             [andrewslai.cljs.stories.recent-content-stories :as recent-content-stories]
             [reagent.core :as reagent]))
 
-(def recent-content-inputs
+(def example-recent-content
   "Extracts inputs from existing card-stories so we can compose story pieces"
-  (helper/->story-inputs {} recent-content-stories/Default-recent-content))
+  (helper/get-story-args recent-content-stories/Default-recent-content))
 
 (def ^:export default
-  (helper/->default {:title     "Page"
-                     :component views/full-page
-                     :args      (merge {:article {:title       "An example article"
-                                                  :author      "Andrew Lai"
-                                                  :timestamp   "2022-01-25T00:00:00"
-                                                  :raw-content "<div><h3>This is some formatted content</h3><p>howdy</p><strong>bold</strong></div>"}
-                                        :user    {:avatar_url "https://andrewslai.com"}}
-                                       recent-content-inputs)}))
+  (helper/->default
+   {:title     "Page"
+    :component views/full-page
+    :args      {:active-content article-stories/example-article
+                :recent-content recent-content-stories/example-recent-content
+                :user           {:avatar_url "https://andrewslai.com"}}}))
 
 (defn template
   [args]

@@ -17,11 +17,13 @@
   "Extracts inputs from existing card-stories so we can compose story pieces"
   (partial helper/->story-inputs card-stories/example-data))
 
+(def example-recent-content
+  [(get-inputs card-stories/Default)
+   (get-inputs card-stories/Research)
+   (get-inputs card-stories/Thoughts)
+   (get-inputs card-stories/Data-Analysis)
+   (get-inputs card-stories/About)
+   (get-inputs card-stories/Archive)])
+
 (def ^:export Default-recent-content
-  (helper/->story template
-                  {:recent-content [(get-inputs card-stories/Default)
-                                    (get-inputs card-stories/Research)
-                                    (get-inputs card-stories/Thoughts)
-                                    (get-inputs card-stories/Data-Analysis)
-                                    (get-inputs card-stories/About)
-                                    (get-inputs card-stories/Archive)]}))
+  (helper/->story template {:recent-content example-recent-content}))

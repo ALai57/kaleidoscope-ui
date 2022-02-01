@@ -1,14 +1,18 @@
-(ns andrewslai.cljs.stories.navbar-stories
-  (:require [andrewslai.cljs.navbar :as navbar]
+(ns andrewslai.cljs.stories.admin.user-profile-stories
+  (:require [andrewslai.cljs.pages.admin :as admin]
             [andrewslai.cljs.stories.helper :as helper]
             [reagent.core :as reagent]))
 
 (def example-user-data
-  {})
+  {:firstName  "Andrew"
+   :lastName   "Lai"
+   :avatar_url ""
+   :username   "andrewslai"
+   :email      "andrew.s.lai5@gmail.com"})
 
 (def ^:export default
-  (helper/->default {:title     "Navbar"
-                     :component navbar/nav-bar
+  (helper/->default {:title     "User Profile"
+                     :component admin/user-profile
                      :args      {:user example-user-data}}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
@@ -16,10 +20,7 @@
   "The template is a function of arguments because Storybook understands how to
   translate arguments into interactive controls"
   [args]
-  (reagent/as-element [navbar/nav-bar (helper/->params args)]))
+  (reagent/as-element [admin/user-profile (helper/->params args)]))
 
-(def ^:export Default-navbar
+(def ^:export Default-user-profile
   (helper/->story template {}))
-
-(def ^:export Navbar-with-icon
-  (helper/->story template {:user {:avatar_url "/images/lock.svg"}}))

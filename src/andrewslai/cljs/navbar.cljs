@@ -18,23 +18,7 @@
     {:src (or avatar-url "/images/nav-bar/unknown-user.svg")
      :on-click #(dispatch [:set-active-panel :admin])}]])
 
-(defn primary-nav []
-  (let [user (subscribe [:user])]
-    [:div#primary-nav
-     [modal/modal]
-     [:a.zoom-icon {:href "#/home"
-                    :style {:float "left"}}
-      [:img.navbutton {:src "images/nav-bar/favicon-white.svg"
-                       :on-click #(dispatch [:set-active-panel :home])}]]
-     [:div#secondary-nav
-      [login-icon (:avatar_url @user)]
-      [nav-icon "thoughts" "andrew-head-icon.svg"]
-      [nav-icon "archive" "archive-icon.svg"]
-      [nav-icon "about" "andrew-silhouette-icon.svg"]
-      [nav-icon "research" "neuron-icon.svg"]
-      [nav-icon "data-analysis" "statistics-icon.svg"]]]))
-
-(defn nav [{:keys [user]}]
+(defn nav-bar [{:keys [user]}]
   [:div#primary-nav
    ;; TODO: Replace modal
    ;;[modal/modal]

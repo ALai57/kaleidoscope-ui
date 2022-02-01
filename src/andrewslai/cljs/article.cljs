@@ -9,11 +9,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn format-timestamp [active-content]
-  (when-let [ts (get-in active-content [:article :timestamp])]
-    (.toLocaleDateString ts)))
-
 (defn string->tokens
   "Takes a string with syles and parses it into properties and value tokens"
   [style]
@@ -75,23 +70,25 @@
     (map format-js content)))
 
 
-(defn hickory-content
+(defn ->hickory
   [s]
   (->> s
        h/parse-fragment
        (map h/as-hickory)
        first))
 
-(defn ->hiccup
-  [s]
-  (->> s
-       (hickory-content)
+(defn select-html
+  [hickory]
+  (->> hickory
        (hs/select (hs/and (hs/not (hs/tag :script))))
-       (first)
-       (format-content)))
+       first))
+
+(defn select-js
+  [hickory]
+  (hs/select (hs/tag :script) hickory))
 
 (defn article
-  [{:keys [title author timestamp raw-content]}]
+  [{:keys [title author timestamp content]}]
   [box
    [:div#goodies
     [:h2.article-title title]
@@ -99,39 +96,9 @@
     [:div.article-subheading timestamp]
     [:div.divider.py-1.bg-dark]
     [:br][:br]
-    [:div (->hiccup raw-content)]]])
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Fully formatted primary content
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn primary-content
-  "Renders article content by parsing HTML (as a string) into Hickory, a CLJS
-  readable form. Incoming HTML is separated into two parts, (1) traditional HTML
-  that can be rendered with Hiccup and (2) script tags and JS that need to be
-  dynamically added to the DOM to render properly"
-  []
-  (let [{:keys [article timestamp author title content] :as active-content}
-        @(subscribe [:active-content])
-
-        hickory-content (->> content
-                             h/parse-fragment
-                             (map h/as-hickory)
-                             first)
-        html-content    (->> hickory-content
-                             (hs/select (hs/and (hs/not (hs/tag :script))))
-                             first)
-        js-content      (->> hickory-content
-                             (hs/select (hs/tag :script)))]
-    (if active-content
-      [:div#goodies
-       [:h2.article-title title]
-       [:div.article-subheading (str "Author: " author)]
-       [:div.article-subheading (format-timestamp active-content)]
-       [:div.line]
-       [:br][:br]
-       [:div (format-content html-content)]
-       (insert-dynamic-js! (map (comp :src :attrs) js-content))]
-      [:div#goodies])))
+    [:div (format-content (select-html (->hickory content)))]
+    (insert-dynamic-js! (map (comp :src :attrs) (select-js (->hickory content))))
+    ]])
 
 (comment
   (require '[re-frame.db :refer [app-db]])

@@ -13,28 +13,19 @@
 ;; Landing pages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn home []
+(defn home [{:keys [user recent-content]}]
   [:div
-   [nav/primary-nav]
-   [cards/recent-content-display]])
+   [nav/nav-bar user]
+   [cards/recent-content-cards {:recent-content recent-content}]])
 
-(defn thoughts []
+(defn full-page [{:keys [user active-content recent-content]}]
   [:div
-   [nav/primary-nav]
-   [:p "Thoughts"]
+   [nav/nav-bar user]
    [:div#primary-content
-    [article/primary-content]]
+    (when active-content
+      [article/article active-content])]
    [:div#rcb
-    [cards/recent-content-display "thoughts"]]])
-
-(defn archive []
-  [:div
-   [nav/primary-nav]
-   [:p "Archive"]
-   [:div#primary-content
-    [article/primary-content]]
-   [:div#rcb
-    ]])
+    [cards/recent-content-cards {:recent-content recent-content}]]])
 
 (defn reset-portfolio-cards [x]
   (let [clicked-element (.-target x)
@@ -46,55 +37,31 @@
                   (includes? clicked-class "card-text"))
       (dispatch [:reset-portfolio-cards]))))
 
-(defn about []
+(defn about [user]
   [:div {:onClick reset-portfolio-cards
-         :style {:height "100%"
-                 :width "100%"
-                 :position "absolute"}}
-   [nav/primary-nav]
+         :style   {:height   "100%"
+                   :width    "100%"
+                   :position "absolute"}}
+   [nav/nav-bar user]
    [:div {:style {:height "100%"}}]])
-
-(defn research []
-  [:div
-   [nav/primary-nav]
-   [:p "Research"]
-   [:div#primary-content
-    [article/primary-content]]
-   [:div#rcb
-    [cards/recent-content-display "research"]]])
-
-(defn full-page
-  [{:keys [article recent-content user]}]
-  [:div
-   [nav/nav user]
-   [:div#primary-content [article/article article]]
-   [:div#rcb [cards/recent-content-cards {:recent-content recent-content}]]])
-
-(defn data-analysis []
-  [:div
-   [nav/primary-nav]
-   [:p "Data Analysis"]
-   [:div#primary-content
-    [article/primary-content]]
-   [:div#rcb
-    [cards/recent-content-display "data-analysis"]]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test pages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(def panels {:home [home]
-             :thoughts [thoughts]
-             :archive [archive]
-             :about [about]
-             :research [research]
-             :data-analysis [data-analysis]
-             :admin [login-ui]
-             :editor [editor-ui]
+(def panels {:home          home
+             :thoughts      full-page
+             :archive       full-page
+             :about         about
+             :research      full-page
+             :data-analysis full-page
+             :admin         login-ui
+             :editor        editor-ui
              })
 
 (defn app []
-  (let [active-panel (subscribe [:active-panel])]
-    (infof "Active panel %s" @active-panel)
-    (get panels @active-panel)))
+  (let [active-panel @(subscribe [:active-panel])]
+    (infof "Active panel %s" active-panel)
+    [(get panels active-panel) {:user           @(subscribe [:user])
+                                :recent-content @(subscribe [:recent-content])
+                                :active-content @(subscribe [:active-content])}]))

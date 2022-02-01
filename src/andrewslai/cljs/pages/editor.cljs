@@ -184,7 +184,7 @@
   (let [{:keys [username firstName lastName] :as user} @(subscribe [:update-user-profile!])
         {:keys [article_tags title]} @(subscribe [:editor-metadata])]
     [:div
-     [nav/primary-nav]
+     [nav/nav-bar user]
      [:br]
      [:h1 "Editor"]
      [:br]

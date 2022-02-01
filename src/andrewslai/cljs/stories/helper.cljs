@@ -26,6 +26,10 @@
   (doto (copy-function template)
     (set! -args (clj->js default-values))))
 
+(defn get-story-args
+  [story]
+  (js->clj (. story -args)))
+
 (defn ->story-inputs
   [default story]
-  (merge default (js->clj (. story -args))))
+  (merge default (get-story-args story)))
