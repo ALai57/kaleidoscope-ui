@@ -6,6 +6,8 @@
 (def ^:export default
   (helper/->default {:title     "Login Prompt"
                      :component admin/login-form
+                     :argTypes  {:on-login-click {:action "Clicked to login!"}
+                                 :on-admin-click {:action "Clicked to check admin!"}}
                      :args      {}}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs

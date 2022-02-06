@@ -62,6 +62,10 @@
 (defn app []
   (let [active-panel @(subscribe [:active-panel])]
     (infof "Active panel %s" active-panel)
-    [(get panels active-panel) {:user           @(subscribe [:user])
-                                :recent-content @(subscribe [:recent-content])
-                                :active-content @(subscribe [:active-content])}]))
+    [(get panels active-panel) {:user                @(subscribe [:user])
+                                :user-event-handlers {:on-login-click        #(dispatch [:keycloak-login])
+                                                      :on-admin-click        #(dispatch [:request-admin-route])
+                                                      :on-logout-click       #(dispatch [:keycloak-logout])
+                                                      :on-edit-profile-click #(dispatch [:keycloak-account-management])}
+                                :recent-content      @(subscribe [:recent-content])
+                                :active-content      @(subscribe [:active-content])}]))
