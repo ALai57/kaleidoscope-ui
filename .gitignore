@@ -8,8 +8,6 @@ figwheel_server.log
 .lein-failures
 log.txt
 node_modules
-package-lock.json
-package.json
 resources/public/js/compiled/
 resources/public/js/test/
 
