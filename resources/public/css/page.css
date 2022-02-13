@@ -312,3 +312,34 @@ pre {
 .avatar-thumbnail {
     width: 100px;
 }
+
+.modal-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400;
+  padding-top: 2;
+  padding-right: 4;
+  padding-bottom: 3;
+}
+
+.modal-backdrop {
+  background-color: #212529;
+}
+
+.modal-content {
+  border: none;
+}
+
+.modal-title {
+  margin-right: 30px;
+  margin-left: 10px;
+}
+
+.close-button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  opacity: 0.5;
+}

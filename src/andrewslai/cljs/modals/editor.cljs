@@ -1,5 +1,5 @@
 (ns andrewslai.cljs.modals.editor
-  (:require [andrewslai.cljs.modal :refer [modal-template close-modal]]
+  (:require [andrewslai.cljs.modal :refer [modal-template]]
             [taoensso.timbre :refer-macros [infof]]))
 
 (defn create-article-failure [payload]

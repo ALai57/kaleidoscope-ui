@@ -4,7 +4,7 @@
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
             [andrewslai.cljs.modals.editor :refer [create-article-failure-modal
                                                    create-article-success-modal]]
-            [andrewslai.cljs.modal :refer [modal-template close-modal]]
+            [andrewslai.cljs.modal :refer [modal-template]]
             [reagent.core :as reagent]))
 
 ;; HTML Serializer

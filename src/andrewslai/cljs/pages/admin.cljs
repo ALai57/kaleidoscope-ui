@@ -6,55 +6,52 @@
             [andrewslai.cljs.components.input-box :as input-box]
             [andrewslai.cljs.components.thumbnail :as thumbnail]
             [andrewslai.cljs.keycloak :as keycloak]
-            [andrewslai.cljs.modal :refer [close-modal modal-template] :as modal]
+            [andrewslai.cljs.modal :refer [modal-template test-modal] :as modal]
             [goog.object :as gobj]
             [re-frame.core :refer [dispatch subscribe]]
-            [keycloak-js :as keycloak-js]))
+            [keycloak-js :as keycloak-js]
+            [taoensso.timbre :refer-macros [infof info]]))
 
-(defn form-data->map [form-id]
-  (let [m (atom {})]
-    (-> js/FormData
-        (new (.getElementById js/document form-id))
-        (.forEach (fn [v k obj] (swap! m conj {(keyword k) v}))))
-    @m))
+(defn authentication-failure
+  []
+  {:title "Authentication failed!"
+   :body  "Not Authenticated"
+   :level "error"})
+
+(defn authentication-success
+  []
+  {:title "Authentication success!"
+   :body  "Authenticated"
+   :level "info"})
+
+(defn success?
+  [{:keys [status]}]
+  (= 200 status))
+
+(defn response-modal
+  [response]
+  (cond
+    (success? response) [test-modal (assoc (authentication-success) :open? true)]
+    (nil? response)     nil
+    :else               [test-modal (assoc (authentication-failure) :open? true)]))
 
 ;; Change to popup!
 #_[:p "andrewslai.com uses the open source "
    [:a {:href "https://www.keycloak.org"} "Keycloak"]
    " identity provider for authentication. Clicking the link will redirect you to a login site."]
 (defn login-form
-  [{:keys [on-login-click on-admin-click] :as _user-event-handlers}]
+  [{:keys [user-event-handlers login-response]}]
+  (info "Login response:" login-response)
   [:div.login-wrapper.shadow.p-3.rounded
    [primary-button/primary-button {:text    "Login via Keycloak"
-                                   :on-click on-login-click}]
+                                   :on-click (get user-event-handlers :on-login-click)}]
    [primary-button/primary-button {:text    "Check if you're already logged in"
-                                   :on-click on-admin-click}]])
+                                   :on-click (get user-event-handlers :on-admin-click)}]
+   [response-modal login-response]])
 
-(defn text-input [field-name title initial-value & description]
-  [:dl.form-group
-   [:dt [:label {:for field-name} title]]
-   [:dd [:input.form-control {:type "text"
-                              :name field-name
-                              :defaultValue initial-value}]]
-   (when description
-     [:note (first description)])])
-
-(defn registration-data->map [form-id]
-  (let [m (atom (form-data->map form-id))
-
-        avatar (-> js/document
-                   (.getElementById "avatar-preview")
-                   (aget "src")
-                   (clojure.string/split ",")
-                   second)]
-
-    (if avatar
-      (swap! m assoc :avatar avatar)
-      (swap! m dissoc :avatar))
-    @m))
-
+;; Instead of doing this, have the component dispatch on a loaded file as an argument
 (defn load-image [file-added-event]
-  (let [file (first (array-seq (.. file-added-event -target -files)))
+  (let [file        (first (array-seq (.. file-added-event -target -files)))
         file-reader (js/FileReader.)]
     (set! (.-onload file-reader)
           (fn [file-load-event]
@@ -70,15 +67,17 @@
   [:div.user-profile-wrapper
    [:form
     [thumbnail/thumbnail {:image-url avatar_url}]
+
+    ;; One component - Image Loader
     [thumbnail/thumbnail {:image-url avatar_url
                           :name      "avatar"
                           :id        "avatar-preview"}]
-    #_[:img {:id    "avatar-preview"
-             :name  "avatar"
-             :style {:width "100px"}}]
     [:input.btn-primary {:type      "file"
                          :accept    "image/png"
                          :on-change load-image}]
+    #_[:img {:id    "avatar-preview"
+             :name  "avatar"
+             :style {:width "100px"}}]
     [:br]
     [:br]
     [:br]
@@ -108,10 +107,11 @@
                                         :on-click on-admin-click}]]])
 
 (defn login-ui
-  [{:keys [user user-event-handlers]}]
+  [{:keys [user user-event-handlers login-response]}]
   [:div
    [nav/nav-bar user]
    [:br]
    (if user
      [user-profile user user-event-handlers]
-     [login-form user-event-handlers])])
+     [login-form {:user-event-handlers user-event-handlers
+                  :login-response      login-response}])])

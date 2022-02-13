@@ -66,14 +66,20 @@
    (:modal db)))
 
 (reg-sub
-  :editor-data
-  (fn [db]
-    (:editor-data db)))
+ :editor-data
+ (fn [db]
+   (:editor-data db)))
 
 (reg-sub
-  :editor-metadata
-  (fn [db]
-    (:editor-metadata db)))
+ :editor-metadata
+ (fn [db]
+   (:editor-metadata db)))
+
+(reg-sub
+ :login-response
+ (fn [db]
+   (:login-response db)))
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;

@@ -1,7 +1,5 @@
 (ns andrewslai.cljs.events.keycloak
   (:require [andrewslai.cljs.keycloak :as keycloak]
-            [andrewslai.cljs.modals.admin :refer [authentication-failure-modal
-                                                  authentication-success-modal]]
             [ajax.core :as ajax]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]))
 
@@ -68,16 +66,16 @@
    {:hash-fragment path}))
 
 (reg-event-db
- :auth-success
+ :successfully-authenticated
  (fn [db [_ response]]
-   (dispatch [:show-modal (authentication-success-modal response)])
-   db))
+   (assoc db :login-response {:status 200
+                              :body   response})))
 
 (reg-event-db
- :auth-failure
+ :not-authenticated
  (fn [db [_ response]]
-   (dispatch [:show-modal (authentication-failure-modal response)])
-   db))
+   (assoc db :login-response {:status nil
+                              :body   response})))
 
 (reg-event-fx
  :request-admin-route
@@ -87,6 +85,8 @@
                  :headers         {:Authorization (str "Bearer " (.-token (:keycloak db)))}
                  :format          (ajax/json-response-format)
                  :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success      [:auth-success]
-                 :on-failure      [:auth-failure]}
-    :db         (assoc db :loading? true)}))
+                 :on-success      [:successfully-authenticated]
+                 :on-failure      [:not-authenticated]}
+    :db         (assoc db
+                       :loading? true
+                       :login-response nil)}))

@@ -1,14 +1,15 @@
 (ns andrewslai.cljs.stories.admin.login-prompt-stories
   (:require [andrewslai.cljs.pages.admin :as admin]
             [andrewslai.cljs.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent]
+            ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
   (helper/->default {:title     "Login Prompt"
                      :component admin/login-form
-                     :argTypes  {:on-login-click {:action "Clicked to login!"}
-                                 :on-admin-click {:action "Clicked to check admin!"}}
-                     :args      {}}))
+                     :args      {:user-event-handlers
+                                 {:on-login-click        (action "on-login-click")
+                                  :on-admin-click        (action "on-admin-click")}}}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template
@@ -19,3 +20,9 @@
 
 (def ^:export Default-login-prompt
   (helper/->story template {}))
+
+(def ^:export Successful-login
+  (helper/->story template {:login-response {:status 200}}))
+
+(def ^:export Failed-login
+  (helper/->story template {:login-response {:status 500}}))

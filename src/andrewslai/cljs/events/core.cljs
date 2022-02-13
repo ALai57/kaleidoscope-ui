@@ -29,10 +29,9 @@
                           :child data})))
 
 (defn set-active-panel [db [_ value]]
-  (merge db {:loading? true
-             :active-panel value
-             :active-content nil
-             #_#_:recent-content nil}))
+  (merge db {:loading?       true
+             :active-panel   value
+             :active-content nil}))
 (reg-event-db
  :set-active-panel
  set-active-panel)
