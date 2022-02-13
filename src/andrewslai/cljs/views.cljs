@@ -13,9 +13,10 @@
 ;; Landing pages
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defn home [{:keys [user recent-content]}]
+(defn home [{:keys [user recent-content notification-type]}]
   [:div
-   [nav/nav-bar user]
+   [nav/nav-bar {:user user
+                 :notification-type notification-type}]
    [cards/recent-content-cards {:recent-content recent-content}]])
 
 (defn full-page [{:keys [user active-content recent-content notification-type]}]
@@ -38,12 +39,13 @@
                   (includes? clicked-class "card-text"))
       (dispatch [:reset-portfolio-cards]))))
 
-(defn about [user]
+(defn about [{:keys [user notification-type]}]
   [:div {:onClick reset-portfolio-cards
          :style   {:height   "100%"
                    :width    "100%"
                    :position "absolute"}}
-   [nav/nav-bar user]
+   [nav/nav-bar {:user user
+                 :notificaiton-type notification-type}]
    [:div {:style {:height "100%"}}]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
