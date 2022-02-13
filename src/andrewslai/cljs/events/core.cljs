@@ -28,6 +28,16 @@
    (assoc-in db [:modal] {:show? true
                           :child data})))
 
+(reg-event-db
+ :change-notification-type
+ (fn [db [_ notification-type]]
+   (assoc db
+          :notification-type notification-type
+          :login-response    {:status  200
+                              :message (str "An example "
+                                            notification-type
+                                            " notification")})))
+
 (defn set-active-panel [db [_ value]]
   (merge db {:loading?       true
              :active-panel   value

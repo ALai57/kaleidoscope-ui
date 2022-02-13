@@ -2,8 +2,10 @@
   (:require [reagent-mui.components :refer [drawer list list-item
                                             list-item-icon list-item-text
                                             button]]
+            [andrewslai.cljs.components.radio-group :refer [basic-radio-group]]
             [reagent-mui.icons.settings :refer [settings]]
             [taoensso.timbre :refer-macros [info]]
+            [re-frame.core :refer [dispatch]]
             [reagent.core :as reagent]))
 
 (defn keydown?
@@ -20,10 +22,14 @@
   []
   [list
    [list-item
-    [list-item-icon [settings]]
-    [list-item-text {:primary "Settings"}]]])
-
-;;The open and close functions need to both set the state -
+    [basic-radio-group {:group-name "Notification Settings"
+                        :default    :snackbar
+                        :on-change  (fn [new-value]
+                                      (dispatch [:change-notification-type (keyword new-value)]))
+                        :elements   [{:value "snackbar"
+                                      :label "Snackbar"}
+                                     {:value "modal"
+                                      :label "Modal"}]}]]])
 
 (defn side-menu
   [{:keys [expand-button]}]

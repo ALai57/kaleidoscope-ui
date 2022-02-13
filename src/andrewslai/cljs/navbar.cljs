@@ -27,7 +27,8 @@
                          :width "100%"
                          :height "75px"
                          :padding "5px"}
-                 :preserve-aspect-ratio "meet"}
+                 ;;:preserve-aspect-ratio "meet"
+                 }
                 props)]])
 
 (defn nav-bar [{:keys [user]}]
