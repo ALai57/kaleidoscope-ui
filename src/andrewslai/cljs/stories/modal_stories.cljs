@@ -6,7 +6,7 @@
 
 (def ^:export default
   (helper/->default {:title     "Modal"
-                     :component modal/test-modal
+                     :component modal/basic-modal
                      :args      {:open?  true
                                  :title  "My Modal"
                                  :body   "Some body"}}))
@@ -16,7 +16,7 @@
   "The template is a function of arguments because Storybook understands how to
   translate arguments into interactive controls"
   [args]
-  (reagent/as-element [modal/test-modal (helper/->params args)]))
+  (reagent/as-element [modal/basic-modal (helper/->params args)]))
 
 (def ^:export Info-Modal
   (helper/->story template {:open? true}))

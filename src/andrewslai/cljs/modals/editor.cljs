@@ -11,8 +11,8 @@
           [:br]]
    :footer [:button {:type "button" :title "Ok"
                      :class "btn btn-default"
-                     :on-click #(close-modal)} "Ok"]
-   :close-fn close-modal})
+                     :on-click #(infof "Failed to close")} "Ok"]
+   :close-fn #(infof "Failed to close")})
 (defn create-article-failure-modal [payload]
   (modal-template (create-article-failure payload)))
 
@@ -22,7 +22,7 @@
   (infof "Success creating article: %s of type %s" article (type article))
   (let [url (str "/#/" article_tags "/content/" article_url)
         close-fn (fn []
-                   (do (close-modal)
+                   (do (infof "Failed to close")
                        (set! (.-href (.-location js/document)) url)))]
     {:title "Successful article creation!"
      :body [:div

@@ -6,7 +6,7 @@
             [andrewslai.cljs.components.input-box :as input-box]
             [andrewslai.cljs.components.thumbnail :as thumbnail]
             [andrewslai.cljs.keycloak :as keycloak]
-            [andrewslai.cljs.modal :refer [modal-template test-modal] :as modal]
+            [andrewslai.cljs.modal :refer [modal-template basic-modal]]
             [goog.object :as gobj]
             [re-frame.core :refer [dispatch subscribe]]
             [keycloak-js :as keycloak-js]
@@ -31,9 +31,9 @@
 (defn response-modal
   [response]
   (cond
-    (success? response) [test-modal (assoc (authentication-success) :open? true)]
+    (success? response) [basic-modal (assoc (authentication-success) :open? true)]
     (nil? response)     nil
-    :else               [test-modal (assoc (authentication-failure) :open? true)]))
+    :else               [basic-modal (assoc (authentication-failure) :open? true)]))
 
 ;; Change to popup!
 #_[:p "andrewslai.com uses the open source "
