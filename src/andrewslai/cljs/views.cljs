@@ -67,6 +67,7 @@
                                                       :on-admin-click        #(dispatch [:request-admin-route])
                                                       :on-logout-click       #(dispatch [:keycloak-logout])
                                                       :on-edit-profile-click #(dispatch [:keycloak-account-management])}
+                                :notification-type   @(subscribe [:notification-type])
                                 :login-response      @(subscribe [:login-response])
                                 :recent-content      @(subscribe [:recent-content])
                                 :active-content      @(subscribe [:active-content])}]))

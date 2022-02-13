@@ -8,8 +8,8 @@
   (helper/->default {:title     "Login Prompt"
                      :component admin/login-form
                      :args      {:user-event-handlers
-                                 {:on-login-click        (action "on-login-click")
-                                  :on-admin-click        (action "on-admin-click")}}}))
+                                 {:on-login-click (action "on-login-click")
+                                  :on-admin-click (action "on-admin-click")}}}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template
@@ -19,10 +19,20 @@
   (reagent/as-element [admin/login-form (helper/->params args)]))
 
 (def ^:export Default-login-prompt
-  (helper/->story template {}))
+  (helper/->story template {:notifier admin/modal-notifier}))
 
-(def ^:export Successful-login
-  (helper/->story template {:login-response {:status 200}}))
+(def ^:export Successful-login-modal
+  (helper/->story template {:login-response {:status 200}
+                            :notifier       admin/modal-notifier}))
 
-(def ^:export Failed-login
-  (helper/->story template {:login-response {:status 500}}))
+(def ^:export Failed-login-modal
+  (helper/->story template {:login-response {:status 500}
+                            :notifier       admin/modal-notifier}))
+
+(def ^:export Successful-login-snackbar
+  (helper/->story template {:login-response {:status 200}
+                            :notifier       admin/snackbar-notifier}))
+
+(def ^:export Failed-login-snackbar
+  (helper/->story template {:login-response {:status 500}
+                            :notifier       admin/snackbar-notifier}))

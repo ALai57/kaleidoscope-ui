@@ -5,6 +5,7 @@
             [andrewslai.cljs.components.secondary-button :as secondary-button]
             [andrewslai.cljs.components.input-box :as input-box]
             [andrewslai.cljs.components.thumbnail :as thumbnail]
+            [andrewslai.cljs.components.snackbar :as snackbar]
             [andrewslai.cljs.keycloak :as keycloak]
             [andrewslai.cljs.modal :refer [modal-template basic-modal]]
             [goog.object :as gobj]
@@ -22,32 +23,45 @@
   []
   {:title "Authentication success!"
    :body  "Authenticated"
-   :level "info"})
+   :level "success"})
 
 (defn success?
   [{:keys [status]}]
   (= 200 status))
 
-(defn response-modal
+(defn modal-notifier
   [response]
   (cond
     (success? response) [basic-modal (assoc (authentication-success) :open? true)]
     (nil? response)     nil
     :else               [basic-modal (assoc (authentication-failure) :open? true)]))
 
+(defn snackbar-notifier
+  [response]
+  (cond
+    (success? response) [snackbar/basic-snackbar {:message "User is logged in!"
+                                                  :level   "success"}]
+    (nil? response)     nil
+    :else               [snackbar/basic-snackbar {:message "You have not authenticated. Please login!"
+                                                  :level   "error"}]))
+
+(def NOTIFIERS
+  {:modal    modal-notifier
+   :snackbar snackbar-notifier})
+
 ;; Change to popup!
 #_[:p "andrewslai.com uses the open source "
    [:a {:href "https://www.keycloak.org"} "Keycloak"]
    " identity provider for authentication. Clicking the link will redirect you to a login site."]
 (defn login-form
-  [{:keys [user-event-handlers login-response]}]
+  [{:keys [user-event-handlers login-response notifier]}]
   (info "Login response:" login-response)
   [:div.login-wrapper.shadow.p-3.rounded
    [primary-button/primary-button {:text    "Login via Keycloak"
                                    :on-click (get user-event-handlers :on-login-click)}]
    [primary-button/primary-button {:text    "Check if you're already logged in"
                                    :on-click (get user-event-handlers :on-admin-click)}]
-   [response-modal login-response]])
+   [notifier login-response]])
 
 ;; Instead of doing this, have the component dispatch on a loaded file as an argument
 (defn load-image [file-added-event]
@@ -107,11 +121,13 @@
                                         :on-click on-admin-click}]]])
 
 (defn login-ui
-  [{:keys [user user-event-handlers login-response]}]
+  [{:keys [user user-event-handlers login-response notification-type]}]
+  (info "Generating UI with notification type" notification-type)
   [:div
    [nav/nav-bar user]
    [:br]
    (if user
      [user-profile user user-event-handlers]
      [login-form {:user-event-handlers user-event-handlers
-                  :login-response      login-response}])])
+                  :login-response      login-response
+                  :notifier            (get NOTIFIERS notification-type modal-notifier)}])])

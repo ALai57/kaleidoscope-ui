@@ -80,6 +80,11 @@
  (fn [db]
    (:login-response db)))
 
+(reg-sub
+ :notification-type
+ (fn [db]
+   (:notification-type db)))
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;

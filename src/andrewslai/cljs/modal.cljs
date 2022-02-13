@@ -10,6 +10,7 @@
 (def COLORS
   {"primary"   "#1139c9"
    "secondary" "#f01c2e"
+   "success"   "rgb(101, 221, 149)"
    "info"      "rgb(141, 174, 255)"
    "warn"      "rgb(233, 218, 45)"
    "error"     "rgb(245, 125, 111)"})

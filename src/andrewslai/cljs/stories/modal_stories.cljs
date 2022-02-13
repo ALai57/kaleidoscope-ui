@@ -18,6 +18,11 @@
   [args]
   (reagent/as-element [modal/basic-modal (helper/->params args)]))
 
+
+(def ^:export Success-Modal
+  (helper/->story template {:open? true
+                            :level "success"}))
+
 (def ^:export Info-Modal
   (helper/->story template {:open? true}))
 
