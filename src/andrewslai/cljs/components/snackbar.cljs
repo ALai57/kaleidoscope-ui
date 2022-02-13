@@ -17,7 +17,6 @@
     :or   {level              "info"
            open?              true
            auto-hide-duration 6000}}]
-  (info "Creating popup")
   (let [showing  (reagent/atom open?)]
     (fn []
       [snackbar {:open               @showing

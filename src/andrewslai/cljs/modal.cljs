@@ -35,7 +35,6 @@
   [{:keys [open? title body footer level]
     :or   {level "info"
            open? true}}]
-  (info "Creating modal")
   (let [showing  (reagent/atom open?)
         on-close #(reset! showing false)]
     (fn []

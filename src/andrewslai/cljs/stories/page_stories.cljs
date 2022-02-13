@@ -16,7 +16,7 @@
     :component views/full-page
     :args      {:active-content article-stories/example-article
                 :recent-content recent-content-stories/example-recent-content
-                :user           {:avatar_url "https://andrewslai.com"}}}))
+                :user           {:avatar_url "/images/lock.svg"}}}))
 
 (defn template
   [args]
