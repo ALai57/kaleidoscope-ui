@@ -17,7 +17,15 @@
 
 (def ^:export Default-Radio-Group
   (helper/->story template {:group-name "Gender"
-                            :default    "female"
+                            :state      (reagent/atom "female")
+                            :elements   [{:value "female"
+                                          :label "Female"}
+                                         {:value "male"
+                                          :label "Male"}]}))
+
+(def ^:export Different-Default
+  (helper/->story template {:group-name "Gender"
+                            :state      (reagent/atom "male")
                             :elements   [{:value "female"
                                           :label "Female"}
                                          {:value "male"

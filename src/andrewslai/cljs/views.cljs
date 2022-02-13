@@ -18,9 +18,10 @@
    [nav/nav-bar user]
    [cards/recent-content-cards {:recent-content recent-content}]])
 
-(defn full-page [{:keys [user active-content recent-content]}]
+(defn full-page [{:keys [user active-content recent-content notification-type]}]
   [:div
-   [nav/nav-bar user]
+   [nav/nav-bar {:user              user
+                 :notification-type notification-type}]
    [:div#primary-content
     (when active-content
       [article/article active-content])]

@@ -24,6 +24,7 @@
    :recent-content           nil
    :loading?                 false
    :loading-resume?          false
+   :notification-type        :modal
    :editor-data              nil
    :editor-metadata          {}
    :keycloak                 (keycloak/keycloak {:url      keycloak/AUTH_URL

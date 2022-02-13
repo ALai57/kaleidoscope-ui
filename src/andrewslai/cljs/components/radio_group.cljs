@@ -15,16 +15,15 @@
     new-value))
 
 (defn basic-radio-group
-  [{:keys [group-name default elements on-change]
+  [{:keys [group-name state elements on-change]
     :or   {on-change identity}}]
-  (let [state (reagent/atom default)]
-    (fn []
-      [form-control
-       [form-label group-name]
-       [radio-group {:value     @state
-                     :on-change (fn [event]
-                                  (on-change (handle-change state event)))}
-        (for [{:keys [value label]} elements]
-          ^{:key label} [form-control-label {:value   value
-                                             :label   label
-                                             :control (reagent/as-element [radio])}])]])))
+  (fn []
+    [form-control
+     [form-label group-name]
+     [radio-group {:value     @state
+                   :on-change (fn [event]
+                                (on-change (handle-change state event)))}
+      (for [{:keys [value label]} elements]
+        ^{:key label} [form-control-label {:value   value
+                                           :label   label
+                                           :control (reagent/as-element [radio])}])]]))

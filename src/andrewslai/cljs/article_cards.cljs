@@ -40,8 +40,8 @@
   [{:keys [recent-content]}]
   [:div#recent-content
    [:div#recent-article-cards.card-group
-    (for [{:keys [article_id] :as content} recent-content]
-      ^{:key article_id} [article-card content])]])
+    (for [{:keys [title] :as content} recent-content]
+      ^{:key title} [article-card content])]])
 
 (defn recent-content-display
   [content-type]

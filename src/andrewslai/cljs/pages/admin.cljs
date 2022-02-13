@@ -55,7 +55,8 @@
    " identity provider for authentication. Clicking the link will redirect you to a login site."]
 (defn login-form
   [{:keys [user-event-handlers login-response notifier]}]
-  (info "Login response:" login-response)
+  (when login-response
+    (info "Login response:" login-response))
   [:div.login-wrapper.shadow.p-3.rounded
    [primary-button/primary-button {:text    "Login via Keycloak"
                                    :on-click (get user-event-handlers :on-login-click)}]
@@ -124,7 +125,8 @@
   [{:keys [user user-event-handlers login-response notification-type]}]
   (info "Generating UI with notification type" notification-type)
   [:div
-   [nav/nav-bar user]
+   [nav/nav-bar {:user              user
+                 :notification-type notification-type}]
    [:br]
    (if user
      [user-profile user user-event-handlers]

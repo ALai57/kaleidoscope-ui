@@ -19,7 +19,8 @@
   (reagent/as-element [navbar/nav-bar (helper/->params args)]))
 
 (def ^:export Default-navbar
-  (helper/->story template {}))
+  (helper/->story template {:notification-type :modal}))
 
 (def ^:export Navbar-with-icon
-  (helper/->story template {:user {:avatar_url "/images/lock.svg"}}))
+  (helper/->story template {:notification-type :modal
+                            :user {:avatar_url "/images/lock.svg"}}))

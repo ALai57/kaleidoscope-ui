@@ -31,14 +31,15 @@
                  }
                 props)]])
 
-(defn nav-bar [{:keys [user]}]
+(defn nav-bar [{:keys [user notification-type]}]
   [:div#primary-nav
    [:a.zoom-icon {:href  "#/home"
                   :style {:float "left"}}
     [:img.navbutton {:src      "images/nav-bar/favicon-white.svg"
                      :on-click #(dispatch [:set-active-panel :home])}]]
    [:div#secondary-nav
-    [side-menu/side-menu {:expand-button menu-icon}]
+    [side-menu/side-menu {:expand-button     menu-icon
+                          :notification-type notification-type}]
     [login-icon (:avatar_url user)]
     [nav-icon "thoughts" "andrew-head-icon.svg"]
     [nav-icon "about" "andrew-silhouette-icon.svg"]
