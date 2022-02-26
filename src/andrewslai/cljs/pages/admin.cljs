@@ -57,12 +57,13 @@
   [{:keys [user-event-handlers login-response notifier]}]
   (when login-response
     (info "Checked if user is authenticated:" login-response))
-  [:div.login-wrapper.shadow.p-3.rounded
-   [primary-button/primary-button {:text    "Login via Keycloak"
-                                   :on-click (get user-event-handlers :on-login-click)}]
-   [primary-button/primary-button {:text    "Check if you're already logged in"
-                                   :on-click (get user-event-handlers :on-admin-click)}]
-   [notifier login-response]])
+  [:div.row.justify-content-center
+   [:div.login-wrapper.shadow.p-3.rounded.col-md-4
+    [primary-button/primary-button {:text    "Login via Keycloak"
+                                    :on-click (get user-event-handlers :on-login-click)}]
+    [primary-button/primary-button {:text    "Check if you're already logged in"
+                                    :on-click (get user-event-handlers :on-admin-click)}]
+    [notifier login-response]]])
 
 ;; Instead of doing this, have the component dispatch on a loaded file as an argument
 (defn load-image [file-added-event]
