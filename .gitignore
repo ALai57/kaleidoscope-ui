@@ -10,6 +10,11 @@ log.txt
 node_modules
 resources/public/js/compiled/
 resources/public/js/test/
+public/
+
+.idea/
+*.iml
+.shadow-cljs/
 
 # EMACS garbage
 *#*#*
