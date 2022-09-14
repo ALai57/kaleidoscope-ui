@@ -4,7 +4,8 @@
             [clojure.string :as str]
             [re-frame.core :refer [subscribe]]
             [reagent.core :refer [adapt-react-class]]
-            [reagent-mui.components :refer [card]]))
+            [reagent-mui.components :refer [card]]
+            [goog.string :as gstr]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Card formatting
@@ -18,18 +19,17 @@
     "images/nav-bar/unknown-user.svg"))
 
 (defn article-card
-  [{:keys [article_tags title article_url article_id timestamp] :as article}]
+  [{:keys [article-tags title article-url article-id timestamp] :as article}]
   [card {:class "text-white bg-light mb-3 article-card"}
    [:div.container-fluid
     [:div.row.flex-items-xs-middle
      [:div.col-sm-3.bg-primary.text-xs-center.card-icon
       [:div.p-y-3
        [:h1.p-y-2
-        [:img.fa.fa-2x {:src (article-tags->icon article_tags)
+        [:img.fa.fa-2x {:src (article-tags->icon article-tags)
                         :style {:width "100%"}}]]]]
      [:div.col-sm-9.bg-light.text-dark.card-description
-      [:h5.card-title>a {:href (str "#/" article_tags
-                                    "/content/" article_url)}
+      [:h5.card-title>a {:href (gstr/format "#/%s/content/%s" article-tags article-url)}
        title]
       [:p.card-text timestamp]]]]])
 
@@ -47,7 +47,7 @@
   [content-type]
   (let [recent-content @(subscribe [:recent-content])
         the-content (if content-type
-                      (filter #(= (:article_tags %1) content-type)
+                      (filter #(= (:article-tags %1) content-type)
                               recent-content)
                       recent-content)]
     [recent-content-cards {:recent-content the-content}]))

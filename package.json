@@ -37,7 +37,8 @@
   },
   "scripts": {
     "watch": "shadow-cljs watch app stories",
-    "build": "shadow-cljs release app",
+    "build-release": "shadow-cljs release app",
+    "deploy": "./scripts/deployment/deploy-to-s3",
     "pack": "webpack --watch",
     "storybook": "start-storybook -s ./resources/public -p 6006",
     "build-storybook": "build-storybook",

@@ -1,10 +1,12 @@
 (ns andrewslai.cljs.article
   (:require [clojure.string :as str]
+            [goog.string :as gstr]
             [hickory.core :as h]
             [hickory.convert :refer [hickory-to-hiccup]]
             [hickory.select :as hs]
             [re-frame.core :refer [subscribe]]
-            [reagent-mui.components :refer [box]]))
+            [reagent-mui.components :refer [box]]
+            [taoensso.timbre :refer-macros [infof]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions
@@ -89,16 +91,18 @@
 
 (defn article
   [{:keys [title author timestamp content]}]
-  [box
-   [:div#goodies
-    [:h2.article-title title]
-    [:div.article-subheading (str "Author: " author)]
-    [:div.article-subheading timestamp]
-    [:div.divider.py-1.bg-dark]
-    [:br][:br]
-    [:div (format-content (select-html (->hickory content)))]
-    (insert-dynamic-js! (map (comp :src :attrs) (select-js (->hickory content))))
-    ]])
+  (let [js-content (select-js (->hickory content))]
+    (infof (gstr/format "Selecting JS content from %s : %s" content js-content))
+    [box
+     [:div#goodies
+      [:h2.article-title title]
+      [:div.article-subheading (str "Author: " author)]
+      [:div.article-subheading timestamp]
+      [:div.divider.py-1.bg-dark]
+      [:br][:br]
+      [:div (format-content (select-html (->hickory content)))]
+      (insert-dynamic-js! (map (comp :src :attrs) js-content))
+      ]]))
 
 (comment
   (require '[re-frame.db :refer [app-db]])

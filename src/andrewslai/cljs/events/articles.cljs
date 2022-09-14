@@ -39,6 +39,7 @@
   (let [valid-articles (filter (partial s/valid? :andrewslai.article/article)
                                response)]
     (infof "Filtered %s articles" (- (count response) (count valid-articles)))
+    (infof "Articles %s" valid-articles)
     (assoc db
            :loading? false
            :recent-content (filter (partial s/valid? :andrewslai.article/article)

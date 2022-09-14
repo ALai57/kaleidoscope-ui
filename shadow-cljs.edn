@@ -2,7 +2,7 @@
 {:source-paths ["src"
                 "test"]
 
- :dependencies [[org.clojars.alai57/andrewslai "0.0.53"]
+ :dependencies [[org.clojars.alai57/andrewslai "0.0.63"]
                 ;; Resolve conflicts
                 [clj-commons/secretary "1.2.4"]
                 [cljs-ajax "0.8.1"]

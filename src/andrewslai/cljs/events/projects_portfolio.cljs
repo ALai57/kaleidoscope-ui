@@ -14,11 +14,13 @@
     (assoc p :skills_names parsed-skills)))
 
 (defn load-portfolio-cards [db [_ {:keys [projects] :as response}]]
-  (let [parsed-projects (map parse-project-skills projects)
-        updated-resume-info (assoc response :projects parsed-projects)]
-    (merge db {:loading-resume? false
-               :resume-info updated-resume-info
-               :selected-resume-info updated-resume-info})))
+  (let [parsed-projects     (map parse-project-skills projects)
+        updated-resume-info (assoc response :projects parsed-projects)
+        db-updates          {:loading-resume?      false
+                             :resume-info          updated-resume-info
+                             :selected-resume-info updated-resume-info}]
+    (infof "Loading Portfolio cards %s" db-updates)
+    (merge db db-updates)))
 (reg-event-db
  :load-portfolio-cards
  load-portfolio-cards)
