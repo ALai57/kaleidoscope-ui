@@ -25,7 +25,6 @@
                 :modules          {:andrewslai {:entries [andrewslai.cljs.core]}}
                 :compiler-options {:static-fns          true
                                    :infer-externs       :auto
-                                   :externs             ["lib/keycloak/keycloak-externs.js"]
                                    :optimize-constants  true
                                    :pretty-print        false
                                    :optimization        :advanced
