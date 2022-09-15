@@ -1,19 +1,24 @@
 (ns andrewslai.cljs.events.keycloak
   (:require [andrewslai.cljs.keycloak :as keycloak]
             [ajax.core :as ajax]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]))
+            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
+            [taoensso.timbre :refer-macros [infof]]
+            ))
 
 
 (reg-event-fx
  :initialize-keycloak
  (fn [cofx [_ _]]
+   (infof "Initializing keycloak")
    {:keycloak {:action   :init
                :instance (get-in cofx [:db :keycloak])
                :success  (fn on-success [auth?]
+                           (infof "Successful keycloak initialization")
                            (when auth?
                              (dispatch [:set-hash-fragment "/admin"])
                              (dispatch [:keycloak-load-profile])))
                :fail     (fn on-error [e]
+                           (infof "Keycloak initialization failed")
                            (js/console.log "Init error" e))}}))
 
 (reg-event-fx
@@ -31,6 +36,7 @@
 (reg-event-fx
  :keycloak-load-profile
  (fn [cofx _]
+   (infof "Loading user profile")
    {:keycloak {:action   :load-profile
                :instance (get-in cofx [:db :keycloak])
                :success  (fn [result]
@@ -45,7 +51,7 @@
 
 (defn keycloak-effect
   [{:keys [action instance success fail]}]
-  (condp = action
+  (case action
     :account-management (keycloak/account-management! instance)
     :init               (keycloak/initialize! instance success fail)
     :load-profile       (keycloak/load-profile! instance)
@@ -63,6 +69,7 @@
 (reg-event-fx
  :set-hash-fragment
  (fn [cofx [_ path]]
+   (infof "Resetting hash fragment to %s" path)
    {:hash-fragment path}))
 
 (reg-event-db
@@ -83,7 +90,8 @@
    {:http-xhrio {:method          :get
                  :uri             "/admin"
                  :headers         {:Authorization (str "Bearer " (.-token (:keycloak db)))}
-                 :format          (ajax/json-response-format)
+                 ;; The response isn't in JSON when the user is not
+                 ;; authenticated - they just get a 401
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:successfully-authenticated]
                  :on-failure      [:not-authenticated]}

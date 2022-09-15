@@ -4,8 +4,7 @@
             [cljs.spec.alpha :as s]
             [day8.re-frame.http-fx]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
-            [taoensso.timbre :as timbre
-             :refer-macros [info infof]]))
+            [taoensso.timbre :as timbre :refer-macros [info infof debugf]]))
 
 (defn load-article [db [_ response]]
   (info "Loading article:" (dissoc response :content))
@@ -28,7 +27,7 @@
  (fn [{:keys [db]} [_ article-name]]
    {:http-xhrio {:method          :get
                  :uri             (make-article-url article-name)
-                 :format          (ajax/json-response-format)
+                 :format          (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-article]
                  :on-failure      [:load-article-failure]}
@@ -39,7 +38,7 @@
   (let [valid-articles (filter (partial s/valid? :andrewslai.article/article)
                                response)]
     (infof "Filtered %s articles" (- (count response) (count valid-articles)))
-    (infof "Articles %s" valid-articles)
+    (debugf "Articles %s" valid-articles)
     (assoc db
            :loading? false
            :recent-content (filter (partial s/valid? :andrewslai.article/article)
@@ -51,7 +50,7 @@
  (fn [{:keys [db]} [_]]
    {:http-xhrio {:method          :get
                  :uri             "/articles"
-                 :format          (ajax/json-response-format)
+                 :format          (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-recent-articles]
                  :on-failure      [:load-recent-articles]}

@@ -1,7 +1,9 @@
 (ns andrewslai.cljs.events.core
   (:require [andrewslai.cljs.db :refer [default-db]]
             [andrewslai.cljs.keycloak :as keycloak]
-            [re-frame.core :refer [dispatch reg-event-db]]))
+            [goog.string :as gstr]
+            [re-frame.core :refer [dispatch reg-event-db]]
+            [taoensso.timbre :refer-macros [infof]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helper functions
@@ -15,6 +17,7 @@
 (reg-event-db
  :update-user-profile!
  (fn [db [_ userinfo]]
+   (infof "Updating user profile: %s" userinfo)
    (assoc db :user-profile userinfo)))
 
 (reg-event-db
@@ -34,9 +37,7 @@
    (assoc db
           :notification-type notification-type
           :login-response    {:status  200
-                              :message (str "An example "
-                                            notification-type
-                                            " notification")})))
+                              :message (gstr/format "An example %s notification" notification-type)})))
 
 (defn set-active-panel [db [_ value]]
   (merge db {:loading?       true

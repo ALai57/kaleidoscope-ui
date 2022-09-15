@@ -63,14 +63,18 @@
              })
 
 (defn app []
-  (let [active-panel @(subscribe [:active-panel])]
-    (infof "Active panel %s" active-panel)
-    [(get panels active-panel) {:user                @(subscribe [:user])
-                                :user-event-handlers {:on-login-click        #(dispatch [:keycloak-login])
-                                                      :on-admin-click        #(dispatch [:request-admin-route])
-                                                      :on-logout-click       #(dispatch [:keycloak-logout])
-                                                      :on-edit-profile-click #(dispatch [:keycloak-account-management])}
-                                :notification-type   @(subscribe [:notification-type])
-                                :login-response      @(subscribe [:login-response])
-                                :recent-content      @(subscribe [:recent-content])
-                                :active-content      @(subscribe [:active-content])}]))
+  (let [active-panel  @(subscribe [:active-panel])
+        active-panel  (if (contains? panels active-panel)
+                        active-panel
+                        :home)]
+    (infof "Currently displayed panel %s" active-panel)
+    [(get panels active-panel login-ui)
+     {:user                @(subscribe [:user])
+      :user-event-handlers {:on-login-click        #(dispatch [:keycloak-login])
+                            :on-admin-click        #(dispatch [:request-admin-route])
+                            :on-logout-click       #(dispatch [:keycloak-logout])
+                            :on-edit-profile-click #(dispatch [:keycloak-account-management])}
+      :notification-type   @(subscribe [:notification-type])
+      :login-response      @(subscribe [:login-response])
+      :recent-content      @(subscribe [:recent-content])
+      :active-content      @(subscribe [:active-content])}]))

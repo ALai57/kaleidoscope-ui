@@ -1,7 +1,7 @@
 (ns andrewslai.cljs.events.projects-portfolio
   (:require [ajax.core :as ajax]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
-            [taoensso.timbre :refer-macros [infof info]]))
+            [taoensso.timbre :refer-macros [infof info debugf]]))
 
 (defn json-string->clj [s]
   (-> js/JSON
@@ -19,7 +19,7 @@
         db-updates          {:loading-resume?      false
                              :resume-info          updated-resume-info
                              :selected-resume-info updated-resume-info}]
-    (infof "Loading Portfolio cards %s" db-updates)
+    (debugf "Loading Portfolio cards %s" db-updates)
     (merge db db-updates)))
 (reg-event-db
  :load-portfolio-cards
@@ -122,7 +122,7 @@
  (fn [{:keys [db]} [_ article-name]]
    {:http-xhrio {:method          :get
                  :uri             "/projects-portfolio"
-                 :format          (ajax/json-response-format)
+                 :format          (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-portfolio-cards]
                  :on-failure      [:load-portfolio-cards]}

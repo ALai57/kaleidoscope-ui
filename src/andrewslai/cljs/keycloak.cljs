@@ -1,6 +1,7 @@
 (ns andrewslai.cljs.keycloak
   (:require ["keycloak-js" :as keycloak-js]
-            [re-frame.core :refer [dispatch]]))
+            [re-frame.core :refer [dispatch]]
+            [taoensso.timbre :refer-macros [infof]]))
 
 (goog-define AUTH_URL "defined-at-compile-time")
 (goog-define CLIENTID "defined-at-compile-time")
@@ -16,8 +17,8 @@
 (defn initialize!
   ([keycloak-instance]
    (initialize! keycloak-instance
-                (fn [auth?] (js/console.log "Authenticated? " auth?))
-                (fn [auth?] (js/console.log "Unable to initialize Keycloak"))))
+                (fn [auth?] (infof "Authenticated? %s" auth?))
+                (fn [auth?] (infof "Unable to initialize Keycloak"))))
   ([keycloak-instance success fail]
    (-> keycloak-instance
        (.init (clj->js {:checkLoginIframe false
@@ -26,6 +27,7 @@
        (.catch fail))))
 
 (defn login! [keycloak]
+  (infof "Redirecting to %s for authentication" HOST_URL)
   (.login keycloak (clj->js {:scope "roles"
                              :prompt "consent"
                              :redirectUri HOST_URL})))
