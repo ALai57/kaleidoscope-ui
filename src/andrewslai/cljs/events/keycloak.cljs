@@ -98,3 +98,9 @@
     :db         (assoc db
                        :loading? true
                        :login-response nil)}))
+
+(reg-event-db
+ :check-identity
+ (fn [{:keys [user-profile]} _]
+   (infof "Identity: %s" user-profile)
+   db))

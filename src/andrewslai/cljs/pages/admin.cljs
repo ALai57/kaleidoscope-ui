@@ -61,7 +61,9 @@
    [:div.login-wrapper.shadow.p-3.rounded.col-md-4
     [primary-button/primary-button {:text    "Login via Keycloak"
                                     :on-click (get user-event-handlers :on-login-click)}]
-    [primary-button/primary-button {:text    "Check if you're already logged in"
+    [primary-button/primary-button {:text    "Check if you are logged in"
+                                    :on-click (get user-event-handlers :on-check-auth-click)}]
+    [primary-button/primary-button {:text    "Check if you have admin access"
                                     :on-click (get user-event-handlers :on-admin-click)}]
     [notifier login-response]]])
 

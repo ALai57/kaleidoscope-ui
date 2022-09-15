@@ -45,7 +45,7 @@
                    :width    "100%"
                    :position "absolute"}}
    [nav/nav-bar {:user user
-                 :notificaiton-type notification-type}]
+                 :notification-type notification-type}]
    [:div {:style {:height "100%"}}]])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -72,6 +72,7 @@
      {:user                @(subscribe [:user])
       :user-event-handlers {:on-login-click        #(dispatch [:keycloak-login])
                             :on-admin-click        #(dispatch [:request-admin-route])
+                            :on-check-auth-click   #(dispatch [:check-identity])
                             :on-logout-click       #(dispatch [:keycloak-logout])
                             :on-edit-profile-click #(dispatch [:keycloak-account-management])}
       :notification-type   @(subscribe [:notification-type])
