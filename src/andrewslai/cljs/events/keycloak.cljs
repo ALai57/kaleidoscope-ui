@@ -101,6 +101,6 @@
 
 (reg-event-db
  :check-identity
- (fn [{:keys [user-profile]} _]
+ (fn [{:keys [user-profile] :as db} _]
    (infof "Identity: %s" user-profile)
    db))
