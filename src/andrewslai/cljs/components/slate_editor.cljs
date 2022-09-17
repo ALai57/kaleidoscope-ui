@@ -1,5 +1,7 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [reagent.core :as reagent]
+            ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
+            ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
             ["@udecode/plate" :as plate :refer
              [createBlockquotePlugin
               createBoldPlugin
@@ -31,6 +33,8 @@
               ELEMENT_CODE_BLOCK
               ELEMENT_PARAGRAPH
 
+              HeadingToolbar
+
               ;; Toolbar buttons
               BlockToolbarButton,
               CodeBlockToolbarButton
@@ -44,14 +48,6 @@
 
 ;; https://plate.udecode.io/
 ;; Add Plate and use it and plugins for rich text editing
-
-(def BASIC-ELEMENTS
-  [:hh1 "🧱 Elements"])
-
-(def x
-  {:type "p"
-   :children [{:text "This is editable plain text"}]})
-
 (def INITIAL-VALUE
   [{:type "p" :children [{:text "This is editable plain text"}]}
    {:type "h1" :children [{:text "🧱 Elements"}]}
@@ -116,17 +112,28 @@
                  #js {:components PLATE-UI}))
 
 (defn toolbar
-  []
-  [:> BlockToolbarButton
-   {:type (getPluginType (usePlateEditorRef (useEventPlateId)))}])
+  [editor-ref]
+  (js/console.log "PLUGIN" (getPluginType editor-ref ELEMENT_BLOCKQUOTE))
+  [:<>
+   [:> BlockToolbarButton
+    {:type (getPluginType editor-ref ELEMENT_BLOCKQUOTE)
+     :icon (reagent/create-element FormatQuote)}]
+   [:> CodeBlockToolbarButton
+    {:type (getPluginType editor-ref ELEMENT_CODE_BLOCK)
+     :icon (reagent/create-element CodeBlock)}]])
 
 (defn editor-ui
   [{:keys [none]}]
   (js/console.log "UI" PLATE-UI)
   (js/console.log "PLUGINS" PLUGINS)
-  [:> PlateProvider
-   {:initialValue  INITIAL-VALUE
-    :plugins       PLUGINS}
-   [:> Plate
-    {:editableProps {:placeholder "Type..."}
-     :onChange      change-handler}]])
+  (let [editor-ref "main"]
+    [:div
+     [:> HeadingToolbar
+      [toolbar editor-ref]]
+     [:> Plate
+      {:id            "main"
+       :ref           editor-ref
+       :editableProps {:placeholder "Type..."}
+       :initialValue INITIAL-VALUE
+       :plugins      PLUGINS
+       :onChange      change-handler}]]))
