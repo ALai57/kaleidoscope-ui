@@ -1,25 +1,45 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [reagent.core :as reagent]
-            ["@udecode/plate" :as plate :refer [createBlockquotePlugin
-                                                createBoldPlugin
-                                                createCodeBlockPlugin
-                                                createCodePlugin
-                                                createHeadingPlugin
-                                                createItalicPlugin
-                                                createParagraphPlugin
-                                                createPlugins
-                                                createStrikethroughPlugin
-                                                createUnderlinePlugin
-                                                Plate
-                                                TEditableProps
+            ["@udecode/plate" :as plate :refer
+             [createBlockquotePlugin
+              createBoldPlugin
+              createCodeBlockPlugin
+              createCodePlugin
+              createHeadingPlugin
+              createItalicPlugin
+              createParagraphPlugin
+              createPlugins
+              createStrikethroughPlugin
+              createUnderlinePlugin
+              createHighlightPlugin
 
-                                                CodeBlockElement
-                                                createPlateUI
-                                                ELEMENT_CODE_BLOCK
-                                                ELEMENT_PARAGRAPH
-                                                StyledElement
-                                                withProps
-                                                ]]))
+              createHorizontalRulePlugin   ;; Horizontal lines
+              createIndentPlugin
+              createLinkPlugin             ;; Hyperlinks
+              createTablePlugin
+
+              Plate
+              TEditableProps
+
+              CodeBlockElement
+              createPlateUI
+              StyledElement
+              withProps
+
+              ;; Element constants
+              ELEMENT_BLOCKQUOTE
+              ELEMENT_CODE_BLOCK
+              ELEMENT_PARAGRAPH
+
+              ;; Toolbar buttons
+              BlockToolbarButton,
+              CodeBlockToolbarButton
+
+              PlateProvider
+              getPluginType
+              useEventPlateId
+              usePlateEditorRef
+              ]]))
 
 
 ;; https://plate.udecode.io/
@@ -85,18 +105,28 @@
                       (createCodeBlockPlugin)
                       (createHeadingPlugin)
                       (createBoldPlugin)
+                      (createHighlightPlugin)
+                      (createHorizontalRulePlugin)
                       (createItalicPlugin)
                       (createUnderlinePlugin)
                       (createStrikethroughPlugin)
+                      (createLinkPlugin)
+                      (createTablePlugin)
                       (createCodePlugin)]
                  #js {:components PLATE-UI}))
+
+(defn toolbar
+  []
+  [:> BlockToolbarButton
+   {:type (getPluginType (usePlateEditorRef (useEventPlateId)))}])
 
 (defn editor-ui
   [{:keys [none]}]
   (js/console.log "UI" PLATE-UI)
   (js/console.log "PLUGINS" PLUGINS)
-  [:> Plate
-   {:editableProps {:placeholder "Type..."}
-    :initialValue  INITIAL-VALUE
-    :onChange      change-handler
-    :plugins       PLUGINS}])
+  [:> PlateProvider
+   {:initialValue  INITIAL-VALUE
+    :plugins       PLUGINS}
+   [:> Plate
+    {:editableProps {:placeholder "Type..."}
+     :onChange      change-handler}]])
