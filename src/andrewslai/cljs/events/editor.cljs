@@ -1,6 +1,5 @@
 (ns andrewslai.cljs.events.editor
-  (:require ["slate-html-serializer" :as shs]
-            [ajax.core :as ajax]
+  (:require [ajax.core :as ajax]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
             [andrewslai.cljs.modals.editor :refer [create-article-failure-modal
                                                    create-article-success-modal]]

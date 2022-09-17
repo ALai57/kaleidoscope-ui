@@ -22,13 +22,14 @@
     "@emotion/react": "11.7.1",
     "@emotion/styled": "11.6.0",
     "@mui/material": "5.0.0",
+    "@udecode/plate": "^17.0.3",
+    "@udecode/plate-ui-toolbar": "^17.0.3",
     "keycloak-js": "16.1.0",
     "react": "17.0.2",
     "react-bootstrap": "1.0.0-beta.14",
     "react-dom": "17.0.2",
-    "slate": "0.33.6",
-    "slate-html-serializer": "0.6.3",
-    "slate-react": "0.12.6"
+    "slate": "0.82.1",
+    "slate-react": "0.82.1"
   },
   "main": "index.js",
   "directories": {
