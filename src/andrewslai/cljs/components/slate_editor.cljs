@@ -33,7 +33,7 @@
    :children [{:text "This is editable plain text"}]})
 
 (def INITIAL-VALUE
-  [{:type "p"  :children [{:text "This is editable plain text"}]}
+  [{:type "p" :children [{:text "This is editable plain text"}]}
    {:type "h1" :children [{:text "🧱 Elements"}]}
    {:type "h2" :children [{:text "🔥 Basic Elements"}]}
    {:type "h1" :children [{:text "Heading 1"}]}
@@ -43,7 +43,28 @@
    {:type "h5" :children [{:text "Heading 5"}]}
    {:type "h6" :children [{:text "Heading 6"}]}
    {:type "blockquote" :children [{:text "Blockquote"}]}
-   {:type "codeblock"  :children [{:type "codeline" :children [{:text "const a = 'Hello';"}]}]}
+   {:type "codeblock" :children [{:type "codeline" :children [{:text "const a = 'Hello';"}]}
+                                 {:type "codeline" :children [{:text "const b = 'Bye';"}]}]}
+
+
+   {:type "h1" :children [{:text "💅 Marks"}]}
+   {:type "h2" :children [{:text "💧 Basic marks"}]}
+   {:type "p" :children [{:text (str "The basic marks consist of text formatting such as "
+                                     "bold, italic, underline, strikethrough, subscript, superscript, and code.")}]}
+   {:type "p" :children [{:text "This text is bold"
+                          :bold true}]}
+   {:type "p" :children [{:text   "This text is italic"
+                          :italic true}]}
+   {:type "p" :children [{:text      "This text is underlined"
+                          :underline true}]}
+   {:type "p" :children [{:text      "This text is bold italic and underlined"
+                          :bold      true
+                          :italic    true
+                          :underline true}]}
+   {:type "p" :children [{:text          "This text is strikethrough"
+                          :strikethrough true}]}
+   {:type "p" :children [{:text "This text is inline code"
+                          :code true}]}
    ])
 
 (defn change-handler
