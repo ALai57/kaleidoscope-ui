@@ -25,11 +25,16 @@
     "@udecode/plate": "^17.0.3",
     "@udecode/plate-ui-toolbar": "^17.0.3",
     "keycloak-js": "16.1.0",
-    "react": "17.0.2",
+    "react": "^17.0.2",
     "react-bootstrap": "1.0.0-beta.14",
-    "react-dom": "17.0.2",
-    "slate": "0.82.1",
-    "slate-react": "0.82.1"
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^17.0.2",
+    "slate": "^0.82.1",
+    "slate-history": "^0.66.0",
+    "slate-hyperscript": "^0.77.0",
+    "slate-react": "^0.82.1",
+    "styled-components": "^5.3.5"
   },
   "main": "index.js",
   "directories": {

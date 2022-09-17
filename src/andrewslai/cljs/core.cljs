@@ -6,7 +6,6 @@
             [secretary.core :as secretary]
             [andrewslai.cljs.events.core] ;; required to make the compiler
             [andrewslai.cljs.events.articles]
-            [andrewslai.cljs.events.editor]
             [andrewslai.cljs.events.keycloak]
             [andrewslai.cljs.events.projects-portfolio]
             [andrewslai.cljs.keycloak :as keycloak]

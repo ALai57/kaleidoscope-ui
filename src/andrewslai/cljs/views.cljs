@@ -2,7 +2,6 @@
   (:require [andrewslai.cljs.article :as article]
             [andrewslai.cljs.article-cards :as cards]
             [andrewslai.cljs.navbar :as nav]
-            [andrewslai.cljs.pages.editor :refer [editor-ui]]
             [andrewslai.cljs.pages.admin :refer [login-ui]]
             [clojure.string :refer [includes?]]
             [re-frame.core :refer [subscribe
@@ -59,7 +58,7 @@
              :research      full-page
              :data-analysis full-page
              :admin         login-ui
-             :editor        editor-ui
+             :editor        identity
              })
 
 (defn app []
