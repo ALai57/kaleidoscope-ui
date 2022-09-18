@@ -50,6 +50,12 @@
               createSoftBreakPlugin
               SoftBreakPlugin
 
+              createTrailingBlockPlugin
+              TrailingBlockPlugin
+
+              createExitBreakPlugin
+              ExitBreakPlugin
+
               Plate
               TEditableProps
 
@@ -82,6 +88,8 @@
               MARK_BG_COLOR
               MARK_COLOR
 
+              KEYS_HEADING
+
               HeadingToolbar
 
               ;; Toolbar buttons
@@ -106,6 +114,8 @@
               PlateFloatingLink
               ]]))
 
+
+;; TODO: Block selection.
 
 ;; https://plate.udecode.io/
 ;; Add Plate and use it and plugins for rich text editing
@@ -193,6 +203,19 @@
                                                  ELEMENT_BLOCKQUOTE
                                                  ELEMENT_ID]}}]}}))
 
+(def TRAILING-BLOCK-PLUGIN
+  (createTrailingBlockPlugin #js {:options {:type ELEMENT_PARAGRAPH}}))
+
+(def P-AFTER-H-PLUGIN
+  (createExitBreakPlugin #js {:options
+                              #js {:rules
+                                   #js [#js {:hotkey "mod+enter"}
+                                        #js {:hotkey "mod+shift+enter" :before true}
+                                        #js {:hotkey "enter"
+                                             :query  #js {:start true
+                                                          :end   true
+                                                          :allow KEYS_HEADING}}]}}))
+
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
                       (createBlockquotePlugin)
@@ -214,6 +237,8 @@
                       INDENT-PLUGIN
                       ALIGN-PLUGIN
                       SOFT-BREAK-PLUGIN
+                      TRAILING-BLOCK-PLUGIN
+                      P-AFTER-H-PLUGIN
                       ]
                  #js {:components PLATE-UI}))
 
