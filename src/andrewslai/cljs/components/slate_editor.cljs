@@ -19,22 +19,33 @@
             ["@styled-icons/material/Check" :refer [Check]]
             ["@styled-icons/material/Link" :refer [Link]]
             ["@udecode/plate" :as plate :refer
-             [createBlockquotePlugin
+             [
               createBoldPlugin
-              createCodeBlockPlugin
-              createCodePlugin
-              createHeadingPlugin
               createItalicPlugin
+              createUnderlinePlugin
+              createStrikethroughPlugin
+              createCodePlugin
+              createCodeBlockPlugin
+
+              createHeadingPlugin
+
+              createBlockquotePlugin
               createParagraphPlugin
               createPlugins
-              createStrikethroughPlugin
-              createUnderlinePlugin
               createHighlightPlugin
 
               createHorizontalRulePlugin   ;; Horizontal lines
               createIndentPlugin
               createLinkPlugin             ;; Hyperlinks
               createTablePlugin
+
+              createListPlugin
+              createAlignPlugin
+
+              createFontColorPlugin
+              createFontBackgroundColorPlugin
+              createFontSizePlugin
+              createIndentPlugin
 
               Plate
               TEditableProps
@@ -151,84 +162,85 @@
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn toolbar
-  [editor-ref]
+  []
   (js/console.log "PLUGIN" (getPluginType editor-ref ELEMENT_BLOCKQUOTE))
-  [:<>
-   [:> MarkToolbarButton
-    {:type (getPluginType editor-ref MARK_BOLD)
-     :icon (reagent/create-element FormatBold)}]
-   [:> MarkToolbarButton
-    {:type (getPluginType editor-ref MARK_ITALIC)
-     :icon (reagent/create-element FormatItalic)}]
-   [:> MarkToolbarButton
-    {:type (getPluginType editor-ref MARK_UNDERLINE)
-     :icon (reagent/create-element FormatUnderlined)}]
-   [:> MarkToolbarButton
-    {:type (getPluginType editor-ref MARK_STRIKETHROUGH)
-     :icon (reagent/create-element FormatStrikethrough)}]
-   [:> MarkToolbarButton
-    {:type (getPluginType editor-ref MARK_CODE)
-     :icon (reagent/create-element CodeAlt)}]
-   [:> ColorPickerToolbarDropdown
-    {:pluginKey    MARK_COLOR
-     :icon         (reagent/create-element FormatColorText)
-     :selectedIcon (reagent/create-element Check)
-     :tooltip      {:content "Text color"}}]
-   [:> ColorPickerToolbarDropdown
-    {:pluginKey    MARK_BG_COLOR
-     :icon         (reagent/create-element FormatColorText)
-     :selectedIcon (reagent/create-element Check)
-     :tooltip      {:content "Highlight color"}}]
-   [:> LinkToolbarButton
-    {:icon (reagent/create-element Link)}]
-   [:> BlockToolbarButton
-    {:type (getPluginType editor-ref ELEMENT_BLOCKQUOTE)
-     :icon (reagent/create-element FormatQuote)}]
-   [:> CodeBlockToolbarButton
-    {:type (getPluginType editor-ref ELEMENT_CODE_BLOCK)
-     :icon (reagent/create-element CodeBlock)}]
-   [:> ListToolbarButton
-    {:type (getPluginType editor-ref ELEMENT_UL)
-     :icon (reagent/create-element FormatListBulleted)}]
-   [:> ListToolbarButton
-    {:type (getPluginType editor-ref ELEMENT_OL)
-     :icon (reagent/create-element FormatListNumbered)}]
-   [:> ToolbarButton
-    {:onMouseDown (fn [e]
-                    (outdent editor-ref)
-                    (.preventDefault e))
-     :icon        (reagent/create-element FormatIndentDecrease)}]
-   [:> ToolbarButton
-    {:onMouseDown (fn [e]
-                    (indent editor-ref)
-                    (.preventDefault e))
-     :icon        (reagent/create-element FormatIndentIncrease)}]
-   [:> AlignToolbarButton
-    {:value "left"
-     :icon  (reagent/create-element FormatAlignLeft)}]
-   [:> AlignToolbarButton
-    {:value "right"
-     :icon  (reagent/create-element FormatAlignRight)}]
-   [:> AlignToolbarButton
-    {:value "center"
-     :icon  (reagent/create-element FormatAlignCenter)}]
-   [:> AlignToolbarButton
-    {:value "justify"
-     :icon  (reagent/create-element FormatAlignJustify)}]
-   ])
+  (let [editor-id  (useEventPlateId)
+        editor-ref (usePlateEditorRef editor-id)]
+    (js/console.log "PLATE ID" editor-id)
+    (js/console.log "PLATE EDITOR REF" editor-ref)
+    [:<>
+     [:> MarkToolbarButton
+      {:type (getPluginType editor-ref MARK_BOLD)
+       :icon (reagent/create-element FormatBold)}]
+     [:> MarkToolbarButton
+      {:type (getPluginType editor-ref MARK_ITALIC)
+       :icon (reagent/create-element FormatItalic)}]
+     [:> MarkToolbarButton
+      {:type (getPluginType editor-ref MARK_UNDERLINE)
+       :icon (reagent/create-element FormatUnderlined)}]
+     [:> MarkToolbarButton
+      {:type (getPluginType editor-ref MARK_STRIKETHROUGH)
+       :icon (reagent/create-element FormatStrikethrough)}]
+     [:> MarkToolbarButton
+      {:type (getPluginType editor-ref MARK_CODE)
+       :icon (reagent/create-element CodeAlt)}]
+     [:> ColorPickerToolbarDropdown
+      {:pluginKey    MARK_COLOR
+       :icon         (reagent/create-element FormatColorText)
+       :selectedIcon (reagent/create-element Check)
+       :tooltip      {:content "Text color"}}]
+     [:> ColorPickerToolbarDropdown
+      {:pluginKey    MARK_BG_COLOR
+       :icon         (reagent/create-element FormatColorText)
+       :selectedIcon (reagent/create-element Check)
+       :tooltip      {:content "Highlight color"}}]
+     [:> LinkToolbarButton
+      {:icon (reagent/create-element Link)}]
+     [:> BlockToolbarButton
+      {:type (getPluginType editor-ref ELEMENT_BLOCKQUOTE)
+       :icon (reagent/create-element FormatQuote)}]
+     [:> CodeBlockToolbarButton
+      {:type (getPluginType editor-ref ELEMENT_CODE_BLOCK)
+       :icon (reagent/create-element CodeBlock)}]
+     [:> ListToolbarButton
+      {:type (getPluginType editor-ref ELEMENT_UL)
+       :icon (reagent/create-element FormatListBulleted)}]
+     [:> ListToolbarButton
+      {:type (getPluginType editor-ref ELEMENT_OL)
+       :icon (reagent/create-element FormatListNumbered)}]
+     [:> ToolbarButton
+      {:onMouseDown (fn [e]
+                      (outdent editor-ref)
+                      (.preventDefault e))
+       :icon        (reagent/create-element FormatIndentDecrease)}]
+     [:> ToolbarButton
+      {:onMouseDown (fn [e]
+                      (indent editor-ref)
+                      (.preventDefault e))
+       :icon        (reagent/create-element FormatIndentIncrease)}]
+     [:> AlignToolbarButton
+      {:value "left"
+       :icon  (reagent/create-element FormatAlignLeft)}]
+     [:> AlignToolbarButton
+      {:value "right"
+       :icon  (reagent/create-element FormatAlignRight)}]
+     [:> AlignToolbarButton
+      {:value "center"
+       :icon  (reagent/create-element FormatAlignCenter)}]
+     [:> AlignToolbarButton
+      {:value "justify"
+       :icon  (reagent/create-element FormatAlignJustify)}]
+     ]))
 
 (defn editor-ui
   [{:keys [none]}]
   (js/console.log "UI" PLATE-UI)
   (js/console.log "PLUGINS" PLUGINS)
-  (let [editor-ref "main"]
-    [:div
-     [:> HeadingToolbar
-      [toolbar editor-ref]]
-     [:> Plate
-      {:id            "main"
-       :ref           editor-ref
-       :editableProps {:placeholder "Type..."}
-       :initialValue INITIAL-VALUE
-       :plugins      PLUGINS
-       :onChange      change-handler}]]))
+  [:div
+   [:> PlateProvider {:initialValue  INITIAL-VALUE
+                      :plugins       PLUGINS}
+    [:> HeadingToolbar
+     [:f> toolbar]]
+    [:> Plate
+     {:editableProps {:placeholder "Type..."}
+      :onChange      change-handler}]]])
