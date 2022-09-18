@@ -61,6 +61,12 @@
               ELEMENT_PARAGRAPH
               ELEMENT_OL
               ELEMENT_UL
+              ELEMENT_H1
+              ELEMENT_H2
+              ELEMENT_H3
+              ELEMENT_H4
+              ELEMENT_H5
+              ELEMENT_H6
 
               MARK_BOLD
               MARK_CODE
@@ -91,6 +97,8 @@
               getPluginType
               useEventPlateId
               usePlateEditorRef
+
+              PlateFloatingLink
               ]]))
 
 
@@ -143,6 +151,34 @@
                                                                       {:margin  0
                                                                        :padding "4 px 0"}}})}))
 
+(def LINK-PLUGIN
+  (createLinkPlugin #js {:renderAfterEditable PlateFloatingLink}))
+
+(def INDENT-PLUGIN
+  (createIndentPlugin #js {:inject
+                           {:props
+                            {:validTypes [ELEMENT_PARAGRAPH
+                                          ELEMENT_H1
+                                          ELEMENT_H2
+                                          ELEMENT_H3
+                                          ELEMENT_H4
+                                          ELEMENT_H5
+                                          ELEMENT_H6
+                                          ELEMENT_BLOCKQUOTE
+                                          ELEMENT_CODE_BLOCK
+                                          ]}}}))
+
+(def ALIGN-PLUGIN
+  (createAlignPlugin #js {:inject
+                          {:props
+                           {:validTypes [ELEMENT_PARAGRAPH
+                                         ELEMENT_H1
+                                         ELEMENT_H2
+                                         ELEMENT_H3
+                                         ELEMENT_H4
+                                         ELEMENT_H5
+                                         ELEMENT_H6]}}}))
+
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
                       (createBlockquotePlugin)
@@ -156,18 +192,23 @@
                       (createStrikethroughPlugin)
                       (createLinkPlugin)
                       (createTablePlugin)
-                      (createCodePlugin)]
+                      (createCodePlugin)
+                      (createFontColorPlugin)
+                      (createFontBackgroundColorPlugin)
+                      LINK-PLUGIN
+                      (createListPlugin)
+                      INDENT-PLUGIN
+                      ALIGN-PLUGIN
+                      ]
                  #js {:components PLATE-UI}))
 
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn toolbar
   []
-  (js/console.log "PLUGIN" (getPluginType editor-ref ELEMENT_BLOCKQUOTE))
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
-    (js/console.log "PLATE ID" editor-id)
-    (js/console.log "PLATE EDITOR REF" editor-ref)
+    ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
     [:<>
      [:> MarkToolbarButton
       {:type (getPluginType editor-ref MARK_BOLD)
@@ -222,11 +263,11 @@
       {:value "left"
        :icon  (reagent/create-element FormatAlignLeft)}]
      [:> AlignToolbarButton
-      {:value "right"
-       :icon  (reagent/create-element FormatAlignRight)}]
-     [:> AlignToolbarButton
       {:value "center"
        :icon  (reagent/create-element FormatAlignCenter)}]
+     [:> AlignToolbarButton
+      {:value "right"
+       :icon  (reagent/create-element FormatAlignRight)}]
      [:> AlignToolbarButton
       {:value "justify"
        :icon  (reagent/create-element FormatAlignJustify)}]
@@ -240,6 +281,9 @@
    [:> PlateProvider {:initialValue  INITIAL-VALUE
                       :plugins       PLUGINS}
     [:> HeadingToolbar
+     ;; NOTE: Need to create a functional component. Since the component is
+     ;; defined as a Clojurescript function, we need to do this where the CLJS
+     ;; function is used, not inside the fn.
      [:f> toolbar]]
     [:> Plate
      {:editableProps {:placeholder "Type..."}
