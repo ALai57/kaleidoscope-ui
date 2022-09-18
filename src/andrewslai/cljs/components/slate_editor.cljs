@@ -2,6 +2,19 @@
   (:require [reagent.core :as reagent]
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
+            ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
+            ["@styled-icons/material/FormatAlignLeft" :refer [FormatAlignLeft]]
+            ["@styled-icons/material/FormatAlignCenter" :refer [FormatAlignCenter]]
+            ["@styled-icons/material/FormatAlignJustify" :refer [FormatAlignJustify]]
+            ["@styled-icons/material/FormatListNumbered" :refer [FormatListNumbered]]
+            ["@styled-icons/material/FormatListBulleted" :refer [FormatListBulleted]]
+            ["@styled-icons/material/FormatIndentDecrease" :refer [FormatIndentDecrease]]
+            ["@styled-icons/material/FormatIndentIncrease" :refer [FormatIndentIncrease]]
+            ["@styled-icons/boxicons-regular/CodeAlt" :refer [CodeAlt]]
+            ["@styled-icons/material/FormatBold" :refer [FormatBold]]
+            ["@styled-icons/material/FormatItalic" :refer [FormatItalic]]
+            ["@styled-icons/material/FormatStrikethrough" :refer [FormatStrikethrough]]
+            ["@styled-icons/material/FormatUnderlined" :refer [FormatUnderlined]]
             ["@udecode/plate" :as plate :refer
              [createBlockquotePlugin
               createBoldPlugin
@@ -32,12 +45,29 @@
               ELEMENT_BLOCKQUOTE
               ELEMENT_CODE_BLOCK
               ELEMENT_PARAGRAPH
+              ELEMENT_OL
+              ELEMENT_UL
+
+              MARK_BOLD
+              MARK_CODE
+              MARK_ITALIC
+              MARK_STRIKETHROUGH
+              MARK_SUBSCRIPT
+              MARK_SUPERSCRIPT
+              MARK_UNDERLINE
 
               HeadingToolbar
 
               ;; Toolbar buttons
-              BlockToolbarButton,
+              BlockToolbarButton
               CodeBlockToolbarButton
+              AlignToolbarButton
+              ListToolbarButton
+              ToolbarButton
+              MarkToolbarButton
+
+              indent
+              outdent
 
               PlateProvider
               getPluginType
@@ -115,12 +145,56 @@
   [editor-ref]
   (js/console.log "PLUGIN" (getPluginType editor-ref ELEMENT_BLOCKQUOTE))
   [:<>
+   [:> MarkToolbarButton
+    {:type (getPluginType editor-ref MARK_BOLD)
+     :icon (reagent/create-element FormatBold)}]
+   [:> MarkToolbarButton
+    {:type (getPluginType editor-ref MARK_ITALIC)
+     :icon (reagent/create-element FormatItalic)}]
+   [:> MarkToolbarButton
+    {:type (getPluginType editor-ref MARK_UNDERLINE)
+     :icon (reagent/create-element FormatUnderlined)}]
+   [:> MarkToolbarButton
+    {:type (getPluginType editor-ref MARK_STRIKETHROUGH)
+     :icon (reagent/create-element FormatStrikethrough)}]
+   [:> MarkToolbarButton
+    {:type (getPluginType editor-ref MARK_CODE)
+     :icon (reagent/create-element CodeAlt)}]
    [:> BlockToolbarButton
     {:type (getPluginType editor-ref ELEMENT_BLOCKQUOTE)
      :icon (reagent/create-element FormatQuote)}]
    [:> CodeBlockToolbarButton
     {:type (getPluginType editor-ref ELEMENT_CODE_BLOCK)
-     :icon (reagent/create-element CodeBlock)}]])
+     :icon (reagent/create-element CodeBlock)}]
+   [:> ListToolbarButton
+    {:type (getPluginType editor-ref ELEMENT_UL)
+     :icon (reagent/create-element FormatListBulleted)}]
+   [:> ListToolbarButton
+    {:type (getPluginType editor-ref ELEMENT_OL)
+     :icon (reagent/create-element FormatListNumbered)}]
+   [:> ToolbarButton
+    {:onMouseDown (fn [e]
+                    (outdent editor-ref)
+                    (.preventDefault e))
+     :icon        (reagent/create-element FormatIndentDecrease)}]
+   [:> ToolbarButton
+    {:onMouseDown (fn [e]
+                    (indent editor-ref)
+                    (.preventDefault e))
+     :icon        (reagent/create-element FormatIndentIncrease)}]
+   [:> AlignToolbarButton
+    {:value "left"
+     :icon  (reagent/create-element FormatAlignLeft)}]
+   [:> AlignToolbarButton
+    {:value "right"
+     :icon  (reagent/create-element FormatAlignRight)}]
+   [:> AlignToolbarButton
+    {:value "center"
+     :icon  (reagent/create-element FormatAlignCenter)}]
+   [:> AlignToolbarButton
+    {:value "justify"
+     :icon  (reagent/create-element FormatAlignJustify)}]
+   ])
 
 (defn editor-ui
   [{:keys [none]}]
