@@ -15,6 +15,9 @@
             ["@styled-icons/material/FormatItalic" :refer [FormatItalic]]
             ["@styled-icons/material/FormatStrikethrough" :refer [FormatStrikethrough]]
             ["@styled-icons/material/FormatUnderlined" :refer [FormatUnderlined]]
+            ["@styled-icons/material/FormatColorText" :refer [FormatColorText]]
+            ["@styled-icons/material/Check" :refer [Check]]
+            ["@styled-icons/material/Link" :refer [Link]]
             ["@udecode/plate" :as plate :refer
              [createBlockquotePlugin
               createBoldPlugin
@@ -55,6 +58,8 @@
               MARK_SUBSCRIPT
               MARK_SUPERSCRIPT
               MARK_UNDERLINE
+              MARK_BG_COLOR
+              MARK_COLOR
 
               HeadingToolbar
 
@@ -65,6 +70,8 @@
               ListToolbarButton
               ToolbarButton
               MarkToolbarButton
+              ColorPickerToolbarDropdown
+              LinkToolbarButton
 
               indent
               outdent
@@ -160,6 +167,18 @@
    [:> MarkToolbarButton
     {:type (getPluginType editor-ref MARK_CODE)
      :icon (reagent/create-element CodeAlt)}]
+   [:> ColorPickerToolbarDropdown
+    {:pluginKey    MARK_COLOR
+     :icon         (reagent/create-element FormatColorText)
+     :selectedIcon (reagent/create-element Check)
+     :tooltip      {:content "Text color"}}]
+   [:> ColorPickerToolbarDropdown
+    {:pluginKey    MARK_BG_COLOR
+     :icon         (reagent/create-element FormatColorText)
+     :selectedIcon (reagent/create-element Check)
+     :tooltip      {:content "Highlight color"}}]
+   [:> LinkToolbarButton
+    {:icon (reagent/create-element Link)}]
    [:> BlockToolbarButton
     {:type (getPluginType editor-ref ELEMENT_BLOCKQUOTE)
      :icon (reagent/create-element FormatQuote)}]
