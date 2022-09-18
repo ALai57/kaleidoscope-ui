@@ -148,6 +148,8 @@
                       (createCodePlugin)]
                  #js {:components PLATE-UI}))
 
+;; https://plate.udecode.io/
+;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn toolbar
   [editor-ref]
   (js/console.log "PLUGIN" (getPluginType editor-ref ELEMENT_BLOCKQUOTE))
