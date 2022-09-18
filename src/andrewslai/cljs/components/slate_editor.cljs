@@ -47,6 +47,9 @@
               createFontSizePlugin
               createIndentPlugin
 
+              createSoftBreakPlugin
+              SoftBreakPlugin
+
               Plate
               TEditableProps
 
@@ -67,6 +70,7 @@
               ELEMENT_H4
               ELEMENT_H5
               ELEMENT_H6
+              ELEMENT_ID
 
               MARK_BOLD
               MARK_CODE
@@ -94,6 +98,7 @@
               outdent
 
               PlateProvider
+              PlatePlugin
               getPluginType
               useEventPlateId
               usePlateEditorRef
@@ -179,6 +184,15 @@
                                          ELEMENT_H5
                                          ELEMENT_H6]}}}))
 
+(def SOFT-BREAK-PLUGIN
+  (createSoftBreakPlugin #js {:options
+                              {:rules
+                               [{:hotkey "shift+enter"}
+                                {:hotkey "enter"
+                                 :query {:allow [ELEMENT_CODE_BLOCK
+                                                 ELEMENT_BLOCKQUOTE
+                                                 ELEMENT_ID]}}]}}))
+
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
                       (createBlockquotePlugin)
@@ -199,6 +213,7 @@
                       (createListPlugin)
                       INDENT-PLUGIN
                       ALIGN-PLUGIN
+                      SOFT-BREAK-PLUGIN
                       ]
                  #js {:components PLATE-UI}))
 
