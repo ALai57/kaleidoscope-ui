@@ -1,5 +1,7 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [reagent.core :as reagent]
+            [goog.object :as g]
+            ["pretty" :as pretty]
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
             ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
@@ -18,6 +20,8 @@
             ["@styled-icons/material/FormatColorText" :refer [FormatColorText]]
             ["@styled-icons/material/Check" :refer [Check]]
             ["@styled-icons/material/Link" :refer [Link]]
+            ["prism-react-renderer" :as Highlight :refer [defaultProps]]
+            ["prism-react-renderer/themes/dracula" :as theme]
             ["@udecode/plate" :as plate :refer
              [
               createBoldPlugin
@@ -110,6 +114,8 @@
               getPluginType
               useEventPlateId
               usePlateEditorRef
+              useEditorState
+              serializeHtml
 
               PlateFloatingLink
               ]]))
@@ -242,6 +248,53 @@
                       ]
                  #js {:components PLATE-UI}))
 
+(def PRISM
+  (g/get Highlight/defaultProps "Prism"))
+
+(def HighlightHTML
+  Highlight/default)
+
+(comment
+  (js/console.log "HIGHLIGHT"
+                  Highlight/default
+                  theme/default
+                  (g/get Highlight/defaultProps "Prism"))
+
+  (pretty "<h1 class=\"slate-h1\">Deserialize HTML</h1><div class=\"slate-p\">By default, pasting content into a Slate editor will use the clipboard&apos;s <code class=\"slate-code\">&apos;text/plain&apos;</code>data. That&apos;s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle <code class=\"slate-code\">&apos;text/html&apos;</code>data.</div><div class=\"slate-p\">This is an example of doing exactly that!</div><div class=\"slate-p\">Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it&apos;s formatting should be preserved.</div><div class=\"slate-p\"></div>")
+  )
+
+(defn Serialized
+  []
+  (let [editor (useEditorState)
+        html   (serializeHtml editor #js {:nodes (.-children editor)})]
+    (js/console.log "EDITOR" editor "html" html "EL")
+    [:div
+     [:r> HighlightHTML
+      #js {:Prism    PRISM
+           :theme    theme/default
+           :code     (pretty html)
+           :language "jsx"}
+      (fn [args]
+        (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args}
+              (js->clj args :keywordize-keys true)]
+          ;;(js/console.log "ARGS" args clj-args)
+          ;;(js/console.log "TOKENS" xxx)
+          ;;(js/console.log "TOKENS" tokens (clj->js tokens))
+          (reagent/as-element
+           [:pre {:className className
+                  :style     style}
+            (map-indexed (fn [i line]
+                           (let [line-props (getLineProps #js {:line line :key (str "line-" i)})]
+                             [:div (assoc (js->clj line-props) :key i)
+                              (map-indexed (fn [c token]
+                                             (let [token-key   (str "token-" c)
+                                                   token-props (getTokenProps (clj->js {:token token
+                                                                                        :key   token-key}))]
+                                               [:span (assoc (js->clj token-props)
+                                                             :key token-key)]))
+                                           (js->clj line))]))
+                         tokens)])))]]))
+
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn toolbar
@@ -327,4 +380,6 @@
      [:f> toolbar]]
     [:> Plate
      {:editableProps {:placeholder "Type..."}
-      :onChange      change-handler}]]])
+      :onChange      change-handler}
+     [:f> Serialized]]
+    ]])
