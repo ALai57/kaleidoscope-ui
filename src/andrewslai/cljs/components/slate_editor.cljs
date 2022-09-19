@@ -267,7 +267,7 @@
   []
   (let [editor (useEditorState)
         html   (serializeHtml editor #js {:nodes (.-children editor)})]
-    (js/console.log "EDITOR" editor "html" html "EL")
+    ;;(js/console.log "EDITOR" editor "html" html "EL")
     [:div
      [:r> HighlightHTML
       #js {:Prism    PRISM
