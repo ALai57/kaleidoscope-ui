@@ -10,7 +10,7 @@ log.txt
 node_modules
 resources/public/js/compiled/
 resources/public/js/test/
-public/
+/public/
 
 .idea/
 *.iml
