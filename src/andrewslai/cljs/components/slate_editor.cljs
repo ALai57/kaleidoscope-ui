@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [reagent.core :as reagent]
+            [re-frame.core :refer [dispatch dispatch-sync]]
             [goog.object :as g]
             ["pretty" :as pretty]
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
@@ -105,6 +106,7 @@
               MarkToolbarButton
               ColorPickerToolbarDropdown
               LinkToolbarButton
+              ToolbarButton
 
               indent
               outdent
@@ -118,7 +120,8 @@
               serializeHtml
 
               PlateFloatingLink
-              ]]))
+              ]]
+            [taoensso.timbre :as log]))
 
 
 ;; TODO: Block selection.
@@ -268,32 +271,31 @@
   (let [editor (useEditorState)
         html   (serializeHtml editor #js {:nodes (.-children editor)})]
     ;;(js/console.log "EDITOR" editor "html" html "EL")
-    [:div
-     [:r> HighlightHTML
-      #js {:Prism    PRISM
-           :theme    theme/default
-           :code     (pretty html)
-           :language "jsx"}
-      (fn [args]
-        (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args}
-              (js->clj args :keywordize-keys true)]
-          ;;(js/console.log "ARGS" args clj-args)
-          ;;(js/console.log "TOKENS" xxx)
-          ;;(js/console.log "TOKENS" tokens (clj->js tokens))
-          (reagent/as-element
-           [:pre {:className className
-                  :style     style}
-            (map-indexed (fn [i line]
-                           (let [line-props (getLineProps #js {:line line :key (str "line-" i)})]
-                             [:div (assoc (js->clj line-props) :key i)
-                              (map-indexed (fn [c token]
-                                             (let [token-key   (str "token-" c)
-                                                   token-props (getTokenProps (clj->js {:token token
-                                                                                        :key   token-key}))]
-                                               [:span (assoc (js->clj token-props)
-                                                             :key token-key)]))
-                                           (js->clj line))]))
-                         tokens)])))]]))
+    [:r> HighlightHTML
+     #js {:Prism    PRISM
+          :theme    theme/default
+          :code     (pretty html)
+          :language "jsx"}
+     (fn [args]
+       (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args}
+             (js->clj args :keywordize-keys true)]
+         ;;(js/console.log "ARGS" args clj-args)
+         ;;(js/console.log "TOKENS" xxx)
+         ;;(js/console.log "TOKENS" tokens (clj->js tokens))
+         (reagent/as-element
+          [:pre {:className className
+                 :style     style}
+           (map-indexed (fn [i line]
+                          (let [line-props (getLineProps #js {:line line :key (str "line-" i)})]
+                            [:div (assoc (js->clj line-props) :key i)
+                             (map-indexed (fn [c token]
+                                            (let [token-key   (str "token-" c)
+                                                  token-props (getTokenProps (clj->js {:token token
+                                                                                       :key   token-key}))]
+                                              [:span (assoc (js->clj token-props)
+                                                            :key token-key)]))
+                                          (js->clj line))]))
+                        tokens)])))]))
 
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
@@ -366,20 +368,46 @@
        :icon  (reagent/create-element FormatAlignJustify)}]
      ]))
 
-(defn editor-ui
-  [{:keys [none]}]
+#_(defn save-toolbar
+    [{:keys [save-fn]}]
+    (let [editor-id  (useEventPlateId)
+          editor-ref (usePlateEditorRef editor-id)
+          ;;editor (useEditorState)
+          html       (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
+      ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
+      [:> ToolbarButton
+       {:icon        (reagent/create-element FormatBold)
+        :onMouseDown (fn [event]
+                       (js/console.log "CLICKED SAVE" event html)
+                       (dispatch [:save-article! {:content html}]))}]))
+
+(defn save-toolbar
+  [{:keys [save-fn]}]
+  (let [editor-id  (useEventPlateId)
+        editor-ref (usePlateEditorRef editor-id)
+        html       (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
+    [:> ToolbarButton
+     {:icon        (reagent/create-element FormatBold)
+      :onMouseDown (fn [event]
+                     (save-fn html))}]))
+
+(defn editor
+  [{:keys [save-fn]}]
   (js/console.log "UI" PLATE-UI)
   (js/console.log "PLUGINS" PLUGINS)
-  [:div
-   [:> PlateProvider {:initialValue  INITIAL-VALUE
-                      :plugins       PLUGINS}
-    [:> HeadingToolbar
-     ;; NOTE: Need to create a functional component. Since the component is
-     ;; defined as a Clojurescript function, we need to do this where the CLJS
-     ;; function is used, not inside the fn.
-     [:f> toolbar]]
-    [:> Plate
-     {:editableProps {:placeholder "Type..."}
-      :onChange      change-handler}
-     [:f> Serialized]]
-    ]])
+  [:> PlateProvider {:initialValue INITIAL-VALUE
+                     :plugins      PLUGINS}
+   [:> HeadingToolbar
+    ;; NOTE: Need to create a functional component. Since the component is
+    ;; defined as a Clojurescript function, we need to do this where the CLJS
+    ;; function is used, not inside the fn.
+    [:f> toolbar]]
+   [:> HeadingToolbar {:style {:float    "right"
+                               :right    "0px"
+                               :width    "11px"}}
+    [:f> save-toolbar
+     {:save-fn save-fn}]]
+   [:> Plate
+    {:editableProps {:placeholder "Type..."}
+     :onChange      change-handler}
+    [:f> Serialized]]])

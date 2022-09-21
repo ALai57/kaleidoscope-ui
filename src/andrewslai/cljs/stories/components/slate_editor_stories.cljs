@@ -6,12 +6,13 @@
 (def ^:export default
   (helper/->default
    {:title     "Slate Editor"
-    :component slate-editor/editor-ui
+    :component slate-editor/editor
     :args      {}}))
 
 (defn template
   [args]
-  (reagent/as-element [slate-editor/editor-ui (helper/->params args)]))
+  (reagent/as-element [slate-editor/editor (helper/->params args)]))
 
 (def ^:export Default-Editor
-  (helper/->story template {}))
+  (helper/->story template {:save-fn (fn [html]
+                                       (js/console.log "CLICKED SAVE" html))}))
