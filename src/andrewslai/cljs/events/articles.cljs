@@ -34,10 +34,12 @@
     :db         (assoc db :loading? true)}))
 
 (defn load-recent-articles [db [_ response]]
-  (infof "Loading recent articles: found %s" (count response))
+  (infof "Retrieved recent articles: found %s" (count response))
   (let [valid-articles (filter (partial s/valid? :andrewslai.article/article)
                                response)]
-    (infof "Filtered %s articles" (- (count response) (count valid-articles)))
+    (infof "Removed %s/%s articles (because they were invalid)"
+           (- (count response) (count valid-articles))
+           (count response))
     (debugf "Articles %s" valid-articles)
     (assoc db
            :loading? false

@@ -3,7 +3,7 @@
             [andrewslai.cljs.article-cards :as cards]
             [andrewslai.cljs.navbar :as nav]
             [andrewslai.cljs.pages.admin :refer [login-ui]]
-            [andrewslai.cljs.components.slate-editor :refer [editor]]
+            [andrewslai.cljs.pages.article-editor :refer [editor-ui]]
             [clojure.string :refer [includes?]]
             [re-frame.core :refer [subscribe
                                    dispatch]]
@@ -59,7 +59,7 @@
              :research      full-page
              :data-analysis full-page
              :admin         login-ui
-             :editor        editor
+             :editor        editor-ui
              })
 
 (defn app []
@@ -80,7 +80,6 @@
       :recent-content      @(subscribe [:recent-content])
       :active-content      @(subscribe [:active-content])
       :save-fn             (fn [{:keys [content title article-tags]}]
-                             (js/console.log "CLICKED SAVE" content)
                              (dispatch [:save-article! {:article-tags article-tags
                                                         :content      content
                                                         :title        title}]))}

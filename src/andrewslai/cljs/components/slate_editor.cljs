@@ -1,6 +1,7 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
+            [reagent-mui.components :refer [text-field]]
             [goog.object :as g]
             [goog.string :as gstr]
             ["pretty" :as pretty]
@@ -22,6 +23,7 @@
             ["@styled-icons/material/FormatColorText" :refer [FormatColorText]]
             ["@styled-icons/material/Check" :refer [Check]]
             ["@styled-icons/material/Link" :refer [Link]]
+            ["@styled-icons/remix-fill/Save3" :refer [Save3]]
             ["prism-react-renderer" :as Highlight :refer [defaultProps]]
             ["prism-react-renderer/themes/dracula" :as theme]
             ["@udecode/plate" :as plate :refer
@@ -370,34 +372,67 @@
      ]))
 
 (defn save-toolbar
-  [{:keys [save-fn]}]
+  [{:keys [save-fn title username]}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)
         html       (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
     [:> ToolbarButton
-     {:icon        (reagent/create-element FormatBold)
+     {:icon        (reagent/create-element Save3)
       :onMouseDown (fn [event]
                      (save-fn {:article-tags "thoughts"
                                :content      (gstr/format "<div>%s</div>" html)
-                               :title        "some-title"}))}]))
+                               :title        title}))}]))
 
 (defn editor
-  [{:keys [save-fn]}]
-  (js/console.log "UI" PLATE-UI)
-  (js/console.log "PLUGINS" PLUGINS)
-  [:> PlateProvider {:initialValue INITIAL-VALUE
-                     :plugins      PLUGINS}
-   [:> HeadingToolbar
-    ;; NOTE: Need to create a functional component. Since the component is
-    ;; defined as a Clojurescript function, we need to do this where the CLJS
-    ;; function is used, not inside the fn.
-    [:f> toolbar]]
-   [:> HeadingToolbar {:style {:float    "right"
-                               :right    "0px"
-                               :width    "11px"}}
-    [:f> save-toolbar
-     {:save-fn save-fn}]]
-   [:> Plate
-    {:editableProps {:placeholder "Type..."}
-     :onChange      change-handler}
-    [:f> Serialized]]])
+  [{:keys [user save-fn]}]
+  ;;(js/console.log "UI" PLATE-UI)
+  ;;(js/console.log "PLUGINS" PLUGINS)
+  (let [title    (reagent/atom "A new article")
+        username (gstr/format "%s %s" (:firstName user) (:lastName user))]
+    (fn []
+      [:> PlateProvider {:initialValue INITIAL-VALUE
+                         :plugins      PLUGINS}
+       [:div {:style {:padding          "10px"
+                      :position         "fixed"
+                      :width            "100%"
+                      :z-index          100
+                      :background-color "white"}}
+        [text-field {:variant       "standard"
+                     :class         "article-title"
+                     :required      true
+                     :label         "Article Title"
+                     :default-value @title
+                     :style         {:padding-right "50px"
+                                     :width         "400px"}
+                     :onChange      (fn [event]
+                                      (reset! title (.. event -target -value)))}]
+        [text-field {:variant       "standard"
+                     :class         "article-author"
+                     :disabled      true
+                     :default-value username
+                     :label         "Author"}]]
+       [:div.divider.py-1.bg-dark]
+       [:> HeadingToolbar {:style {:top "60px"}}
+        ;; NOTE: Need to create a functional component. Since the component is
+        ;; defined as a Clojurescript function, we need to do this where the CLJS
+        ;; function is used, not inside the fn.
+        [:f> toolbar]]
+       [:> HeadingToolbar {:style {:float "right"
+                                   :right "0px"
+                                   :top   "60px"
+                                   :width "11px"}}
+        [:f> save-toolbar
+         {:save-fn  save-fn
+          :title    @title}]]
+       [:div {:style {:height "120px"}}]
+       [:div#primary-content
+        [:h2.article-title @title]
+        [:div.article-subheading (gstr/format "Author: %s %s" (:firstName user) (:lastName user))]
+        [:div.article-subheading "2022-01-01T00:00:00"]
+        [:div.divider.py-1.bg-dark]
+        [:br][:br]
+        [:div#article-content
+         [:> Plate
+          {:editableProps {:placeholder "Type..."}
+           :onChange      change-handler}
+          [:f> Serialized]]]]])))
