@@ -3,6 +3,7 @@
             [andrewslai.cljs.article-cards :as cards]
             [andrewslai.cljs.navbar :as nav]
             [andrewslai.cljs.pages.admin :refer [login-ui]]
+            [andrewslai.cljs.components.slate-editor :refer [editor]]
             [clojure.string :refer [includes?]]
             [re-frame.core :refer [subscribe
                                    dispatch]]
@@ -14,7 +15,7 @@
 
 (defn home [{:keys [user recent-content notification-type]}]
   [:div
-   [nav/nav-bar {:user user
+   [nav/nav-bar {:user              user
                  :notification-type notification-type}]
    [cards/recent-content-cards {:recent-content recent-content}]])
 
@@ -54,18 +55,18 @@
 (def panels {:home          home
              :thoughts      full-page
              :archive       full-page
-             :about         about
+             :about         full-page
              :research      full-page
              :data-analysis full-page
              :admin         login-ui
-             :editor        identity
+             :editor        editor
              })
 
 (defn app []
-  (let [active-panel  @(subscribe [:active-panel])
-        active-panel  (if (contains? panels active-panel)
-                        active-panel
-                        :home)]
+  (let [active-panel @(subscribe [:active-panel])
+        active-panel (if (contains? panels active-panel)
+                       active-panel
+                       :home)]
     (infof "Currently displayed panel %s" active-panel)
     [(get panels active-panel login-ui)
      {:user                @(subscribe [:user])
@@ -77,4 +78,10 @@
       :notification-type   @(subscribe [:notification-type])
       :login-response      @(subscribe [:login-response])
       :recent-content      @(subscribe [:recent-content])
-      :active-content      @(subscribe [:active-content])}]))
+      :active-content      @(subscribe [:active-content])
+      :save-fn             (fn [{:keys [content title article-tags]}]
+                             (js/console.log "CLICKED SAVE" content)
+                             (dispatch [:save-article! {:article-tags article-tags
+                                                        :content      content
+                                                        :title        title}]))}
+     ]))

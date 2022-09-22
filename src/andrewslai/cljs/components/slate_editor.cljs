@@ -2,6 +2,7 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [goog.object :as g]
+            [goog.string :as gstr]
             ["pretty" :as pretty]
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
@@ -368,19 +369,6 @@
        :icon  (reagent/create-element FormatAlignJustify)}]
      ]))
 
-#_(defn save-toolbar
-    [{:keys [save-fn]}]
-    (let [editor-id  (useEventPlateId)
-          editor-ref (usePlateEditorRef editor-id)
-          ;;editor (useEditorState)
-          html       (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
-      ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
-      [:> ToolbarButton
-       {:icon        (reagent/create-element FormatBold)
-        :onMouseDown (fn [event]
-                       (js/console.log "CLICKED SAVE" event html)
-                       (dispatch [:save-article! {:content html}]))}]))
-
 (defn save-toolbar
   [{:keys [save-fn]}]
   (let [editor-id  (useEventPlateId)
@@ -389,7 +377,9 @@
     [:> ToolbarButton
      {:icon        (reagent/create-element FormatBold)
       :onMouseDown (fn [event]
-                     (save-fn html))}]))
+                     (save-fn {:article-tags "thoughts"
+                               :content      (gstr/format "<div>%s</div>" html)
+                               :title        "some-title"}))}]))
 
 (defn editor
   [{:keys [save-fn]}]

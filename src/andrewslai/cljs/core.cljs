@@ -8,6 +8,7 @@
             [andrewslai.cljs.events.articles]
             [andrewslai.cljs.events.keycloak]
             [andrewslai.cljs.events.projects-portfolio]
+            [andrewslai.cljs.events.slate-editor]
             [andrewslai.cljs.keycloak :as keycloak]
             [andrewslai.cljs.subs]   ;; load them (see docs/App-Structure.md)
             [andrewslai.cljs.views]

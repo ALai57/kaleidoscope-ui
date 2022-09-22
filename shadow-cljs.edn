@@ -26,6 +26,7 @@
                 :compiler-options {:static-fns          true
                                    :infer-externs       :auto
                                    :optimize-constants  true
+                                   :output-feature-set  :es-next
                                    :pretty-print        false
                                    :optimization        :advanced
                                    :strip-type-prefixes #{"cljs.pprint"}}
