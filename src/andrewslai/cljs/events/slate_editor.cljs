@@ -22,6 +22,14 @@
    (dispatch [:show-modal (create-article-failure-modal response)])
    db))
 
+(reg-event-db
+ :update-editor-article-id
+ (fn [db [_ new-id]]
+   (let [new-db (assoc db :editor-article-id new-id)]
+     (infof "Update Editor Article ID: %s" new-id)
+     ;;(println "NEW DB" new-db)
+     new-db)))
+
 (defn title->url
   [title]
   (-> title

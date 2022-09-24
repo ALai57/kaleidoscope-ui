@@ -131,9 +131,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Log suppresion for known spammy logs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def old-error
-  (.-error js/console))
-
 (defn wrap-suppress-errors
   "Filter out useLayoutEffect warnings. These are known and really annoying/spammy
 
@@ -333,14 +330,6 @@
                                           (js->clj line))]))
                         tokens)])))]))
 
-(defn deserialize
-  [html]
-  (let [editor-id  (useEventPlateId)
-        editor-ref (usePlateEditorRef editor-id)
-        slate-html (plate/deserializeHtml editor-ref #js {:element html})]
-    (js/console.log "deserializeHtml" slate-html)))
-
-
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn toolbar
@@ -424,62 +413,78 @@
                                :content      (gstr/format "<div>%s</div>" html)
                                :title        title}))}]))
 
+(defn deserializer
+  [{:keys [state html]}]
+  (let [editor-id  (useEventPlateId)
+        editor-ref (usePlateEditorRef editor-id)
+        slate-html (plate/deserializeHtml editor-ref #js {:element html})]
+    [:input {:type     "button"
+             :value    "Load HTML"
+             :on-click (fn [event]
+                         ;;(js/console.log "STATE" @state)
+                         ;;(println @state)
+                         (reset! state slate-html)
+                         ;;(js/console.log "STATE" @state)
+                         ;;(println @state)
+                         ;;(js/console.log "deserializeHtml" slate-html)
+                         )}]))
 
+(defn loader
+  [{:keys [load-fn]}]
+  [:input {:type     "button"
+           :value    "Load HTML"
+           :on-click (fn [event]
+                       (load-fn))}])
 
 (defn editor
-  [{:keys [user save-fn initial-value]}]
+  [{:keys [user save-fn initial-value title load-fn]}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
-  (let [title    (reagent/atom "A new article")
-        username (gstr/format "%s %s" (:firstName user) (:lastName user))]
+  (let [initial-value (reagent/atom initial-value)
+        title         (reagent/atom title)
+        username      (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in"))]
     (fn []
-      [:div {:key initial-value}
-       [:> PlateProvider {:initialValue INITIAL-VALUE ;;initial-value
-                          :plugins      PLUGINS}
-        [:div {:style {:padding          "10px"
-                       :position         "fixed"
-                       :width            "100%"
-                       :z-index          100
-                       :background-color "white"}}
-         [text-field {:variant       "standard"
-                      :class         "article-title"
-                      :required      true
-                      :label         "Article Title"
-                      :default-value @title
-                      :style         {:padding-right "50px"
-                                      :width         "400px"}
-                      :onChange      (fn [event]
-                                       (reset! title (.. event -target -value)))}]
-         [text-field {:variant       "standard"
-                      :class         "article-author"
-                      :disabled      true
-                      :default-value username
-                      :label         "Author"}]
-         [:input {:type "button"
-                  :on-click (fn [event]
-                              (deserialize "<p>HI THERE</p>"))}]]
+      [:> PlateProvider {:initialValue @initial-value
+                         :plugins      PLUGINS}
+       [:div {:style {:padding          "10px"
+                      :position         "fixed"
+                      :width            "100%"
+                      :z-index          100
+                      :background-color "white"}}
+        [text-field {:variant  "standard"
+                     :class    "article-title"
+                     :required true
+                     :label    "Article Title"
+                     :value    @title
+                     :style    {:padding-right "50px"
+                                :width         "400px"}
+                     :onChange (fn [event]
+                                 (reset! title (.. event -target -value)))}]
+        [:f> loader {:load-fn load-fn}]]
+       [:div.divider.py-1.bg-dark]
+       [:> HeadingToolbar {:style {:top "60px"}}
+        ;; NOTE: Need to create a functional component. Since the component is
+        ;; defined as a Clojurescript function, we need to do this where the CLJS
+        ;; function is used, not inside the fn.
+        [:f> toolbar]]
+       [:> HeadingToolbar {:style {:float "right"
+                                   :right "0px"
+                                   :top   "60px"
+                                   :width "11px"}}
+        [:f> save-toolbar
+         {:save-fn save-fn
+          :title   @title}]]
+       [:div {:style {:height "120px"}}]
+       [:div#primary-content
+        [:h2.article-title @title]
+        [:div.article-subheading (gstr/format "Author: %s" username)]
+        [:div.article-subheading "2022-01-01T00:00:00"]
         [:div.divider.py-1.bg-dark]
-        [:> HeadingToolbar {:style {:top "60px"}}
-         ;; NOTE: Need to create a functional component. Since the component is
-         ;; defined as a Clojurescript function, we need to do this where the CLJS
-         ;; function is used, not inside the fn.
-         [:f> toolbar]]
-        [:> HeadingToolbar {:style {:float "right"
-                                    :right "0px"
-                                    :top   "60px"
-                                    :width "11px"}}
-         [:f> save-toolbar
-          {:save-fn save-fn
-           :title   @title}]]
-        [:div {:style {:height "120px"}}]
-        [:div#primary-content
-         [:h2.article-title @title]
-         [:div.article-subheading (gstr/format "Author: %s %s" (:firstName user) (:lastName user))]
-         [:div.article-subheading "2022-01-01T00:00:00"]
-         [:div.divider.py-1.bg-dark]
-         [:br][:br]
-         [:div#article-content
-          [:> Plate
-           {:editableProps {:placeholder "Type..."}
-            :onChange      change-handler}
-           [:f> Serialized]]]]]])))
+        [:br][:br]
+        [:div#article-content
+         (try [:> Plate
+               {:editableProps {:placeholder "Type..."}
+                :onChange      change-handler}
+               [:f> Serialized]]
+              (catch js/Error e
+                (println "Error occurred")))]]])))

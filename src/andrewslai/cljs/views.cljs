@@ -79,6 +79,10 @@
       :login-response      @(subscribe [:login-response])
       :recent-content      @(subscribe [:recent-content])
       :active-content      @(subscribe [:active-content])
+      :editor-article-id   @(subscribe [:editor-article-id])
+      :load-fn             (fn [new-id]
+                             (println "NEW ID" new-id)
+                             (dispatch [:update-editor-article-id new-id]))
       :save-fn             (fn [{:keys [content title article-tags]}]
                              (dispatch [:save-article! {:article-tags article-tags
                                                         :content      content

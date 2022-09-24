@@ -17,5 +17,6 @@
   (helper/->story template {:user          {:firstName "Andrew"
                                             :lastName  "Lai"}
                             :initial-value slate-editor/INITIAL-VALUE
+                            :title         "My new article"
                             :save-fn       (fn [html]
                                              (js/console.log "CLICKED SAVE" html))}))

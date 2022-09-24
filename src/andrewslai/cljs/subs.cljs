@@ -85,6 +85,12 @@
  (fn [db]
    (:notification-type db)))
 
+(reg-sub
+ :editor-article-id
+ (fn [db]
+   (:editor-article-id db)))
+
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;
