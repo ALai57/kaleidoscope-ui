@@ -404,14 +404,14 @@
 (defn save-toolbar
   [{:keys [save-fn title username]}]
   (let [editor-id  (useEventPlateId)
-        editor-ref (usePlateEditorRef editor-id)
-        html       (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
+        editor-ref (usePlateEditorRef editor-id)]
     [:> ToolbarButton
      {:icon        (reagent/create-element Save3)
       :onMouseDown (fn [event]
-                     (save-fn {:article-tags "thoughts"
-                               :content      (gstr/format "<div>%s</div>" html)
-                               :title        title}))}]))
+                     (let [html (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
+                       (save-fn {:article-tags "thoughts"
+                                 :content      (gstr/format "<div>%s</div>" html)
+                                 :title        title})))}]))
 
 (defn deserializer
   [{:keys [state html]}]
