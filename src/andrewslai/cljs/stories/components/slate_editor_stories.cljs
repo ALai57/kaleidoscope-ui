@@ -14,5 +14,8 @@
   (reagent/as-element [slate-editor/editor (helper/->params args)]))
 
 (def ^:export Default-Editor
-  (helper/->story template {:save-fn (fn [html]
-                                       (js/console.log "CLICKED SAVE" html))}))
+  (helper/->story template {:user          {:firstName "Andrew"
+                                            :lastName  "Lai"}
+                            :initial-value slate-editor/INITIAL-VALUE
+                            :save-fn       (fn [html]
+                                             (js/console.log "CLICKED SAVE" html))}))

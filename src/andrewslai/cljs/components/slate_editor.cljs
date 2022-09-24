@@ -1,7 +1,8 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [reagent.core :as reagent]
+            ["react" :as react]
             [re-frame.core :refer [dispatch dispatch-sync]]
-            [reagent-mui.components :refer [text-field]]
+            [reagent-mui.components :refer [text-field button]]
             [goog.object :as g]
             [goog.string :as gstr]
             ["pretty" :as pretty]
@@ -123,10 +124,42 @@
               serializeHtml
 
               PlateFloatingLink
+              parseHtmlDocument
               ]]
             [taoensso.timbre :as log]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Log suppresion for known spammy logs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(def old-error
+  (.-error js/console))
 
+(defn wrap-suppress-errors
+  "Filter out useLayoutEffect warnings. These are known and really annoying/spammy
+
+  See https://github.com/udecode/plate/issues/1047 for more details.
+
+  The short story is that the serializeHtml function uses ReactDOMServer under
+  the hood, which incorrectly assumes that it is running on the Server (it is
+  rendering on the client because this is in Javascript!)."
+  [logger]
+  (fn [message url line column e]
+    ;;(js/console.log "MY CUSTOM logger MESSAGE")
+    ;;(js/console.log message (type message) (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message))
+    (if-not (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message)
+      (logger message))))
+
+(let [new-console (update (js->clj js/console :keywordize-keys true)
+                          :error
+                          wrap-suppress-errors)]
+  ;;(println new-console)
+  ;;((:error new-console) "HI HI")
+  ;;((:error new-console) "Warning: useLayoutEffect does nothing on the server.*")
+  (set! js/console (clj->js new-console)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Core code
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO: Block selection.
 
 ;; https://plate.udecode.io/
@@ -300,6 +333,14 @@
                                           (js->clj line))]))
                         tokens)])))]))
 
+(defn deserialize
+  [html]
+  (let [editor-id  (useEventPlateId)
+        editor-ref (usePlateEditorRef editor-id)
+        slate-html (plate/deserializeHtml editor-ref #js {:element html})]
+    (js/console.log "deserializeHtml" slate-html)))
+
+
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn toolbar
@@ -383,56 +424,62 @@
                                :content      (gstr/format "<div>%s</div>" html)
                                :title        title}))}]))
 
+
+
 (defn editor
-  [{:keys [user save-fn]}]
+  [{:keys [user save-fn initial-value]}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
   (let [title    (reagent/atom "A new article")
         username (gstr/format "%s %s" (:firstName user) (:lastName user))]
     (fn []
-      [:> PlateProvider {:initialValue INITIAL-VALUE
-                         :plugins      PLUGINS}
-       [:div {:style {:padding          "10px"
-                      :position         "fixed"
-                      :width            "100%"
-                      :z-index          100
-                      :background-color "white"}}
-        [text-field {:variant       "standard"
-                     :class         "article-title"
-                     :required      true
-                     :label         "Article Title"
-                     :default-value @title
-                     :style         {:padding-right "50px"
-                                     :width         "400px"}
-                     :onChange      (fn [event]
-                                      (reset! title (.. event -target -value)))}]
-        [text-field {:variant       "standard"
-                     :class         "article-author"
-                     :disabled      true
-                     :default-value username
-                     :label         "Author"}]]
-       [:div.divider.py-1.bg-dark]
-       [:> HeadingToolbar {:style {:top "60px"}}
-        ;; NOTE: Need to create a functional component. Since the component is
-        ;; defined as a Clojurescript function, we need to do this where the CLJS
-        ;; function is used, not inside the fn.
-        [:f> toolbar]]
-       [:> HeadingToolbar {:style {:float "right"
-                                   :right "0px"
-                                   :top   "60px"
-                                   :width "11px"}}
-        [:f> save-toolbar
-         {:save-fn  save-fn
-          :title    @title}]]
-       [:div {:style {:height "120px"}}]
-       [:div#primary-content
-        [:h2.article-title @title]
-        [:div.article-subheading (gstr/format "Author: %s %s" (:firstName user) (:lastName user))]
-        [:div.article-subheading "2022-01-01T00:00:00"]
+      [:div {:key initial-value}
+       [:> PlateProvider {:initialValue INITIAL-VALUE ;;initial-value
+                          :plugins      PLUGINS}
+        [:div {:style {:padding          "10px"
+                       :position         "fixed"
+                       :width            "100%"
+                       :z-index          100
+                       :background-color "white"}}
+         [text-field {:variant       "standard"
+                      :class         "article-title"
+                      :required      true
+                      :label         "Article Title"
+                      :default-value @title
+                      :style         {:padding-right "50px"
+                                      :width         "400px"}
+                      :onChange      (fn [event]
+                                       (reset! title (.. event -target -value)))}]
+         [text-field {:variant       "standard"
+                      :class         "article-author"
+                      :disabled      true
+                      :default-value username
+                      :label         "Author"}]
+         [:input {:type "button"
+                  :on-click (fn [event]
+                              (deserialize "<p>HI THERE</p>"))}]]
         [:div.divider.py-1.bg-dark]
-        [:br][:br]
-        [:div#article-content
-         [:> Plate
-          {:editableProps {:placeholder "Type..."}
-           :onChange      change-handler}
-          [:f> Serialized]]]]])))
+        [:> HeadingToolbar {:style {:top "60px"}}
+         ;; NOTE: Need to create a functional component. Since the component is
+         ;; defined as a Clojurescript function, we need to do this where the CLJS
+         ;; function is used, not inside the fn.
+         [:f> toolbar]]
+        [:> HeadingToolbar {:style {:float "right"
+                                    :right "0px"
+                                    :top   "60px"
+                                    :width "11px"}}
+         [:f> save-toolbar
+          {:save-fn save-fn
+           :title   @title}]]
+        [:div {:style {:height "120px"}}]
+        [:div#primary-content
+         [:h2.article-title @title]
+         [:div.article-subheading (gstr/format "Author: %s %s" (:firstName user) (:lastName user))]
+         [:div.article-subheading "2022-01-01T00:00:00"]
+         [:div.divider.py-1.bg-dark]
+         [:br][:br]
+         [:div#article-content
+          [:> Plate
+           {:editableProps {:placeholder "Type..."}
+            :onChange      change-handler}
+           [:f> Serialized]]]]]])))
