@@ -48,6 +48,15 @@ h2 {font-size: 18;
 /** Zoom icons **/
 /*****************************************************/
 
+.zoom-card-icon {
+    transition: transform 1s ease;
+    }
+
+.zoom-card-icon:hover {
+    -ms-transform: scale(1.05); /* IE 9 */
+    -webkit-transform: scale(1.05); /* Safari 3-8 */
+    transform: scale(1.05);}
+
 .zoom-icon {
     float:right;
     transition: transform .3s;
@@ -89,8 +98,24 @@ div.card-icon {
     padding-bottom: 1rem;
     width: 25%;}
 
+
 div.card-description {
-    padding-top: 0.5rem;
+    height: 100%;
+    width: 75%;}
+
+
+div.thin-article-card {
+    max-width: 28rem;
+    min-width: 350px;
+    display: inline-block;
+    margin: 3px;}
+div.thin-card-icon {
+  min-height: 50px;
+  min-width: 50px;
+  width: 25%;}
+div.thin-card-description {
+    padding: 0px;
+    margin:  5px;
     height: 100%;
     width: 75%;}
 

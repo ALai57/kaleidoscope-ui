@@ -1,4 +1,4 @@
-(ns andrewslai.cljs.stories.card-stories
+(ns andrewslai.cljs.stories.thin-article-card-stories
   (:require [andrewslai.cljs.article-cards :as article-cards]
             [andrewslai.cljs.stories.helper :as helper]
             [reagent.core :as reagent]))
@@ -11,8 +11,8 @@
    :article-tags ""})
 
 (def ^:export default
-  (helper/->default {:title     "Article Cards"
-                     :component article-cards/article-card
+  (helper/->default {:title     "Thin Article Cards"
+                     :component article-cards/thin-article-card
                      :args      example-data}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
@@ -20,10 +20,14 @@
   "The template is a function of arguments because Storybook understands how to
   translate arguments into interactive controls"
   [args]
-  (reagent/as-element [article-cards/article-card (helper/->params args)]))
+  (reagent/as-element [article-cards/thin-article-card (helper/->params args)]))
 
 (def ^:export Default
   (helper/->story template {:title        "An example with the default image"
+                            :article-tags "unrecognized"}))
+
+(def ^:export Truncated-Header
+  (helper/->story template {:title        "An example with the default image and more things"
                             :article-tags "unrecognized"}))
 
 (def ^:export Research
