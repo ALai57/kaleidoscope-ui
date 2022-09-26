@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.components.slate-editor
-  (:require [reagent.core :as reagent]
+  (:require [andrewslai.cljs.components.article-selector :as article-selector]
+            [reagent.core :as reagent]
             ["react" :as react]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent-mui.components :refer [text-field button]]
@@ -7,6 +8,7 @@
             [goog.string :as gstr]
             ["pretty" :as pretty]
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
+            ["@styled-icons/boxicons-regular/Library" :refer [Library]]
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
             ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
             ["@styled-icons/material/FormatAlignLeft" :refer [FormatAlignLeft]]
@@ -401,17 +403,27 @@
        :icon  (reagent/create-element FormatAlignJustify)}]
      ]))
 
+(defn expand-button
+  [{:keys [on-click]}]
+  [:> ToolbarButton
+   {:onMouseDown on-click
+    :icon        (reagent/create-element Library)}])
+
 (defn save-toolbar
   [{:keys [save-fn title username]}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
-    [:> ToolbarButton
-     {:icon        (reagent/create-element Save3)
-      :onMouseDown (fn [event]
-                     (let [html (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
-                       (save-fn {:article-tags "thoughts"
-                                 :content      (gstr/format "<div>%s</div>" html)
-                                 :title        title})))}]))
+    [:<>
+     [article-selector/article-selector
+      {:expand-button  expand-button
+       :recent-content [{:title "hi"}]}]
+     [:> ToolbarButton
+      {:icon        (reagent/create-element Save3)
+       :onMouseDown (fn [event]
+                      (let [html (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
+                        (save-fn {:article-tags "thoughts"
+                                  :content      (gstr/format "<div>%s</div>" html)
+                                  :title        title})))}]]))
 
 (defn deserializer
   [{:keys [state html]}]
@@ -467,10 +479,11 @@
         ;; defined as a Clojurescript function, we need to do this where the CLJS
         ;; function is used, not inside the fn.
         [:f> toolbar]]
-       [:> HeadingToolbar {:style {:float "right"
-                                   :right "0px"
-                                   :top   "60px"
-                                   :width "11px"}}
+       [:> HeadingToolbar {:style {:float            "right"
+                                   :background-color "aliceblue"
+                                   :right            "0px"
+                                   :top              "60px"
+                                   :width            "70px"}}
         [:f> save-toolbar
          {:save-fn save-fn
           :title   @title}]]

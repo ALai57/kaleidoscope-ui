@@ -73,7 +73,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn thin-content-cards
   [{:keys [recent-content]}]
-  [:div
+  [:div {:style {:max-width "500px"}}
    (for [{:keys [title] :as content} recent-content]
      ^{:key title} [thin-article-card content])])
 
