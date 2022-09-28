@@ -5,6 +5,7 @@
             [re-frame.core :refer [subscribe]]
             [reagent.core :refer [adapt-react-class]]
             [reagent-mui.components :refer [card]]
+            [reagent-mui.components :refer [card-action-area]]
             [goog.string :as gstr]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,33 +41,38 @@
       (str title "\n")
       (apply str (concat (take (- chars 3) title) ["..."])))))
 
-;; SELECT not from href, instead use something else. Also have cards zoom/pop
+;; TODO: SELECT not from href, instead use something else. Also have cards zoom/pop
 ;; when hovered
+;; Add to a sidebar menu that pops up, similar to menu to select notification types
 (defn thin-article-card
   ([article]
    (thin-article-card article {:n-rows 2}))
   ([{:keys [article-tags title article-url article-id timestamp] :as article}
     {:keys [n-rows] :as options
      :or   {n-rows 2}}]
-   [card {:class "text-white bg-light thin-article-card zoom-card-icon"
-          :sx    {:width 1}}
-    [:div.container-fluid {:style {:padding "0px"
-                                   :height  "50px"}}
-     [:div.row.flex-items-xs-middle {:style {:margin "0px"}}
-      [:div.col-sm-1.bg-primary.text-xs-center.thin-card-icon {:style {:padding "0px"}}
-       [:img.fa.fa-2x {:src   (article-tags->icon article-tags)
-                       :style {:width      "100%"
-                               :max-height "50px"
-                               :padding    "3px"
-                               :height     "100%"}}]]
-      [:div.col.bg-light.text-dark.thin-card-description
-       [:h6 {:style {:margin "0px"}}
-        (truncate title 33 n-rows)
-        #_[:a {:href  (gstr/format "#/%s/content/%s" article-tags article-url)
-               :title title}
-           (truncate title 33 n-rows)]]
-       #_[:p.card-text {:style {:color "darkgray"}}
-          timestamp]]]]]))
+   [card {:class   "text-white bg-light thin-article-card zoom-card-icon"
+          :onClick (fn [event]
+                     (println "Clicked thin article card")
+                     (identity article))
+          :sx      {:width 1}}
+    [card-action-area
+     [:div.container-fluid {:style {:padding "0px"
+                                    :height  "50px"}}
+      [:div.row.flex-items-xs-middle {:style {:margin "0px"}}
+       [:div.col-sm-1.bg-primary.text-xs-center.thin-card-icon {:style {:padding "0px"}}
+        [:img.fa.fa-2x {:src   (article-tags->icon article-tags)
+                        :style {:width      "100%"
+                                :max-height "50px"
+                                :padding    "3px"
+                                :height     "100%"}}]]
+       [:div.col.bg-light.text-dark.thin-card-description
+        [:h6 {:style {:margin "0px"}}
+         (truncate title 33 n-rows)
+         #_[:a {:href  (gstr/format "#/%s/content/%s" article-tags article-url)
+                :title title}
+            (truncate title 33 n-rows)]]
+        #_[:p.card-text {:style {:color "darkgray"}}
+           timestamp]]]]]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Full display of all cards
