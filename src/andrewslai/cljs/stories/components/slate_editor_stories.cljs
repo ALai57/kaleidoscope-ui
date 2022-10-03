@@ -24,4 +24,4 @@
                             :initial-value EXAMPLE-INPUT
                             :title         "My new article"
                             :save-fn       (fn [html]
-                                             (js/console.log "CLICKED SAVE" html))}))
+                                             (println "CLICKED SAVE" html))}))
