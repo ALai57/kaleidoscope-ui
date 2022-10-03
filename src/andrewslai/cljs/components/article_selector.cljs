@@ -19,7 +19,7 @@
       (reset! ratom open))))
 
 (defn article-selector
-  [{:keys [expand-button recent-content] :as arg}]
+  [{:keys [expand-button recent-content on-click] :as arg}]
   (let [showing (reagent/atom false)]
     (fn []
       [:div
@@ -30,4 +30,5 @@
                  :variant            "temporary"
                  :transitionDuration 500
                  :on-close           (toggle-drawer showing false)}
-         [article-cards/thin-content-cards {:recent-content recent-content}]]]])))
+         [article-cards/thin-content-cards {:recent-content recent-content
+                                            :on-click       on-click}]]]])))

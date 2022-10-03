@@ -5,7 +5,7 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Recent Content"
+  (helper/->default {:title     "Article Subcomponents/Recent Content"
                      :component article-cards/recent-content-cards}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs

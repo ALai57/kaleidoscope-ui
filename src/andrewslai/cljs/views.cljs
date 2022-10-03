@@ -80,8 +80,9 @@
       :recent-content      @(subscribe [:recent-content])
       :active-content      @(subscribe [:active-content])
       :editor-article-id   @(subscribe [:editor-article-id])
-      :load-fn             (fn [new-id]
-                             (dispatch [:update-editor-article-id new-id]))
+      :load-fn             (fn [{:keys [id] :as article}]
+                             (infof "Updating editor article id to %s" id)
+                             (dispatch [:update-editor-article-id id]))
       :save-fn             (fn [{:keys [content title article-tags]}]
                              (dispatch [:save-article! {:article-tags article-tags
                                                         :content      content

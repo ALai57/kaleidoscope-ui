@@ -5,7 +5,7 @@
 
 (def ^:export default
   (helper/->default
-   {:title     "Slate Editor"
+   {:title     "Editor Subcomponents/Slate Editor"
     :component slate-editor/editor
     :args      {}}))
 

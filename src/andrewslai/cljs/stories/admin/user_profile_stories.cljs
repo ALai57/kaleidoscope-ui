@@ -11,7 +11,7 @@
    :email      "andrew.s.lai5@gmail.com"})
 
 (def ^:export default
-  (helper/->default {:title     "User Profile"
+  (helper/->default {:title     "User Subcomponents/User Profile"
                      :component admin/user-profile
                      :args      {:user example-user-data}}))
 

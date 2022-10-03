@@ -11,7 +11,7 @@
    :content   "<div><h3>This is some formatted content</h3><p>howdy</p><strong>bold</strong></div>"})
 
 (def ^:export default
-  (helper/->default {:title     "Article"
+  (helper/->default {:title     "Article Subcomponents/Article"
                      :component article/article
                      :args      example-article}))
 

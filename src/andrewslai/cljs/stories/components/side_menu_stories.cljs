@@ -9,7 +9,7 @@
   [button props "Click me"])
 
 (def ^:export default
-  (helper/->default {:title     "Side Menu"
+  (helper/->default {:title     "Basic Components/Side Menu"
                      :component side-menu/side-menu
                      :args      {:expand-button expand-button}}))
 

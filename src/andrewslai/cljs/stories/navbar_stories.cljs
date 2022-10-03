@@ -7,7 +7,7 @@
   {})
 
 (def ^:export default
-  (helper/->default {:title     "Navbar"
+  (helper/->default {:title     "Basic Components/Navbar"
                      :component navbar/nav-bar
                      :args      {:user example-user-data}}))
 

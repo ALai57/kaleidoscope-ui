@@ -10,7 +10,7 @@
   [button props "Click me"])
 
 (def ^:export default
-  (helper/->default {:title     "Article Selector"
+  (helper/->default {:title     "Article Subcomponents/Article Selector"
                      :component article-selector/article-selector
                      :args      {:expand-button expand-button}}))
 

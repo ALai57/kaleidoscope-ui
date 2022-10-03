@@ -5,7 +5,7 @@
             ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
-  (helper/->default {:title     "Snackbar"
+  (helper/->default {:title     "Basic Components/Snackbar"
                      :component snackbar/basic-snackbar
                      :args      {:open?              true
                                  :auto-hide-duration 6000

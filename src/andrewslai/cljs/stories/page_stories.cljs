@@ -12,7 +12,7 @@
 
 (def ^:export default
   (helper/->default
-   {:title     "Article Page"
+   {:title     "Full Pages/Article Page2"
     :component views/full-page
     :args      {:active-content article-stories/example-article
                 :recent-content recent-content-stories/example-recent-content
@@ -22,5 +22,5 @@
   [args]
   (reagent/as-element [views/full-page (helper/->params args)]))
 
-(def ^:export Default-Article-Page
+(def ^:export Default-Article-Page2
   (helper/->story template {}))

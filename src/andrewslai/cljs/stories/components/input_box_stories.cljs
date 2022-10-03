@@ -4,7 +4,7 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Input Box"
+  (helper/->default {:title     "Basic Components/Input Box"
                      :component input-box/input-box
                      :args      {:value     "An Input Box"
                                  :label     "Email"

@@ -41,20 +41,20 @@
       (str title "\n")
       (apply str (concat (take (- chars 3) title) ["..."])))))
 
-;; TODO: SELECT not from href, instead use something else. Also have cards zoom/pop
-;; when hovered
-;; Add to a sidebar menu that pops up, similar to menu to select notification types
+(defn log-click
+  [event]
+  (println "Clicked thin article card"))
+
 (defn thin-article-card
   ([article]
    (thin-article-card article {:n-rows 2}))
   ([{:keys [article-tags title article-url article-id timestamp] :as article}
-    {:keys [n-rows] :as options
-     :or   {n-rows 2}}]
+    {:keys [n-rows on-click] :as options
+     :or   {n-rows   2
+            on-click log-click}}]
    [card {:class   "text-white bg-light thin-article-card zoom-card-icon"
           :onClick (fn [event]
-                     (println "Clicked thin article card")
-                     (identity article))
-          :sx      {:width 1}}
+                     (on-click article))}
     [card-action-area
      [:div.container-fluid {:style {:padding "0px"
                                     :height  "50px"}}
@@ -78,10 +78,10 @@
 ;; Full display of all cards
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn thin-content-cards
-  [{:keys [recent-content]}]
+  [{:keys [recent-content on-click]}]
   [:div {:style {:max-width "500px"}}
    (for [{:keys [title] :as content} recent-content]
-     ^{:key title} [thin-article-card content])])
+     ^{:key title} [thin-article-card content {:on-click on-click}])])
 
 (defn recent-content-cards
   [{:keys [recent-content]}]

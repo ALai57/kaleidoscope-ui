@@ -11,7 +11,7 @@
    :article-tags ""})
 
 (def ^:export default
-  (helper/->default {:title     "Thin Article Cards"
+  (helper/->default {:title     "Article Subcomponents/Thin Article Cards"
                      :component article-cards/thin-article-card
                      :args      example-data}))
 

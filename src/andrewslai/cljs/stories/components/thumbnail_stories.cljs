@@ -4,7 +4,7 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Thumbnail"
+  (helper/->default {:title     "Basic Components/Thumbnail"
                      :component thumbnail/thumbnail
                      :args      {:image-url "/images/volunteer-unverified.png"}}))
 

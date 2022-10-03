@@ -4,7 +4,7 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Radio Group"
+  (helper/->default {:title     "Basic Components/Radio Group"
                      :component radio-group/basic-radio-group
                      :args      {}}))
 

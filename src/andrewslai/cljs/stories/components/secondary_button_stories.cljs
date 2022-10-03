@@ -4,7 +4,7 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Secondary Button"
+  (helper/->default {:title     "Basic Components/Secondary Button"
                      :component secondary-button/secondary-button
                      :argTypes  {:on-click {:action "Clicked Button!"}}
                      :args      {:text "A button"}}))

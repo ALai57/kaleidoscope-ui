@@ -6,7 +6,7 @@
             ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
-  (helper/->default {:title     "Login Page"
+  (helper/->default {:title     "Full Pages/Login Page"
                      :component admin/login-ui
                      :args      {:user-event-handlers
                                  {:on-login-click        (action "on-login-click")

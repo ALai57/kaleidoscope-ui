@@ -334,7 +334,7 @@
 
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
-(defn toolbar
+(defn editing-toolbar
   []
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
@@ -409,14 +409,15 @@
    {:onMouseDown on-click
     :icon        (reagent/create-element Library)}])
 
-(defn save-toolbar
-  [{:keys [save-fn title username]}]
+(defn management-toolbar
+  [{:keys [save-fn load-fn title username recent-content] :as args}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     [:<>
      [article-selector/article-selector
       {:expand-button  expand-button
-       :recent-content [{:title "hi"}]}]
+       :recent-content recent-content
+       :on-click       load-fn}]
      [:> ToolbarButton
       {:icon        (reagent/create-element Save3)
        :onMouseDown (fn [event]
@@ -426,78 +427,102 @@
                                   :title        title})))}]]))
 
 (defn deserializer
-  [{:keys [state html]}]
-  (let [editor-id  (useEventPlateId)
+  [{:keys [raw-html deserialized-html loaded]
+    :or   {raw-html ""}}]
+  (println "RAW HTML" raw-html  "DESERIALIZED" @deserialized-html "LOADED" @loaded)
+  ;;(js/console.log "RAW HTML" raw-html  "DESERIALIZED" @deserialized-html "LOADED" @loaded)
+  (when-not @loaded
+    (let [editor-id  (useEventPlateId)
+          editor-ref (usePlateEditorRef editor-id)
+          html       (plate/deserializeHtml editor-ref #js {:element raw-html})]
+      (println "HTML" html)
+      (reset! deserialized-html html)
+      (reset! loaded true)))
+
+  (fn []
+    [:div]))
+
+#_(let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)
-        slate-html (plate/deserializeHtml editor-ref #js {:element html})]
+        slate-html (plate/deserializeHtml editor-ref #js {:element raw-html})]
+    (when-not @loaded
+      (println "Not loaded yet"))
+
+    #_[:input {:type     "button"
+               :value    "Load HTML"
+               :on-click (fn [event]
+                           (js/console.log "Deserialized HTML" @deserialized-html)
+                           (println "Raw HTML" raw-html)
+                           (reset! deserialized-html slate-html)
+                           ;;(js/console.log "STATE" @state)
+                           ;;(println @state)
+                           ;;(js/console.log "deserializeHtml" slate-html)
+                           )}])
+
+#_(defn loader
+    [{:keys [load-fn]}]
     [:input {:type     "button"
              :value    "Load HTML"
              :on-click (fn [event]
-                         ;;(js/console.log "STATE" @state)
-                         ;;(println @state)
-                         (reset! state slate-html)
-                         ;;(js/console.log "STATE" @state)
-                         ;;(println @state)
-                         ;;(js/console.log "deserializeHtml" slate-html)
-                         )}]))
-
-(defn loader
-  [{:keys [load-fn]}]
-  [:input {:type     "button"
-           :value    "Load HTML"
-           :on-click (fn [event]
-                       (load-fn))}])
+                         (load-fn))}])
 
 (defn editor
-  [{:keys [user save-fn initial-value title load-fn]}]
+  [{:keys [user save-fn initial-value title load-fn] :as args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
-  (let [initial-value (reagent/atom initial-value)
-        title         (reagent/atom title)
-        username      (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in"))]
+  (let [plate-html (reagent/atom [])
+        loaded     (reagent/atom false)
+        title      (reagent/atom title)
+        username   (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in"))]
     (fn []
-      [:> PlateProvider {:initialValue @initial-value
-                         :plugins      PLUGINS}
-       [:div {:style {:padding          "10px"
-                      :position         "fixed"
-                      :width            "100%"
-                      :z-index          100
-                      :background-color "white"}}
-        [text-field {:variant  "standard"
-                     :class    "article-title"
-                     :required true
-                     :label    "Article Title"
-                     :value    @title
-                     :style    {:padding-right "50px"
-                                :width         "400px"}
-                     :onChange (fn [event]
-                                 (reset! title (.. event -target -value)))}]
-        [:f> loader {:load-fn load-fn}]]
-       [:div.divider.py-1.bg-dark]
-       [:> HeadingToolbar {:style {:top "60px"}}
-        ;; NOTE: Need to create a functional component. Since the component is
-        ;; defined as a Clojurescript function, we need to do this where the CLJS
-        ;; function is used, not inside the fn.
-        [:f> toolbar]]
-       [:> HeadingToolbar {:style {:float            "right"
-                                   :background-color "aliceblue"
-                                   :right            "0px"
-                                   :top              "60px"
-                                   :width            "70px"}}
-        [:f> save-toolbar
-         {:save-fn save-fn
-          :title   @title}]]
-       [:div {:style {:height "120px"}}]
-       [:div#primary-content
-        [:h2.article-title @title]
-        [:div.article-subheading (gstr/format "Author: %s" username)]
-        [:div.article-subheading "2022-01-01T00:00:00"]
+      ;;(println "PLATE HTML" plate-html "LOADED" loaded "INITIAL VALUE" initial-value)
+      [:div {:key (str "editor" initial-value @loaded)}
+       [:> PlateProvider {:initialValue @plate-html
+                          :plugins      PLUGINS}
+        [:div {:style {:padding          "10px"
+                       :position         "fixed"
+                       :width            "100%"
+                       :z-index          100
+                       :background-color "white"}}
+         [text-field {:variant  "standard"
+                      :class    "article-title"
+                      :required true
+                      :label    "Article Title"
+                      :value    @title
+                      :style    {:padding-right "50px"
+                                 :width         "400px"}
+                      :onChange (fn [event]
+                                  (reset! title (.. event -target -value)))}]
+         (when-not @loaded
+           [:f> deserializer
+            {:loaded            loaded
+             :raw-html          (or initial-value "")
+             :deserialized-html plate-html}])
+         #_[:f> loader {:load-fn load-fn}]]
         [:div.divider.py-1.bg-dark]
-        [:br][:br]
-        [:div#article-content
-         (try [:> Plate
-               {:editableProps {:placeholder "Type..."}
-                :onChange      change-handler}
-               [:f> Serialized]]
-              (catch js/Error e
-                (println "Error occurred")))]]])))
+        [:> HeadingToolbar {:style {:top "60px"}}
+         ;; NOTE: Need to create a functional component. Since the component is
+         ;; defined as a Clojurescript function, we need to do this where the CLJS
+         ;; function is used, not inside the fn.
+         [:f> editing-toolbar]]
+        [:> HeadingToolbar {:style {:float            "right"
+                                    :background-color "aliceblue"
+                                    :right            "0px"
+                                    :top              "60px"
+                                    :width            "70px"}}
+         [:f> management-toolbar
+          (assoc args :title @title)]]
+        [:div {:style {:height "120px"}}]
+        [:div#primary-content
+         [:h2.article-title @title]
+         [:div.article-subheading (gstr/format "Author: %s" username)]
+         [:div.article-subheading "2022-01-01T00:00:00"]
+         [:div.divider.py-1.bg-dark]
+         [:br][:br]
+         [:div#article-content
+          (try [:> Plate
+                {:editableProps {:placeholder "Type..."}
+                 :onChange      change-handler}
+                [:f> Serialized]]
+               (catch js/Error e
+                 (println "Error occurred")))]]]])))

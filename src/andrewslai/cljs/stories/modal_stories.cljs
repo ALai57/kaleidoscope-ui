@@ -5,7 +5,7 @@
             ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
-  (helper/->default {:title     "Modal"
+  (helper/->default {:title     "Basic Components/Modal"
                      :component modal/basic-modal
                      :args      {:open?  true
                                  :title  "My Modal"

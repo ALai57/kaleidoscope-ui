@@ -5,7 +5,7 @@
             ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
-  (helper/->default {:title     "Login Prompt"
+  (helper/->default {:title     "User Subcomponents/Login Prompt"
                      :component admin/login-form
                      :args      {:user-event-handlers
                                  {:on-login-click (action "on-login-click")
