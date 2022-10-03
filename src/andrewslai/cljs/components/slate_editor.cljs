@@ -161,42 +161,43 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; TODO: Block selection.
 
-;; https://plate.udecode.io/
-;; Add Plate and use it and plugins for rich text editing
-(def INITIAL-VALUE
-  [{:type "p" :children [{:text "This is editable plain text"}]}
-   {:type "h1" :children [{:text "🧱 Elements"}]}
-   {:type "h2" :children [{:text "🔥 Basic Elements"}]}
-   {:type "h1" :children [{:text "Heading 1"}]}
-   {:type "h2" :children [{:text "Heading 2"}]}
-   {:type "h3" :children [{:text "Heading 3"}]}
-   {:type "h4" :children [{:text "Heading 4"}]}
-   {:type "h5" :children [{:text "Heading 5"}]}
-   {:type "h6" :children [{:text "Heading 6"}]}
-   {:type "blockquote" :children [{:text "Blockquote"}]}
-   {:type "codeblock" :children [{:type "codeline" :children [{:text "const a = 'Hello';"}]}
-                                 {:type "codeline" :children [{:text "const b = 'Bye';"}]}]}
+(comment
+  ;; https://plate.udecode.io/
+  (def INITIAL-VALUE
+    "This is what a serialized version of HTML looks like"
+    [{:type "p" :children [{:text "This is editable plain text"}]}
+     {:type "h1" :children [{:text "🧱 Elements"}]}
+     {:type "h2" :children [{:text "🔥 Basic Elements"}]}
+     {:type "h1" :children [{:text "Heading 1"}]}
+     {:type "h2" :children [{:text "Heading 2"}]}
+     {:type "h3" :children [{:text "Heading 3"}]}
+     {:type "h4" :children [{:text "Heading 4"}]}
+     {:type "h5" :children [{:text "Heading 5"}]}
+     {:type "h6" :children [{:text "Heading 6"}]}
+     {:type "blockquote" :children [{:text "Blockquote"}]}
+     {:type "codeblock" :children [{:type "codeline" :children [{:text "const a = 'Hello';"}]}
+                                   {:type "codeline" :children [{:text "const b = 'Bye';"}]}]}
 
 
-   {:type "h1" :children [{:text "💅 Marks"}]}
-   {:type "h2" :children [{:text "💧 Basic marks"}]}
-   {:type "p" :children [{:text (str "The basic marks consist of text formatting such as "
-                                     "bold, italic, underline, strikethrough, subscript, superscript, and code.")}]}
-   {:type "p" :children [{:text "This text is bold"
-                          :bold true}]}
-   {:type "p" :children [{:text   "This text is italic"
-                          :italic true}]}
-   {:type "p" :children [{:text      "This text is underlined"
-                          :underline true}]}
-   {:type "p" :children [{:text      "This text is bold italic and underlined"
-                          :bold      true
-                          :italic    true
-                          :underline true}]}
-   {:type "p" :children [{:text          "This text is strikethrough"
-                          :strikethrough true}]}
-   {:type "p" :children [{:text "This text is inline code"
-                          :code true}]}
-   ])
+     {:type "h1" :children [{:text "💅 Marks"}]}
+     {:type "h2" :children [{:text "💧 Basic marks"}]}
+     {:type "p" :children [{:text (str "The basic marks consist of text formatting such as "
+                                       "bold, italic, underline, strikethrough, subscript, superscript, and code.")}]}
+     {:type "p" :children [{:text "This text is bold"
+                            :bold true}]}
+     {:type "p" :children [{:text   "This text is italic"
+                            :italic true}]}
+     {:type "p" :children [{:text      "This text is underlined"
+                            :underline true}]}
+     {:type "p" :children [{:text      "This text is bold italic and underlined"
+                            :bold      true
+                            :italic    true
+                            :underline true}]}
+     {:type "p" :children [{:text          "This text is strikethrough"
+                            :strikethrough true}]}
+     {:type "p" :children [{:text "This text is inline code"
+                            :code true}]}
+     ]))
 
 (defn change-handler
   [x]
@@ -442,30 +443,6 @@
   (fn []
     [:div]))
 
-#_(let [editor-id  (useEventPlateId)
-        editor-ref (usePlateEditorRef editor-id)
-        slate-html (plate/deserializeHtml editor-ref #js {:element raw-html})]
-    (when-not @loaded
-      (println "Not loaded yet"))
-
-    #_[:input {:type     "button"
-               :value    "Load HTML"
-               :on-click (fn [event]
-                           (js/console.log "Deserialized HTML" @deserialized-html)
-                           (println "Raw HTML" raw-html)
-                           (reset! deserialized-html slate-html)
-                           ;;(js/console.log "STATE" @state)
-                           ;;(println @state)
-                           ;;(js/console.log "deserializeHtml" slate-html)
-                           )}])
-
-#_(defn loader
-    [{:keys [load-fn]}]
-    [:input {:type     "button"
-             :value    "Load HTML"
-             :on-click (fn [event]
-                         (load-fn))}])
-
 (defn editor
   [{:keys [user save-fn initial-value title load-fn] :as args}]
   ;;(js/console.log "UI" PLATE-UI)
@@ -497,8 +474,7 @@
            [:f> deserializer
             {:loaded            loaded
              :raw-html          (or initial-value "")
-             :deserialized-html plate-html}])
-         #_[:f> loader {:load-fn load-fn}]]
+             :deserialized-html plate-html}])]
         [:div.divider.py-1.bg-dark]
         [:> HeadingToolbar {:style {:top "60px"}}
          ;; NOTE: Need to create a functional component. Since the component is

@@ -1,7 +1,9 @@
 (ns andrewslai.cljs.stories.components.slate-editor-stories
   (:require [andrewslai.cljs.stories.helper :as helper]
             [andrewslai.cljs.components.slate-editor :as slate-editor]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent]
+            [shadow.resource :as rc]
+            ))
 
 (def ^:export default
   (helper/->default
@@ -13,10 +15,13 @@
   [args]
   (reagent/as-element [slate-editor/editor (helper/->params args)]))
 
+(def EXAMPLE-INPUT
+  (rc/inline "./example-editor-value.txt"))
+
 (def ^:export Default-Editor
   (helper/->story template {:user          {:firstName "Andrew"
                                             :lastName  "Lai"}
-                            :initial-value slate-editor/INITIAL-VALUE
+                            :initial-value EXAMPLE-INPUT
                             :title         "My new article"
                             :save-fn       (fn [html]
                                              (js/console.log "CLICKED SAVE" html))}))

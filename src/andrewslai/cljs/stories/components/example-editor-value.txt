@@ -1,0 +1,61 @@
+<div>
+  <p class=\"slate-p\">This is editable plain text
+  </p>
+  <h1 class=\"slate-h1\">🧱 Elements
+  </h1>
+  <h2 class=\"slate-h2\">🔥 Basic Elements
+  </h2>
+  <h1 class=\"slate-h1\">Heading 1
+  </h1>
+  <h2 class=\"slate-h2\">Heading 2
+  </h2>
+  <h3 class=\"slate-h3\">Heading 3
+  </h3>
+  <h4 class=\"slate-h4\">Heading 4
+  </h4>
+  <h5 class=\"slate-h5\">Heading 5
+  </h5>
+  <h6 class=\"slate-h6\">Heading 6
+  </h6>
+  <blockquote class=\"slate-blockquote\">Blockquote
+  </blockquote>
+  <div>
+    <div>const a = &apos;Hello&apos;;
+    </div>
+    <div>const b = &apos;Bye&apos;;
+    </div>
+  </div>
+  <h1 class=\"slate-h1\">💅 Marks
+  </h1>
+  <h2 class=\"slate-h2\">💧 Basic marks
+  </h2>
+  <p class=\"slate-p\">The basic marks consist of text formatting such as bold, italic, underline, strikethrough, subscript, superscript, and code.
+  </p>
+  <p class=\"slate-p\">
+    <strong class=\"slate-bold\">This text is bold
+    </strong>
+  </p>
+  <p class=\"slate-p\">
+    <em class=\"slate-italic\">This text is italic
+    </em>
+  </p>
+  <p class=\"slate-p\">
+    <u class=\"slate-underline\">This text is underlined
+    </u>
+  </p>
+  <p class=\"slate-p\">
+    <u class=\"slate-underline\">
+      <em class=\"slate-italic\">
+        <strong class=\"slate-bold\">This text is bold italic and underlined
+        </strong>
+      </em>
+    </u>
+  </p>
+  <p class=\"slate-p\">
+    <s class=\"slate-strikethrough\">This text is strikethrough
+    </s>
+  </p>
+  <p class=\"slate-p\">
+    <code class=\"slate-code\">This text is inline code
+    </code>
+</p></div>

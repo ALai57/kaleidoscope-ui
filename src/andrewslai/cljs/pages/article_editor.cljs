@@ -6,12 +6,6 @@
             [taoensso.timbre :refer-macros [infof]]
             ))
 
-(def ARTICLE-MOCK
-  {"1" {:content se/INITIAL-VALUE
-        :title   "My first article"}
-   "2" {:content [{:type "p" :children [{:text "This is editable plain text"}]}]
-        :title   "My second article"}})
-
 ;; TODO: Update such that
 (defn editor-ui
   [{:keys [save-fn load-fn user editor-article-id recent-content] :as args}]
@@ -28,9 +22,3 @@
                        :title         title
                        :user          {:firstName "Andrew"
                                        :lastName  "Lai"})]]))
-
-#_(get ARTICLE-MOCK editor-article-id)
-#_(fn []
-    (load-fn (if (= "2" editor-article-id)
-               "1"
-               "2")))
