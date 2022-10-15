@@ -20,7 +20,7 @@
          :active-content response))
 
 (defn make-article-url [article-name]
-  (str "/articles/" (name article-name)))
+  (str "/compositions/" (name article-name)))
 
 (reg-event-fx
  :request-article
@@ -51,7 +51,7 @@
  :request-recent-articles
  (fn [{:keys [db]} [_]]
    {:http-xhrio {:method          :get
-                 :uri             "/articles"
+                 :uri             "/compositions"
                  :format          (ajax/json-request-format)
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-recent-articles]

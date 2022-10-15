@@ -90,14 +90,14 @@
   (hs/select (hs/tag :script) hickory))
 
 (defn article
-  [{:keys [title author timestamp content]}]
+  [{:keys [title author modified-at content]}]
   (let [js-content (select-js (->hickory content))]
     (infof (gstr/format "Selecting JS content from %s : %s" content js-content))
     [box
      [:div#goodies
       [:h2.article-title title]
       [:div.article-subheading (str "Author: " author)]
-      [:div.article-subheading timestamp]
+      [:div.article-subheading modified-at]
       [:div.divider.py-1.bg-dark]
       [:br][:br]
       [:div (format-content (select-html (->hickory content)))]

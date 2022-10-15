@@ -6,7 +6,6 @@
             [taoensso.timbre :refer-macros [infof]]
             ))
 
-;; TODO: Update such that
 (defn editor-ui
   [{:keys [save-fn load-fn user editor-article-id recent-content] :as args}]
   (let [[{:keys [content title] :as article}] (filter (fn [{:keys [id] :as article}]
@@ -15,7 +14,7 @@
     (infof "Loading Article ID = %s into editor. Title %s" editor-article-id title)
     ;;(println "CONTENT" content)
 
-    ;; Key is used here to trigger a reload when the recent-content changes
+    ;; NOTE: Key is used here to trigger a reload when the recent-content changes
     [:div {:key (str editor-article-id (count recent-content))}
      [se/editor (assoc args
                        :initial-value content
