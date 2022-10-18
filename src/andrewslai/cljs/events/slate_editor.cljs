@@ -23,10 +23,10 @@
    db))
 
 (reg-event-db
- :update-editor-article-id
+ :update-editor-branch-id
  (fn [db [_ new-id]]
-   (let [new-db (assoc db :editor-article-id new-id)]
-     (infof "Update Editor Article ID: %s" new-id)
+   (let [new-db (assoc db :editor-branch-id new-id)]
+     (infof "Update Editor Branch ID: %s" new-id)
      ;;(println "NEW DB" new-db)
      new-db)))
 
@@ -40,11 +40,11 @@
 
 (reg-event-fx
  :save-article!
- (fn [{:keys [db]} [_ {:keys [title] :as article}]]
+ (fn [{:keys [db]} [_ {:keys [title branch-name] :as article}]]
    (let [sanitized-title (title->url title)]
      (infof "Saving article: %s" article)
-     {:http-xhrio {:method          :put
-                   :uri             (gstr/format "/articles/%s" sanitized-title)
+     {:http-xhrio {:method          :post
+                   :uri             (gstr/format "/articles/%s/branches/%s" sanitized-title branch-name)
                    :params          article
                    :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
                                                                        "test"))

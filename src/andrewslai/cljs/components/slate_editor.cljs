@@ -6,6 +6,7 @@
             [reagent-mui.components :refer [text-field button]]
             [goog.object :as g]
             [goog.string :as gstr]
+            [andrewslai.cljs.article-cards :as article-cards]
             ["pretty" :as pretty]
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
             ["@styled-icons/boxicons-regular/Library" :refer [Library]]
@@ -411,7 +412,7 @@
     :icon        (reagent/create-element Library)}])
 
 (defn management-toolbar
-  [{:keys [save-fn load-fn title username recent-content] :as args}]
+  [{:keys [save-fn load-fn title username recent-content branch-name] :as args}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     [:<>
@@ -424,6 +425,7 @@
        :onMouseDown (fn [event]
                       (let [html (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
                         (save-fn {:article-tags "thoughts"
+                                  :branch-name  branch-name
                                   :content      (gstr/format "<div>%s</div>" html)
                                   :title        title})))}]]))
 
@@ -444,12 +446,13 @@
     [:div]))
 
 (defn editor
-  [{:keys [user save-fn initial-value title load-fn] :as args}]
+  [{:keys [user save-fn initial-value title load-fn branch-name branch-id]
+    :as args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
   (let [plate-html (reagent/atom [])
         loaded     (reagent/atom false)
-        title      (reagent/atom title)
+        title      (reagent/atom (or title "<<YOUR NEW ARTICLE'S TITLE HERE>>"))
         username   (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in"))]
     (fn []
       ;;(println "PLATE HTML" plate-html "LOADED" loaded "INITIAL VALUE" initial-value)
@@ -470,6 +473,15 @@
                                  :width         "400px"}
                       :onChange (fn [event]
                                   (reset! title (.. event -target -value)))}]
+
+         [article-cards/article-branch {:on-click (fn [event]
+                                                    (js/console.log "Clicked branch!"))}
+          (or branch-name "main")]
+         [article-cards/article-branch {:on-click (fn new-branch [event]
+                                                    (js/console.log "Creating new branch"))
+                                        :style    {:background-color "green"}}
+          (gstr/format "Branch off of %s" (or branch-name "main"))]
+
          (when-not @loaded
            [:f> deserializer
             {:loaded            loaded

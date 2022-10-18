@@ -79,12 +79,11 @@
       :login-response      @(subscribe [:login-response])
       :recent-content      @(subscribe [:recent-content])
       :active-content      @(subscribe [:active-content])
-      :editor-article-id   @(subscribe [:editor-article-id])
-      :load-fn             (fn [{:keys [id] :as article}]
-                             (infof "Updating editor article id to %s" id)
-                             (dispatch [:update-editor-article-id id]))
-      :save-fn             (fn [{:keys [content title article-tags]}]
-                             (dispatch [:save-article! {:article-tags article-tags
-                                                        :content      content
-                                                        :title        title}]))}
+      :editor-branch-id    @(subscribe [:editor-branch-id])
+      :load-fn             (fn [{:keys [article-id] :as article-branch}]
+                             (infof "Updating editor article id to %s" article-id)
+                             ;;(infof "article-branch %s" article-branch)
+                             (dispatch [:update-editor-branch-id article-id]))
+      :save-fn             (fn [{:keys [content title article-tags branch-name] :as save-data}]
+                             (dispatch [:save-article! save-data]))}
      ]))

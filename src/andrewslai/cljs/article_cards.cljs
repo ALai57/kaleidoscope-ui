@@ -48,11 +48,11 @@
   (println "Clicked thin article card"))
 
 (defn article-branch
-  [on-click branch-name]
+  [{:keys [on-click style]}
+   branch-name]
   [button {:variant   "contained"
            :startIcon (reagent/create-element GitBranch #js {:width "20px"})
-           :style     {:borderRadius    "35px"
-                       :backgroundColor "#ba59db"}
+           :style     (merge style {:borderRadius "35px"})
            :onClick   on-click}
    branch-name])
 
@@ -60,7 +60,7 @@
   "For displaying an article's lineage and branches"
   ([article]
    (thin-article-card article {:n-rows 2}))
-  ([{:keys [article-tags title article-url article-id created-at] :as article}
+  ([{:keys [article-tags title article-url article-id created-at branch-name] :as article}
     {:keys [n-rows on-click] :as options
      :or   {n-rows   2
             on-click log-click}}]
@@ -86,9 +86,9 @@
           #_[:p.card-text {:style {:color "darkgray"}}
              created-at]]]]]]]
     [accordion-details
-     [article-branch (fn [event]
-                       (on-click article))
-      "main"]]]))
+     [article-branch {:on-click (fn [event]
+                                  (on-click article))}
+      branch-name]]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Full display of all cards

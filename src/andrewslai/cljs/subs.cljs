@@ -86,9 +86,9 @@
    (:notification-type db)))
 
 (reg-sub
- :editor-article-id
+ :editor-branch-id
  (fn [db]
-   (:editor-article-id db)))
+   (:editor-branch-id db)))
 
 
 ;; -------------------------------------------------------------------------------------
