@@ -7,16 +7,12 @@
             ))
 
 (defn editor-ui
-  [{:keys [save-fn load-fn user editor-branch-id recent-content] :as args}]
-  (let [[{:keys [content title branch-name branch-id] :as article-branch}]
-        (filter (fn [{:keys [branch-id] :as article-branch}]
-                  (= editor-branch-id branch-id))
-                recent-content)]
-    (infof "Loading Article Branch ID = %s into editor. Title %s" editor-branch-id title)
-    ;;(println "CONTENT" content)
+  [{:keys [save-fn load-fn user initial-editor-data branches] :as args}]
+  (let [{:keys [content title branch-name branch-id] :as article-branch} initial-editor-data]
+    (infof "Loading Article Branch ID = %s into editor. Title %s" branch-id title)
 
-    ;; NOTE: Key is used here to trigger a reload when the recent-content changes
-    [:div {:key (str editor-branch-id (count recent-content))}
+    ;; NOTE: Key is used here to trigger a reload when :branches changes
+    [:div {:key (str branch-id (count branches))}
      [se/editor (assoc args
                        :branch-name   branch-name
                        :branch-id     branch-id

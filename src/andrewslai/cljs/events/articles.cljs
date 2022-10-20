@@ -4,7 +4,7 @@
             [cljs.spec.alpha :as s]
             [day8.re-frame.http-fx]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
-            [taoensso.timbre :as timbre :refer-macros [info infof debugf]]))
+            [taoensso.timbre :as timbre :refer-macros [info infof debugf errorf]]))
 
 (defn load-article [db [_ response]]
   (info "Loading article:" (dissoc response :content))
@@ -56,4 +56,31 @@
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-recent-articles]
                  :on-failure      [:load-recent-articles]}
+    :db         (assoc db :loading? true)}))
+
+
+(defn load-all-branches
+  [db [_ response]]
+  (infof "Retrieved all branches: found %s" (count response))
+  (debugf "Branches %s" response)
+  (assoc db
+         :loading?     false
+         :branches response))
+(reg-event-db :load-all-branches load-all-branches)
+
+(defn load-all-branches-failure
+  [db [_ response]]
+  (errorf "Failed to retrieve branches %s" response)
+  db)
+(reg-event-db :load-all-branches-failure load-all-branches-failure)
+
+(reg-event-fx
+ :request-all-branches
+ (fn [{:keys [db]} [_]]
+   {:http-xhrio {:method          :get
+                 :uri             "/branches"
+                 :format          (ajax/json-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success      [:load-all-branches]
+                 :on-failure      [:load-all-branches-failure]}
     :db         (assoc db :loading? true)}))

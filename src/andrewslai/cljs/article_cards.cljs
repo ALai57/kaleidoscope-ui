@@ -60,7 +60,7 @@
   "For displaying an article's lineage and branches"
   ([article]
    (thin-article-card article {:n-rows 2}))
-  ([{:keys [article-tags title article-url article-id created-at branch-name] :as article}
+  ([{:keys [article-tags article-url article-id created-at branches] :as article}
     {:keys [n-rows on-click] :as options
      :or   {n-rows   2
             on-click log-click}}]
@@ -79,25 +79,33 @@
                                   :height     "100%"}}]]
          [:div.col.bg-light.text-dark.thin-card-description
           [:h6 {:style {:margin "0px"}}
-           (truncate title 33 n-rows)
+           (truncate article-url 33 n-rows)
            #_[:a {:href  (gstr/format "#/%s/content/%s" article-tags article-url)
                   :title title}
               (truncate title 33 n-rows)]]
           #_[:p.card-text {:style {:color "darkgray"}}
              created-at]]]]]]]
     [accordion-details
-     [article-branch {:on-click (fn [event]
-                                  (on-click article))}
-      branch-name]]]))
+     (for [{:keys [branch-name branch-id]} branches]
+       ^{:key branch-name} [article-branch {:on-click (fn [event]
+                                                        (on-click (assoc article
+                                                                         :branch-name branch-name
+                                                                         :branch-id   branch-id)))}
+                            branch-name])]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Full display of all cards
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn thin-content-cards
-  [{:keys [recent-content on-click]}]
-  [:div {:style {:max-width "500px"}}
-   (for [{:keys [title] :as content} recent-content]
-     ^{:key title} [thin-article-card content {:on-click on-click}])])
+  [{:keys [branches on-click]}]
+  (let [grouped-branches (reduce-kv (fn [acc m xs]
+                                      (conj acc (assoc m :branches (map #(select-keys % [:branch-name :branch-id]) xs))))
+                                    []
+                                    (group-by #(select-keys % [:article-id :author :article-url :article-tags]) branches))]
+    ;;(println "GROUPED BRANCHES" grouped-branches)
+    [:div {:style {:max-width "500px"}}
+     (for [{:keys [branches article-id] :as content} grouped-branches]
+       ^{:key (gstr/format "%s-%s" branches article-id)} [thin-article-card content {:on-click on-click}])]))
 
 (defn recent-content-cards
   [{:keys [recent-content]}]

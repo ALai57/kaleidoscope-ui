@@ -1,6 +1,6 @@
 (ns andrewslai.cljs.stories.components.article-selector-stories
   (:require [andrewslai.cljs.components.article-selector :as article-selector]
-            [andrewslai.cljs.stories.thin-article-cards-display-stories :refer [example-recent-content]]
+            ;;[andrewslai.cljs.stories.thin-article-cards-display-stories :refer [example-recent-content]]
             [andrewslai.cljs.stories.helper :as helper]
             [reagent-mui.components :refer [button]]
             [reagent.core :as reagent]))
@@ -21,5 +21,5 @@
   [args]
   (reagent/as-element [article-selector/article-selector (helper/->params args)]))
 
-(def ^:export Default-Side-Menu
-  (helper/->story template {:recent-content example-recent-content}))
+#_(def ^:export Default-Side-Menu
+    (helper/->story template {:recent-content example-recent-content}))

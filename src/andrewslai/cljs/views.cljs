@@ -78,12 +78,17 @@
       :notification-type   @(subscribe [:notification-type])
       :login-response      @(subscribe [:login-response])
       :recent-content      @(subscribe [:recent-content])
+      :branches            @(subscribe [:branches])
       :active-content      @(subscribe [:active-content])
       :editor-branch-id    @(subscribe [:editor-branch-id])
-      :load-fn             (fn [{:keys [article-id] :as article-branch}]
+      :initial-editor-data @(subscribe [:initial-editor-data])
+      :load-fn             (fn [{:keys [article-id branch-id] :as article-branch}]
                              (infof "Updating editor article id to %s" article-id)
                              ;;(infof "article-branch %s" article-branch)
+
+                             (dispatch [:load-latest-version! article-branch])
+                             ;; TODO deprecate me
                              (dispatch [:update-editor-branch-id article-id]))
-      :save-fn             (fn [{:keys [content title article-tags branch-name] :as save-data}]
-                             (dispatch [:save-article! save-data]))}
+      :save-fn (fn [{:keys [content title article-tags branch-name] :as save-data}]
+                 (dispatch [:save-article! save-data]))}
      ]))

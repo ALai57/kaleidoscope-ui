@@ -412,14 +412,14 @@
     :icon        (reagent/create-element Library)}])
 
 (defn management-toolbar
-  [{:keys [save-fn load-fn title username recent-content branch-name] :as args}]
+  [{:keys [save-fn load-fn title username branches branch-name article-url] :as args}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     [:<>
      [article-selector/article-selector
-      {:expand-button  expand-button
-       :recent-content recent-content
-       :on-click       load-fn}]
+      {:expand-button expand-button
+       :branches      branches
+       :on-click      load-fn}]
      [:> ToolbarButton
       {:icon        (reagent/create-element Save3)
        :onMouseDown (fn [event]
@@ -427,6 +427,7 @@
                         (save-fn {:article-tags "thoughts"
                                   :branch-name  branch-name
                                   :content      (gstr/format "<div>%s</div>" html)
+                                  :article-url  article-url
                                   :title        title})))}]]))
 
 (defn deserializer
@@ -446,7 +447,7 @@
     [:div]))
 
 (defn editor
-  [{:keys [user save-fn initial-value title load-fn branch-name branch-id]
+  [{:keys [user save-fn initial-value title load-fn branch-name]
     :as args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)

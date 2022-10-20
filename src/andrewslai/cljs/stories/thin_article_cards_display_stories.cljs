@@ -13,17 +13,41 @@
   [args]
   (reagent/as-element [article-cards/thin-content-cards (helper/->params args)]))
 
-(def get-inputs
-  "Extracts inputs from existing card-stories so we can compose story pieces"
-  (partial helper/->story-inputs thin-card-stories/example-data))
-
-(def example-recent-content
-  [(get-inputs thin-card-stories/Default)
-   (get-inputs thin-card-stories/Research)
-   (get-inputs thin-card-stories/Thoughts)
-   (get-inputs thin-card-stories/Data-Analysis)
-   (get-inputs thin-card-stories/About)
-   (get-inputs thin-card-stories/Archive)])
-
 (def ^:export Default-thin-content
-  (helper/->story template {:recent-content example-recent-content}))
+  (helper/->story template {:branches [{:branch-id 1,
+                                        :branch-name "main",
+                                        :published-at "2022-03-01T00:00:00Z",
+                                        :article-id 1,
+                                        :author "Andrew Lai",
+                                        :article-url "my-first-article",
+                                        :article-tags "thoughts"}
+                                       {:branch-id 2,
+                                        :branch-name "main",
+                                        :published-at "2022-03-01T00:00:00Z",
+                                        :article-id 2,
+                                        :author "Andrew Lai",
+                                        :article-url "my-second-article",
+                                        :article-tags "thoughts"}
+                                       {:branch-id 3,
+                                        :branch-name "main",
+                                        :published-at "2022-03-01T00:00:00Z",
+                                        :article-id 3,
+                                        :author "Andrew Lai",
+                                        :article-url "my-third-article",
+                                        :article-tags "thoughts"}
+                                       {:branch-id 4,
+                                        :branch-name "main",
+                                        :published-at "2022-03-01T00:00:00Z",
+                                        :article-id 4,
+                                        :author "Andrew Lai",
+                                        :article-url
+                                        "neural-network-explanation",
+                                        :article-tags "thoughts"}
+                                       {:branch-id 5,
+                                        :branch-name "test",
+                                        :published-at nil,
+                                        :article-id 4,
+                                        :author "Andrew Lai",
+                                        :article-url
+                                        "neural-network-explanation",
+                                        :article-tags "thoughts"}]}))

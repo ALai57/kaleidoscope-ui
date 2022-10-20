@@ -23,29 +23,43 @@
   (reagent/as-element [article-cards/thin-article-card (helper/->params args)]))
 
 (def ^:export Default
-  (helper/->story template {:title        "An example with the default image"
-                            :article-tags "unrecognized"}))
+  (helper/->story template {:article-url  "An example with the default image"
+                            :article-tags "unrecognized"
+                            :branches [{:branch-name "main" :branch-id 1}
+                                       {:branch-name "new" :branch-id 2}]}))
 
 (def ^:export Truncated-Header
-  (helper/->story template {:title        "An example with the default image and more things"
-                            :article-tags "unrecognized"}))
+  (helper/->story template {:article-url  "An example with the default image and more things"
+                            :article-tags "unrecognized"
+                            :branches     [{:branch-name "main" :branch-id 1}
+                                           {:branch-name "new" :branch-id 2}]}))
 
 (def ^:export Research
-  (helper/->story template {:title        "An example research article"
-                            :article-tags "research"}))
+  (helper/->story template {:article-url  "An example research article"
+                            :article-tags "research"
+                            :branches [{:branch-name "main" :branch-id 1}
+                                       {:branch-name "new" :branch-id 2}]}))
 
 (def ^:export Thoughts
-  (helper/->story template {:title        "An example thoughts article"
-                            :article-tags "thoughts"}))
+  (helper/->story template {:article-url  "An example thoughts article"
+                            :article-tags "thoughts"
+                            :branches [{:branch-name "main" :branch-id 1}
+                                       {:branch-name "new" :branch-id 2}]}))
 
 (def ^:export Data-Analysis
-  (helper/->story template {:title        "An example data-analysis article"
-                            :article-tags "data-analysis"}))
+  (helper/->story template {:article-url  "An example data-analysis article"
+                            :article-tags "data-analysis"
+                            :branches [{:branch-name "main" :branch-id 1}
+                                       {:branch-name "new" :branch-id 2}]}))
 
 (def ^:export About
-  (helper/->story template {:title        "An example about me article"
-                            :article-tags "about"}))
+  (helper/->story template {:article-url  "An example about me article"
+                            :article-tags "about"
+                            :branches [{:branch-name "main" :branch-id 1}
+                                       {:branch-name "new" :branch-id 2}]}))
 
 (def ^:export Archive
-  (helper/->story template {:title        "An example archived article"
-                            :article-tags "archive"}))
+  (helper/->story template {:article-url  "An example archived article"
+                            :article-tags "archive"
+                            :branches [{:branch-name "main" :branch-id 1}
+                                       {:branch-name "new" :branch-id 2}]}))

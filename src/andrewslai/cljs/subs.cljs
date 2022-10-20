@@ -90,6 +90,15 @@
  (fn [db]
    (:editor-branch-id db)))
 
+(reg-sub
+ :branches
+ (fn [db]
+   (:branches db)))
+
+(reg-sub
+ :initial-editor-data
+ (fn [db]
+   (:initial-editor-data db)))
 
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler

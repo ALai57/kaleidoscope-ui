@@ -19,7 +19,6 @@
 
 (defn create-article-success [{:keys [title author timestamp
                                       article_tags article_url] :as article}]
-  (infof "Success creating article: %s" article)
   (let [url (str "/#/" article_tags "/content/" article_url)
         close-fn (fn []
                    (do (infof "Failed to close")

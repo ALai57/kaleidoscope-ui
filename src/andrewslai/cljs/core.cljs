@@ -20,6 +20,7 @@
 (dispatch-sync [:initialize-db])
 (dispatch-sync [:initialize-keycloak])
 (dispatch-sync [:request-recent-articles])
+(dispatch-sync [:request-all-branches])
 (dispatch-sync [:request-portfolio-cards])
 
 ;; -- Debugging aids ----------------------------------------------------------
