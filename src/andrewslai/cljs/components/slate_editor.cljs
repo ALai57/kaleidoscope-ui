@@ -129,7 +129,7 @@
               PlateFloatingLink
               parseHtmlDocument
               ]]
-            [taoensso.timbre :as log]))
+            [taoensso.timbre :refer-macros [infof]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Log suppresion for known spammy logs
@@ -412,8 +412,10 @@
     :icon        (reagent/create-element Library)}])
 
 (defn management-toolbar
-  [{:keys [save-fn load-fn title username branches branch-name article-url] :as args}]
-  (let [editor-id  (useEventPlateId)
+  [{:keys [user save-fn load-fn branches initial-branch] :as args}]
+  (let [{:keys [title branch-name article-url]} initial-branch
+
+        editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     [:<>
      [article-selector/article-selector
@@ -433,31 +435,37 @@
 (defn deserializer
   [{:keys [raw-html deserialized-html loaded]
     :or   {raw-html ""}}]
-  (println "RAW HTML" raw-html  "DESERIALIZED" @deserialized-html "LOADED" @loaded)
-  ;;(js/console.log "RAW HTML" raw-html  "DESERIALIZED" @deserialized-html "LOADED" @loaded)
-  (when-not @loaded
+  (infof "Checking if HTML is loaded: %s" @loaded)
+  (if-not @loaded
     (let [editor-id  (useEventPlateId)
           editor-ref (usePlateEditorRef editor-id)
           html       (plate/deserializeHtml editor-ref #js {:element raw-html})]
-      (println "HTML" html)
+      (infof "Deserializing HTML.\nRaw HTML: %s\nDeserialized-html: %s" raw-html (js->clj html))
       (reset! deserialized-html html)
-      (reset! loaded true)))
+      (reset! loaded true))
+    (infof "HTML is already loaded. Skipping HTML import."))
 
   (fn []
     [:div]))
 
+;; TODO: Move to user namespace
+(defn get-username
+  [user]
+  (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in")))
+
 (defn editor
-  [{:keys [user save-fn initial-value title load-fn branch-name]
+  [{:keys [user save-fn load-fn initial-branch]
     :as args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
-  (let [plate-html (reagent/atom [])
+  (let [{:keys [content title branch-id branch-name]} initial-branch
+
+        plate-html (reagent/atom [])
         loaded     (reagent/atom false)
-        title      (reagent/atom (or title "<<YOUR NEW ARTICLE'S TITLE HERE>>"))
-        username   (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in"))]
+        title      (reagent/atom (or title "<<YOUR NEW ARTICLE'S TITLE HERE>>"))]
     (fn []
       ;;(println "PLATE HTML" plate-html "LOADED" loaded "INITIAL VALUE" initial-value)
-      [:div {:key (str "editor" initial-value @loaded)}
+      [:div {:key (str "editor" content @loaded)}
        [:> PlateProvider {:initialValue @plate-html
                           :plugins      PLUGINS}
         [:div {:style {:padding          "10px"
@@ -486,7 +494,7 @@
          (when-not @loaded
            [:f> deserializer
             {:loaded            loaded
-             :raw-html          (or initial-value "")
+             :raw-html          (or content "")
              :deserialized-html plate-html}])]
         [:div.divider.py-1.bg-dark]
         [:> HeadingToolbar {:style {:top "60px"}}
@@ -500,11 +508,11 @@
                                     :top              "60px"
                                     :width            "70px"}}
          [:f> management-toolbar
-          (assoc args :title @title)]]
+          (update args :initial-branch assoc :title @title)]]
         [:div {:style {:height "120px"}}]
         [:div#primary-content
          [:h2.article-title @title]
-         [:div.article-subheading (gstr/format "Author: %s" username)]
+         [:div.article-subheading (gstr/format "Author: %s" (get-username user))]
          [:div.article-subheading "2022-01-01T00:00:00"]
          [:div.divider.py-1.bg-dark]
          [:br][:br]

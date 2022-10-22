@@ -7,16 +7,13 @@
             ))
 
 (defn editor-ui
-  [{:keys [save-fn load-fn user initial-editor-data branches] :as args}]
-  (let [{:keys [content title branch-name branch-id] :as article-branch} initial-editor-data]
-    (infof "Loading Article Branch ID = %s into editor. Title %s" branch-id title)
+  [{:keys [user save-fn load-fn initial-editor-data branches] :as args}]
+  (let [{:keys [branch-id] :as article-branch} initial-editor-data]
+    (infof "Loading Editor: %s" (select-keys article-branch [:branch-id :title]))
 
     ;; NOTE: Key is used here to trigger a reload when :branches changes
     [:div {:key (str branch-id (count branches))}
      [se/editor (assoc args
-                       :branch-name   branch-name
-                       :branch-id     branch-id
-                       :initial-value content
-                       :title         title
-                       :user          {:firstName "Andrew"
-                                       :lastName  "Lai"})]]))
+                       :initial-branch initial-editor-data
+                       :user           {:firstName "Andrew"
+                                        :lastName  "Lai"})]]))
