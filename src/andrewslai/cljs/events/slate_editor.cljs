@@ -74,7 +74,7 @@
    (let [sanitized-title (title->url title)]
      (infof "Saving article: %s" article)
      {:http-xhrio {:method          :post
-                   :uri             (gstr/format "/articles/%s/branches/%s" (or article-url sanitized-title) branch-name)
+                   :uri             (gstr/format "/articles/%s/branches/%s" (or article-url sanitized-title) (or branch-name "main"))
                    :params          article
                    :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
                                                                        "test"))
