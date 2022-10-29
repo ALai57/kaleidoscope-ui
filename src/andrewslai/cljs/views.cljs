@@ -82,13 +82,16 @@
       :active-content      @(subscribe [:active-content])
       :editor-branch-id    @(subscribe [:editor-branch-id])
       :initial-editor-data @(subscribe [:initial-editor-data])
-      :load-fn             (fn [{:keys [article-id branch-id] :as article-branch}]
-                             (infof "Updating editor article id to %s" article-id)
-                             ;;(infof "article-branch %s" article-branch)
+      :publish-fn          (fn [{:keys [article-url branch-name] :as article-branch}]
+                             (infof "Publishing branch %s of article %s" branch-name article-url)
+                             (dispatch [:publish-branch! article-branch]))
+      :load-fn (fn [{:keys [article-id branch-id] :as article-branch}]
+                 (infof "Updating editor article id to %s" article-id)
+                 ;;(infof "article-branch %s" article-branch)
 
-                             (dispatch [:load-latest-version! article-branch])
-                             ;; TODO deprecate me
-                             (dispatch [:update-editor-branch-id article-id]))
+                 (dispatch [:load-latest-version! article-branch])
+                 ;; TODO deprecate me
+                 (dispatch [:update-editor-branch-id article-id]))
       :save-fn (fn [{:keys [content title article-tags branch-name] :as save-data}]
                  (dispatch [:save-article! save-data]))}
      ]))

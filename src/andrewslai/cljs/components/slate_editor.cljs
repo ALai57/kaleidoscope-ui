@@ -11,6 +11,7 @@
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
             ["@styled-icons/boxicons-regular/Library" :refer [Library]]
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
+            ["@styled-icons/boxicons-regular/Rocket" :refer [Rocket]]
             ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
             ["@styled-icons/material/FormatAlignLeft" :refer [FormatAlignLeft]]
             ["@styled-icons/material/FormatAlignCenter" :refer [FormatAlignCenter]]
@@ -412,7 +413,7 @@
     :icon        (reagent/create-element Library)}])
 
 (defn management-toolbar
-  [{:keys [user save-fn load-fn branches initial-branch] :as args}]
+  [{:keys [user save-fn load-fn publish-fn branches initial-branch] :as args}]
   (let [{:keys [title branch-name article-url]} initial-branch
 
         editor-id  (useEventPlateId)
@@ -430,7 +431,11 @@
                                   :branch-name  branch-name
                                   :content      (gstr/format "<div>%s</div>" html)
                                   :article-url  article-url
-                                  :title        title})))}]]))
+                                  :title        title})))}]
+     [:> ToolbarButton
+      {:icon        (reagent/create-element Rocket)
+       :onMouseDown (fn [event]
+                      (publish-fn initial-branch))}]]))
 
 (defn deserializer
   [{:keys [raw-html deserialized-html loaded]

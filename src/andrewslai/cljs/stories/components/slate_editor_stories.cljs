@@ -23,5 +23,7 @@
                                             :lastName  "Lai"}
                             :initial-value EXAMPLE-INPUT
                             :title         "My new article"
+                            :publish-fn    (fn [a]
+                                             (println "Clicked Publish" a))
                             :save-fn       (fn [html]
                                              (println "CLICKED SAVE" html))}))

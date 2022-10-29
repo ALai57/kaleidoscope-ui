@@ -74,8 +74,8 @@
    (let [sanitized-title (title->url title)]
      (infof "Saving article: %s" article)
      {:http-xhrio {:method          :post
-                   :uri             (gstr/format "/articles/%s/branches/%s" (or article-url sanitized-title) (or branch-name "main"))
-                   :params          article
+                   :uri             (gstr/format "/articles/%s/branches/%s/versions" (or article-url sanitized-title) (or branch-name "main"))
+                   :params          (assoc article :article-tags "thoughts")
                    :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
                                                                        "test"))
                                      :Content-Type "application/json"}
@@ -84,3 +84,32 @@
                    :on-success      [:save-success]
                    :on-failure      [:save-failure]}
       :db         (assoc db :loading? true)})))
+
+
+
+(reg-event-db
+ :publish-success
+ (fn [db [_ response]]
+   (infof "Success publishing article response: %s" response)
+   db))
+
+(reg-event-db
+ :publish-failure
+ (fn [db [_ response]]
+   (infof "Publish article failure response: %s" response)
+   db))
+
+(reg-event-fx
+ :publish-branch!
+ (fn [{:keys [db]} [_ {:keys [branch-name article-url] :as article}]]
+   (infof "Publishing article: %s" article)
+   {:http-xhrio {:method          :put
+                 :uri             (gstr/format "/articles/%s/branches/%s/publish" article-url branch-name)
+                 :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                     "test"))
+                                   :Content-Type "application/json"}
+                 :format          (ajax/json-request-format)
+                 :response-format (ajax/json-response-format {:keywords? true})
+                 :on-success      [:publish-success]
+                 :on-failure      [:publish-failure]}
+    :db         (assoc db :loading? true)}))
