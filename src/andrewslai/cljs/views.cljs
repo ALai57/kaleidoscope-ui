@@ -5,6 +5,7 @@
             [andrewslai.cljs.pages.admin :refer [login-ui]]
             [andrewslai.cljs.pages.article-editor :refer [editor-ui]]
             [clojure.string :refer [includes?]]
+            [goog.string :as gstr]
             [re-frame.core :refer [subscribe
                                    dispatch]]
             [taoensso.timbre :refer-macros [infof]]))
@@ -93,5 +94,5 @@
                  ;; TODO deprecate me
                  (dispatch [:update-editor-branch-id article-id]))
       :save-fn (fn [{:keys [content title article-tags branch-name] :as save-data}]
-                 (dispatch [:save-article! save-data]))}
+                 (dispatch [:save-article! (update save-data :content gstr/unescapeEntities)]))}
      ]))

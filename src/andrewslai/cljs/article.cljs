@@ -60,11 +60,20 @@
                   (-> (.setAttribute "src" js-script))))
   ^{:key (str js-script)} [:div])
 
+(defn unescape
+  "https://github.com/reagent-project/reagent/issues/413"
+  [v]
+  (cond
+    (vector? v) (mapv unescape v)
+    (string? v) (gstr/unescapeEntities v)
+    :else       v))
+
 (defn format-content [content]
   [:div#article-content
    (when content
      (->> content
           hickory-to-hiccup
+          unescape
           hiccup->sablono))])
 
 (defn insert-dynamic-js! [content]
