@@ -304,6 +304,11 @@
   (pretty "<h1 class=\"slate-h1\">Deserialize HTML</h1><div class=\"slate-p\">By default, pasting content into a Slate editor will use the clipboard&apos;s <code class=\"slate-code\">&apos;text/plain&apos;</code>data. That&apos;s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle <code class=\"slate-code\">&apos;text/html&apos;</code>data.</div><div class=\"slate-p\">This is an example of doing exactly that!</div><div class=\"slate-p\">Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it&apos;s formatting should be preserved.</div><div class=\"slate-p\"></div>")
   )
 
+(defn unescape
+  "https://github.com/reagent-project/reagent/issues/413"
+  [s]
+  (and s (gstr/unescapeEntities s)))
+
 (defn Serialized
   []
   (let [editor (useEditorState)
@@ -326,13 +331,17 @@
            (map-indexed (fn [i line]
                           (let [line-props (getLineProps #js {:line line :key (str "line-" i)})]
                             [:div (assoc (js->clj line-props) :key i)
-                             (map-indexed (fn [c token]
-                                            (let [token-key   (str "token-" c)
-                                                  token-props (getTokenProps (clj->js {:token token
-                                                                                       :key   token-key}))]
-                                              [:span (assoc (js->clj token-props)
-                                                            :key token-key)]))
-                                          (js->clj line))]))
+                             (into [:<>]
+                                   (map-indexed (fn [c token]
+                                                  (let [token-key   (str "token-" c)
+                                                        token-props (getTokenProps (clj->js {:token token
+                                                                                             :key   token-key}))
+                                                        m           (-> token-props
+                                                                        (js->clj)
+                                                                        (assoc :key token-key)
+                                                                        (update "children" unescape))]
+                                                    [:span m]))
+                                                (js->clj line)))]))
                         tokens)])))]))
 
 ;; https://plate.udecode.io/
