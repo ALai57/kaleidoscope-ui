@@ -11,6 +11,7 @@
             ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
             ["@styled-icons/boxicons-regular/Library" :refer [Library]]
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
+            ["@styled-icons/boxicons-regular/Hide" :refer [Hide]]
             ["@styled-icons/boxicons-regular/Rocket" :refer [Rocket]]
             ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
             ["@styled-icons/material/FormatAlignLeft" :refer [FormatAlignLeft]]
@@ -114,7 +115,6 @@
               MarkToolbarButton
               ColorPickerToolbarDropdown
               LinkToolbarButton
-              ToolbarButton
 
               indent
               outdent
@@ -423,7 +423,7 @@
 
 (defn management-toolbar
   [{:keys [user save-fn load-fn publish-fn branches initial-branch] :as args}]
-  (let [{:keys [title branch-name article-url]} initial-branch
+  (let [{:keys [title branch-name article-url published-at]} initial-branch
 
         editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
@@ -441,10 +441,15 @@
                                   :content      (gstr/format "<div>%s</div>" html)
                                   :article-url  article-url
                                   :title        title})))}]
-     [:> ToolbarButton
-      {:icon        (reagent/create-element Rocket)
-       :onMouseDown (fn [event]
-                      (publish-fn initial-branch))}]]))
+     (if published-at
+       [:> ToolbarButton
+        {:icon        (reagent/create-element Hide)
+         :onMouseDown (fn [event]
+                        (js/console.log "Deleting branch not implemented yet"))}]
+       [:> ToolbarButton
+        {:icon        (reagent/create-element Rocket)
+         :onMouseDown (fn [event]
+                        (publish-fn initial-branch))}])]))
 
 (defn deserializer
   [{:keys [raw-html deserialized-html loaded]
