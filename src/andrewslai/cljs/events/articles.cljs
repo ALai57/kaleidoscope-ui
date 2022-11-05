@@ -80,6 +80,8 @@
    {:http-xhrio {:method          :get
                  :uri             "/branches"
                  :format          (ajax/json-request-format)
+                 :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                     "test"))}
                  :response-format (ajax/json-response-format {:keywords? true})
                  :on-success      [:load-all-branches]
                  :on-failure      [:load-all-branches-failure]}
