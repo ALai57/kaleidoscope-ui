@@ -77,6 +77,7 @@
 (reg-event-fx
  :request-all-branches
  (fn [{:keys [db]} [_]]
+   (infof "Requesting all branches")
    {:http-xhrio {:method          :get
                  :uri             "/branches"
                  :format          (ajax/json-request-format)

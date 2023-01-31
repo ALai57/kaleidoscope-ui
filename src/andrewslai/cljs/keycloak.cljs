@@ -22,14 +22,14 @@
   ([keycloak-instance success fail]
    (-> keycloak-instance
        (.init (clj->js {:checkLoginIframe false
-                        :pkceMethod "S256"}))
+                        :pkceMethod       "S256"}))
        (.then success)
        (.catch fail))))
 
 (defn login! [keycloak]
   (infof "Redirecting to %s for authentication" HOST_URL)
-  (.login keycloak (clj->js {:scope "roles"
-                             :prompt "consent"
+  (.login keycloak (clj->js {:scope       "roles"
+                             :prompt      "consent"
                              :redirectUri HOST_URL})))
 
 (defn logout! [keycloak]

@@ -33,10 +33,10 @@
                 ;;:devtools   {:after-load app.main/reload!}}
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
-                :dev     {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "http://172.17.0.1:8080/auth"
+                :dev     {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "http://172.17.0.1:8080"
                                             andrewslai.cljs.keycloak/CLIENTID "test-login"
                                             andrewslai.cljs.keycloak/REALM    "test"}}
-                :release {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "https://keycloak.andrewslai.com/auth"
+                :release {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
                                             andrewslai.cljs.keycloak/REALM    "andrewslai"
                                             andrewslai.cljs.keycloak/CLIENTID "andrewslai-frontend"}}
                 }
