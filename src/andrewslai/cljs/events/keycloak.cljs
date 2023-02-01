@@ -11,38 +11,38 @@
  (fn [cofx [_ _]]
    (infof "Initializing keycloak")
    {:keycloak {:action   :init
-               :instance (get-in cofx [:db :keycloak])}}))
+               :keycloak-adapter (get-in cofx [:db :keycloak])}}))
 
 (reg-event-fx
  :keycloak-login
  (fn [cofx _]
-   {:keycloak {:action :login
-               :instance (get-in cofx [:db :keycloak])}}))
+   {:keycloak {:action           :login
+               :keycloak-adapter (get-in cofx [:db :keycloak])}}))
 
 (reg-event-fx
  :keycloak-logout
  (fn [cofx _]
-   {:keycloak {:action :logout
-               :instance (get-in cofx [:db :keycloak])}}))
+   {:keycloak {:action           :logout
+               :keycloak-adapter (get-in cofx [:db :keycloak])}}))
 
 (reg-event-fx
  :keycloak-load-profile
  (fn [cofx _]
    (infof "Loading user profile")
-   {:keycloak {:action   :load-profile
-               :instance (get-in cofx [:db :keycloak])}}))
+   {:keycloak {:action           :load-profile
+               :keycloak-adapter (get-in cofx [:db :keycloak])}}))
 
 (reg-event-fx
  :keycloak-account-management
  (fn [cofx _]
-   {:keycloak {:action :account-management
-               :instance (get-in cofx [:db :keycloak])}}))
+   {:keycloak {:action           :account-management
+               :keycloak-adapter (get-in cofx [:db :keycloak])}}))
 
 (defn keycloak-effect
-  [{:keys [action instance]}]
+  [{:keys [action keycloak-adapter]}]
   (case action
-    :account-management (keycloak/account-management! instance)
-    :init               (keycloak/initialize! instance
+    :account-management (keycloak/account-management! keycloak-adapter)
+    :init               (keycloak/initialize! keycloak-adapter
                                               (fn on-success [auth?]
                                                 (infof "Successful keycloak initialization")
                                                 (when auth?
@@ -51,9 +51,9 @@
                                               (fn on-error [e]
                                                 (infof "Keycloak initialization failed")
                                                 (js/console.log "Init error" e)))
-    :load-profile       (keycloak/load-profile! instance)
-    :login              (keycloak/login! instance)
-    :logout             (keycloak/logout! instance)))
+    :load-profile       (keycloak/load-profile! keycloak-adapter)
+    :login              (keycloak/login! keycloak-adapter)
+    :logout             (keycloak/logout! keycloak-adapter)))
 
 (reg-fx :keycloak keycloak-effect)
 
