@@ -1,4 +1,5 @@
 #!/bin/bash
 
-npm version patch
 aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js s3://andrewslai/js/compiled/andrewslai.js
+echo "Incrementing package version..."
+npm version patch
