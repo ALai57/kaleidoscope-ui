@@ -71,11 +71,11 @@
     (infof "Currently displayed panel %s" active-panel)
     [(get panels active-panel login-ui)
      {:user                @(subscribe [:user])
-      :user-event-handlers {:on-login-click        #(dispatch [:keycloak-login])
+      :user-event-handlers {:on-login-click        #(dispatch [:keycloak-action :login])
                             :on-admin-click        #(dispatch [:request-admin-route])
                             :on-check-auth-click   #(dispatch [:check-identity])
-                            :on-logout-click       #(dispatch [:keycloak-logout])
-                            :on-edit-profile-click #(dispatch [:keycloak-account-management])}
+                            :on-logout-click       #(dispatch [:keycloak-action :logout])
+                            :on-edit-profile-click #(dispatch [:keycloak-action :account-management])}
       :notification-type   @(subscribe [:notification-type])
       :login-response      @(subscribe [:login-response])
       :recent-content      @(subscribe [:recent-content])

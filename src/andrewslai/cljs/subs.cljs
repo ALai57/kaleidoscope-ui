@@ -55,10 +55,10 @@
  (fn [db]
    (:user db)))
 
-(reg-sub
- :update-user-profile!
- (fn [db]
-   (:user-profile db)))
+#_(reg-sub
+   :update-user-profile!
+   (fn [db]
+     (:user-profile db)))
 
 (reg-sub
  :modal

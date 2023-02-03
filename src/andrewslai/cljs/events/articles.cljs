@@ -18,6 +18,7 @@
   (assoc db
          :loading? false
          :active-content response))
+(reg-event-db :load-article-failure load-article)
 
 (defn make-article-url [article-name]
   (str "/compositions/" (name article-name)))

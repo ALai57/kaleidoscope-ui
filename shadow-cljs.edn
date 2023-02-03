@@ -7,7 +7,8 @@
                 [clj-commons/secretary "1.2.4"]
                 [cljs-ajax "0.8.1"]
 
-                [day8.re-frame/http-fx "0.2.3"]
+                [day8.re-frame/http-fx "0.2.3"]       ;; For re-frame HTTP effects
+                [day8.re-frame/async-flow-fx "0.3.0"] ;; For better async startup
                 [hickory "0.7.1"]
                 [nubank/matcher-combinators "3.1.4" :scope "test" :exclusions [org.clojure/spec.alpha]]
                 [re-frame "1.2.0"]
@@ -33,7 +34,7 @@
                 ;;:devtools   {:after-load app.main/reload!}}
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
-                :dev     {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "http://172.17.0.1:8080"
+                :dev     {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "http://localhost:8080"
                                             andrewslai.cljs.keycloak/CLIENTID "test-login"
                                             andrewslai.cljs.keycloak/REALM    "test"}}
                 :release {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "https://keycloak.andrewslai.com"

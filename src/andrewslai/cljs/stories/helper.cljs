@@ -27,7 +27,7 @@
     (set! -args (clj->js default-values))))
 
 (defn get-story-args
-  [story]
+  [^js story]
   (js->clj (. story -args)))
 
 (defn ->story-inputs

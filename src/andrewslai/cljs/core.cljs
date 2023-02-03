@@ -8,6 +8,7 @@
             [andrewslai.cljs.events.articles]
             [andrewslai.cljs.events.keycloak]
             [andrewslai.cljs.events.projects-portfolio]
+            [andrewslai.cljs.events.user]
             [andrewslai.cljs.events.slate-editor]
             [andrewslai.cljs.keycloak :as keycloak]
             [andrewslai.cljs.subs]   ;; load them (see docs/App-Structure.md)
@@ -17,10 +18,9 @@
   (:import [goog History]
            [goog.history EventType]))
 
-(dispatch-sync [:initialize-db])
-(dispatch-sync [:initialize-keycloak])
+;; Use async-flow fx to make a single initialize function
+(dispatch-sync [:boot])
 (dispatch-sync [:request-recent-articles])
-(dispatch-sync [:request-all-branches])
 (dispatch-sync [:request-portfolio-cards])
 
 ;; -- Debugging aids ----------------------------------------------------------

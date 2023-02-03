@@ -1,7 +1,7 @@
 (ns andrewslai.cljs.keycloak
   (:require ["keycloak-js" :as keycloak-js]
             [re-frame.core :refer [dispatch]]
-            [taoensso.timbre :refer-macros [infof]]))
+            [taoensso.timbre :refer-macros [infof debugf]]))
 
 (goog-define AUTH_URL "defined-at-compile-time")
 (goog-define CLIENTID "defined-at-compile-time")
@@ -12,37 +12,42 @@
 
 (defn keycloak
   [options]
+  (debugf "Starting Keycloak...")
   (keycloak-js (clj->js options)))
 
 (defn initialize!
-  ([keycloak-instance]
+  ([^js keycloak-instance]
    (initialize! keycloak-instance
                 (fn [auth?] (infof "Authenticated? %s" auth?))
                 (fn [auth?] (infof "Unable to initialize Keycloak"))))
-  ([keycloak-instance success fail]
+  ([^js keycloak-instance success fail]
    (-> keycloak-instance
        (.init (clj->js {:checkLoginIframe false
                         :pkceMethod       "S256"}))
        (.then success)
        (.catch fail))))
 
-(defn login! [keycloak]
-  (infof "Redirecting to %s for authentication" HOST_URL)
+(defn login! [^js keycloak]
+  (infof "Redirecting to %s for authentication" AUTH_URL)
   (.login keycloak (clj->js {:scope       "roles"
                              :prompt      "consent"
                              :redirectUri HOST_URL})))
 
-(defn logout! [keycloak]
+(defn logout! [^js keycloak]
   (.logout keycloak))
 
-(defn account-management! [keycloak]
+(defn account-management! [^js keycloak]
   (.accountManagement keycloak))
 
+;; See https://keycloak.discourse.group/t/cors-issue-for-loaduserprofile-and-loaduserinfo/3549
 (defn load-profile!
-  [keycloak]
-  (-> keycloak
-      .loadUserProfile
-      (.then #(dispatch [:update-user-profile! (js->clj % :keywordize-keys true)]))))
+  [^js keycloak-instance success failure]
+  (debugf "Loading user profile...")
+  (js/console.log keycloak-instance)
+  (-> keycloak-instance
+      .loadUserInfo
+      (.then success)
+      (.catch failure)))
 
 
 ;; Make sequence diagram for the authentication flow

@@ -150,13 +150,14 @@
     (if-not (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message)
       (logger message))))
 
-(let [new-console (update (js->clj js/console :keywordize-keys true)
-                          :error
-                          wrap-suppress-errors)]
-  ;;(println new-console)
-  ;;((:error new-console) "HI HI")
-  ;;((:error new-console) "Warning: useLayoutEffect does nothing on the server.*")
-  (set! js/console (clj->js new-console)))
+(do
+  (let [new-console (update (js->clj js/console :keywordize-keys true)
+                            :error
+                            wrap-suppress-errors)]
+    ;;(println new-console)
+    ;;((:error new-console) "HI HI")
+    ;;((:error new-console) "Warning: useLayoutEffect does nothing on the server.*")
+    (set! js/console (clj->js new-console))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Core code
