@@ -112,11 +112,6 @@
    (info "Resetting Portfolio cards")
    (assoc db :selected-resume-info (:resume-info db))))
 
-(reg-event-db
- :test-transitions
- (fn [db [_ value]]
-   (assoc db :test-transitions value)))
-
 (reg-event-fx
  :request-portfolio-cards
  (fn [{:keys [db]} [_ article-name]]

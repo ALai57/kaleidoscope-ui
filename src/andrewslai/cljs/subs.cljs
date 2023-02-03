@@ -41,24 +41,14 @@
    (:recent-content db)))
 
 (reg-sub
-  :loading?
-  (fn [db _]
-    (:loading? db)))
-
-(reg-sub
- :test-transitions
- (fn [db]
-   (:test-transitions db)))
+ :loading?
+ (fn [db _]
+   (:loading? db)))
 
 (reg-sub
  :user
  (fn [db]
    (:user db)))
-
-#_(reg-sub
-   :update-user-profile!
-   (fn [db]
-     (:user-profile db)))
 
 (reg-sub
  :modal
