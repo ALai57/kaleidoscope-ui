@@ -1,20 +1,21 @@
 (ns andrewslai.cljs.core
   (:require-macros [secretary.core :refer [defroute]])
-  (:require [goog.events :as events]
-            [reagent.dom :refer [render]]
-            [re-frame.core :refer [dispatch dispatch-sync]]
-            [secretary.core :as secretary]
+  (:require [andrewslai.cljs.events.articles]
+            [andrewslai.cljs.events.auth]
             [andrewslai.cljs.events.core] ;; required to make the compiler
-            [andrewslai.cljs.events.articles]
             [andrewslai.cljs.events.keycloak]
             [andrewslai.cljs.events.projects-portfolio]
-            [andrewslai.cljs.events.user]
             [andrewslai.cljs.events.slate-editor]
+            [andrewslai.cljs.events.user]
             [andrewslai.cljs.keycloak :as keycloak]
             [andrewslai.cljs.subs]   ;; load them (see docs/App-Structure.md)
             [andrewslai.cljs.views]
+            [goog.events :as events]
             ;;[devtools.core :as devtools]
-            [keycloak-js :as keycloak-js])
+            [keycloak-js :as keycloak-js]
+            [re-frame.core :refer [dispatch dispatch-sync]]
+            [reagent.dom :refer [render]]
+            [secretary.core :as secretary])
   (:import [goog History]
            [goog.history EventType]))
 
