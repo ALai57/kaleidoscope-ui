@@ -1,7 +1,7 @@
 {
   "name": "andrewslai-frontend",
   "description": "My personal website's frontend",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "devDependencies": {
     "@babel/core": "7.16.0",
     "@storybook/addon-actions": "6.3.12",
