@@ -13,6 +13,7 @@
             ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
             ["@styled-icons/boxicons-regular/Hide" :refer [Hide]]
             ["@styled-icons/boxicons-regular/Rocket" :refer [Rocket]]
+            ["@styled-icons/boxicons-regular/ImageAdd" :refer [ImageAdd]]
             ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
             ["@styled-icons/material/FormatAlignLeft" :refer [FormatAlignLeft]]
             ["@styled-icons/material/FormatAlignCenter" :refer [FormatAlignCenter]]
@@ -70,6 +71,9 @@
               createExitBreakPlugin
               ExitBreakPlugin
 
+              createImagePlugin
+              createMediaEmbedPlugin
+
               Plate
               TEditableProps
 
@@ -115,6 +119,7 @@
               MarkToolbarButton
               ColorPickerToolbarDropdown
               LinkToolbarButton
+              ImageToolbarButton
 
               indent
               outdent
@@ -280,6 +285,8 @@
                       (createCodePlugin)
                       (createFontColorPlugin)
                       (createFontBackgroundColorPlugin)
+                      (createImagePlugin)
+                      (createMediaEmbedPlugin)
                       LINK-PLUGIN
                       (createListPlugin)
                       INDENT-PLUGIN
@@ -378,6 +385,8 @@
        :icon         (reagent/create-element FormatColorText)
        :selectedIcon (reagent/create-element Check)
        :tooltip      {:content "Highlight color"}}]
+     [:> ImageToolbarButton
+      {:icon (reagent/create-element ImageAdd)}]
      [:> LinkToolbarButton
       {:icon (reagent/create-element Link)}]
      [:> BlockToolbarButton

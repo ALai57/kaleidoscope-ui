@@ -299,6 +299,22 @@ pre {
   color: darkgray;
 }
 
+.slate-ImageElement-img {
+    display: block;
+    max-width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 3px;
+    object-fit: cover;
+}
+
+.slate-ImageElement-resizable {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .code-block {
   white-space: pre-wrap;
   background: hsl(30, 80%, 90%);
