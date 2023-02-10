@@ -224,28 +224,28 @@
 
 (def INDENT-PLUGIN
   (createIndentPlugin #js {:inject
-                           {:props
-                            {:validTypes [ELEMENT_PARAGRAPH
-                                          ELEMENT_H1
-                                          ELEMENT_H2
-                                          ELEMENT_H3
-                                          ELEMENT_H4
-                                          ELEMENT_H5
-                                          ELEMENT_H6
-                                          ELEMENT_BLOCKQUOTE
-                                          ELEMENT_CODE_BLOCK
-                                          ]}}}))
+                           #js {:props
+                                #js {:validTypes (clj->js [ELEMENT_PARAGRAPH
+                                                           ELEMENT_H1
+                                                           ELEMENT_H2
+                                                           ELEMENT_H3
+                                                           ELEMENT_H4
+                                                           ELEMENT_H5
+                                                           ELEMENT_H6
+                                                           ELEMENT_BLOCKQUOTE
+                                                           ELEMENT_CODE_BLOCK
+                                                           ])}}}))
 
 (def ALIGN-PLUGIN
   (createAlignPlugin #js {:inject
-                          {:props
-                           {:validTypes [ELEMENT_PARAGRAPH
-                                         ELEMENT_H1
-                                         ELEMENT_H2
-                                         ELEMENT_H3
-                                         ELEMENT_H4
-                                         ELEMENT_H5
-                                         ELEMENT_H6]}}}))
+                          #js {:props
+                               #js {:validTypes (clj->js [ELEMENT_PARAGRAPH
+                                                          ELEMENT_H1
+                                                          ELEMENT_H2
+                                                          ELEMENT_H3
+                                                          ELEMENT_H4
+                                                          ELEMENT_H5
+                                                          ELEMENT_H6])}}}))
 
 (def SOFT-BREAK-PLUGIN
   (createSoftBreakPlugin #js {:options
@@ -285,7 +285,7 @@
                       (createCodePlugin)
                       (createFontColorPlugin)
                       (createFontBackgroundColorPlugin)
-                      (createImagePlugin)
+                      (createImagePlugin #js {:props #js {:caption #js {:disabled true}}})
                       (createMediaEmbedPlugin)
                       LINK-PLUGIN
                       (createListPlugin)
@@ -321,7 +321,9 @@
   []
   (let [editor (useEditorState)
         html   (serializeHtml editor #js {:nodes (.-children editor)})]
-    ;;(js/console.log "EDITOR" editor "html" html "EL")
+    ;;(js/console.log "EDITOR" editor)
+    ;;(js/console.log "SERIALIZED HTML" html)
+    ;;(js/console.log "CHILDREN" (.-children editor))
     [:r> HighlightHTML
      #js {:Prism    PRISM
           :theme    theme/default
@@ -552,3 +554,60 @@
                 [:f> Serialized]]
                (catch js/Error e
                  (println "Error occurred")))]]]])))
+
+
+(comment
+  #_["@udecode/plate-media" :as plate.media :refer
+     [ELEMENT_IMAGE]]
+  #_(defn get-caption
+      [node]
+      (.. node -element -caption))
+
+  #_ #js {:serializeHtml (fn [props]
+                           (js/console.log "Serializing an image to HTML" props)
+                           (reagent/as-element [:span "Hello"]))}
+
+
+  #_ #js {:then (fn [editor props]
+                  (js/console.log "PLUGIN TYPE" (getPluginType editor ELEMENT_IMAGE))
+                  #js {:getNode (fn [el]
+                                  (js/console.log "GET NODE" el)
+                                  #js {:type (.type el)
+                                       :url  (.getAttribute el "src")})
+                       :inject #js {:props
+                                    #js {:nodeKey            ELEMENT_IMAGE,
+                                         :validTypes         #js [(getPluginType editor ELEMENT_IMAGE)],
+                                         :transformNodeValue (fn [x]
+                                                               (js/console.log "TRANSFORMING NODE VALUE" x)
+                                                               x)}}})}
+
+
+  #_(defn set-children!
+      [node new-children]
+      (js/console.log "CURRENT CHILDREN" (.. node -element -children))
+      (set! (.. node -children) new-children)
+      (set! (.. node -element -children) new-children)
+      (js/console.log "AFTER CURRENT CHILDREN" (.. node -element -children))
+      nil)
+  #_#js {:inject
+         #js {:props
+              #js {:nodeKey            "url",
+                   :validTypes         (clj->js [ELEMENT_IMAGE])
+                   :transformNodeValue (fn [node]
+                                         (let [caption (get-caption node)]
+                                           (js/console.log "TRANSFORMING NODE:" node caption)
+                                           (if caption
+                                             (update-children node caption)
+                                             node)))}}}
+
+  #_(defn update-children
+      [node new-children]
+      ;;(js/console.log "CURRENT CHILDREN" (.. node -element -children))
+      (let [clj-node (js->clj node :keywordize-keys true)
+            new-node (-> clj-node
+                         (assoc-in [:element :children] new-children)
+                         (assoc :children new-children)
+                         clj->js)]
+        (js/console.log new-node)
+        new-node))
+  )

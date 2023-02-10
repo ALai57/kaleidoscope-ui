@@ -326,6 +326,7 @@ pre {
 .slate-ImageElement-resizable {
     margin-left: auto;
     margin-right: auto;
+    min-width: 80% !important;
 }
 
 .code-block {
