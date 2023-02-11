@@ -525,7 +525,7 @@
          (when-not @loaded
            [:f> deserializer
             {:loaded            loaded
-             :raw-html          (or content "")
+             :raw-html          (or content "Start typing...")
              :deserialized-html plate-html}])]
         [:div.divider.py-1.bg-dark]
         [:> HeadingToolbar {:style {:top "60px"}}
