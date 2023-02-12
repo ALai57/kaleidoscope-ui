@@ -24,10 +24,7 @@
                 :asset-path "js/compiled/andrewslai"
 
                 :module-loader    true
-                :modules          {:andrewslai {
-                                                ;;:entries [andrewslai.cljs.core]
-                                                :init-fn andrewslai.cljs.core/main
-                                                }
+                :modules          {:andrewslai {:init-fn andrewslai.cljs.core/main}
                                    :editor     {:entries    [andrewslai.cljs.pages.article-editor]
                                                 :depends-on #{:andrewslai}}
                                    }
