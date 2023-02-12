@@ -23,7 +23,14 @@
                 :output-dir "resources/public/js/compiled/andrewslai"
                 :asset-path "js/compiled/andrewslai"
 
-                :modules          {:andrewslai {:entries [andrewslai.cljs.core]}}
+                :module-loader    true
+                :modules          {:andrewslai {
+                                                ;;:entries [andrewslai.cljs.core]
+                                                :init-fn andrewslai.cljs.core/main
+                                                }
+                                   :editor     {:entries    [andrewslai.cljs.pages.article-editor]
+                                                :depends-on #{:andrewslai}}
+                                   }
                 :compiler-options {:static-fns          true
                                    :infer-externs       :auto
                                    :optimize-constants  true
@@ -39,9 +46,12 @@
                                             andrewslai.cljs.keycloak/REALM    "test"}}
                 :release {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
                                             andrewslai.cljs.keycloak/REALM    "andrewslai"
-                                            andrewslai.cljs.keycloak/CLIENTID "andrewslai-frontend"}}
+                                            andrewslai.cljs.keycloak/CLIENTID "andrewslai-frontend"}
+                          :build-hooks     [(shadow.cljs.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 
+          ;; Stories broke with lazy loading. Presumably because the NPM module works diffently from
+          ;; browser target?
           :stories {:target     :npm-module
                     :ns-regexp  "-stories$"
                     :output-dir "public/js/stories"}}}

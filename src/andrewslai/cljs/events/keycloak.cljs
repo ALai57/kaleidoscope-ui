@@ -1,6 +1,7 @@
 (ns andrewslai.cljs.events.keycloak
   (:require [andrewslai.cljs.keycloak :as keycloak]
             [ajax.core :as ajax]
+            [day8.re-frame.async-flow-fx :as async-flow-fx]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
             [taoensso.timbre :refer-macros [debugf infof warnf]]))
 
@@ -21,7 +22,8 @@
                                                 (if auth?
                                                   (do (debugf "Found authenticated user!")
                                                       (dispatch [:keycloak-action :load-profile]))
-                                                  (do (warnf "No authenticated user found."))))
+                                                  (do (warnf "No authenticated user found.")
+                                                      (dispatch [::async-flow-fx/notify :success-boot]))))
                                               (fn on-error [e]
                                                 (infof "Keycloak initialization failed")
                                                 (js/console.log "Init error" e)))

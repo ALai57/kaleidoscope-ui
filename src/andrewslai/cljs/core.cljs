@@ -21,8 +21,8 @@
 
 ;; Use async-flow fx to make a single initialize function
 (dispatch-sync [:boot])
-(dispatch-sync [:request-recent-articles])
-(dispatch-sync [:request-portfolio-cards])
+(dispatch [:request-recent-articles])
+(dispatch [:request-portfolio-cards])
 
 ;; -- Debugging aids ----------------------------------------------------------
 ;;(devtools/install!)       ;; https://github.com/binaryage/cljs-devtools
