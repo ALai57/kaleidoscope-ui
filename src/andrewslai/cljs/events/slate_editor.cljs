@@ -8,7 +8,6 @@
                                    dispatch]]
             [taoensso.timbre :refer-macros [infof errorf]]))
 
-;; TODO SHOULD ALSO UPDATE THE CURRENT IN APP DB
 (reg-event-db
  :save-success
  (fn [db [_ response]]
@@ -67,7 +66,6 @@
       (clojure.string/replace  #"[!|.|(|)|]" "")
       (clojure.string/replace  " " "-")))
 
-;; TODO: Support renaming by removing dependence on `article-url` here
 (reg-event-fx
  :save-article!
  (fn [{:keys [db]} [_ {:keys [title branch-name article-url] :as article}]]
