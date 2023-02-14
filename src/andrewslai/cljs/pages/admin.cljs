@@ -82,7 +82,7 @@
               (aset preview "src" (-> file-load-event .-target .-result)))))
     (.readAsDataURL file-reader file)))
 
-(defn user-profile [{:keys [avatar_url username firstName lastName email] :as user}
+(defn user-profile [{:keys [avatar_url username given_name family_name email] :as user}
                     {:keys [on-admin-click
                             on-edit-profile-click
                             on-logout-click]
@@ -110,12 +110,12 @@
                           :label-for "email"
                           :disabled  true
                           :readOnly  true}]
-    [input-box/input-box {:value     (or firstName "<UNKNOWN>")
+    [input-box/input-box {:value     (or given_name "<UNKNOWN>")
                           :label     "First name"
                           :label-for "firstName"
                           :disabled  true
                           :readOnly  true}]
-    [input-box/input-box {:value     (or lastName "<UNKNOWN>")
+    [input-box/input-box {:value     (or family_name "<UNKNOWN>")
                           :label     "Last name"
                           :label-for "lastName"
                           :disabled  true
