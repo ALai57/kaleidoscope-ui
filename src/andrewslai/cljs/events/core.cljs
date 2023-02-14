@@ -12,9 +12,10 @@
    (infof "Initializing the web app!")
    {:db         default-db
     :async-flow {:first-dispatch [:keycloak-action :init]
-                 :rules          [{:when     :seen?
-                                   :events   [[::async-flow-fx/notify :success-load-profile]]
-                                   :dispatch [:request-all-branches]}
+                 :rules          [{:when       :seen?
+                                   :events     [[::async-flow-fx/notify :success-load-profile]]
+                                   :dispatch-n [[:set-hash-fragment "#/admin"]
+                                                [:request-all-branches]]}
                                   {:when   :seen?
                                    :events [[::async-flow-fx/notify :success-boot]]
                                    :halt?  true}

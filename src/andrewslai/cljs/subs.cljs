@@ -51,6 +51,11 @@
    (:user db)))
 
 (reg-sub
+ :user-profile
+ (fn [db]
+   (:user-profile db)))
+
+(reg-sub
  :modal
  (fn [db]
    (:modal db)))

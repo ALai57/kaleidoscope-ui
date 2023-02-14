@@ -93,12 +93,12 @@
     [thumbnail/thumbnail {:image-url avatar_url}]
 
     ;; One component - Image Loader
-    [thumbnail/thumbnail {:image-url avatar_url
-                          :name      "avatar"
-                          :id        "avatar-preview"}]
-    [:input.btn-primary {:type      "file"
-                         :accept    "image/png"
-                         :on-change load-image}]
+    #_[thumbnail/thumbnail {:image-url avatar_url
+                            :name      "avatar"
+                            :id        "avatar-preview"}]
+    #_[:input.btn-primary {:type      "file"
+                           :accept    "image/png"
+                           :on-change load-image}]
     #_[:img {:id    "avatar-preview"
              :name  "avatar"
              :style {:width "100px"}}]
@@ -108,14 +108,17 @@
     [input-box/input-box {:value     email
                           :label     "Email"
                           :label-for "email"
+                          :disabled  true
                           :readOnly  true}]
-    [input-box/input-box {:value     firstName
+    [input-box/input-box {:value     (or firstName "<UNKNOWN>")
                           :label     "First name"
                           :label-for "firstName"
+                          :disabled  true
                           :readOnly  true}]
-    [input-box/input-box {:value     lastName
+    [input-box/input-box {:value     (or lastName "<UNKNOWN>")
                           :label     "Last name"
                           :label-for "lastName"
+                          :disabled  true
                           :readOnly  true}]
     [:br]
     [:br]
@@ -127,8 +130,12 @@
                                         :on-click on-logout-click}]
     [:br]
     [:br]
+    [secondary-button/secondary-button {:text     "Editor"
+                                        :on-click #(dispatch [:set-hash-fragment "#/editor"])}]
+    [:br]
     [secondary-button/secondary-button {:text     "Try hitting restricted route"
                                         :on-click on-admin-click}]
+
 
     ]])
 

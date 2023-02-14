@@ -77,7 +77,7 @@
                        :home)]
     (infof "Currently displayed panel %s" active-panel)
     [(get panels active-panel login-ui)
-     {:user                @(subscribe [:user])
+     {:user                @(subscribe [:user-profile])
       :user-event-handlers {:on-login-click        #(dispatch [:keycloak-action :login])
                             :on-admin-click        #(dispatch [:request-admin-route])
                             :on-check-auth-click   #(dispatch [:check-identity])
