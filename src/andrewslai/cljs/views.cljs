@@ -62,9 +62,6 @@
 (def panels {:home          home
              :thoughts      full-page
              :archive       full-page
-             :about         full-page
-             :research      full-page
-             :data-analysis full-page
              :admin         login-ui
              :editor        editor-ui
              })

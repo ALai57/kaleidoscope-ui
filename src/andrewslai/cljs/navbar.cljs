@@ -7,41 +7,28 @@
 (def nav-images-path "images/nav-bar/")
 
 (defn- nav-icon
-  [route img]
+  [route src]
   [:a.zoom-icon {:href (str "#/" route)}
    [:img.navbutton
-    {:src (str nav-images-path img)
+    {:src      src
      :on-click #(dispatch [:set-active-panel (keyword route)])}]])
 
-(defn- login-icon
-  [avatar-url]
-  [:a.zoom-icon {:href (str "#/admin")}
-   [:img.navbutton
-    {:src (or avatar-url "/images/nav-bar/unknown-user.svg")
-     :on-click #(dispatch [:set-active-panel :admin])}]])
-
-(defn menu-icon
-  [props]
-  [:a.zoom-icon
-   [menu (merge {:style {:color "white"
-                         :width "100%"
-                         :height "75px"
-                         :padding "5px"}
-                 ;;:preserve-aspect-ratio "meet"
-                 }
-                props)]])
+(defn img-path
+  [fname]
+  (str nav-images-path fname))
 
 (defn nav-bar [{:keys [user notification-type]}]
   [:div#primary-nav
    [:a.zoom-icon {:href  "#/home"
                   :style {:float "left"}}
-    [:img.navbutton {:src      "images/nav-bar/favicon-white.svg"
+    [:img.navbutton {:src      (img-path "favicon-white.svg")
                      :on-click #(dispatch [:set-active-panel :home])}]]
    [:div#secondary-nav
-    [side-menu/side-menu {:expand-button     menu-icon
-                          :notification-type notification-type}]
-    [login-icon (:avatar_url user)]
-    [nav-icon "thoughts" "andrew-head-icon.svg"]
-    [nav-icon "about" "andrew-silhouette-icon.svg"]
-    [nav-icon "research" "neuron-icon.svg"]
-    [nav-icon "data-analysis" "statistics-icon.svg"]]])
+    [nav-icon "admin"    (or (:avatar_url user)
+                             (img-path "andrew-silhouette-icon.svg"))]
+    [nav-icon "archive"  (img-path "archive-icon.svg")]
+    ;;[nav-icon "thoughts" (img-path "andrew-head-icon.svg")]
+    ;;[nav-icon "travel"   ".svg"]
+    #_[nav-icon "research" "neuron-icon.svg"]
+    #_[nav-icon "data-analysis" "statistics-icon.svg"]
+    ]])
