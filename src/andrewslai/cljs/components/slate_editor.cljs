@@ -65,6 +65,7 @@
 
               createAutoformatPlugin
               unwrapList
+              insertEmptyCodeBlock
 
               createSoftBreakPlugin
               SoftBreakPlugin
@@ -87,7 +88,11 @@
               StyledElement
               withProps
 
+              CodeSyntaxLeaf
+
               ;; Element constants
+              ELEMENT_DEFAULT
+              ELEMENT_CODE_SYNTAX
               ELEMENT_BLOCKQUOTE
               ELEMENT_CODE_BLOCK
               ELEMENT_PARAGRAPH
@@ -215,12 +220,8 @@
   (js/console.log "CHANGE" x))
 
 (def PLATE-UI
-  (createPlateUI {[ELEMENT_CODE_BLOCK] CodeBlockElement
-                  [ELEMENT_PARAGRAPH]  (withProps StyledElement
-                                                  {:prefixClassNames "p"
-                                                   :styles           {:root
-                                                                      {:margin  0
-                                                                       :padding "4 px 0"}}})}))
+  (createPlateUI (clj->js {ELEMENT_CODE_BLOCK  CodeBlockElement
+                           ELEMENT_CODE_SYNTAX CodeSyntaxLeaf})))
 
 (def LINK-PLUGIN
   (createLinkPlugin #js {:renderAfterEditable PlateFloatingLink}))
@@ -299,16 +300,36 @@
     :preFormat (fn [editor] (unwrapList editor))}
    ])
 
+(def BLOCKQUOTE-AUTOFORMATTERS
+  [{:mode  "block"
+    :type  ELEMENT_BLOCKQUOTE
+    :match "> "
+    :preFormat (fn [editor] (unwrapList editor))}])
+
+(def CODE-BLOCK-AUTOFORMATTERS
+  [{:mode                "block"
+    :type                ELEMENT_CODE_BLOCK
+    :match               "```"
+    :triggerAtBlockStart false
+    :preFormat           (fn [editor] (unwrapList editor))
+    :format              (fn [editor]
+                           (insertEmptyCodeBlock editor #js {:defaultType        (getPluginType editor ELEMENT_DEFAULT)
+                                                             :insertNodesOptions #js {:select true}}))}])
+
+
 (def AUTOFORMAT-PLUGIN
   (createAutoformatPlugin
    #js {:options
-        #js {:rules              (clj->js (concat H-AUTOFORMATTERS))
+        #js {:rules              (clj->js (concat H-AUTOFORMATTERS
+                                                  BLOCKQUOTE-AUTOFORMATTERS
+                                                  CODE-BLOCK-AUTOFORMATTERS))
              :enableUndoOnDelete true}}))
 
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
                       (createBlockquotePlugin)
-                      (createCodeBlockPlugin)
+                      (createCodeBlockPlugin #js {:syntax             true
+                                                  :syntaxPopularFirst true})
                       (createHeadingPlugin)
                       (createBoldPlugin)
                       (createHighlightPlugin)
