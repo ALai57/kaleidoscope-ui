@@ -29,6 +29,10 @@
    (-> keycloak-instance
        (.init (clj->js {:checkLoginIframe          false
                         :onLoad                    "check-sso"
+                        ;; This came from keycloak documentation
+                        ;; https://github.com/keycloak/keycloak-documentation/blob/main/securing_apps/topics/oidc/javascript-adapter.adoc
+                        ;; The `/silent-check-sso.html` file must exist and post
+                        ;; a notification back to the parent window.
                         :silentCheckSsoRedirectUri (str js/window.location.origin "/silent-check-sso.html")
                         :pkceMethod                "S256"}))
        (.then success)
