@@ -23,6 +23,7 @@
             ["@styled-icons/material/FormatIndentDecrease" :refer [FormatIndentDecrease]]
             ["@styled-icons/material/FormatIndentIncrease" :refer [FormatIndentIncrease]]
             ["@styled-icons/boxicons-regular/CodeAlt" :refer [CodeAlt]]
+            ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
             ["@styled-icons/material/FormatBold" :refer [FormatBold]]
             ["@styled-icons/material/FormatItalic" :refer [FormatItalic]]
             ["@styled-icons/material/FormatStrikethrough" :refer [FormatStrikethrough]]
@@ -62,6 +63,9 @@
               createFontSizePlugin
               createIndentPlugin
 
+              createAutoformatPlugin
+              unwrapList
+
               createSoftBreakPlugin
               SoftBreakPlugin
 
@@ -78,6 +82,7 @@
               TEditableProps
 
               CodeBlockElement
+              CodeBlockToolbarButton
               createPlateUI
               StyledElement
               withProps
@@ -267,6 +272,39 @@
                                                           :end   true
                                                           :allow KEYS_HEADING}}]}}))
 
+(def H-AUTOFORMATTERS
+  [{:mode      "block"
+    :type      ELEMENT_H1
+    :match     "# "
+    :preFormat (fn [editor] (unwrapList editor))}
+   {:mode      "block"
+    :type      ELEMENT_H2
+    :match     "## "
+    :preFormat (fn [editor] (unwrapList editor))}
+   {:mode      "block"
+    :type      ELEMENT_H3
+    :match     "### "
+    :preFormat (fn [editor] (unwrapList editor))}
+   {:mode      "block"
+    :type      ELEMENT_H4
+    :match     "#### "
+    :preFormat (fn [editor] (unwrapList editor))}
+   {:mode      "block"
+    :type      ELEMENT_H5
+    :match     "##### "
+    :preFormat (fn [editor] (unwrapList editor))}
+   {:mode      "block"
+    :type      ELEMENT_H6
+    :match     "###### "
+    :preFormat (fn [editor] (unwrapList editor))}
+   ])
+
+(def AUTOFORMAT-PLUGIN
+  (createAutoformatPlugin
+   #js {:options
+        #js {:rules              (clj->js (concat H-AUTOFORMATTERS))
+             :enableUndoOnDelete true}}))
+
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
                       (createBlockquotePlugin)
@@ -285,6 +323,7 @@
                       (createFontBackgroundColorPlugin)
                       (createImagePlugin #js {:props #js {:caption #js {:disabled true}}})
                       (createMediaEmbedPlugin)
+                      AUTOFORMAT-PLUGIN
                       LINK-PLUGIN
                       (createListPlugin)
                       INDENT-PLUGIN
@@ -372,6 +411,8 @@
      [:> MarkToolbarButton
       {:type (getPluginType editor-ref MARK_STRIKETHROUGH)
        :icon (reagent/create-element FormatStrikethrough)}]
+     [:> CodeBlockToolbarButton
+      {:icon (reagent/create-element CodeBlock)}]
      [:> MarkToolbarButton
       {:type (getPluginType editor-ref MARK_CODE)
        :icon (reagent/create-element CodeAlt)}]
@@ -392,9 +433,9 @@
      [:> BlockToolbarButton
       {:type (getPluginType editor-ref ELEMENT_BLOCKQUOTE)
        :icon (reagent/create-element FormatQuote)}]
-     [:> CodeBlockToolbarButton
-      {:type (getPluginType editor-ref ELEMENT_CODE_BLOCK)
-       :icon (reagent/create-element CodeBlock)}]
+     #_[:> CodeBlockToolbarButton
+        {:type (getPluginType editor-ref ELEMENT_CODE_BLOCK)
+         :icon (reagent/create-element CodeBlock)}]
      [:> ListToolbarButton
       {:type (getPluginType editor-ref ELEMENT_UL)
        :icon (reagent/create-element FormatListBulleted)}]
