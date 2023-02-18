@@ -7,5 +7,6 @@ aws s3 cp ./resources/public/js/compiled/andrewslai/editor.js.map s3://andrewsla
 aws s3 cp ./resources/public/js/compiled/andrewslai/manifest.edn s3://andrewslai/js/compiled/manifest.edn
 aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.edn s3://andrewslai/js/compiled/module-loader.edn
 aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.json s3://andrewslai/js/compiled/module-loader.json
+aws s3 cp ./resources/public/silent-check-sso.html s3://andrewslai/silent-check-sso.html
 echo "Incrementing package version..."
 npm version patch

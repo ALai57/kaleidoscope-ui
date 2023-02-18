@@ -1,7 +1,7 @@
 (ns andrewslai.cljs.keycloak
   (:require ["keycloak-js" :as keycloak-js]
             [re-frame.core :refer [dispatch]]
-            [taoensso.timbre :refer-macros [infof debugf]]))
+            [taoensso.timbre :refer-macros [infof debugf warnf]]))
 
 (goog-define AUTH_URL "defined-at-compile-time")
 (goog-define CLIENTID "defined-at-compile-time")
@@ -13,7 +13,12 @@
 (defn keycloak
   [options]
   (debugf "Starting Keycloak...")
-  (keycloak-js (clj->js options)))
+  (let [kc-instance (keycloak-js (clj->js options))]
+    (set! (.-onTokenExpired kc-instance) (fn [] (infof "Access token is expiring!")))
+    (set! (.-onAuthSuccess kc-instance) (fn [] (infof "Successful authentication!")))
+    (set! (.-onAuthRefreshSuccess kc-instance) (fn [] (infof "Successful token refresh!")))
+    (set! (.-onAuthRefreshError kc-instance) (fn [] (warnf "Token refresh failure!")))
+    kc-instance))
 
 (defn initialize!
   ([^js keycloak-instance]
@@ -22,8 +27,14 @@
                 (fn [auth?] (infof "Unable to initialize Keycloak"))))
   ([^js keycloak-instance success fail]
    (-> keycloak-instance
-       (.init (clj->js {:checkLoginIframe false
-                        :pkceMethod       "S256"}))
+       (.init (clj->js {:checkLoginIframe          false
+                        :onLoad                    "check-sso"
+                        ;; This came from keycloak documentation
+                        ;; https://github.com/keycloak/keycloak-documentation/blob/main/securing_apps/topics/oidc/javascript-adapter.adoc
+                        ;; The `/silent-check-sso.html` file must exist and post
+                        ;; a notification back to the parent window.
+                        :silentCheckSsoRedirectUri (str js/window.location.origin "/silent-check-sso.html")
+                        :pkceMethod                "S256"}))
        (.then success)
        (.catch fail))))
 
