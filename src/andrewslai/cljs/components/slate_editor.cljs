@@ -83,6 +83,7 @@
               TEditableProps
 
               CodeBlockElement
+              CodeLineElement
               CodeBlockToolbarButton
               createPlateUI
               StyledElement
@@ -93,6 +94,7 @@
               ;; Element constants
               ELEMENT_DEFAULT
               ELEMENT_CODE_SYNTAX
+              ELEMENT_CODE_LINE
               ELEMENT_BLOCKQUOTE
               ELEMENT_CODE_BLOCK
               ELEMENT_PARAGRAPH
@@ -220,8 +222,7 @@
   (js/console.log "CHANGE" x))
 
 (def PLATE-UI
-  (createPlateUI (clj->js {ELEMENT_CODE_BLOCK  CodeBlockElement
-                           ELEMENT_CODE_SYNTAX CodeSyntaxLeaf})))
+  (createPlateUI (clj->js {ELEMENT_CODE_BLOCK CodeBlockElement})))
 
 (def LINK-PLUGIN
   (createLinkPlugin #js {:renderAfterEditable PlateFloatingLink}))
@@ -316,7 +317,6 @@
                            (insertEmptyCodeBlock editor #js {:defaultType        (getPluginType editor ELEMENT_DEFAULT)
                                                              :insertNodesOptions #js {:select true}}))}])
 
-
 (def AUTOFORMAT-PLUGIN
   (createAutoformatPlugin
    #js {:options
@@ -325,11 +325,80 @@
                                                   CODE-BLOCK-AUTOFORMATTERS))
              :enableUndoOnDelete true}}))
 
+(def PRISM
+  (g/get Highlight/defaultProps "Prism"))
+
+(def HighlightHTML
+  Highlight/default)
+
+(defn unescape
+  "https://github.com/reagent-project/reagent/issues/413"
+  [s]
+  (and s (gstr/unescapeEntities s)))
+
+(defn ->token-props
+  [c token]
+  #js {:token (clj->js token)
+       :key   (str "token-" c)})
+
+(defn token->hiccup
+  [token-props]
+  ;;(js/console.log "TOKEN PROPS" token-props)
+  (let [token-props (js->clj token-props :keywordize-keys true)]
+    (println (:className token-props)
+             (type (:className token-props)))
+    [:span (-> token-props
+               (update :children unescape))]))
+
+(defn clojurize
+  [x]
+  (js->clj x :keywordize-keys true))
+
+(defn get-language
+  [props]
+  (.-lang (.-element props)))
+
+;; https://docs.slatejs.org/concepts/09-rendering#decorations
+;; However, decorations are computed at render-time based on the content itself. This is helpful for dynamic formatting like syntax highlighting or search keywords, where changes to the content (or some external data) has the potential to change the formatting.
+;; Decorations are different from Marks in that they are not stored on editor state.
+(def CODE-BLOCK-PLUGIN
+  (createCodeBlockPlugin
+   #js {:syntax             true
+        :syntaxPopularFirst true
+        :serializeHtml
+        (fn [props]
+          ;;(js-debugger)
+
+          (js/console.log "Serializing a code block to HTML" props)
+
+          (reagent/as-element [:r> HighlightHTML
+                               #js {:Prism    PRISM
+                                    :theme    theme/default
+                                    ;; TODO: Figure out how to get raw text here!
+                                    :code     "def x():\n  return 1+1;"
+                                    :language (get-language props)}
+                               (fn [args]
+                                 (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args}
+                                       (js->clj args :keywordize-keys true)
+
+                                       ;; Rebind - `tokens` is actually a collection of lines
+                                       ;; Lines are collections of tokens
+                                       ;; line = [token token token]
+                                       lines tokens]
+                                   ;;(js/console.log "ARGS" args clj-args className tokens)
+                                   (reagent/as-element [:pre {:className className
+                                                              :style     style}
+                                                        [:code
+                                                         (map-indexed (fn [line-num tokens]
+                                                                        (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
+                                                                                     tokens))
+                                                                      lines)]])))]))})
+  )
+
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
                       (createBlockquotePlugin)
-                      (createCodeBlockPlugin #js {:syntax             true
-                                                  :syntaxPopularFirst true})
+                      CODE-BLOCK-PLUGIN
                       (createHeadingPlugin)
                       (createBoldPlugin)
                       (createHighlightPlugin)
@@ -355,12 +424,6 @@
                       ]
                  #js {:components PLATE-UI}))
 
-(def PRISM
-  (g/get Highlight/defaultProps "Prism"))
-
-(def HighlightHTML
-  Highlight/default)
-
 (comment
   (js/console.log "HIGHLIGHT"
                   Highlight/default
@@ -370,17 +433,28 @@
   (pretty "<h1 class=\"slate-h1\">Deserialize HTML</h1><div class=\"slate-p\">By default, pasting content into a Slate editor will use the clipboard&apos;s <code class=\"slate-code\">&apos;text/plain&apos;</code>data. That&apos;s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle <code class=\"slate-code\">&apos;text/html&apos;</code>data.</div><div class=\"slate-p\">This is an example of doing exactly that!</div><div class=\"slate-p\">Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it&apos;s formatting should be preserved.</div><div class=\"slate-p\"></div>")
   )
 
-(defn unescape
-  "https://github.com/reagent-project/reagent/issues/413"
-  [s]
-  (and s (gstr/unescapeEntities s)))
+
 
 (defn Serialized
   []
   (let [editor (useEditorState)
-        html   (serializeHtml editor #js {:nodes (.-children editor)})]
+        html   (serializeHtml editor #js {:nodes              (.-children editor)
+
+                                          ;; Preserve class names of tokenized Prism/code blocks
+                                          ;; so they will display with syntax highlighting
+                                          :preserveClassNames #js ["slate-"
+                                                                   "prism-"
+                                                                   "token"
+                                                                   "selector"
+                                                                   "property"
+                                                                   "punctuation"
+                                                                   "string"
+                                                                   "number"
+                                                                   "keyword"
+                                                                   "operator"
+                                                                   "builtin"]})]
     ;;(js/console.log "EDITOR" editor)
-    ;;(js/console.log "SERIALIZED HTML" html)
+    ;;(js/console.log "SERIALIZED HTML" (pretty html #js {:ocd true}))
     ;;(js/console.log "CHILDREN" (.-children editor))
     [:r> HighlightHTML
      #js {:Prism    PRISM
