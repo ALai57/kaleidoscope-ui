@@ -352,7 +352,9 @@
   ;;(js/console.log "TOKEN PROPS" token-props)
   [:span (-> token-props
              (clojurize)
-             (update :children unescape))])
+             (update :children unescape)
+             (update :className (fn [x]
+                                  (str "prism-token " x))))])
 
 (defn get-language
   [props]
@@ -375,6 +377,27 @@
        (map code-block-line->text)
        (string/join "\n")))
 
+(defn get-text
+  [html-element]
+  (.-innerText html-element))
+
+(defn get-slate-code-lines
+  [html-element]
+  (array-seq (.getElementsByClassName html-element "slate-code_line")))
+
+(defn slate-code-line->slate-node
+  [slate-code-line-element]
+  #js {:type     ELEMENT_CODE_LINE
+       :children (clj->js [{:text (get-text slate-code-line-element)}])})
+
+(defn get-language-from-html
+  [html-element]
+  (-> html-element
+      (.-className)
+      (.match #"language-(?<language>\w+)")
+      (.-groups)
+      (.-language)))
+
 ;; https://docs.slatejs.org/concepts/09-rendering#decorations
 ;; However, decorations are computed at render-time based on the content itself. This is helpful for dynamic formatting like syntax highlighting or search keywords, where changes to the content (or some external data) has the potential to change the formatting.
 ;; Decorations are different from Marks in that they are not stored on editor state.
@@ -382,15 +405,25 @@
   (createCodeBlockPlugin
    #js {:syntax             true
         :syntaxPopularFirst true
+        :deserializeHtml    #js {:rules   (clj->js [{:validNodeName "PRE"}
+                                                    {:validNodeName "P"
+                                                     :validStyle    {:fontFamily "Consolas"}}])
+                                 :getNode (fn [el]
+                                            (let [result (map slate-code-line->slate-node
+                                                              (get-slate-code-lines el))]
+                                              #js {:type     ELEMENT_CODE_BLOCK
+                                                   :lang     (get-language-from-html el)
+                                                   :children (clj->js result)}))}
         :serializeHtml
         (fn [props]
           (js/console.log "Serializing a code block to HTML" props)
           (let [raw-string (raw-code-string props)
+                language   (get-language props)
                 element    (reagent/as-element [:r> HighlightHTML
                                                 #js {:Prism    PRISM
                                                      :theme    theme/default
                                                      :code     raw-string
-                                                     :language (get-language props)}
+                                                     :language language}
                                                 (fn [args]
                                                   (let [{:keys [className style tokens
                                                                 getTokenProps getLineProps] :as clj-args} (clojurize args)
@@ -402,15 +435,18 @@
                                                     ;;(js/console.log "ARGS" args clj-args className tokens)
                                                     (reagent/as-element [:pre {:className className
                                                                                :style     style}
-                                                                         [:code
-                                                                          (map-indexed (fn [line-num tokens]
-                                                                                         [:div (-> #js {:line tokens}
-                                                                                                   (getLineProps)
-                                                                                                   (js->clj)
-                                                                                                   (assoc :key (str "line-" line-num)))
-                                                                                          (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
-                                                                                                       tokens)])
-                                                                                       lines)]])))])]
+                                                                         [:code {:className (str language " language-" language)}
+                                                                          [:span {:data-slate-node "text"}
+                                                                           (map-indexed (fn [line-num tokens]
+                                                                                          [:div (-> #js {:line tokens}
+                                                                                                    (getLineProps)
+                                                                                                    (js->clj)
+                                                                                                    (assoc :key (str "line-" line-num))
+                                                                                                    (update :className (fn [x] (str x " slate-code_line")))
+                                                                                                    )
+                                                                                           (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
+                                                                                                        tokens)])
+                                                                                        lines)]]])))])]
             ;;(println "THE ELEMENT" (rd/renderToString element))
             element))})
   )
@@ -460,6 +496,10 @@
                              ;; Preserve class names of tokenized Prism/code blocks
                              ;; so they will display with syntax highlighting
                              :preserveClassNames #js ["slate-"
+                                                      "slate-code_block"
+                                                      "slate-code_line"
+                                                      "language"
+                                                      "prism-token"
                                                       "prism-"
                                                       "token"
                                                       "selector"
