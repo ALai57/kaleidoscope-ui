@@ -416,7 +416,7 @@
                                                    :children (clj->js result)}))}
         :serializeHtml
         (fn [props]
-          (js/console.log "Serializing a code block to HTML" props)
+          ;;(js/console.log "Serializing a code block to HTML" props)
           (let [raw-string (raw-code-string props)
                 language   (get-language props)
                 element    (reagent/as-element [:r> HighlightHTML
