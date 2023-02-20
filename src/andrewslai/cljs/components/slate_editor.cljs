@@ -1,7 +1,9 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [andrewslai.cljs.components.article-selector :as article-selector]
+            [clojure.string :as string]
             [reagent.core :as reagent]
             ["react" :as react]
+            ["react-dom/server" :as rd]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent-mui.components :refer [text-field button]]
             [goog.object :as g]
@@ -336,6 +338,10 @@
   [s]
   (and s (gstr/unescapeEntities s)))
 
+(defn clojurize
+  [x]
+  (js->clj x :keywordize-keys true))
+
 (defn ->token-props
   [c token]
   #js {:token (clj->js token)
@@ -344,19 +350,30 @@
 (defn token->hiccup
   [token-props]
   ;;(js/console.log "TOKEN PROPS" token-props)
-  (let [token-props (js->clj token-props :keywordize-keys true)]
-    (println (:className token-props)
-             (type (:className token-props)))
-    [:span (-> token-props
-               (update :children unescape))]))
-
-(defn clojurize
-  [x]
-  (js->clj x :keywordize-keys true))
+  [:span (-> token-props
+             (clojurize)
+             (update :children unescape))])
 
 (defn get-language
   [props]
   (.-lang (.-element props)))
+
+(defn get-children-elements
+  "Used to get code block lines from a code block."
+  [props]
+  (.-children (.-element props)))
+
+(defn code-block-line->text
+  [child]
+  (get-in child [:children 0 :text]))
+
+(defn raw-code-string
+  [props]
+  (->> props
+       (get-children-elements)
+       (clojurize)
+       (map code-block-line->text)
+       (string/join "\n")))
 
 ;; https://docs.slatejs.org/concepts/09-rendering#decorations
 ;; However, decorations are computed at render-time based on the content itself. This is helpful for dynamic formatting like syntax highlighting or search keywords, where changes to the content (or some external data) has the potential to change the formatting.
@@ -367,32 +384,35 @@
         :syntaxPopularFirst true
         :serializeHtml
         (fn [props]
-          ;;(js-debugger)
-
           (js/console.log "Serializing a code block to HTML" props)
+          (let [raw-string (raw-code-string props)
+                element    (reagent/as-element [:r> HighlightHTML
+                                                #js {:Prism    PRISM
+                                                     :theme    theme/default
+                                                     :code     raw-string
+                                                     :language (get-language props)}
+                                                (fn [args]
+                                                  (let [{:keys [className style tokens
+                                                                getTokenProps getLineProps] :as clj-args} (clojurize args)
 
-          (reagent/as-element [:r> HighlightHTML
-                               #js {:Prism    PRISM
-                                    :theme    theme/default
-                                    ;; TODO: Figure out how to get raw text here!
-                                    :code     "def x():\n  return 1+1;"
-                                    :language (get-language props)}
-                               (fn [args]
-                                 (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args}
-                                       (js->clj args :keywordize-keys true)
-
-                                       ;; Rebind - `tokens` is actually a collection of lines
-                                       ;; Lines are collections of tokens
-                                       ;; line = [token token token]
-                                       lines tokens]
-                                   ;;(js/console.log "ARGS" args clj-args className tokens)
-                                   (reagent/as-element [:pre {:className className
-                                                              :style     style}
-                                                        [:code
-                                                         (map-indexed (fn [line-num tokens]
-                                                                        (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
-                                                                                     tokens))
-                                                                      lines)]])))]))})
+                                                        ;; Rebind - `tokens` is actually a collection of lines
+                                                        ;; Lines are collections of tokens
+                                                        ;; line = [token token token]
+                                                        lines tokens]
+                                                    ;;(js/console.log "ARGS" args clj-args className tokens)
+                                                    (reagent/as-element [:pre {:className className
+                                                                               :style     style}
+                                                                         [:code
+                                                                          (map-indexed (fn [line-num tokens]
+                                                                                         [:div (-> #js {:line tokens}
+                                                                                                   (getLineProps)
+                                                                                                   (js->clj)
+                                                                                                   (assoc :key (str "line-" line-num)))
+                                                                                          (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
+                                                                                                       tokens)])
+                                                                                       lines)]])))])]
+            ;;(println "THE ELEMENT" (rd/renderToString element))
+            element))})
   )
 
 (def PLUGINS
@@ -433,26 +453,28 @@
   (pretty "<h1 class=\"slate-h1\">Deserialize HTML</h1><div class=\"slate-p\">By default, pasting content into a Slate editor will use the clipboard&apos;s <code class=\"slate-code\">&apos;text/plain&apos;</code>data. That&apos;s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle <code class=\"slate-code\">&apos;text/html&apos;</code>data.</div><div class=\"slate-p\">This is an example of doing exactly that!</div><div class=\"slate-p\">Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it&apos;s formatting should be preserved.</div><div class=\"slate-p\"></div>")
   )
 
+(defn serialize
+  [editor]
+  (serializeHtml editor #js {:nodes (.-children editor)
 
+                             ;; Preserve class names of tokenized Prism/code blocks
+                             ;; so they will display with syntax highlighting
+                             :preserveClassNames #js ["slate-"
+                                                      "prism-"
+                                                      "token"
+                                                      "selector"
+                                                      "property"
+                                                      "punctuation"
+                                                      "string"
+                                                      "number"
+                                                      "keyword"
+                                                      "operator"
+                                                      "builtin"]}))
 
 (defn Serialized
   []
   (let [editor (useEditorState)
-        html   (serializeHtml editor #js {:nodes              (.-children editor)
-
-                                          ;; Preserve class names of tokenized Prism/code blocks
-                                          ;; so they will display with syntax highlighting
-                                          :preserveClassNames #js ["slate-"
-                                                                   "prism-"
-                                                                   "token"
-                                                                   "selector"
-                                                                   "property"
-                                                                   "punctuation"
-                                                                   "string"
-                                                                   "number"
-                                                                   "keyword"
-                                                                   "operator"
-                                                                   "builtin"]})]
+        html   (serialize editor)]
     ;;(js/console.log "EDITOR" editor)
     ;;(js/console.log "SERIALIZED HTML" (pretty html #js {:ocd true}))
     ;;(js/console.log "CHILDREN" (.-children editor))
@@ -462,29 +484,24 @@
           :code     (pretty html)
           :language "jsx"}
      (fn [args]
-       (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args}
-             (js->clj args :keywordize-keys true)]
+       (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args} (clojurize args)
+
+             element (reagent/as-element
+                      [:pre {:className className
+                             :style     style}
+                       (map-indexed (fn [i line]
+                                      [:div (-> #js {:line line}
+                                                (getLineProps)
+                                                (js->clj)
+                                                (assoc :key (str "line-" i)))
+                                       (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
+                                                    line)])
+                                    tokens)])]
          ;;(js/console.log "ARGS" args clj-args)
          ;;(js/console.log "TOKENS" xxx)
          ;;(js/console.log "TOKENS" tokens (clj->js tokens))
-         (reagent/as-element
-          [:pre {:className className
-                 :style     style}
-           (map-indexed (fn [i line]
-                          (let [line-props (getLineProps #js {:line line :key (str "line-" i)})]
-                            [:div (assoc (js->clj line-props) :key i)
-                             (into [:<>]
-                                   (map-indexed (fn [c token]
-                                                  (let [token-key   (str "token-" c)
-                                                        token-props (getTokenProps (clj->js {:token token
-                                                                                             :key   token-key}))
-                                                        m           (-> token-props
-                                                                        (js->clj)
-                                                                        (assoc :key token-key)
-                                                                        (update "children" unescape))]
-                                                    [:span m]))
-                                                (js->clj line)))]))
-                        tokens)])))]))
+         ;;(println "THE WHOLE THING" (rd/renderToString element))
+         element))]))
 
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
@@ -581,7 +598,7 @@
      [:> ToolbarButton
       {:icon        (reagent/create-element Save3)
        :onMouseDown (fn [event]
-                      (let [html (serializeHtml editor-ref #js {:nodes (.-children editor-ref)})]
+                      (let [html (serialize editor-ref)]
                         (save-fn {:article-tags "thoughts"
                                   :branch-name  branch-name
                                   :content      (gstr/format "<div>%s</div>" html)
@@ -604,7 +621,8 @@
   (if-not @loaded
     (let [editor-id  (useEventPlateId)
           editor-ref (usePlateEditorRef editor-id)
-          html       (plate/deserializeHtml editor-ref #js {:element raw-html})]
+          html       (plate/deserializeHtml editor-ref #js {:element         raw-html
+                                                            :stripWhitespace false})]
       (infof "Deserializing HTML.\nRaw HTML: %s\nDeserialized-html: %s" raw-html (js->clj html))
       (reset! deserialized-html html)
       (reset! loaded true))
