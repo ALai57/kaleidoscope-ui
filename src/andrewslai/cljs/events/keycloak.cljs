@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.events.keycloak
   (:require [andrewslai.cljs.keycloak :as keycloak]
+            [andrewslai.cljs.utils :as u]
             [ajax.core :as ajax]
             [day8.re-frame.async-flow-fx :as async-flow-fx]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
@@ -29,7 +30,7 @@
                                                 (js/console.log "Init error" e)))
     :load-profile       (keycloak/load-profile! keycloak-adapter
                                                 (fn [user]
-                                                  (dispatch [:update-user-profile! (js->clj user :keywordize-keys true)]))
+                                                  (dispatch [:update-user-profile! (u/clojurize user)]))
                                                 (fn [_]
                                                   (warnf "Could not load user")))
     :login              (keycloak/login! keycloak-adapter)

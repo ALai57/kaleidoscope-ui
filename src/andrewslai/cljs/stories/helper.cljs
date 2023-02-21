@@ -1,8 +1,9 @@
 (ns andrewslai.cljs.stories.helper
-  (:require [reagent.core :as reagent]))
+  (:require [andrewslai.cljs.utils :as u]
+            [reagent.core :as reagent]))
 
 (defn ->params [^js args]
-  (js->clj args :keywordize-keys true))
+  (u/clojurize args))
 
 (defn ->reactified [options path]
   (if (get-in options path)

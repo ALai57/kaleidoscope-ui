@@ -82,18 +82,11 @@
               TEditableProps
 
               CodeBlockElement
-              CodeLineElement
               CodeBlockToolbarButton
               createPlateUI
-              StyledElement
-              withProps
-
-              CodeSyntaxLeaf
 
               ;; Element constants
               ELEMENT_DEFAULT
-              ELEMENT_CODE_SYNTAX
-              ELEMENT_CODE_LINE
               ELEMENT_BLOCKQUOTE
               ELEMENT_CODE_BLOCK
               ELEMENT_PARAGRAPH
@@ -136,15 +129,11 @@
               outdent
 
               PlateProvider
-              PlatePlugin
               getPluginType
               useEventPlateId
               usePlateEditorRef
-              useEditorState
-              serializeHtml
 
               PlateFloatingLink
-              parseHtmlDocument
               ]]
             [taoensso.timbre :refer-macros [infof]]))
 
@@ -167,7 +156,7 @@
       (logger message))))
 
 (do
-  (let [new-console (update (js->clj js/console :keywordize-keys true)
+  (let [new-console (update (u/clojurize js/console)
                             :error
                             wrap-suppress-errors)]
     ;;(println new-console)
