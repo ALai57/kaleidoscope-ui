@@ -1,9 +1,7 @@
 (ns andrewslai.cljs.utils
-  (:require
-   [goog.string :as gstr]
-   ["react" :as react]
-   [reagent.core :as r]
-   [shadow.lazy :as lazy]))
+  (:require [goog.string :as gstr]
+            [reagent.core :as r]
+            [shadow.lazy :as lazy]))
 
 (defn image->blob [the-bytes]
   (let [data-blob (js/Blob. #js [the-bytes] #js {:type "image/png"})]

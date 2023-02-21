@@ -8,7 +8,6 @@
             [andrewslai.cljs.utils :as u]
             [goog.string :as gstr]
             [reagent.core :as reagent]
-            ["react" :as react]
             [reagent-mui.components :refer [text-field button]]
             ["@styled-icons/boxicons-regular/CodeAlt"      :refer [CodeAlt]]
             ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
@@ -210,7 +209,10 @@
   (js/console.log "CHANGE" x))
 
 (def PLATE-UI
-  (createPlateUI (clj->js {ELEMENT_CODE_BLOCK CodeBlockElement})))
+  (createPlateUI (clj->js {ELEMENT_CODE_BLOCK
+                           (reagent/reactify-component cb/CustomCodeBlock)
+                           ;;CodeBlockElement
+                           })))
 
 (def LINK-PLUGIN
   (createLinkPlugin #js {:renderAfterEditable PlateFloatingLink}))

@@ -1,13 +1,15 @@
 (ns andrewslai.cljs.components.slate.prism
   (:require [andrewslai.cljs.utils :as u]
             [goog.object :as g]
+            ["./prism" :as prism]
             ["prism-react-renderer" :as Highlight]
             ["prism-react-renderer/themes/dracula" :as theme])
   )
 
 
 (def PRISM
-  (g/get Highlight/defaultProps "Prism"))
+  ;;(g/get Highlight/defaultProps "Prism")
+  prism)
 
 (def HighlightHTML
   "A react component that can be used to highlight raw HTML code"

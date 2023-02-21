@@ -6,7 +6,12 @@
             [reagent.core :as reagent]
             ;;["react-dom/server" :as rd]
             ["@udecode/plate" :as plate :refer [ELEMENT_CODE_LINE
-                                                ELEMENT_CODE_BLOCK]]
+                                                ELEMENT_CODE_BLOCK
+
+                                                getRootProps
+                                                useEditorRef
+                                                setNodes
+                                                findNodePath]]
             ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -51,11 +56,11 @@
 
 (defn get-language-from-html
   [html-element]
-  (-> html-element
-      (.-className)
-      (.match #"language-(?<language>\w+)")
-      (.-groups)
-      (.-language)))
+  (some-> html-element
+          (.-className)
+          (.match #"language-(?<language>\w+)")
+          (.-groups)
+          (.-language)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Code Lines
@@ -119,3 +124,57 @@
                                                                                 lines)]]])))])]
     ;;(println "THE ELEMENT" (rd/renderToString element))
     element))
+
+(def LANGUAGES
+  {
+   :clojure    "Clojure"
+   :bash       "Bash"
+   :html       "HTML"
+   :java       "Java"
+   :javascript "Javascript"
+   :json       "JSON"
+   :python     "Python"
+   :ruby       "Ruby"
+   :sql        "SQL"
+   })
+
+(defn CodeBlockSelectElement
+  [{:keys [lang on-change] :as props}]
+  (let [v (reagent/atom lang)]
+    (fn []
+      [:select {:value           @v
+                :style           {:float "right"}
+                :onClick         (fn [e] (.stopPropagation e))
+                :onChange        (fn [e]
+                                   (on-change (.. e -target -value))
+                                   (reset! v (.. e -target -value)))
+                :contentEditable false}
+       (for [[k v] LANGUAGES]
+         [:option {:key   (name k)
+                   :value (name k)}
+          v])
+       ])))
+
+(defn CustomCodeBlock
+  [{:keys [attributes children nodeProps element editor] :as props}]
+  (js/console.log props)
+  ;;(println props)
+  (let [lang       (.-lang element)
+        class-name (and lang (gstr/format "%s language-%s" lang lang))
+        root-props (getRootProps props)]
+    (println "Lang" lang)
+    [:<>
+     [:pre
+      [CodeBlockSelectElement {:data-testid "CodeBlockSelectElement"
+                               :editor      editor
+                               :lang        lang
+                               :on-change   (fn [v]
+                                              (println "Handling language change to " v)
+                                              (when-let [path (findNodePath editor element)]
+                                                (setNodes editor
+                                                          #js {:lang v}
+                                                          #js {:at path})))}]
+      [:code {:className class-name}
+       children]]])
+
+  )
