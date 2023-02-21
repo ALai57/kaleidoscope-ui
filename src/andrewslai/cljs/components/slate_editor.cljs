@@ -1,41 +1,38 @@
 (ns andrewslai.cljs.components.slate-editor
-  (:require [andrewslai.cljs.components.article-selector :as article-selector]
-            [clojure.string :as string]
+  (:require [andrewslai.cljs.article-cards :as article-cards]
+            [andrewslai.cljs.components.article-selector :as article-selector]
+            [andrewslai.cljs.components.slate.serialization :as serialization]
+            [andrewslai.cljs.components.slate.prism :as prism]
+            [andrewslai.cljs.components.slate.code-block-helpers :as cb]
+            [andrewslai.cljs.core-api.user :as user]
+            [andrewslai.cljs.utils :as u]
+            [goog.string :as gstr]
             [reagent.core :as reagent]
             ["react" :as react]
-            ["react-dom/server" :as rd]
-            [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent-mui.components :refer [text-field button]]
-            [goog.object :as g]
-            [goog.string :as gstr]
-            [andrewslai.cljs.article-cards :as article-cards]
-            ["pretty" :as pretty]
-            ["@styled-icons/material/FormatQuote" :refer [FormatQuote]]
-            ["@styled-icons/boxicons-regular/Library" :refer [Library]]
-            ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
-            ["@styled-icons/boxicons-regular/Hide" :refer [Hide]]
-            ["@styled-icons/boxicons-regular/Rocket" :refer [Rocket]]
-            ["@styled-icons/boxicons-regular/ImageAdd" :refer [ImageAdd]]
-            ["@styled-icons/material/FormatAlignRight" :refer [FormatAlignRight]]
-            ["@styled-icons/material/FormatAlignLeft" :refer [FormatAlignLeft]]
-            ["@styled-icons/material/FormatAlignCenter" :refer [FormatAlignCenter]]
-            ["@styled-icons/material/FormatAlignJustify" :refer [FormatAlignJustify]]
-            ["@styled-icons/material/FormatListNumbered" :refer [FormatListNumbered]]
-            ["@styled-icons/material/FormatListBulleted" :refer [FormatListBulleted]]
+            ["@styled-icons/boxicons-regular/CodeAlt"      :refer [CodeAlt]]
+            ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
+            ["@styled-icons/boxicons-regular/Hide"         :refer [Hide]]
+            ["@styled-icons/boxicons-regular/ImageAdd"     :refer [ImageAdd]]
+            ["@styled-icons/boxicons-regular/Library"      :refer [Library]]
+            ["@styled-icons/boxicons-regular/Rocket"       :refer [Rocket]]
+            ["@styled-icons/material/Check"                :refer [Check]]
+            ["@styled-icons/material/FormatAlignCenter"    :refer [FormatAlignCenter]]
+            ["@styled-icons/material/FormatAlignJustify"   :refer [FormatAlignJustify]]
+            ["@styled-icons/material/FormatAlignLeft"      :refer [FormatAlignLeft]]
+            ["@styled-icons/material/FormatAlignRight"     :refer [FormatAlignRight]]
+            ["@styled-icons/material/FormatBold"           :refer [FormatBold]]
+            ["@styled-icons/material/FormatColorText"      :refer [FormatColorText]]
             ["@styled-icons/material/FormatIndentDecrease" :refer [FormatIndentDecrease]]
             ["@styled-icons/material/FormatIndentIncrease" :refer [FormatIndentIncrease]]
-            ["@styled-icons/boxicons-regular/CodeAlt" :refer [CodeAlt]]
-            ["@styled-icons/boxicons-regular/CodeBlock" :refer [CodeBlock]]
-            ["@styled-icons/material/FormatBold" :refer [FormatBold]]
-            ["@styled-icons/material/FormatItalic" :refer [FormatItalic]]
-            ["@styled-icons/material/FormatStrikethrough" :refer [FormatStrikethrough]]
-            ["@styled-icons/material/FormatUnderlined" :refer [FormatUnderlined]]
-            ["@styled-icons/material/FormatColorText" :refer [FormatColorText]]
-            ["@styled-icons/material/Check" :refer [Check]]
-            ["@styled-icons/material/Link" :refer [Link]]
-            ["@styled-icons/remix-fill/Save3" :refer [Save3]]
-            ["prism-react-renderer" :as Highlight :refer [defaultProps]]
-            ["prism-react-renderer/themes/dracula" :as theme]
+            ["@styled-icons/material/FormatItalic"         :refer [FormatItalic]]
+            ["@styled-icons/material/FormatListBulleted"   :refer [FormatListBulleted]]
+            ["@styled-icons/material/FormatListNumbered"   :refer [FormatListNumbered]]
+            ["@styled-icons/material/FormatQuote"          :refer [FormatQuote]]
+            ["@styled-icons/material/FormatStrikethrough"  :refer [FormatStrikethrough]]
+            ["@styled-icons/material/FormatUnderlined"     :refer [FormatUnderlined]]
+            ["@styled-icons/material/Link"                 :refer [Link]]
+            ["@styled-icons/remix-fill/Save3"              :refer [Save3]]
             ["@udecode/plate" :as plate :refer
              [
               createBoldPlugin
@@ -327,77 +324,6 @@
                                                   CODE-BLOCK-AUTOFORMATTERS))
              :enableUndoOnDelete true}}))
 
-(def PRISM
-  (g/get Highlight/defaultProps "Prism"))
-
-(def HighlightHTML
-  Highlight/default)
-
-(defn unescape
-  "https://github.com/reagent-project/reagent/issues/413"
-  [s]
-  (and s (gstr/unescapeEntities s)))
-
-(defn clojurize
-  [x]
-  (js->clj x :keywordize-keys true))
-
-(defn ->token-props
-  [c token]
-  #js {:token (clj->js token)
-       :key   (str "token-" c)})
-
-(defn token->hiccup
-  [token-props]
-  ;;(js/console.log "TOKEN PROPS" token-props)
-  [:span (-> token-props
-             (clojurize)
-             (update :children unescape)
-             (update :className (fn [x]
-                                  (str "prism-token " x))))])
-
-(defn get-language
-  [props]
-  (.-lang (.-element props)))
-
-(defn get-children-elements
-  "Used to get code block lines from a code block."
-  [props]
-  (.-children (.-element props)))
-
-(defn code-block-line->text
-  [child]
-  (get-in child [:children 0 :text]))
-
-(defn raw-code-string
-  [props]
-  (->> props
-       (get-children-elements)
-       (clojurize)
-       (map code-block-line->text)
-       (string/join "\n")))
-
-(defn get-text
-  [html-element]
-  (.-innerText html-element))
-
-(defn get-slate-code-lines
-  [html-element]
-  (array-seq (.getElementsByClassName html-element "slate-code_line")))
-
-(defn slate-code-line->slate-node
-  [slate-code-line-element]
-  #js {:type     ELEMENT_CODE_LINE
-       :children (clj->js [{:text (get-text slate-code-line-element)}])})
-
-(defn get-language-from-html
-  [html-element]
-  (-> html-element
-      (.-className)
-      (.match #"language-(?<language>\w+)")
-      (.-groups)
-      (.-language)))
-
 ;; https://docs.slatejs.org/concepts/09-rendering#decorations
 ;; However, decorations are computed at render-time based on the content itself. This is helpful for dynamic formatting like syntax highlighting or search keywords, where changes to the content (or some external data) has the potential to change the formatting.
 ;; Decorations are different from Marks in that they are not stored on editor state.
@@ -405,51 +331,8 @@
   (createCodeBlockPlugin
    #js {:syntax             true
         :syntaxPopularFirst true
-        :deserializeHtml    #js {:rules   (clj->js [{:validNodeName "PRE"}
-                                                    {:validNodeName "P"
-                                                     :validStyle    {:fontFamily "Consolas"}}])
-                                 :getNode (fn [el]
-                                            (let [result (map slate-code-line->slate-node
-                                                              (get-slate-code-lines el))]
-                                              #js {:type     ELEMENT_CODE_BLOCK
-                                                   :lang     (get-language-from-html el)
-                                                   :children (clj->js result)}))}
-        :serializeHtml
-        (fn [props]
-          ;;(js/console.log "Serializing a code block to HTML" props)
-          (let [raw-string (raw-code-string props)
-                language   (get-language props)
-                element    (reagent/as-element [:r> HighlightHTML
-                                                #js {:Prism    PRISM
-                                                     :theme    theme/default
-                                                     :code     raw-string
-                                                     :language language}
-                                                (fn [args]
-                                                  (let [{:keys [className style tokens
-                                                                getTokenProps getLineProps] :as clj-args} (clojurize args)
-
-                                                        ;; Rebind - `tokens` is actually a collection of lines
-                                                        ;; Lines are collections of tokens
-                                                        ;; line = [token token token]
-                                                        lines tokens]
-                                                    ;;(js/console.log "ARGS" args clj-args className tokens)
-                                                    (reagent/as-element [:pre {:className className
-                                                                               :style     style}
-                                                                         [:code {:className (str language " language-" language)}
-                                                                          [:span {:data-slate-node "text"}
-                                                                           (map-indexed (fn [line-num tokens]
-                                                                                          [:div (-> #js {:line tokens}
-                                                                                                    (getLineProps)
-                                                                                                    (js->clj)
-                                                                                                    (assoc :key (str "line-" line-num))
-                                                                                                    (update :className (fn [x] (str x " slate-code_line")))
-                                                                                                    )
-                                                                                           (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
-                                                                                                        tokens)])
-                                                                                        lines)]]])))])]
-            ;;(println "THE ELEMENT" (rd/renderToString element))
-            element))})
-  )
+        :deserializeHtml    cb/CODE-BLOCK-DESERIALIZATION
+        :serializeHtml      cb/serialize-code-block}))
 
 (def PLUGINS
   (createPlugins #js [(createParagraphPlugin)
@@ -480,68 +363,6 @@
                       ]
                  #js {:components PLATE-UI}))
 
-(comment
-  (js/console.log "HIGHLIGHT"
-                  Highlight/default
-                  theme/default
-                  (g/get Highlight/defaultProps "Prism"))
-
-  (pretty "<h1 class=\"slate-h1\">Deserialize HTML</h1><div class=\"slate-p\">By default, pasting content into a Slate editor will use the clipboard&apos;s <code class=\"slate-code\">&apos;text/plain&apos;</code>data. That&apos;s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle <code class=\"slate-code\">&apos;text/html&apos;</code>data.</div><div class=\"slate-p\">This is an example of doing exactly that!</div><div class=\"slate-p\">Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it&apos;s formatting should be preserved.</div><div class=\"slate-p\"></div>")
-  )
-
-(defn serialize
-  [editor]
-  (serializeHtml editor #js {:nodes (.-children editor)
-
-                             ;; Preserve class names of tokenized Prism/code blocks
-                             ;; so they will display with syntax highlighting
-                             :preserveClassNames #js ["slate-"
-                                                      "slate-code_block"
-                                                      "slate-code_line"
-                                                      "language"
-                                                      "prism-token"
-                                                      "prism-"
-                                                      "token"
-                                                      "selector"
-                                                      "property"
-                                                      "punctuation"
-                                                      "string"
-                                                      "number"
-                                                      "keyword"
-                                                      "operator"
-                                                      "builtin"]}))
-
-(defn Serialized
-  []
-  (let [editor (useEditorState)
-        html   (serialize editor)]
-    ;;(js/console.log "EDITOR" editor)
-    ;;(js/console.log "SERIALIZED HTML" (pretty html #js {:ocd true}))
-    ;;(js/console.log "CHILDREN" (.-children editor))
-    [:r> HighlightHTML
-     #js {:Prism    PRISM
-          :theme    theme/default
-          :code     (pretty html)
-          :language "jsx"}
-     (fn [args]
-       (let [{:keys [className style tokens getLineProps getTokenProps] :as clj-args} (clojurize args)
-
-             element (reagent/as-element
-                      [:pre {:className className
-                             :style     style}
-                       (map-indexed (fn [i line]
-                                      [:div (-> #js {:line line}
-                                                (getLineProps)
-                                                (js->clj)
-                                                (assoc :key (str "line-" i)))
-                                       (map-indexed (comp token->hiccup clojurize getTokenProps ->token-props)
-                                                    line)])
-                                    tokens)])]
-         ;;(js/console.log "ARGS" args clj-args)
-         ;;(js/console.log "TOKENS" xxx)
-         ;;(js/console.log "TOKENS" tokens (clj->js tokens))
-         ;;(println "THE WHOLE THING" (rd/renderToString element))
-         element))]))
 
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
@@ -638,7 +459,7 @@
      [:> ToolbarButton
       {:icon        (reagent/create-element Save3)
        :onMouseDown (fn [event]
-                      (let [html (serialize editor-ref)]
+                      (let [html (serialization/serialize editor-ref)]
                         (save-fn {:article-tags "thoughts"
                                   :branch-name  branch-name
                                   :content      (gstr/format "<div>%s</div>" html)
@@ -670,11 +491,6 @@
 
   (fn []
     [:div]))
-
-;; TODO: Move to user namespace
-(defn get-username
-  [user]
-  (gstr/format "%s %s" (get user :firstName "Not") (get user :lastName "Logged in")))
 
 (defn editor
   [{:keys [user save-fn load-fn initial-branch]
@@ -735,7 +551,7 @@
         [:div {:style {:height "120px"}}]
         [:div#primary-content
          [:h2.article-title @title]
-         [:div.article-subheading (gstr/format "Author: %s" (get-username user))]
+         [:div.article-subheading (gstr/format "Author: %s" (user/get-username user))]
          [:div.article-subheading "2022-01-01T00:00:00"]
          [:div.divider.py-1.bg-dark]
          [:br][:br]
@@ -743,7 +559,7 @@
           (try [:> Plate
                 {:editableProps {:placeholder "Type..."}
                  :onChange      change-handler}
-                [:f> Serialized]]
+                [:f> serialization/PrettyHtml]]
                (catch js/Error e
                  (println "Error occurred")))]]]])))
 
