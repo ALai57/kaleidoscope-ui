@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.utils
   (:require
+   [goog.string :as gstr]
    ["react" :as react]
    [reagent.core :as r]
    [shadow.lazy :as lazy]))
@@ -17,3 +18,12 @@
                                  (reset! component root-el))))]
       (fn [props]
         [@component props]))))
+
+(defn clojurize
+  [x]
+  (js->clj x :keywordize-keys true))
+
+(defn unescape
+  "https://github.com/reagent-project/reagent/issues/413"
+  [s]
+  (and s (gstr/unescapeEntities s)))
