@@ -19,15 +19,20 @@
                                                       "language"
                                                       "prism-token"
                                                       "prism-"
-                                                      "token"
-                                                      "selector"
+                                                      ;; Prism tokens
+                                                      "builtin"
+                                                      "comment"
+                                                      "function"
+                                                      "keyword"
+                                                      "number"
+                                                      "operator"
                                                       "property"
                                                       "punctuation"
+                                                      "selector"
                                                       "string"
-                                                      "number"
-                                                      "keyword"
-                                                      "operator"
-                                                      "builtin"]}))
+                                                      "symbol"
+                                                      "token"
+                                                      ]}))
 
 (defn PrettyHtml
   []

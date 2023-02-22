@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.components.slate.code-block-helpers
   (:require [andrewslai.cljs.utils :as u]
+            [andrewslai.cljs.utils.events :as events]
             [andrewslai.cljs.components.slate.prism :as prism]
             [clojure.string :as string]
             [goog.string :as gstr]
@@ -13,7 +14,6 @@
                                                 setNodes
                                                 findNodePath]]
             ))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HTML element helpers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,8 +146,8 @@
                 :style           {:float "right"}
                 :onClick         (fn [e] (.stopPropagation e))
                 :onChange        (fn [e]
-                                   (on-change (.. e -target -value))
-                                   (reset! v (.. e -target -value)))
+                                   (on-change (events/event-value e))
+                                   (reset! v (events/event-value e)))
                 :contentEditable false}
        (for [[k v] LANGUAGES]
          [:option {:key   (name k)
@@ -161,10 +161,11 @@
   ;;(println props)
   (let [lang       (.-lang element)
         class-name (and lang (gstr/format "%s language-%s" lang lang))
-        root-props (getRootProps props)]
-    (println "Lang" lang)
+        root-props (getRootProps (clj->js props))]
+    ;;(js/console.log attributes nodeProps root-props)
     [:<>
-     [:pre
+     [:pre (merge (js->clj attributes)
+                  {:className (str "prism-code slate-code_block language-" lang)})
       [CodeBlockSelectElement {:data-testid "CodeBlockSelectElement"
                                :editor      editor
                                :lang        lang
