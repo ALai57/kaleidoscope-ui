@@ -14,7 +14,16 @@
   [options]
   (debugf "Starting Keycloak...")
   (let [kc-instance (keycloak-js (clj->js options))]
-    (set! (.-onTokenExpired kc-instance) (fn [] (infof "Access token is expiring!")))
+    (set! (.-onTokenExpired kc-instance) (fn [] (infof "Access token is expiring! Refreshing tokens...")
+                                           (-> kc-instance
+                                               (.updateToken)
+                                               (.then (fn [refreshed]
+                                                        (if refreshed
+                                                          (infof "Tokens successfully refreshed")
+                                                          (warnf "Tokens failed to refresh"))))
+                                               (.catch (fn []
+                                                         (warnf "Failed to refresh token or session expired."))))
+                                           ))
     (set! (.-onAuthSuccess kc-instance) (fn [] (infof "Successful authentication!")))
     (set! (.-onAuthRefreshSuccess kc-instance) (fn [] (infof "Successful token refresh!")))
     (set! (.-onAuthRefreshError kc-instance) (fn [] (warnf "Token refresh failure!")))
