@@ -9,14 +9,6 @@
             [shadow.lazy :refer [loadable] :as lazy]
             [taoensso.timbre :refer-macros [infof]]))
 
-;;"https://code.thheller.com/blog/shadow-cljs/2019/03/03/code-splitting-clojurescript.html"
-(def panels {:home          page.home/home
-             :thoughts      page.article/article-page
-             :archive       page.article/article-page
-             :admin         page.admin/login-ui
-             :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User events
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -67,34 +59,29 @@
   [{:keys [content title article-tags branch-name] :as save-data}]
   (dispatch [:save-article! (update save-data :content gstr/unescapeEntities)]))
 
+
+;;"https://code.thheller.com/blog/shadow-cljs/2019/03/03/code-splitting-clojurescript.html"
+(def panels {:home          page.home/home
+             :thoughts      page.article/article-page
+             :archive       page.article/article-page
+             :admin         page.admin/login-ui
+             :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
+
 (defn app []
-  (let [active-panel @(subscribe [:active-panel])
-        active-panel (if (contains? panels active-panel)
-                       active-panel
-                       :home)]
+  (let [active-panel @(subscribe [:active-panel])]
     (infof "Currently displayed panel %s" active-panel)
-    [(get panels active-panel page.admin/login-ui)
+    [(get panels active-panel page.home/home)
      {;; General settings
-      :notification-type   @(subscribe [:notification-type])
-      :login-response      @(subscribe [:login-response])
+      :notification-type @(subscribe [:notification-type])
+      :login-response    @(subscribe [:login-response]) ;; The last response from a login endpoint
 
       ;; Article viewer data
-      :recent-content      @(subscribe [:recent-content])
-      :active-content      @(subscribe [:active-content])
+      :recent-content @(subscribe [:recent-content])
+      :active-content @(subscribe [:active-content])
 
       ;; User data
-      :user                @(subscribe [:user-profile])
+      :user @(subscribe [:user-profile])
 
       ;; User actions
-      :user-event-handlers user-event-handlers
-
-      ;; Editor data
-      :branches            @(subscribe [:branches])
-      :editor-branch-id    @(subscribe [:editor-branch-id])
-      :initial-editor-data @(subscribe [:initial-editor-data])
-
-      ;; Editor actions
-      :publish-fn          publish-article!
-      :load-fn             load-latest-version!
-      :save-fn             save-version!}
+      :user-event-handlers user-event-handlers}
      ]))

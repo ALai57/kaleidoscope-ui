@@ -12,15 +12,15 @@
 
 (def ^:export default
   (helper/->default
-   {:title     "Full Pages/Article Page2"
-    :component page.article/article-page
+   {:title     "Full Pages/Article Page"
+    :component page.article/-article-page
     :args      {:active-content article-stories/example-article
                 :recent-content recent-content-stories/example-recent-content
                 :user           {:avatar_url "/images/lock.svg"}}}))
 
 (defn template
   [args]
-  (reagent/as-element [page.article/article-page (helper/->params args)]))
+  (reagent/as-element [page.article/-article-page (helper/->params args)]))
 
-(def ^:export Default-Article-Page2
+(def ^:export Default-Article-Page
   (helper/->story template {}))
