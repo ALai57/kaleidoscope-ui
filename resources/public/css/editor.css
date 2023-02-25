@@ -12,6 +12,16 @@
   width: 100%;
 }
 
+.slate-code {
+  white-space: pre-wrap;
+  font-size: 85%;
+  font-family: 'SFMono-Regular',Consolas,'Liberation Mono',Menlo,Courier,monospace;
+  background-color: rgba(135,131,120,0.15);
+  border-radius: 3px;
+  padding: 0.2em 0.4em;
+  line-height: normal;
+}
+
 /* https://prismjs.com/ */
 /**
  * prism.js default theme for JavaScript, CSS and HTML
