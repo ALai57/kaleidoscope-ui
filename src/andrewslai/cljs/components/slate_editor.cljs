@@ -305,7 +305,11 @@
     :preFormat           (fn [editor] (unwrapList editor))
     :format              (fn [editor]
                            (insertEmptyCodeBlock editor #js {:defaultType        (getPluginType editor ELEMENT_DEFAULT)
-                                                             :insertNodesOptions #js {:select true}}))}])
+                                                             :insertNodesOptions #js {:select true}}))}
+   {:mode  "mark"
+    :type  MARK_CODE
+    :match "`"}
+   ])
 
 (def AUTOFORMAT-PLUGIN
   (createAutoformatPlugin
