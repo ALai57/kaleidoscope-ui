@@ -16,6 +16,57 @@
              :admin         page.admin/login-ui
              :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; User events
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn login!
+  []
+  (dispatch [:keycloak-action :login]))
+
+(defn check-admin-status!
+  []
+  (dispatch [:request-admin-route]))
+
+(defn print-current-user!
+  []
+  (dispatch [:check-identity]))
+
+(defn logout!
+  []
+  (dispatch [:keycloak-action :logout]))
+
+(defn account-management!
+  []
+  (dispatch [:keycloak-action :account-management]))
+
+(def user-event-handlers
+  {:on-login-click        login!
+   :on-admin-click        check-admin-status!
+   :on-check-auth-click   print-current-user!
+   :on-logout-click       logout!
+   :on-edit-profile-click account-management!})
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Editor events
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn publish-article!
+  [{:keys [article-url branch-name] :as article-branch}]
+  (infof "Publishing branch %s of article %s" branch-name article-url)
+  (dispatch [:publish-branch! article-branch]))
+
+(defn load-latest-version!
+  [{:keys [article-id branch-id] :as article-branch}]
+  (infof "Updating editor article id to %s" article-id)
+  ;;(infof "article-branch %s" article-branch)
+
+  (dispatch [:load-latest-version! article-branch])
+  (dispatch [:update-editor-branch-id article-id]))
+
+(defn save-version!
+  [{:keys [content title article-tags branch-name] :as save-data}]
+  (dispatch [:save-article! (update save-data :content gstr/unescapeEntities)]))
+
 (defn app []
   (let [active-panel @(subscribe [:active-panel])
         active-panel (if (contains? panels active-panel)
@@ -23,29 +74,27 @@
                        :home)]
     (infof "Currently displayed panel %s" active-panel)
     [(get panels active-panel page.admin/login-ui)
-     {:user                @(subscribe [:user-profile])
-      :user-event-handlers {:on-login-click        #(dispatch [:keycloak-action :login])
-                            :on-admin-click        #(dispatch [:request-admin-route])
-                            :on-check-auth-click   #(dispatch [:check-identity])
-                            :on-logout-click       #(dispatch [:keycloak-action :logout])
-                            :on-edit-profile-click #(dispatch [:keycloak-action :account-management])}
+     {;; General settings
       :notification-type   @(subscribe [:notification-type])
       :login-response      @(subscribe [:login-response])
+
+      ;; Article viewer data
       :recent-content      @(subscribe [:recent-content])
-      :branches            @(subscribe [:branches])
       :active-content      @(subscribe [:active-content])
+
+      ;; User data
+      :user                @(subscribe [:user-profile])
+
+      ;; User actions
+      :user-event-handlers user-event-handlers
+
+      ;; Editor data
+      :branches            @(subscribe [:branches])
       :editor-branch-id    @(subscribe [:editor-branch-id])
       :initial-editor-data @(subscribe [:initial-editor-data])
-      :publish-fn          (fn [{:keys [article-url branch-name] :as article-branch}]
-                             (infof "Publishing branch %s of article %s" branch-name article-url)
-                             (dispatch [:publish-branch! article-branch]))
-      :load-fn (fn [{:keys [article-id branch-id] :as article-branch}]
-                 (infof "Updating editor article id to %s" article-id)
-                 ;;(infof "article-branch %s" article-branch)
 
-                 (dispatch [:load-latest-version! article-branch])
-                 ;; TODO deprecate me
-                 (dispatch [:update-editor-branch-id article-id]))
-      :save-fn (fn [{:keys [content title article-tags branch-name] :as save-data}]
-                 (dispatch [:save-article! (update save-data :content gstr/unescapeEntities)]))}
+      ;; Editor actions
+      :publish-fn          publish-article!
+      :load-fn             load-latest-version!
+      :save-fn             save-version!}
      ]))
