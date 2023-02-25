@@ -75,10 +75,6 @@
       :notification-type @(subscribe [:notification-type])
       :login-response    @(subscribe [:login-response]) ;; The last response from a login endpoint
 
-      ;; Article viewer data
-      :recent-content @(subscribe [:recent-content])
-      :active-content @(subscribe [:active-content])
-
       ;; User data
       :user @(subscribe [:user-profile])
 

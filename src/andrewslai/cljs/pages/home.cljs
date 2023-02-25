@@ -6,4 +6,5 @@
   [:div
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
-   [cards/recent-content-cards {:recent-content recent-content}]])
+   [:div "Welcome to my home page"]
+   ])
