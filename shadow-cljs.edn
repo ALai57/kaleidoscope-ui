@@ -23,6 +23,8 @@
                 :output-dir "resources/public/js/compiled/andrewslai"
                 :asset-path "js/compiled/andrewslai"
 
+                ;; Split up the Frontend UI so that we have two smaller builds, instead of one
+                ;; large Javascript file.
                 :module-loader    true
                 :modules          {:andrewslai {:init-fn andrewslai.cljs.core/main}
                                    :editor     {:entries    [andrewslai.cljs.pages.article-editor]

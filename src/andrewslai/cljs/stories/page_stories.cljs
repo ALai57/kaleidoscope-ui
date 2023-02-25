@@ -1,5 +1,5 @@
 (ns andrewslai.cljs.stories.page-stories
-  (:require [andrewslai.cljs.views :as views]
+  (:require [andrewslai.cljs.pages.article-page :as page.article]
             [andrewslai.cljs.stories.helper :as helper]
             [andrewslai.cljs.stories.card-stories :as card-stories]
             [andrewslai.cljs.stories.article-stories :as article-stories]
@@ -13,14 +13,14 @@
 (def ^:export default
   (helper/->default
    {:title     "Full Pages/Article Page2"
-    :component views/full-page
+    :component page.article/article-page
     :args      {:active-content article-stories/example-article
                 :recent-content recent-content-stories/example-recent-content
                 :user           {:avatar_url "/images/lock.svg"}}}))
 
 (defn template
   [args]
-  (reagent/as-element [views/full-page (helper/->params args)]))
+  (reagent/as-element [page.article/article-page (helper/->params args)]))
 
 (def ^:export Default-Article-Page2
   (helper/->story template {}))

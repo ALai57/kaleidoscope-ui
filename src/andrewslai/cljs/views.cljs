@@ -1,74 +1,20 @@
 (ns andrewslai.cljs.views
-  (:require [andrewslai.cljs.article :as article]
-            [andrewslai.cljs.article-cards :as cards]
-            [andrewslai.cljs.navbar :as nav]
-            [andrewslai.cljs.pages.admin :refer [login-ui]]
-            ;;[andrewslai.cljs.pages.article-editor :refer [editor-ui]]
+  (:require [andrewslai.cljs.pages.admin        :as page.admin]
+            [andrewslai.cljs.pages.article-page :as page.article]
+            [andrewslai.cljs.pages.home         :as page.home]
             [andrewslai.cljs.utils :refer [lazy-component]]
-            [clojure.string :refer [includes?]]
             [goog.string :as gstr]
             ["react" :as react]
-            [reagent.core :as r]
-            [re-frame.core :refer [subscribe
-                                   dispatch]]
+            [re-frame.core :refer [subscribe dispatch]]
             [shadow.lazy :refer [loadable] :as lazy]
             [taoensso.timbre :refer-macros [infof]]))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Landing pages
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn home [{:keys [user recent-content notification-type]}]
-  [:div
-   [nav/nav-bar {:user              user
-                 :notification-type notification-type}]
-   [cards/recent-content-cards {:recent-content recent-content}]])
-
-(defn full-page [{:keys [user active-content recent-content notification-type]}]
-  [:div
-   [nav/nav-bar {:user              user
-                 :notification-type notification-type}]
-   [:div#primary-content
-    (when active-content
-      [article/article active-content])]
-   [:div#rcb
-    [cards/recent-content-cards {:recent-content recent-content}]]])
-
-(defn reset-portfolio-cards [x]
-  (let [clicked-element (.-target x)
-        clicked-class (.-className clicked-element)]
-    (when-not (or (includes? clicked-class "resume-info-image")
-                  (includes? clicked-class "resume-info-icon")
-                  (includes? clicked-class "card-description")
-                  (includes? clicked-class "card-title")
-                  (includes? clicked-class "card-text"))
-      (dispatch [:reset-portfolio-cards]))))
-
-(defn about [{:keys [user notification-type]}]
-  [:div {:onClick reset-portfolio-cards
-         :style   {:height   "100%"
-                   :width    "100%"
-                   :position "absolute"}}
-   [nav/nav-bar {:user user
-                 :notification-type notification-type}]
-   [:div {:style {:height "100%"}}]])
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Test pages
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(def editor-ui (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui)))
-
-(def panels {:home          home
-             :thoughts      full-page
-             :archive       full-page
-             :admin         login-ui
-             :editor        editor-ui
-             })
-
-(def LAZY-LOADED-PAGES
-  "https://code.thheller.com/blog/shadow-cljs/2019/03/03/code-splitting-clojurescript.html"
-  #{:editor})
+;;"https://code.thheller.com/blog/shadow-cljs/2019/03/03/code-splitting-clojurescript.html"
+(def panels {:home          page.home/home
+             :thoughts      page.article/article-page
+             :archive       page.article/article-page
+             :admin         page.admin/login-ui
+             :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
 
 (defn app []
   (let [active-panel @(subscribe [:active-panel])
@@ -76,7 +22,7 @@
                        active-panel
                        :home)]
     (infof "Currently displayed panel %s" active-panel)
-    [(get panels active-panel login-ui)
+    [(get panels active-panel page.admin/login-ui)
      {:user                @(subscribe [:user-profile])
       :user-event-handlers {:on-login-click        #(dispatch [:keycloak-action :login])
                             :on-admin-click        #(dispatch [:request-admin-route])
