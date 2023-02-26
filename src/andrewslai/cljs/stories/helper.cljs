@@ -24,7 +24,7 @@
   "Copy a function and modify the default arguments.
   Used to create stories that have default configurations."
   [template default-values]
-  (doto (copy-function template)
+  (doto ^js/Function (copy-function template)
     (set! -args (clj->js default-values))))
 
 (defn get-story-args
