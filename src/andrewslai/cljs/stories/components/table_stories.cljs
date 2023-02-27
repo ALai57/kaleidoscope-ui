@@ -18,8 +18,7 @@
   [args]
   (reagent/as-element [table/table (helper/->params args)]))
 
+;; https://github.com/arttuka/reagent-material-ui/blob/06d5e6538ac80f6ac9883d40e8db668c44bcef84/example/src/example/data_grid.cljs
 (def ^:export Default-Table
-  (helper/->story template {:rows    [{:id 1 :name "Andrew"}]
-                            :columns [{:field "id" :headerName "ID" :width 90}
-                                      {:field "name" :headerName "NAME" :width 90}
-                                      ]}))
+  (helper/->story template {:rows    [{:id 1 :name "Andrew" :email "andrewslai@gmail.com"}]
+                            :columns table/USER-COLUMNS}))
