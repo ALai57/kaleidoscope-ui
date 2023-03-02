@@ -1,6 +1,7 @@
 (ns andrewslai.cljs.navbar
   (:require [andrewslai.cljs.modal :as modal]
             [andrewslai.cljs.components.side-menu :as side-menu]
+            [reagent-mui.icons.manage-accounts :refer [manage-accounts]]
             [reagent-mui.icons.menu :refer [menu]]
             [re-frame.core :refer [dispatch subscribe]]))
 
@@ -26,7 +27,11 @@
    [:div#secondary-nav
     [nav-icon "admin"    (or (:avatar_url user)
                              (img-path "andrew-silhouette-icon.svg"))]
+    (when user
+      [:<>
+       [nav-icon "groups"  (img-path "neuron-icon.svg")]])
     [nav-icon "archive"  (img-path "archive-icon.svg")]
+
     ;;[nav-icon "thoughts" (img-path "andrew-head-icon.svg")]
     ;;[nav-icon "travel"   ".svg"]
     #_[nav-icon "research" "neuron-icon.svg"]

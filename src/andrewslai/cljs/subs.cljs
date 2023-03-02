@@ -95,6 +95,12 @@
  (fn [db]
    (:initial-editor-data db)))
 
+;; Groups
+(reg-sub
+ :groups
+ (fn [db]
+   (:groups db)))
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;

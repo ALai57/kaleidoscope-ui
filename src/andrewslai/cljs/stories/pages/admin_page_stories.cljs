@@ -1,4 +1,4 @@
-(ns andrewslai.cljs.stories.admin.login-ui-stories
+(ns  andrewslai.cljs.stories.pages.admin-page-stories
   (:require [andrewslai.cljs.pages.admin :as admin]
             [andrewslai.cljs.stories.helper :as helper]
             [andrewslai.cljs.stories.admin.user-profile-stories :as user-profile]

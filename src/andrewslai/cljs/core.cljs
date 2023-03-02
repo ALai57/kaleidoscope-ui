@@ -3,6 +3,7 @@
   (:require [andrewslai.cljs.events.articles]
             [andrewslai.cljs.events.auth]
             [andrewslai.cljs.events.core] ;; required to make the compiler
+            [andrewslai.cljs.events.groups] ;; required to make the compiler
             [andrewslai.cljs.events.keycloak]
             [andrewslai.cljs.events.projects-portfolio]
             [andrewslai.cljs.events.slate-editor]

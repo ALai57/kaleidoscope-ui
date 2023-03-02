@@ -18,9 +18,13 @@
   [args]
   (reagent/as-element [navbar/nav-bar (helper/->params args)]))
 
-(def ^:export Default-navbar
+(def ^:export Default-logged-in-navbar
   (helper/->story template {:notification-type :modal}))
+
+(def ^:export Logged-out-navbar
+  (helper/->story template {:notification-type :modal
+                            :user              nil}))
 
 (def ^:export Navbar-with-icon
   (helper/->story template {:notification-type :modal
-                            :user {:avatar_url "/images/lock.svg"}}))
+                            :user              {:avatar_url "/images/lock.svg"}}))

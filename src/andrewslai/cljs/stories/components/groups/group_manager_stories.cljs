@@ -1,7 +1,8 @@
 (ns andrewslai.cljs.stories.components.groups.group-manager-stories
   (:require [andrewslai.cljs.components.groups.group-manager :as group-manager]
             [andrewslai.cljs.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent]
+            ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
   (helper/->default {:title     "Groups Components/Group Manager"
@@ -11,7 +12,8 @@
                                                                                 {:id 3 :name "Alice"}] }
                                           {:display-name "My group 2" :members [{:id 1 :name "Caheri"}] }
                                           {:display-name "My group 3" :members [{:id 1 :name "Bob"}] }
-                                          ]}}))
+                                          ]
+                                 }}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template
