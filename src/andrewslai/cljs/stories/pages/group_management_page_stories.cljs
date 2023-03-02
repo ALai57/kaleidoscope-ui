@@ -9,14 +9,16 @@
   (helper/->default {:title     "Full Pages/Group Management Page"
                      :component groups/-group-page
                      :args      {:user   {}
-                                 :groups [{:id "group-1" :display-name "Family" :members [{:id 1 :name "Andrew"}
-                                                                                          {:id 2 :name "Alison"}
-                                                                                          {:id 3 :name "Mom"}
-                                                                                          {:id 4 :name "Dad"}] }
-                                          {:id "group-1" :display-name "Friends" :members [{:id 1 :name "Andrew"}
-                                                                                           {:id 2 :name "Steve"}
-                                                                                           {:id 3 :name "Tim"}
-                                                                                           {:id 4 :name "Sahil"}] }]
+                                 :groups [{:id           "group-1"
+                                           :display-name "Family"
+                                           :members      [{:id 1 :name "Alison" :email "alison@gmail.com" :added-at "2021-01-01"}
+                                                          {:id 2 :name "Mom"    :email "mom@gmail.com"    :added-at "2021-01-01"}
+                                                          {:id 3 :name "Dad"    :email "dad@gmail.com"    :added-at "2021-01-01"}] }
+                                          {:id           "group-2"
+                                           :display-name "Friends"
+                                           :members      [{:id 1 :name "Steve" :email "steve@gmail.com" :added-at "2021-01-01"}
+                                                          {:id 2 :name "Tim"   :email "tim@gmail.com"   :added-at "2021-01-01"}
+                                                          {:id 3 :name "Sahil" :email "sahil@gmail.com" :added-at "2021-01-01"}] }]
                                  }}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
