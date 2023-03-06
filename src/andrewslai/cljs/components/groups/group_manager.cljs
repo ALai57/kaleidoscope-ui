@@ -21,15 +21,16 @@
                                             text-field
                                             ]]
             [re-frame.core :refer [dispatch subscribe]]
-            [taoensso.timbre :refer-macros [infof debugf warnf]]))
+            [taoensso.timbre :refer-macros [infof debugf warnf]]
+            [clojure.set :as set]))
 
 
 (def USER-COLUMNS
-  [{:field :id       :headerName "ID"  :width 40}
-   ;;{:field :avatar   :headerName "Avatar"   :width 90}
-   {:field :name     :headerName "Name"  :width 180}
-   {:field :email    :headerName "Email" :width 200}
-   {:field :added-at :headerName "Added" :width 120}
+  [{:field :id                    :headerName "ID"    :width 40}
+   {:field :membership-id         :headerName "ID"    :width 40}
+   {:field :alias                 :headerName "Name"  :width 180}
+   {:field :email                 :headerName "Email" :width 200}
+   {:field :membership-created-at :headerName "Added" :width 120}
    ])
 
 (defn add-group-item
@@ -53,7 +54,7 @@
     [list-item-text text]]])
 
 (defn group-entry
-  [{:keys [idx display-name open? members on-click]}]
+  [{:keys [idx display-name open? memberships on-click]}]
   [:<>
    [list-entry {:icon     icons.group/group
                 :text     display-name
@@ -63,7 +64,8 @@
               :unmountOnExit true}
     [list-item {:style {:display "block"}}
      [table/table {:columns   USER-COLUMNS
-                   :rows      members
+                   :rows      (map #(set/rename-keys % {:membership-id :id})
+                                   memberships)
                    :max-width 400}]]]])
 
 (defn add-group-form

@@ -9,17 +9,38 @@
   (helper/->default {:title     "Full Pages/Group Management Page"
                      :component groups/-group-page
                      :args      {:user   {}
-                                 :groups [{:id           "group-1"
+                                 :groups [{:group-id     "group-1"
                                            :display-name "Family"
-                                           :members      [{:id 1 :name "Alison" :email "alison@gmail.com" :added-at "2021-01-01"}
-                                                          {:id 2 :name "Mom"    :email "mom@gmail.com"    :added-at "2021-01-01"}
-                                                          {:id 3 :name "Dad"    :email "dad@gmail.com"    :added-at "2021-01-01"}] }
-                                          {:id           "group-2"
-                                           :display-name "Friends"
-                                           :members      [{:id 1 :name "Steve" :email "steve@gmail.com" :added-at "2021-01-01"}
-                                                          {:id 2 :name "Tim"   :email "tim@gmail.com"   :added-at "2021-01-01"}
-                                                          {:id 3 :name "Sahil" :email "sahil@gmail.com" :added-at "2021-01-01"}] }]
-                                 }}))
+                                           :memberships  [{:membership-id         1
+                                                           :membership-created-at "2021-01-01"
+                                                           :alias                 "Alison"
+                                                           :email                 "Alison@email.com"}
+                                                          {:membership-id         2
+                                                           :membership-created-at "2021-01-01"
+                                                           :alias                 "Mom"
+                                                           :email                 "mom@email.com"}
+                                                          {:membership-id         3
+                                                           :membership-created-at "2021-01-01"
+                                                           :alias                 "Dad"
+                                                           :email                 "dad@email.com"}
+                                                          ]}
+                                          {:group-id     "group-2"
+                                           :display-name "NU Friends"
+                                           :memberships  [{:membership-id         1
+                                                           :membership-created-at "2021-01-01"
+                                                           :alias                 "Steve"
+                                                           :email                 "Steve@email.com"}
+                                                          {:membership-id         2
+                                                           :membership-created-at "2021-01-01"
+                                                           :alias                 "Tim"
+                                                           :email                 "Tim@email.com"}
+                                                          {:membership-id         3
+                                                           :membership-created-at "2021-01-01"
+                                                           :alias                 "Sahil"
+                                                           :email                 "Sahil@email.com"}
+                                                          ]}]}}))
+
+
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template
