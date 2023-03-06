@@ -43,22 +43,24 @@
     [list-item-text text]]])
 
 (defn list-entry
-  [{:keys [icon text on-click]
+  [{:keys [icon text on-click delete-group!]
     :or   {on-click (fn [x]
                       (println "Clicked " text))}}]
   [list-item {:secondaryAction (reagent/as-element [box
-                                                    [icon-button {:edge "end"}
+                                                    [icon-button {:edge     "end"
+                                                                  :on-click delete-group!}
                                                      [delete]]])}
    [list-item-button {:on-click on-click}
     [list-item-icon [icon]]
     [list-item-text text]]])
 
 (defn group-entry
-  [{:keys [idx display-name open? memberships on-click]}]
+  [{:keys [idx display-name open? memberships on-click delete-group!]}]
   [:<>
-   [list-entry {:icon     icons.group/group
-                :text     display-name
-                :on-click on-click}]
+   [list-entry {:icon          icons.group/group
+                :text          display-name
+                :on-click      on-click
+                :delete-group! delete-group!}]
    [collapse {:in            open?
               :timeout       "auto"
               :unmountOnExit true}

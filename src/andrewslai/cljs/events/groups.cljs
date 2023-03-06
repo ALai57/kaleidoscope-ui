@@ -48,18 +48,43 @@
     (errorf "Failed to retrieve groups %s" response)
     db))
 
-(reg-event-fx
- :add-group!
- (fn [{:keys [db]} [_ group-name]]
-   (infof "Creating group: %s" group-name)
-   {:http-xhrio {:method          :post
-                 :uri             "/groups"
-                 :params          {:display-name group-name}
-                 :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
-                                                                     "test"))
-                                   :Content-Type "application/json"}
-                 :format          (ajax/json-request-format)
-                 :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success      [:save-group.success]
-                 :on-failure      [:save-group.failure]}
-    :db         (assoc db :loading? true)}))
+(reg-event-fx :add-group!
+  (fn [{:keys [db]} [_ group-name]]
+    (infof "Creating group: %s" group-name)
+    {:http-xhrio {:method          :post
+                  :uri             "/groups"
+                  :params          {:display-name group-name}
+                  :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                      "test"))
+                                    :Content-Type "application/json"}
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [:save-group.success]
+                  :on-failure      [:save-group.failure]}
+     :db         (assoc db :loading? true)}))
+
+
+(reg-event-fx :delete-group.success
+  (fn [cofx [_ response]]
+    (infof "Delete group `%s`" response)
+    {:db (:db cofx)
+     :fx [[:dispatch [:request-all-groups]]]}))
+
+(reg-event-db :delete-group.failure
+  (fn [db [_ response]]
+    (errorf "Failed to delete groups %s" response)
+    db))
+
+(reg-event-fx :delete-group!
+  (fn [{:keys [db]} [_ group]]
+    (infof "Deleting group: %s" group)
+    {:http-xhrio {:method          :delete
+                  :uri             (gstr/format "/groups/%s" (:group-id group))
+                  :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                      "test"))
+                                    :Content-Type "application/json"}
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [:delete-group.success]
+                  :on-failure      [:delete-group.failure]}
+     :db         (assoc db :loading? true)}))

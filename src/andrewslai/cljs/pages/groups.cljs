@@ -2,10 +2,12 @@
   (:require [andrewslai.cljs.components.groups.group-manager :as gm]
             [andrewslai.cljs.navbar :as nav]
             [re-frame.core :refer [subscribe dispatch]]
+            [taoensso.timbre :refer-macros [infof info]]
             ))
 
 (defn -add-group!
   [group-name]
+  (infof "Creating group %s" group-name)
   (dispatch [:add-group! group-name]))
 
 (defn -delete-group!
