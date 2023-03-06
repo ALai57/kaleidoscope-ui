@@ -2,6 +2,7 @@
   (:require [andrewslai.cljs.pages.admin        :as page.admin]
             [andrewslai.cljs.pages.article-page :as page.article]
             [andrewslai.cljs.pages.home         :as page.home]
+            [andrewslai.cljs.pages.groups       :as page.groups]
             [andrewslai.cljs.utils :refer [lazy-component]]
             [goog.string :as gstr]
             ["react" :as react]
@@ -65,6 +66,7 @@
              :thoughts      page.article/article-page
              :archive       page.article/article-page
              :admin         page.admin/login-ui
+             :groups        page.groups/group-page
              :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
 
 (defn app []

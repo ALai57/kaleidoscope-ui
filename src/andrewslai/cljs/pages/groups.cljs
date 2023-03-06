@@ -27,6 +27,8 @@
    [:br]
    [:br]
    [:div#primary-content
+    ;; To make sure the component re-renders, because it uses state
+    ^{:key (str "group-manager-" (count groups))}
     [gm/group-manager {:groups        groups
                        :add-group!    -add-group!
                        :delete-group! -delete-group!

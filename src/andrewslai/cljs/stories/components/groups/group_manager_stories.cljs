@@ -36,7 +36,12 @@
                                                            :membership-created-at "2021-01-01"
                                                            :alias                 "Sahil"
                                                            :email                 "Sahil@email.com"}
-                                                          ]}]
+                                                          ]}
+                                          {:group-id     "group-3"
+                                           :display-name "Empty"
+                                           :memberships  []}
+                                          ]
+
                                  }}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs

@@ -64,8 +64,10 @@
               :unmountOnExit true}
     [list-item {:style {:display "block"}}
      [table/table {:columns   USER-COLUMNS
-                   :rows      (map #(set/rename-keys % {:membership-id :id})
-                                   memberships)
+                   :rows      (if (empty? memberships)
+                                []
+                                (map #(set/rename-keys % {:membership-id :id})
+                                     memberships))
                    :max-width 400}]]]])
 
 (defn add-group-form
