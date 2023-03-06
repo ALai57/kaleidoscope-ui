@@ -66,7 +66,7 @@
 
 (reg-event-fx :delete-group.success
   (fn [cofx [_ response]]
-    (infof "Delete group `%s`" response)
+    (infof "Deleted group `%s`" response)
     {:db (:db cofx)
      :fx [[:dispatch [:request-all-groups]]]}))
 
