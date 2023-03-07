@@ -30,7 +30,7 @@
   [props]
   (reagent/as-element [icon-button {:edge     "end"
                                     :on-click (fn []
-                                                (let [row            (u/clojurize (.-row props))
+                                                (let [row            (u/clojurize ^js (.-row props))
                                                       delete-member! (:delete-member! row)]
                                                   (delete-member! (:id row))))}
                        [delete]]))
