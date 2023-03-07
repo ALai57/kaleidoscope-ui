@@ -1,5 +1,18 @@
 (ns andrewslai.cljs.components.table
-  (:require [reagent-mui.material.box :refer [box]]
+  (:require [reagent.core :as reagent]
+            [reagent-mui.components :refer [box
+                                            button
+                                            divider
+                                            collapse
+                                            icon-button
+                                            list
+                                            list-item
+                                            list-item-button
+                                            list-item-icon
+                                            list-item-text
+
+                                            text-field
+                                            ]]
             [reagent-mui.x.data-grid :refer [data-grid]]))
 
 
@@ -12,14 +25,14 @@
    ])
 
 (defn table
-  [{:keys [rows columns]}]
-  [box {:style {:height 400 :max-width 650}}
-   [data-grid {:rows       rows
-               :columns    columns
-               :page-size  5
-               :row-height 32
-
-               :rows-per-page-options      [5]
-               :checkbox-selection         true
+  [{:keys [rows columns toolbar max-width]
+    :or   {max-width 650}}]
+  [box {:style {:height 400 :max-width max-width}}
+   [data-grid {:rows                       rows
+               :columns                    columns
+               :page-size                  10
+               :row-height                 32
+               :rows-per-page-options      [10]
+               ;;:checkbox-selection         true
                :disable-selection-on-click true
                }]])

@@ -150,7 +150,7 @@
   [logger]
   (fn [message url line column e]
     ;;(js/console.log "MY CUSTOM logger MESSAGE")
-    ;;(js/console.log message (type message) (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message))
+    ;;(js/console.log message url line column (type message) (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message))
     (if-not (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message)
       (logger message))))
 

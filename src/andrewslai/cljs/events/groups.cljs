@@ -88,3 +88,56 @@
                   :on-success      [:delete-group.success]
                   :on-failure      [:delete-group.failure]}
      :db         (assoc db :loading? true)}))
+
+
+
+(reg-event-fx :save-member.success
+  (fn [cofx [_ response]]
+    (infof "Saved member `%s`" response)
+    {:db (:db cofx)
+     :fx [[:dispatch [:request-all-groups]]]}))
+
+(reg-event-db :save-member.failure
+  (fn [db [_ response]]
+    (errorf "Failed to retrieve members %s" response)
+    db))
+
+(reg-event-fx :add-member!
+  (fn [{:keys [db]} [_ group {:keys [email alias] :as member}]]
+    (infof "Creating member: %s" member)
+    {:http-xhrio {:method          :post
+                  :uri             (gstr/format "/groups/%s/members" (:group-id group))
+                  :params          member
+                  :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                      "test"))
+                                    :Content-Type "application/json"}
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [:save-member.success]
+                  :on-failure      [:save-member.failure]}
+     :db         (assoc db :loading? true)}))
+
+
+(reg-event-fx :delete-member.success
+  (fn [cofx [_ response]]
+    (infof "Deleted member `%s`" response)
+    {:db (:db cofx)
+     :fx [[:dispatch [:request-all-groups]]]}))
+
+(reg-event-db :delete-member.failure
+  (fn [db [_ response]]
+    (errorf "Failed to delete member %s" response)
+    db))
+
+(reg-event-fx :delete-member!
+  (fn [{:keys [db]} [_ group member-id]]
+    (infof "Deleting member %s from group %s" member-id group)
+    {:http-xhrio {:method          :delete
+                  :uri             (gstr/format "/groups/%s/members/%s" (:group-id group) member-id)
+                  :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                      "test"))}
+                  :format          (ajax/json-request-format)
+                  :response-format (ajax/json-response-format {:keywords? true})
+                  :on-success      [:delete-member.success]
+                  :on-failure      [:delete-member.failure]}
+     :db         (assoc db :loading? true)}))
