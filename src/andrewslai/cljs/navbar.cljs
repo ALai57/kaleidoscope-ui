@@ -29,7 +29,8 @@
                              (img-path "admin.svg"))]
     (when user
       [:<>
-       [nav-icon "groups"  (img-path "groups.svg")]])
+       [nav-icon "groups"  (img-path "groups.svg")]
+       [nav-icon "editor"  (img-path "editor.svg")]])
     [nav-icon "archive"  (img-path "archive.svg")]
 
     ;;[nav-icon "thoughts" (img-path "andrew-head-icon.svg")]

@@ -10,3 +10,6 @@ aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.json s3://andr
 #aws s3 cp ./resources/public/silent-check-sso.html s3://andrewslai/silent-check-sso.html
 echo "Incrementing package version..."
 npm version patch
+
+# Deploy images
+aws s3 cp --recursive ./resources/public/images/nav-bar s3://andrewslai/images/nav-bar
