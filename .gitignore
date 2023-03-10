@@ -8,6 +8,7 @@ figwheel_server.log
 .lein-failures
 log.txt
 node_modules
+build-reports
 resources/public/js/compiled/
 resources/public/js/test/
 /public/
