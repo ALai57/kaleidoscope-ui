@@ -22,15 +22,15 @@
   [:div#primary-nav
    [:a.zoom-icon {:href  "#/home"
                   :style {:float "left"}}
-    [:img.navbutton {:src      (img-path "favicon-white.svg")
+    [:img.navbutton {:src      (img-path "favicon.svg")
                      :on-click #(dispatch [:set-active-panel :home])}]]
    [:div#secondary-nav
     [nav-icon "admin"    (or (:avatar_url user)
-                             (img-path "andrew-silhouette-icon.svg"))]
+                             (img-path "admin.svg"))]
     (when user
       [:<>
-       [nav-icon "groups"  (img-path "neuron-icon.svg")]])
-    [nav-icon "archive"  (img-path "archive-icon.svg")]
+       [nav-icon "groups"  (img-path "groups.svg")]])
+    [nav-icon "archive"  (img-path "archive.svg")]
 
     ;;[nav-icon "thoughts" (img-path "andrew-head-icon.svg")]
     ;;[nav-icon "travel"   ".svg"]
