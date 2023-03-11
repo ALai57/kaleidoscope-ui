@@ -1,5 +1,5 @@
 (ns andrewslai.cljs.article
-  (:require [clojure.string :as str]
+  (:require [andrewslai.cljs.utils :as u]
             [goog.string :as gstr]
             [hickory.core :as h]
             [hickory.convert :refer [hickory-to-hiccup]]
@@ -106,7 +106,8 @@
      [:div#goodies
       [:h2.article-title title]
       [:div.article-subheading (str "Author: " author)]
-      [:div.article-subheading modified-at]
+      ;; TODO: only show day
+      [:div.article-subheading (u/date modified-at)]
       [:div.divider.py-1.bg-dark]
       [:br][:br]
       [:div (format-content (select-html (->hickory content)))]

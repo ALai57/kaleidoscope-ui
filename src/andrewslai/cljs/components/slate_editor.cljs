@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.components.slate-editor
   (:require [andrewslai.cljs.article-cards :as article-cards]
+            [andrewslai.cljs.navbar :as navbar]
             [andrewslai.cljs.components.article-selector :as article-selector]
             [andrewslai.cljs.components.slate.serialization :as serialization]
             [andrewslai.cljs.components.slate.prism :as prism]
@@ -367,6 +368,13 @@
         editor-ref (usePlateEditorRef editor-id)]
     ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
     [:<>
+     [:a.zoom-icon {:href  "#/home"
+                    :style {:float        "left"
+                            :height       "48px"
+                            :margin-right "20px"}}
+      [:img.navbutton {:src      (navbar/img-path "favicon.svg")
+                       :style    {:height "48px"}
+                       :on-click navbar/navigate-home!}]]
      [:> MarkToolbarButton
       {:type (getPluginType editor-ref MARK_BOLD)
        :icon (reagent/create-element FormatBold)}]
@@ -489,7 +497,7 @@
 
 (defn editor
   [{:keys [user save-fn load-fn initial-branch]
-    :as args}]
+    :as   args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
   (let [{:keys [content title branch-id branch-name]} initial-branch
@@ -507,23 +515,15 @@
                        :width            "100%"
                        :z-index          100
                        :background-color "white"}}
-         [text-field {:variant  "standard"
-                      :class    "article-title"
-                      :required true
-                      :label    "Article Title"
-                      :value    @title
-                      :style    {:padding-right "50px"
-                                 :width         "400px"}
-                      :onChange (fn [event]
-                                  (reset! title (.. event -target -value)))}]
 
-         [article-cards/article-branch {:on-click (fn [event]
-                                                    (js/console.log "Clicked branch!"))}
-          (or branch-name "main")]
-         [article-cards/article-branch {:on-click (fn new-branch [event]
-                                                    (js/console.log "Creating new branch"))
-                                        :style    {:background-color "green"}}
-          (gstr/format "Branch off of %s" (or branch-name "main"))]
+         ;; Allow users to change the article URL
+         #_[article-cards/article-branch {:on-click (fn [event]
+                                                      (js/console.log "Clicked branch!"))}
+            (or branch-name "main")]
+         #_[article-cards/article-branch {:on-click (fn new-branch [event]
+                                                      (js/console.log "Creating new branch"))
+                                          :style    {:background-color "green"}}
+            (gstr/format "Branch off of %s" (or branch-name "main"))]
 
          (when-not @loaded
            [:f> deserializer
@@ -531,7 +531,7 @@
              :raw-html          (or content "Start typing...")
              :deserialized-html plate-html}])]
         [:div.divider.py-1.bg-dark]
-        [:> HeadingToolbar {:style {:top "60px"}}
+        [:> HeadingToolbar {:style {:top "0px"}}
          ;; NOTE: Need to create a functional component. Since the component is
          ;; defined as a Clojurescript function, we need to do this where the CLJS
          ;; function is used, not inside the fn.
@@ -545,9 +545,21 @@
           (update args :initial-branch assoc :title @title)]]
         [:div {:style {:height "120px"}}]
         [:div#primary-content
-         [:h2.article-title @title]
-         [:div.article-subheading (gstr/format "Author: %s" (user/get-username user))]
-         [:div.article-subheading "2022-01-01T00:00:00"]
+         [text-field {:variant     "standard"
+                      :class       "article-title"
+                      :required    true
+                      :value       @title
+                      :input-props {:style {:width         "800px"
+                                            :font-style    "normal"
+                                            :font-weight   "bold"
+                                            :font-size     "20pt"
+                                            :color         "#505050"}}
+                      :onChange    (fn [event]
+                                     (reset! title (.. event -target -value)))}]
+         [:div.article-subheading {:style {:color "#aba9a9"}}
+          (gstr/format "Author: %s" (user/get-username user))]
+         [:div.article-subheading {:style {:color "#aba9a9"}}
+          "2022-01-01T00:00:00"]
          [:div.divider.py-1.bg-dark]
          [:br][:br]
          [:div#article-content

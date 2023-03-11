@@ -7,6 +7,10 @@
 
 (def nav-images-path "images/nav-bar/")
 
+(defn navigate-home!
+  []
+  (dispatch [:set-active-panel :home]))
+
 (defn- nav-icon
   [route src]
   [:a.zoom-icon {:href (str "#/" route)}

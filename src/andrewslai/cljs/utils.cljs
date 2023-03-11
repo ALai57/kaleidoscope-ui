@@ -1,5 +1,6 @@
 (ns andrewslai.cljs.utils
-  (:require [goog.string :as gstr]
+  (:require [clojure.string :as str]
+            [goog.string :as gstr]
             [reagent.core :as r]
             [shadow.lazy :as lazy]))
 
@@ -25,3 +26,7 @@
   "https://github.com/reagent-project/reagent/issues/413"
   [s]
   (and s (gstr/unescapeEntities s)))
+
+(defn date
+  [iso-string]
+  (first (str/split iso-string #"T")))

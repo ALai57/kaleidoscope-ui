@@ -2,6 +2,7 @@
   (:require ["react" :as react]
             ["react-bootstrap" :as react-bootstrap]
             ["@styled-icons/remix-fill/GitBranch" :refer [GitBranch]]
+            [andrewslai.cljs.utils :as u]
             [clojure.string :as str]
             [re-frame.core :refer [subscribe]]
             [reagent.core :as reagent :refer [adapt-react-class]]
@@ -36,7 +37,7 @@
      [:div.col-sm-9.bg-light.text-dark.card-description
       [:h5.card-title>a {:href (gstr/format "#/%s/content/%s" article-tags article-url)}
        title]
-      [:p.card-text created-at]]]]])
+      [:p.card-text (u/date created-at)]]]]])
 
 (defn truncate
   [title chars-per-row rows]
