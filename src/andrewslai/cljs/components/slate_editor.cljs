@@ -368,10 +368,11 @@
         editor-ref (usePlateEditorRef editor-id)]
     ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
     [:<>
-     [:a.zoom-icon {:href  "#/home"
-                    :style {:float        "left"
-                            :height       "48px"
-                            :margin-right "20px"}}
+     [:a.zoom-icon.bg-primary {:href  "#/home"
+                               :style {:float            "left"
+                                       :height           "48px"
+                                       :margin-right     "20px"
+                                       :background-color ""}}
       [:img.navbutton {:src      (navbar/img-path "favicon.svg")
                        :style    {:height "48px"}
                        :on-click navbar/navigate-home!}]]
@@ -559,7 +560,7 @@
          [:div.article-subheading {:style {:color "#aba9a9"}}
           (gstr/format "Author: %s" (user/get-username user))]
          [:div.article-subheading {:style {:color "#aba9a9"}}
-          "2022-01-01T00:00:00"]
+          (u/date (.toISOString (new js/Date)))]
          [:div.divider.py-1.bg-dark]
          [:br][:br]
          [:div#article-content
