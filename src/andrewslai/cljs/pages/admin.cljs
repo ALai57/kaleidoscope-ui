@@ -55,9 +55,8 @@
    [:a {:href "https://www.keycloak.org"} "Keycloak"]
    " identity provider for authentication. Clicking the link will redirect you to a login site."]
 (defn login-form
-  [{:keys [user-event-handlers login-response notifier notification-type]}]
-  (when login-response
-    (info "Checked if user is authenticated:" login-response))
+  [{:keys [user-event-handlers login-response notification-type]}]
+
   [:div.row.justify-content-center
    [:div.login-wrapper.shadow.p-3.rounded.col-md-4
     [primary-button/primary-button {:text    "Login via Keycloak"
@@ -69,8 +68,7 @@
     [:br]
     [side-menu/side-menu {:expand-button     (fn [props] [primary-button/primary-button (merge props
                                                                                                {:text "Notification settings"})])
-                          :notification-type notification-type}]
-    [notifier login-response]]])
+                          :notification-type notification-type}]]])
 
 ;; Instead of doing this, have the component dispatch on a loaded file as an argument
 (defn load-image [file-added-event]
@@ -88,7 +86,7 @@
                             on-logout-click]
                      :as   user-event-handlers}
                     notification-type]
-  [:div.user-profile-wrapper
+  [:div#primary-content
    [:form
     [thumbnail/thumbnail {:image-url avatar_url}]
 
@@ -122,31 +120,30 @@
                           :readOnly  true}]
     [:br]
     [:br]
-    [secondary-button/secondary-button {:text     "Edit profile"
-                                        :style    {:float "left"}
-                                        :on-click on-edit-profile-click}]
-    [secondary-button/secondary-button {:text     "Logout"
-                                        :style    {:float "right"}
-                                        :on-click on-logout-click}]
+    [primary-button/primary-button {:text     "Edit profile"
+                                    :on-click on-edit-profile-click}]
+    [primary-button/primary-button {:text     "Logout"
+                                    :on-click on-logout-click}]
+    [primary-button/primary-button {:text     "Check user authentication"
+                                    :on-click on-admin-click}]
     [:br]
-    [:br]
-    [secondary-button/secondary-button {:text     "Editor"
-                                        :on-click #(dispatch [:set-hash-fragment "#/editor"])}]
-    [:br]
-    [secondary-button/secondary-button {:text     "Try hitting restricted route"
-                                        :on-click on-admin-click}]
-
-
-    ]])
+    [side-menu/side-menu {:expand-button     (fn [props] [primary-button/primary-button (merge props
+                                                                                               {:text "Notification settings"})])
+                          :notification-type notification-type}]]])
 
 (defn login-ui
   [{:keys [user user-event-handlers login-response notification-type]}]
-  [:div
-   [nav/nav-bar {:user user}]
-   [:br]
-   (if user
-     [user-profile user user-event-handlers notification-type]
-     [login-form {:user-event-handlers user-event-handlers
-                  :login-response      login-response
-                  :notifier            (get NOTIFIERS notification-type modal-notifier)
-                  :notification-type   notification-type}])])
+  (when login-response
+    (info "Checked if user is authenticated:" login-response))
+  (let [notifier (get NOTIFIERS notification-type modal-notifier)]
+    [:div
+     [nav/nav-bar {:user user}]
+     [:br]
+
+     [notifier login-response]
+     (if user
+       [user-profile user user-event-handlers notification-type]
+       [login-form {:user-event-handlers user-event-handlers
+                    :login-response      login-response
+                    :notification-type   notification-type
+                    }])]))

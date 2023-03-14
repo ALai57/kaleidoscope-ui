@@ -106,7 +106,6 @@
      [:div#goodies
       [:h2.article-title title]
       [:div.article-subheading (str "Author: " author)]
-      ;; TODO: only show day
       [:div.article-subheading (u/date modified-at)]
       [:div.divider.py-1.bg-dark]
       [:br][:br]
