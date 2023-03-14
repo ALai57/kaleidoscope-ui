@@ -12,4 +12,5 @@ echo "Incrementing package version..."
 npm version patch
 
 # Deploy images
-aws s3 cp --recursive ./resources/public/images/nav-bar s3://andrewslai/images/nav-bar
+#aws s3 cp --recursive ./resources/public/images/nav-bar s3://andrewslai/images/nav-bar
+#aws s3 cp --recursive ./resources/public/css s3://andrewslai/css

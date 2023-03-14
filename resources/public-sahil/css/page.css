@@ -40,9 +40,7 @@ h2 {font-size: 18;
 
 /* For mobile phones: */
 #primary-content{
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
   font-size: 24pt;
 }
 
@@ -50,7 +48,9 @@ h2 {font-size: 18;
 
   #primary-content{
     width: 800px;
-    max-width: 90%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
     font-size: 20pt;
   }
 
