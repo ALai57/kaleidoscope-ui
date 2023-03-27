@@ -6,6 +6,9 @@ aws s3 cp --recursive ./resources/public-sahil/css s3://sahiltalkingcents/css
 # Deploy images
 aws s3 cp --recursive ./resources/public-sahil/images/nav-bar s3://sahiltalkingcents/images/nav-bar
 
+aws s3 cp ./resources/public-sahil/images/images.svg     s3://sahiltalkingcents/images/images.svg
+aws s3 cp ./resources/public-sahil/images/writing.svg    s3://sahiltalkingcents/images/writing.svg
+aws s3 cp ./resources/public-sahil/images/audiences.svg  s3://sahiltalkingcents/images/audiences.svg
 
 # Background #0e766d
 # Light      #aeadff00

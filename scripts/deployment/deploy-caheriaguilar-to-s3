@@ -6,5 +6,9 @@ aws s3 cp --recursive ./resources/public-caheri/css s3://caheriaguilar/css
 # Deploy images
 aws s3 cp --recursive ./resources/public-caheri/images/nav-bar s3://caheriaguilar/images/nav-bar
 
+aws s3 cp ./resources/public/images/images.svg     s3://caheriaguilar/images/images.svg
+aws s3 cp ./resources/public/images/writing.svg    s3://caheriaguilar/images/writing.svg
+aws s3 cp ./resources/public/images/audiences.svg  s3://caheriaguilar/images/audiences.svg
+
 # Background #0e766d
 # Light      #aeadff00

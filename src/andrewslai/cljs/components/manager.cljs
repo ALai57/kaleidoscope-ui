@@ -39,7 +39,7 @@
     [card-action-area {:class    "bg-primary"
                        :on-click on-click
                        :sx       {"& > :not(style)" {:m             1
-                                                     :height        "70%%"
+                                                     :height        "70%"
                                                      :width         "auto"
                                                      :margin-left   "auto"
                                                      :margin-right  "auto"
@@ -47,7 +47,9 @@
                                                      :margin-bottom "5px"}}}
      [card-media {:component "img"
                   :src       src
-                  :alt       alt}]]
+                  :alt       alt
+                  :sx        {:max-width  "100%"
+                              :max-height "142px"}}]]
     [card-content
      [typography {:variant "h5"}
       name]
