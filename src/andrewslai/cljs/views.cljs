@@ -3,6 +3,7 @@
             [andrewslai.cljs.pages.article-page :as page.article]
             [andrewslai.cljs.pages.home         :as page.home]
             [andrewslai.cljs.pages.groups       :as page.groups]
+            [andrewslai.cljs.pages.manager      :as page.manager]
             [andrewslai.cljs.utils :refer [lazy-component]]
             [goog.string :as gstr]
             ["react" :as react]
@@ -67,6 +68,7 @@
              :archive       page.article/article-page
              :admin         page.admin/login-ui
              :groups        page.groups/group-page
+             :manager       page.manager/manager-page
              :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
 
 (defn app []

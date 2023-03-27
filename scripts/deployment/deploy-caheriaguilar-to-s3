@@ -1,23 +1,10 @@
-
-# Deploy the main app
-aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js      s3://caheriaguilar/js/compiled/andrewslai/andrewslai.js
-aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js.map  s3://caheriaguilar/js/compiled/andrewslai/andrewslai.js.map
-aws s3 cp ./resources/public/js/compiled/andrewslai/editor.js          s3://caheriaguilar/js/compiled/andrewslai/editor.js
-aws s3 cp ./resources/public/js/compiled/andrewslai/editor.js.map      s3://caheriaguilar/js/compiled/andrewslai/editor.js.map
-aws s3 cp ./resources/public/js/compiled/andrewslai/manifest.edn       s3://caheriaguilar/js/compiled/andrewslai/manifest.edn
-aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.edn  s3://caheriaguilar/js/compiled/andrewslai/module-loader.edn
-aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.json s3://caheriaguilar/js/compiled/andrewslai/module-loader.json
+#!/bin/bash
 
 # Deploy CSS
 aws s3 cp --recursive ./resources/public-caheri/css s3://caheriaguilar/css
 
 # Deploy images
 aws s3 cp --recursive ./resources/public-caheri/images/nav-bar s3://caheriaguilar/images/nav-bar
-
-# Deploy HTML
-aws s3 cp ./resources/public-caheri/index.html s3://caheriaguilar/index.html
-aws s3 cp ./resources/public-caheri/silent-check-sso.html s3://caheriaguilar/silent-check-sso.html
-
 
 # Background #0e766d
 # Light      #aeadff00

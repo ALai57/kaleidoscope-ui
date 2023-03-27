@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Deploy CSS
+aws s3 cp --recursive ./resources/public-sahil/css s3://sahiltalkingcents/css
+
+# Deploy images
+aws s3 cp --recursive ./resources/public-sahil/images/nav-bar s3://sahiltalkingcents/images/nav-bar
+
+
+# Background #0e766d
+# Light      #aeadff00

@@ -58,15 +58,8 @@
     [:img.navbutton {:src      (img-path "favicon.svg")
                      :on-click #(dispatch [:set-active-panel :home])}]]
    [:div#secondary-nav
-    [login-icon "admin" (img-path "admin.svg") user]
+    [login-icon "admin" (img-path "user.svg") user]
     (when user
       [:<>
-       [nav-icon "groups"  (img-path "groups.svg")]
-       [nav-icon "editor"  (img-path "editor.svg")]])
-    [nav-icon "archive"  (img-path "archive.svg")]
-
-    ;;[nav-icon "thoughts" (img-path "andrew-head-icon.svg")]
-    ;;[nav-icon "travel"   ".svg"]
-    #_[nav-icon "research" "neuron-icon.svg"]
-    #_[nav-icon "data-analysis" "statistics-icon.svg"]
-    ]])
+       [nav-icon "manager"  (img-path "resources.svg")]])
+    [nav-icon "archive"  (img-path "articles.svg")]]])
