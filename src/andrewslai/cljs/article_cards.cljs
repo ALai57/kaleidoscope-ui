@@ -1,6 +1,5 @@
 (ns andrewslai.cljs.article-cards
   (:require ["react" :as react]
-            ["react-bootstrap" :as react-bootstrap]
             ["@styled-icons/remix-fill/GitBranch" :refer [GitBranch]]
             [andrewslai.cljs.utils :as u]
             [clojure.string :as str]
