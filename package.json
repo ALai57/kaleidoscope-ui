@@ -35,10 +35,10 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^17.0.2",
-    "slate": "^0.84.0",
-    "slate-history": "^0.66.0",
+    "slate": "^0.91.4",
+    "slate-history": "^0.86.0",
     "slate-hyperscript": "^0.77.0",
-    "slate-react": "^0.83.2",
+    "slate-react": "^0.92.0",
     "styled-components": "^5.3.5"
   },
   "main": "index.js",
