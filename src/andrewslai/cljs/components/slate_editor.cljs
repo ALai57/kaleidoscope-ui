@@ -479,22 +479,13 @@
          :onMouseDown (fn [event]
                         (publish-fn initial-branch))}])]))
 
-(defn deserializer
-  [{:keys [raw-html deserialized-html loaded]
-    :or   {raw-html ""}}]
-  (infof "Checking if HTML is loaded: %s" @loaded)
-  (if-not @loaded
-    (let [editor-id  (useEventPlateId)
-          editor-ref (usePlateEditorRef editor-id)
-          html       (plate/deserializeHtml editor-ref #js {:element         raw-html
-                                                            :stripWhitespace false})]
-      (infof "Deserializing HTML.\nRaw HTML: %s\nDeserialized-html: %s" raw-html (js->clj html))
-      (reset! deserialized-html html)
-      (reset! loaded true))
-    (infof "HTML is already loaded. Skipping HTML import."))
+(def PLATE
+  (reagent/as-element [:> plate/Plate {:plugins PLUGINS}]))
 
-  (fn []
-    [:div]))
+(defn plate-deserialize
+  [content]
+  (plate/deserializeHtml PLATE #js {:element         content
+                                    :stripWhitespace false}))
 
 (defn editor
   [{:keys [user save-fn load-fn initial-branch]
@@ -503,34 +494,16 @@
   ;;(js/console.log "PLUGINS" PLUGINS)
   (let [{:keys [content title branch-id branch-name]} initial-branch
 
-        plate-html (reagent/atom [])
-        loaded     (reagent/atom false)
-        title      (reagent/atom (or title "<<YOUR NEW ARTICLE'S TITLE HERE>>"))]
+        title      (reagent/atom (or title "<<YOUR NEW ARTICLE'S TITLE HERE>>"))
+        plate-html (reagent/atom (plate-deserialize (or content "Start typing...")))]
+    ;;(js/console.log "*****************")
+    ;;(js/console.log (plate-deserialize "SOME STUFF!"))
+    ;;(js/console.log "*****************")
     (fn []
       ;;(println "PLATE HTML" plate-html "LOADED" loaded "INITIAL VALUE" initial-value)
-      [:div {:key (str "editor" content @loaded)}
+      [:div {:key (str "editor" content)}
        [:> PlateProvider {:initialValue @plate-html
                           :plugins      PLUGINS}
-        [:div {:style {:padding          "10px"
-                       :position         "fixed"
-                       :width            "100%"
-                       :z-index          100
-                       :background-color "white"}}
-
-         ;; Allow users to change the article URL
-         #_[article-cards/article-branch {:on-click (fn [event]
-                                                      (js/console.log "Clicked branch!"))}
-            (or branch-name "main")]
-         #_[article-cards/article-branch {:on-click (fn new-branch [event]
-                                                      (js/console.log "Creating new branch"))
-                                          :style    {:background-color "green"}}
-            (gstr/format "Branch off of %s" (or branch-name "main"))]
-
-         (when-not @loaded
-           [:f> deserializer
-            {:loaded            loaded
-             :raw-html          (or content "Start typing...")
-             :deserialized-html plate-html}])]
         [:div.divider.py-1.bg-dark]
         [:> HeadingToolbar {:style {:top "0px"}}
          ;; NOTE: Need to create a functional component. Since the component is
@@ -550,11 +523,11 @@
                       :class       "article-title"
                       :required    true
                       :value       @title
-                      :input-props {:style {:width         "800px"
-                                            :font-style    "normal"
-                                            :font-weight   "bold"
-                                            :font-size     "20pt"
-                                            :color         "#505050"}}
+                      :input-props {:style {:width       "800px"
+                                            :font-style  "normal"
+                                            :font-weight "bold"
+                                            :font-size   "20pt"
+                                            :color       "#505050"}}
                       :onChange    (fn [event]
                                      (reset! title (.. event -target -value)))}]
          [:div.article-subheading {:style {:color "#aba9a9"}}
@@ -572,58 +545,10 @@
                  (println "Error occurred")))]]]])))
 
 
+
+
 (comment
-  #_["@udecode/plate-media" :as plate.media :refer
-     [ELEMENT_IMAGE]]
-  #_(defn get-caption
-      [node]
-      (.. node -element -caption))
+  (plate/deserializeHtml (plate/Plate {:plugins PLUGINS}) #js {:element         content
+                                                               :stripWhitespace false})
 
-  #_ #js {:serializeHtml (fn [props]
-                           (js/console.log "Serializing an image to HTML" props)
-                           (reagent/as-element [:span "Hello"]))}
-
-
-  #_ #js {:then (fn [editor props]
-                  (js/console.log "PLUGIN TYPE" (getPluginType editor ELEMENT_IMAGE))
-                  #js {:getNode (fn [el]
-                                  (js/console.log "GET NODE" el)
-                                  #js {:type (.type el)
-                                       :url  (.getAttribute el "src")})
-                       :inject #js {:props
-                                    #js {:nodeKey            ELEMENT_IMAGE,
-                                         :validTypes         #js [(getPluginType editor ELEMENT_IMAGE)],
-                                         :transformNodeValue (fn [x]
-                                                               (js/console.log "TRANSFORMING NODE VALUE" x)
-                                                               x)}}})}
-
-
-  #_(defn set-children!
-      [node new-children]
-      (js/console.log "CURRENT CHILDREN" (.. node -element -children))
-      (set! (.. node -children) new-children)
-      (set! (.. node -element -children) new-children)
-      (js/console.log "AFTER CURRENT CHILDREN" (.. node -element -children))
-      nil)
-  #_#js {:inject
-         #js {:props
-              #js {:nodeKey            "url",
-                   :validTypes         (clj->js [ELEMENT_IMAGE])
-                   :transformNodeValue (fn [node]
-                                         (let [caption (get-caption node)]
-                                           (js/console.log "TRANSFORMING NODE:" node caption)
-                                           (if caption
-                                             (update-children node caption)
-                                             node)))}}}
-
-  #_(defn update-children
-      [node new-children]
-      ;;(js/console.log "CURRENT CHILDREN" (.. node -element -children))
-      (let [clj-node (js->clj node :keywordize-keys true)
-            new-node (-> clj-node
-                         (assoc-in [:element :children] new-children)
-                         (assoc :children new-children)
-                         clj->js)]
-        (js/console.log new-node)
-        new-node))
   )
