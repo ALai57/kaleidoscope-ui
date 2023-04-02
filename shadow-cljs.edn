@@ -20,6 +20,12 @@
 
  :builds {:app {:target :browser
 
+                ;; Fixes a problem whereby three-js seems to be incompatible with
+                ;; shadow/Closure compiler.
+                ;; https://clojurians-log.clojureverse.org/shadow-cljs/2021-06-17
+                ;; And https://github.com/ertugrulcetin/racing-game-cljs
+                :js-options {:entry-keys ["module" "browser" "main"]}
+
                 :output-dir "resources/public/js/compiled/andrewslai"
                 :asset-path "js/compiled/andrewslai"
 
