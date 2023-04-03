@@ -4,45 +4,47 @@
             [reagent.core :as reagent]
             ["@storybook/addon-actions" :refer [action]]))
 
+(def groups
+  [{:group-id     "group-1"
+    :display-name "Family"
+    :memberships  [{:membership-id         1
+                    :membership-created-at "2021-01-01"
+                    :alias                 "Alison"
+                    :email                 "Alison@email.com"}
+                   {:membership-id         2
+                    :membership-created-at "2021-01-01"
+                    :alias                 "Mom"
+                    :email                 "mom@email.com"}
+                   {:membership-id         3
+                    :membership-created-at "2021-01-01"
+                    :alias                 "Dad"
+                    :email                 "dad@email.com"}
+                   ]}
+   {:group-id     "group-2"
+    :display-name "NU Friends"
+    :memberships  [{:membership-id         1
+                    :membership-created-at "2021-01-01"
+                    :alias                 "Steve"
+                    :email                 "Steve@email.com"}
+                   {:membership-id         2
+                    :membership-created-at "2021-01-01"
+                    :alias                 "Tim"
+                    :email                 "Tim@email.com"}
+                   {:membership-id         3
+                    :membership-created-at "2021-01-01"
+                    :alias                 "Sahil"
+                    :email                 "Sahil@email.com"}
+                   ]}
+   {:group-id     "group-3"
+    :display-name "Empty"
+    :memberships  []}
+   ])
+
 (def ^:export default
   (helper/->default {:title     "Groups Components/Group Manager"
                      :component group-manager/group-manager
-                     :args      {:groups [{:group-id     "group-1"
-                                           :display-name "Family"
-                                           :memberships  [{:membership-id         1
-                                                           :membership-created-at "2021-01-01"
-                                                           :alias                 "Alison"
-                                                           :email                 "Alison@email.com"}
-                                                          {:membership-id         2
-                                                           :membership-created-at "2021-01-01"
-                                                           :alias                 "Mom"
-                                                           :email                 "mom@email.com"}
-                                                          {:membership-id         3
-                                                           :membership-created-at "2021-01-01"
-                                                           :alias                 "Dad"
-                                                           :email                 "dad@email.com"}
-                                                          ]}
-                                          {:group-id     "group-2"
-                                           :display-name "NU Friends"
-                                           :memberships  [{:membership-id         1
-                                                           :membership-created-at "2021-01-01"
-                                                           :alias                 "Steve"
-                                                           :email                 "Steve@email.com"}
-                                                          {:membership-id         2
-                                                           :membership-created-at "2021-01-01"
-                                                           :alias                 "Tim"
-                                                           :email                 "Tim@email.com"}
-                                                          {:membership-id         3
-                                                           :membership-created-at "2021-01-01"
-                                                           :alias                 "Sahil"
-                                                           :email                 "Sahil@email.com"}
-                                                          ]}
-                                          {:group-id     "group-3"
-                                           :display-name "Empty"
-                                           :memberships  []}
-                                          ]
-
-                                 }}))
+                     :args      {:open   (reagent/atom (vec (repeat (count groups) false)))
+                                 :groups groups}}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template
