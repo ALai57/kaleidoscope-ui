@@ -14,7 +14,7 @@
     :description "Create and manage Articles"
     :src         "/images/writing.svg"
     :alt         "Manage articles"
-    :on-click    (fn [] (dispatch [:set-hash-fragment "/editor"]))}
+    :on-click    (fn [] (dispatch [:set-hash-fragment "/article-manager"]))}
    {:name        "Images (WIP)"
     :description "Create and manage Images. Not implemented yet!"
     :alt         "Manage images"

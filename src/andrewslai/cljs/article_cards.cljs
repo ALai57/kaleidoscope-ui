@@ -24,7 +24,7 @@
     "images/nav-bar/unknown-user.svg"))
 
 (defn article-card
-  [{:keys [article-tags title article-url article-id created-at] :as article}]
+  [{:keys [article-tags article-title article-url article-id created-at] :as article}]
   [card {:class "text-white bg-light mb-3 article-card"}
    [:div.container-fluid
     [:div.row.flex-items-xs-middle
@@ -35,15 +35,15 @@
                         :style {:width "100%"}}]]]]
      [:div.col-sm-9.bg-light.text-dark.card-description
       [:h5.card-title>a {:href (gstr/format "#/%s/content/%s" article-tags article-url)}
-       title]
+       article-title]
       [:p.card-text (u/date created-at)]]]]])
 
 (defn truncate
-  [title chars-per-row rows]
+  [article-title chars-per-row rows]
   (let [chars (* chars-per-row rows)]
-    (if (<= (count title) chars)
-      (str title "\n")
-      (apply str (concat (take (- chars 3) title) ["..."])))))
+    (if (<= (count article-title) chars)
+      (str article-title "\n")
+      (apply str (concat (take (- chars 3) article-title) ["..."])))))
 
 (defn log-click
   [event]
@@ -57,11 +57,6 @@
            :style     (merge style {:borderRadius "35px"})
            :onClick   on-click}
    branch-name])
-
-(defn format-date
-  [s]
-  (let [formatter (new goog.i18n.DateTimeFormat goog.i18n.DateTimeFormat.Format.MEDIUM_DATE)]
-    (.format formatter (gdatetime/fromIsoString s))))
 
 (defn latest
   [coll]
@@ -102,8 +97,8 @@
              ;;(js/console.log "PUBLISHED AT" (format-date published-at))
              ;;(js/console.log "CREATED AT" created-at)
              (cond
-               published-at (gstr/format "PUB: %s" (format-date published-at))
-               created-at   (gstr/format "NEW: %s"   (format-date created-at))))
+               published-at (gstr/format "PUB: %s" (u/format-date u/MONTH-DAY-YEAR published-at))
+               created-at   (gstr/format "NEW: %s" (u/format-date u/MONTH-DAY-YEAR created-at))))
            ]]]]]]]
     [accordion-details
      (for [{:keys [branch-name branch-id]} branches]
@@ -131,8 +126,8 @@
   [{:keys [recent-content]}]
   [:div#recent-content
    [:div#recent-article-cards.card-group
-    (for [{:keys [title] :as content} recent-content]
-      ^{:key title} [article-card content])]])
+    (for [{:keys [article-title] :as content} recent-content]
+      ^{:key article-title} [article-card content])]])
 
 (defn recent-content-display
   [content-type]

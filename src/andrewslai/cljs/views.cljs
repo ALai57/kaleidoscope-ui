@@ -1,9 +1,10 @@
 (ns andrewslai.cljs.views
-  (:require [andrewslai.cljs.pages.admin        :as page.admin]
-            [andrewslai.cljs.pages.article-page :as page.article]
-            [andrewslai.cljs.pages.home         :as page.home]
-            [andrewslai.cljs.pages.groups       :as page.groups]
-            [andrewslai.cljs.pages.manager      :as page.manager]
+  (:require [andrewslai.cljs.pages.admin           :as page.admin]
+            [andrewslai.cljs.pages.article-page    :as page.article]
+            [andrewslai.cljs.pages.home            :as page.home]
+            [andrewslai.cljs.pages.groups          :as page.groups]
+            [andrewslai.cljs.pages.manager         :as page.manager]
+            [andrewslai.cljs.pages.article-manager :as page.article-manager]
             [andrewslai.cljs.utils :refer [lazy-component]]
             [goog.string :as gstr]
             ["react" :as react]
@@ -63,13 +64,14 @@
 
 
 ;;"https://code.thheller.com/blog/shadow-cljs/2019/03/03/code-splitting-clojurescript.html"
-(def panels {:home          page.home/home
-             :thoughts      page.article/article-page
-             :archive       page.article/article-page
-             :admin         page.admin/login-ui
-             :groups        page.groups/group-page
-             :manager       page.manager/manager-page
-             :editor        (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
+(def panels {:home            page.home/home
+             :thoughts        page.article/article-page
+             :archive         page.article/article-page
+             :admin           page.admin/login-ui
+             :groups          page.groups/group-page
+             :manager         page.manager/manager-page
+             :article-manager page.article-manager/article-manager-page
+             :editor          (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
 
 (defn app []
   (let [active-panel @(subscribe [:active-panel])]

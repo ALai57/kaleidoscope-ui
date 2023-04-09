@@ -13,7 +13,7 @@
 (defn keycloak
   [options]
   (debugf "Starting Keycloak...")
-  (let [kc-instance (keycloak-js (clj->js options))]
+  (let [kc-instance (keycloak-js/default (clj->js options))]
     (set! (.-onTokenExpired kc-instance) (fn [] (infof "Access token is expiring! Refreshing tokens...")
                                            (-> kc-instance
                                                (.updateToken)

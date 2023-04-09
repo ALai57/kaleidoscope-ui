@@ -7,27 +7,26 @@
 (def article-groups
   [{:group-name   "January 2023"
     :display-name "January 2023"
-    :articles     [{:article-id         1
-                    :article-name       "My first article"
-                    :article-created-at "2021-01-01"}
-                   {:article-id         2
-                    :article-name       "My second article"
-                    :article-created-at "2021-01-01"}
-                   {:article-id         3
-                    :article-name       "A third article"
-                    :article-created-at "2021-01-01"}]}
+    :articles     [{:article-id           1
+                    :article-name         "My first article"
+                    :article-created-date "2021-01-01"}
+                   {:article-id           2
+                    :article-name         "My second article"
+                    :article-created-date "2021-01-01"}
+                   {:article-id           3
+                    :article-name         "A third article"
+                    :article-created-date "2021-01-01"}]}
    {:group-name   "February 2023"
     :display-name "February 2023"
-    :articles     [{:article-id         4
-                    :article-name       "Yet another"
-                    :article-created-at "2021-01-01"}
-                   {:article-id         5
-                    :article-name       "I keep writing things!"
-                    :article-created-at "2021-01-01"}
-                   {:article-id         6
-                    :article-name       "Last one, I promise"
-                    :article-created-at "2021-01-01"}]}
-   ])
+    :articles     [{:article-id           4
+                    :article-name         "Yet another"
+                    :article-created-date "2021-01-01"}
+                   {:article-id           5
+                    :article-name         "I keep writing things!"
+                    :article-created-date "2021-01-01"}
+                   {:article-id           6
+                    :article-name         "Last one, I promise"
+                    :article-created-date "2021-01-01"}]}])
 
 (def ^:export default
   (helper/->default {:title     "Manager Subcomponents/Article Manager"

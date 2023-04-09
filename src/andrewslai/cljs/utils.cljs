@@ -1,6 +1,8 @@
 (ns andrewslai.cljs.utils
   (:require [clojure.string :as str]
             [goog.string :as gstr]
+            [goog.date.DateTime :as gdatetime]
+            [goog.i18n.DateTimeFormat :as gdatetimefmt]
             [reagent.core :as r]
             [shadow.lazy :as lazy]))
 
@@ -27,6 +29,30 @@
   [s]
   (and s (gstr/unescapeEntities s)))
 
+;;
+;; Date utilities
+;;
 (defn date
   [iso-string]
   (first (str/split iso-string #"T")))
+
+(def yyyy-MM-dd
+  "ex. 2022-01-01"
+  "yyyy-MM-dd")
+
+(def MONTH-YEAR
+  "ex. February 2023"
+  "MMMM, yyyy")
+
+(def MONTH-DAY-YEAR
+  "ex. Feb 28, 2022"
+  goog.i18n.DateTimeFormat.Format.MEDIUM_DATE)
+
+(def MONTH-DAY
+  "ex. Feb 28"
+  "MMM dd")
+
+(defn format-date
+  [date-fmt s]
+  (let [formatter (new goog.i18n.DateTimeFormat date-fmt)]
+    (.format formatter (gdatetime/fromIsoString s))))

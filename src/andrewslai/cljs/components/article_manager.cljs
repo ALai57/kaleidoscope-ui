@@ -1,4 +1,4 @@
-(ns  andrewslai.cljs.components.article-manager
+(ns andrewslai.cljs.components.article-manager
   (:require [andrewslai.cljs.components.table :as table]
             [andrewslai.cljs.components.primary-button :as primary-button]
             [andrewslai.cljs.components.input-box :as input-box]
@@ -29,7 +29,7 @@
             [clojure.set :as set]))
 
 (defn article-row
-  [{:keys [article-created-at article-name on-click delete-article!]
+  [{:keys [article-created-date article-name on-click delete-article!]
     :or   {on-click (fn [x]
                       (println "Clicked " article-name))}}]
   [list-item {:secondaryAction (reagent/as-element [box
@@ -53,7 +53,7 @@
                                                     ])}
    [list-item-button {:on-click on-click}
     [list-item-icon [icons.article/article]]
-    [list-item-text article-created-at]
+    [list-item-text article-created-date]
     [list-item-text article-name]]])
 
 (defn article-group-accordion
@@ -63,7 +63,7 @@
            delete-member! add-member!] :as article}]
   [:<>
    [list-item-button {:on-click on-click}
-    [list-item-text display-name]]
+    [list-item-text [:h3 display-name]]]
    [collapse {:style         {:margin-left "40px"}
               :in            open?
               :timeout       "auto"
