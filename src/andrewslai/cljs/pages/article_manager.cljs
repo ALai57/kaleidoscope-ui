@@ -24,6 +24,7 @@
   (->> branches
        (map add-human-readable-dates)
        (sort-by :article-created-date)
+       reverse
        (group-by (fn [branch] (select-keys branch [:group-name :display-name])))
        (reduce-kv (fn [acc group v] (conj acc (assoc group :articles v))) [])
        (sort-by :group-value)
