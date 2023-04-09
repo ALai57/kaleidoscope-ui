@@ -36,3 +36,10 @@ npm run build-release
 npm run deploy
 ```
 
+TODO:
+;; Shrink Clickable bar area so it doesn't overlap with delete tray
+;; Add bar showing the branch that was edited to article manager
+;; Hook up Edit button so it redirects to article editing
+;; Add confirmation modal when someone clicks delete or publish icons
+;; Refetch list of articles after a new one is added
+;; Add config button to change URL, etc

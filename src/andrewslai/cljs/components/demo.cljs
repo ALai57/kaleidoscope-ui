@@ -107,10 +107,10 @@
   []
   (let [gltf  (drei/useGLTF "/corporis-fabrica/scene.gltf")
         scene (.-scene gltf)]
-    (js/console.log "********************")
+    ;;(js/console.log "********************")
     ;;(js/console.log (.. gltf -scene -position -x))
-    (js/console.log gltf)
-    (js/console.log "********************")
+    ;;(js/console.log gltf)
+    ;;(js/console.log "********************")
     [:primitive {:object   (doto scene
                              (rotate!    [0 -90  0])
                              (scale!     [3   3  3])

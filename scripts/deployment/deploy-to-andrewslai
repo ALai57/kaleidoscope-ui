@@ -7,3 +7,5 @@ aws s3 cp --recursive ./resources/public/css            s3://andrewslai/css
 aws s3 cp ./resources/public/images/images.svg     s3://andrewslai/images/images.svg
 aws s3 cp ./resources/public/images/writing.svg    s3://andrewslai/images/writing.svg
 aws s3 cp ./resources/public/images/audiences.svg  s3://andrewslai/images/audiences.svg
+
+aws s3 cp -r ./resources/public/corporis-fabrica   s3://andrewslai/corporis-fabrica/

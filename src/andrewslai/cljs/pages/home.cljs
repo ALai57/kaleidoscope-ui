@@ -8,7 +8,4 @@
   [:div
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
-   [demo/demo]
-   [:div "hi"]
-   [:div "Welcome to my home page"]
-   ])
+   [demo/demo]])

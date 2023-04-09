@@ -11,7 +11,7 @@
 (defn add-human-readable-dates
   [{:keys [article-created-at] :as branch}]
   (let [pretty-date  (u/format-date u/MONTH-YEAR article-created-at)
-        numeric-date (u/format-date u/yyyy-MM-dd article-created-at)
+        numeric-date (u/format-date u/yyyy-MM    article-created-at)
         short-date   (u/format-date u/MONTH-DAY  article-created-at)]
     (assoc branch
            :group-name           pretty-date
@@ -23,7 +23,8 @@
   [branches]
   (->> branches
        (map add-human-readable-dates)
-       (group-by (fn [branch] (select-keys branch [:group-name :display-name :group-value])))
+       (sort-by :article-created-date)
+       (group-by (fn [branch] (select-keys branch [:group-name :display-name])))
        (reduce-kv (fn [acc group v] (conj acc (assoc group :articles v))) [])
        (sort-by :group-value)
        reverse))

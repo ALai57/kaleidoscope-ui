@@ -36,9 +36,9 @@
   [iso-string]
   (first (str/split iso-string #"T")))
 
-(def yyyy-MM-dd
+(def yyyy-MM
   "ex. 2022-01-01"
-  "yyyy-MM-dd")
+  "yyyy-MM")
 
 (def MONTH-YEAR
   "ex. February 2023"
