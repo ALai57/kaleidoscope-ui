@@ -9,13 +9,15 @@
     :display-name "January 2023"
     :articles     [{:article-id           1
                     :article-title        "My first article"
-                    :article-created-date "Jan 01"}
+                    :article-created-date "Jan 01"
+                    :published-at         "2023-01-01T00:00:00Z"}
                    {:article-id           2
                     :article-title        "My second article"
                     :article-created-date "Jan 02"}
                    {:article-id           3
                     :article-title        "A third article"
-                    :article-created-date "Jan 03"}]}
+                    :article-created-date "Jan 03"
+                    :published-at         "2023-01-01T00:00:00Z"}]}
    {:group-name   "February 2023"
     :display-name "February 2023"
     :articles     [{:article-id           4

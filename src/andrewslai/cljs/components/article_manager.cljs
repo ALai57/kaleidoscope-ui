@@ -28,15 +28,19 @@
             [taoensso.timbre :refer-macros [infof debugf warnf]]
             [clojure.set :as set]))
 
+(def SUCCESS-GREEN "#08b383")
+
 (defn article-row
-  [{:keys [article-created-date article-title on-click delete-article!]
+  [{:keys [article-created-date article-title on-click delete-article! published-at]
     :or   {on-click (fn [x]
                       (println "Clicked " article-title))}}]
-  [list-item {:secondaryAction (reagent/as-element [box
+  [list-item {:sx              {:padding-right "150px"}
+              :secondaryAction (reagent/as-element [box
                                                     [icon-button {:edge     "end"
+                                                                  :disabled (if published-at true false)
                                                                   :on-click (fn [& x]
                                                                               (println "Clicked publish"))}
-                                                     [rocket-launch]]
+                                                     [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
                                                     [icon-button {:edge     "end"
                                                                   :on-click (fn [& x]
                                                                               (println "Clicked edit"))}
@@ -52,9 +56,11 @@
                                                      [delete]]
                                                     ])}
    [list-item-button {:on-click on-click}
-    [list-item-icon [icons.article/article]]
-    [list-item-text article-created-date]
-    [list-item-text article-title]]])
+    [list-item-text {:sx {:width "70px"
+                          :flex  "none"}} article-created-date]
+    [list-item-icon {:sx {:margin-left "10px"
+                          :min-width   "26px"}} [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
+    [list-item-text {:sx {:margin-left "10px"}} article-title]]])
 
 (defn article-group-accordion
   [{:keys [idx open? on-click
@@ -64,13 +70,12 @@
   [:<>
    [list-item-button {:on-click on-click}
     [list-item-text [:h3 display-name]]]
-   [collapse {:style         {:margin-left "40px"}
-              :in            open?
+   [collapse {:in            open?
               :timeout       "auto"
               :unmountOnExit true}
     [list-item {:style {:display "block"}}
      (for [{:keys [article-created-at article-title] :as article} articles]
-       ^{:key (str article-title article-created-at)}[article-row article])]]])
+       ^{:key (str article-title article-created-at)} [article-row article])]]])
 
 (defn add-article-form
   [{:keys [add-article!]}]
