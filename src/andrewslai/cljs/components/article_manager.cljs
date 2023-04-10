@@ -31,19 +31,17 @@
 (def SUCCESS-GREEN "#08b383")
 
 (defn article-row
-  [{:keys [article-created-date article-title on-click delete-article! published-at]
-    :or   {on-click (fn [x]
-                      (println "Clicked " article-title))}}]
+  [{:keys [article-created-date article-title published-at] :as article-branch}
+   {:keys [delete-article! edit-article! publish-article!] :as article-actions}]
   [list-item {:sx              {:padding-right "150px"}
               :secondaryAction (reagent/as-element [box
                                                     [icon-button {:edge     "end"
                                                                   :disabled (if published-at true false)
-                                                                  :on-click (fn [& x]
-                                                                              (println "Clicked publish"))}
+                                                                  :on-click publish-article!}
                                                      [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
                                                     [icon-button {:edge     "end"
-                                                                  :on-click (fn [& x]
-                                                                              (println "Clicked edit"))}
+                                                                  :on-click (fn [event]
+                                                                              (edit-article! article-branch))}
                                                      [edit]]
                                                     [icon-button {:edge     "end"
                                                                   :on-click (fn [& x]
@@ -55,7 +53,8 @@
                                                                   :on-click delete-article!}
                                                      [delete]]
                                                     ])}
-   [list-item-button {:on-click on-click}
+   [list-item-button {:on-click (fn [event]
+                                  (edit-article! article-branch))}
     [list-item-text {:sx {:width "70px"
                           :flex  "none"}} article-created-date]
     [list-item-icon {:sx {:margin-left "10px"
@@ -64,9 +63,8 @@
 
 (defn article-group-accordion
   [{:keys [idx open? on-click
-           display-name articles
-           delete-article!
-           delete-member! add-member!] :as article}]
+           display-name articles] :as article-group}
+   article-actions]
   [:<>
    [list-item-button {:on-click on-click}
     [list-item-text [:h3 display-name]]]
@@ -74,8 +72,8 @@
               :timeout       "auto"
               :unmountOnExit true}
     [list-item {:style {:display "block"}}
-     (for [{:keys [article-created-at article-title] :as article} articles]
-       ^{:key (str article-title article-created-at)} [article-row article])]]])
+     (for [{:keys [article-created-at article-title branch-name] :as article} articles]
+       ^{:key (str article-title article-created-at branch-name)} [article-row article article-actions])]]])
 
 (defn add-article-form
   [{:keys [add-article!]}]
@@ -102,14 +100,15 @@
 
 (defn article-manager
   [{:keys [article-groups open
-           add-article! delete-article!]
-    :or   {add-article!    (fn [article-title] (infof "Adding article `%s`!" article-title))
-           delete-article! (fn [article] (infof "Deleting article!"))}}]
+           add-article! delete-article! edit-article! publish-article!]
+    :or   {add-article!     (fn [article-title] (infof "Adding article `%s`!" article-title))
+           delete-article!  (fn [article] (infof "Deleting article!"))
+           edit-article!    (fn [article] (infof "Loading article!"))
+           publish-article! (fn [article] (infof "Publishing article!"))}}]
   (let [indexed-groups (map-indexed (fn [idx article-group]
                                       (assoc article-group
-                                             :idx idx
-                                             :delete-article! (partial delete-article! article-group)
-                                             :on-click        (fn [] (swap! open update idx not))))
+                                             :idx      idx
+                                             :on-click (fn [] (swap! open update idx not))))
                                     article-groups)]
     [:div
      [add-article-form {:add-article! add-article!}]
@@ -119,5 +118,8 @@
                                                    (assoc article-group :open? open?))
                                                  indexed-groups
                                                  @open)]
-        ^{:key (str "idx-" idx "-ge")} [article-group-accordion article-group])]]))
-
+        ^{:key (str "idx-" idx "-ge")} [article-group-accordion article-group
+                                        {:delete-article!  delete-article!
+                                         :edit-article!    edit-article!
+                                         :add-article!     add-article!
+                                         :publish-article! publish-article!}])]]))

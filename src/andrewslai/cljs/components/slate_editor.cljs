@@ -443,23 +443,13 @@
        :icon  (reagent/create-element FormatAlignJustify)}]
      ]))
 
-(defn expand-button
-  [{:keys [on-click]}]
-  [:> ToolbarButton
-   {:onMouseDown on-click
-    :icon        (reagent/create-element Library)}])
-
 (defn management-toolbar
-  [{:keys [user save-fn load-fn publish-fn branches initial-branch] :as args}]
-  (let [{:keys [title branch-name article-url published-at]} initial-branch
+  [{:keys [user save-fn publish-fn initial-branch] :as args}]
+  (let [{:keys [article-title branch-name article-url published-at]} initial-branch
 
         editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     [:<>
-     [article-selector/article-selector
-      {:expand-button expand-button
-       :branches      branches
-       :on-click      load-fn}]
      [:> ToolbarButton
       {:icon        (reagent/create-element Save3)
        :onMouseDown (fn [event]
@@ -468,7 +458,7 @@
                                   :branch-name  branch-name
                                   :content      (gstr/format "<div>%s</div>" html)
                                   :article-url  article-url
-                                  :title        title})))}]
+                                  :title        article-title})))}]
      (if published-at
        [:> ToolbarButton
         {:icon        (reagent/create-element Hide)
@@ -480,7 +470,7 @@
                         (publish-fn initial-branch))}])]))
 
 (def PLATE
-  (reagent/as-element [:> plate/Plate {:plugins PLUGINS}]))
+  (plate/createPlateUIEditor #js {:plugins PLUGINS}))
 
 (defn plate-deserialize
   [content]
@@ -488,13 +478,12 @@
                                     :stripWhitespace false}))
 
 (defn editor
-  [{:keys [user save-fn load-fn initial-branch]
+  [{:keys [user save-fn initial-branch]
     :as   args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
-  (let [{:keys [content title branch-id branch-name]} initial-branch
+  (let [{:keys [content article-title branch-id branch-name]} initial-branch
 
-        title      (reagent/atom (or title "<<YOUR NEW ARTICLE'S TITLE HERE>>"))
         plate-html (reagent/atom (plate-deserialize (or content "Start typing...")))]
     ;;(js/console.log "*****************")
     ;;(js/console.log (plate-deserialize "SOME STUFF!"))
@@ -515,25 +504,12 @@
                                     :right            "0px"
                                     :top              "60px"
                                     :width            "70px"}}
-         [:f> management-toolbar
-          (update args :initial-branch assoc :title @title)]]
+         [:f> management-toolbar args]]
         [:div {:style {:height "120px"}}]
         [:div#primary-content
-         [text-field {:variant     "standard"
-                      :class       "article-title"
-                      :required    true
-                      :value       @title
-                      :input-props {:style {:width       "800px"
-                                            :font-style  "normal"
-                                            :font-weight "bold"
-                                            :font-size   "20pt"
-                                            :color       "#505050"}}
-                      :onChange    (fn [event]
-                                     (reset! title (.. event -target -value)))}]
-         [:div.article-subheading {:style {:color "#aba9a9"}}
-          (gstr/format "Author: %s" (user/get-username user))]
-         [:div.article-subheading {:style {:color "#aba9a9"}}
-          (u/date (.toISOString (new js/Date)))]
+         [:div.article-title article-title]
+         [:div.article-subheading (gstr/format "Author: %s" (user/get-username user))]
+         [:div.article-subheading (u/date (.toISOString (new js/Date)))]
          [:div.divider.py-1.bg-dark]
          [:br][:br]
          [:div#article-content

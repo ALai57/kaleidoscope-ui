@@ -28,7 +28,8 @@
        (group-by (fn [branch] (select-keys branch [:group-name :display-name])))
        (reduce-kv (fn [acc group v] (conj acc (assoc group :articles v))) [])
        (sort-by :group-value)
-       reverse))
+       reverse
+       ))
 
 (def branches
   [{:article-created-at "2022-03-01T00:00:00Z"
@@ -73,7 +74,7 @@
     :published-at       nil,}])
 
 (defn -article-manager-page [{:keys [articles branches user groups notification-type
-                                     add-article! delete-article!]}]
+                                     add-article! delete-article! edit-article!]}]
   (let [article-groups (group-branches branches)]
     [:div
      [nav/nav-bar {:user              user
@@ -84,6 +85,7 @@
       [am/article-manager {:article-groups  article-groups
                            :open            (reagent/atom (vec (repeat (count article-groups) true)))
                            :add-article!    add-article!
+                           :edit-article!   edit-article!
                            :delete-article! delete-article!}]]]))
 
 (defn save-version!
@@ -94,11 +96,20 @@
     :as   save-data}]
   (dispatch [:save-article! (update save-data :content gstr/unescapeEntities)]))
 
+(defn edit-article!
+  [{:keys [article-id branch-id] :as article-branch}]
+  (infof "Updating editor article id to %s" article-id)
+
+  (dispatch [:load-latest-version! article-branch])
+  (dispatch [:update-editor-branch-id article-id])
+  (dispatch [:set-hash-fragment "/editor"]))
+
 (defn article-manager-page
   [{:keys [articles user notification-type]}]
   [-article-manager-page {:user              user
                           :notification-type notification-type
                           :add-article!      save-version!
                           :delete-article!   (fn [& args] (println "Clicked delete!"))
+                          :edit-article!     edit-article!
                           :articles          nil
                           :branches          @(subscribe [:branches])}])
