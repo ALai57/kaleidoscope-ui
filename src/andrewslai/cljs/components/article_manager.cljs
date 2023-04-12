@@ -22,6 +22,7 @@
                                             list-item-icon
                                             list-item-text
 
+                                            tooltip
                                             text-field
                                             ]]
             [re-frame.core :refer [dispatch subscribe]]
@@ -34,32 +35,36 @@
   [{:keys [article-created-date article-title published-at] :as article-branch}
    {:keys [delete-article! edit-article! publish-article!] :as article-actions}]
   [list-item {:sx              {:padding-right "150px"}
-              :secondaryAction (reagent/as-element [box
-                                                    [icon-button {:edge     "end"
-                                                                  :disabled (if published-at true false)
-                                                                  :on-click publish-article!}
-                                                     [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
-                                                    [icon-button {:edge     "end"
-                                                                  :on-click (fn [event]
-                                                                              (edit-article! article-branch))}
-                                                     [edit]]
-                                                    [icon-button {:edge     "end"
-                                                                  :on-click (fn [& x]
-                                                                              (println "Clicked settings"))}
-                                                     [settings]]
-                                                    [:div {:style {:width   "20px"
-                                                                   :display "inline-block"}}]
-                                                    [icon-button {:edge     "end"
-                                                                  :on-click delete-article!}
-                                                     [delete]]
-                                                    ])}
-   [list-item-button {:on-click (fn [event]
-                                  (edit-article! article-branch))}
-    [list-item-text {:sx {:width "70px"
-                          :flex  "none"}} article-created-date]
-    [list-item-icon {:sx {:margin-left "10px"
-                          :min-width   "26px"}} [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
-    [list-item-text {:sx {:margin-left "10px"}} article-title]]])
+              :secondaryAction (reagent/as-element
+                                [box
+                                 [tooltip {:id    "publish-tooltip"
+                                           :title (if published-at (str "Published on " published-at) "Publish article")}
+                                  [:span
+                                   [icon-button {:edge     "end"
+                                                 :disabled (if published-at true false)
+                                                 :on-click publish-article!}
+                                    [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]
+
+                                 [tooltip {:id "settings-tooltip" :title "Settings (WIP)"}
+                                  [icon-button {:edge     "end"
+                                                :on-click (fn [& x]
+                                                            (println "Clicked settings"))}
+                                   [settings]]]
+                                 [:div {:style {:width   "20px"
+                                                :display "inline-block"}}]
+                                 [tooltip {:id "settings-tooltip" :title "Delete article (WIP)"}
+                                  [icon-button {:edge     "end"
+                                                :on-click delete-article!}
+                                   [delete]]]
+                                 ])}
+   [tooltip {:id "edit-tooltip" :title "Edit article"}
+    [list-item-button {:on-click (fn [event]
+                                   (edit-article! article-branch))}
+     [list-item-text {:sx {:width "70px"
+                           :flex  "none"}} article-created-date]
+     [list-item-icon {:sx {:margin-left "10px"
+                           :min-width   "26px"}} [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
+     [list-item-text {:sx {:margin-left "10px"}} article-title]]]])
 
 (defn article-group-accordion
   [{:keys [idx open? on-click

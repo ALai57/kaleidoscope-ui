@@ -5,11 +5,13 @@
             [andrewslai.cljs.components.slate.serialization :as serialization]
             [andrewslai.cljs.components.slate.prism :as prism]
             [andrewslai.cljs.components.slate.code-block-helpers :as cb]
+            [andrewslai.cljs.modal :refer [modal-template MODAL-BACKGROUND]]
             [andrewslai.cljs.core-api.user :as user]
             [andrewslai.cljs.utils :as u]
             [goog.string :as gstr]
+            [re-frame.core :refer [dispatch]]
             [reagent.core :as reagent]
-            [reagent-mui.components :refer [text-field button]]
+            [reagent-mui.components :refer [text-field button tooltip modal box]]
             ["@styled-icons/boxicons-regular/CodeAlt"      :refer [CodeAlt]]
             ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
             ["@styled-icons/boxicons-regular/Hide"         :refer [Hide]]
@@ -359,23 +361,22 @@
                       ]
                  #js {:components PLATE-UI}))
 
-
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn editing-toolbar
-  []
+  [{:keys [show-modal]}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
     [:<>
-     [:a.zoom-icon.bg-primary {:href  "#/home"
-                               :style {:float            "left"
+     [:a.zoom-icon.bg-primary {:style {:float            "left"
                                        :height           "48px"
                                        :margin-right     "20px"
                                        :background-color ""}}
       [:img.navbutton {:src      (navbar/img-path "favicon.svg")
                        :style    {:height "48px"}
-                       :on-click navbar/navigate-home!}]]
+                       :on-click (fn [event]
+                                   (reset! show-modal true))}]]
      [:> MarkToolbarButton
       {:type (getPluginType editor-ref MARK_BOLD)
        :icon (reagent/create-element FormatBold)}]
@@ -450,8 +451,10 @@
         editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     [:<>
+     [:div {:style {:width "100px"}}]
      [:> ToolbarButton
       {:icon        (reagent/create-element Save3)
+       :tooltip     {:content "Save article"}
        :onMouseDown (fn [event]
                       (let [html (serialization/serialize editor-ref)]
                         (save-fn {:article-tags  "thoughts"
@@ -459,15 +462,11 @@
                                   :content       (gstr/format "<div>%s</div>" html)
                                   :article-url   article-url
                                   :article-title article-title})))}]
-     (if published-at
-       [:> ToolbarButton
-        {:icon        (reagent/create-element Hide)
-         :onMouseDown (fn [event]
-                        (js/console.log "Deleting branch not implemented yet"))}]
-       [:> ToolbarButton
-        {:icon        (reagent/create-element Rocket)
-         :onMouseDown (fn [event]
-                        (publish-fn initial-branch))}])]))
+     [:> ToolbarButton
+      {:icon        (reagent/create-element Rocket)
+       :tooltip     {:content (if published-at (str "Published at " published-at) "Publish article!")}
+       :onMouseDown (fn [event]
+                      (publish-fn initial-branch))}]]))
 
 (def PLATE
   (plate/createPlateUIEditor #js {:plugins PLUGINS}))
@@ -477,6 +476,19 @@
   (plate/deserializeHtml PLATE #js {:element         content
                                     :stripWhitespace false}))
 
+(defn basic-modal
+  [{:keys [open? title body footer level on-close]
+    :or   {level "info"}}]
+  [modal {:open          @open?
+          :on-close      #(reset! open? false)
+          :BackdropProps {:style {:background-color MODAL-BACKGROUND}}}
+   [box {:class "modal-box"}
+    [modal-template {:title    title
+                     :body     body
+                     :footer   footer
+                     :on-close #(reset! open? false)
+                     :level    level}]]])
+
 (defn editor
   [{:keys [user save-fn initial-branch]
     :as   args}]
@@ -484,13 +496,26 @@
   ;;(js/console.log "PLUGINS" PLUGINS)
   (let [{:keys [content article-title branch-id branch-name]} initial-branch
 
-        plate-html (reagent/atom (plate-deserialize (or content "Start typing...")))]
+        plate-html (reagent/atom (plate-deserialize (or content "Start typing...")))
+        show-modal (reagent/atom false)]
     ;;(js/console.log "*****************")
     ;;(js/console.log (plate-deserialize "SOME STUFF!"))
     ;;(js/console.log "*****************")
     (fn []
       ;;(println "PLATE HTML" plate-html "LOADED" loaded "INITIAL VALUE" initial-value)
       [:div {:key (str "editor" content)}
+       [basic-modal {:open?    show-modal
+                     :level    "warn"
+                     :title    "Do you want to leave the editor? Any unsaved changes will be lost."
+                     :body     [:div
+                                [:button {:type     "button" :title "Not yet"
+                                          :class    "btn btn-default"
+                                          :on-click #(reset! show-modal false)}
+                                 "Not yet"]
+                                [:button {:type     "button" :title "Ok, I'm ready"
+                                          :class    "btn btn-default"
+                                          :on-click navbar/navigate-home!}
+                                 "Ok, I'm ready"]]}]
        [:> PlateProvider {:initialValue @plate-html
                           :plugins      PLUGINS}
         [:div.divider.py-1.bg-dark]
@@ -498,13 +523,10 @@
          ;; NOTE: Need to create a functional component. Since the component is
          ;; defined as a Clojurescript function, we need to do this where the CLJS
          ;; function is used, not inside the fn.
-         [:f> editing-toolbar]]
-        [:> HeadingToolbar {:style {:float            "right"
-                                    :background-color "aliceblue"
-                                    :right            "0px"
-                                    :top              "60px"
-                                    :width            "70px"}}
-         [:f> management-toolbar args]]
+         [:f> editing-toolbar {:show-modal show-modal}]
+         [:<> [:f> management-toolbar args]]
+         ]
+
         [:div {:style {:height "120px"}}]
         [:div#primary-content
          [:div.article-title article-title]

@@ -64,6 +64,14 @@ h2 {font-size: 18;
     font-size: 20pt;
   }
 
+  .card-title {
+    font-weight: normal;
+  }
+
+  .card-text {
+    font-size: 14pt;
+  }
+
 }
 
 
