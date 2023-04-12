@@ -9,11 +9,12 @@
             [taoensso.timbre :refer-macros [infof errorf]]))
 
 (reg-event-db
- :save-success
- (fn [db [_ response]]
-   (infof "Success saving article response: %s" response)
-   (dispatch [:show-modal (create-article-success-modal response)])
-   db))
+    :save-success
+  (fn [db [_ response]]
+    (infof "Success saving article response: %s" response)
+    (dispatch [:show-modal (create-article-success-modal response)])
+    (dispatch [:request-all-branches])
+    db))
 
 (reg-event-db
  :save-failure
@@ -67,29 +68,32 @@
       (clojure.string/replace  " " "-")))
 
 (reg-event-fx
- :save-article!
- (fn [{:keys [db]} [_ {:keys [title branch-name article-url] :as article}]]
-   (let [sanitized-title (title->url title)]
-     (infof "Saving article: %s" article)
-     {:http-xhrio {:method          :post
-                   :uri             (gstr/format "/articles/%s/branches/%s/versions" (or article-url sanitized-title) (or branch-name "main"))
-                   :params          (assoc article :article-tags "thoughts")
-                   :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
-                                                                       "test"))
-                                     :Content-Type "application/json"}
-                   :format          (ajax/json-request-format)
-                   :response-format (ajax/json-response-format {:keywords? true})
-                   :on-success      [:save-success]
-                   :on-failure      [:save-failure]}
-      :db         (assoc db :loading? true)})))
+    :save-article!
+  (fn [{:keys [db]} [_ {:keys [article-title branch-name article-url] :as article}]]
+    (let [sanitized-title (title->url article-title)]
+      (infof "Saving article: %s" article)
+      {:http-xhrio {:method          :post
+                    :uri             (gstr/format "/articles/%s/branches/%s/versions" (or article-url sanitized-title) (or branch-name "main"))
+                    :params          (assoc article :article-tags "thoughts")
+                    :headers         {:Authorization (str "Bearer " (or (.-token (:keycloak db))
+                                                                        "test"))
+                                      :Content-Type "application/json"}
+                    :format          (ajax/json-request-format)
+                    :response-format (ajax/json-response-format {:keywords? true})
+                    :on-success      [:save-success]
+                    :on-failure      [:save-failure]}
+       :db         (assoc db :loading? true)})))
 
 
 
 (reg-event-db
- :publish-success
- (fn [db [_ response]]
-   (infof "Success publishing article response: %s" response)
-   db))
+    :publish-success
+  (fn [db [_ response]]
+    (infof "Success publishing article response: %s" response)
+    (dispatch [:request-all-branches])
+    (dispatch [:request-recent-articles])
+    (dispatch [:set-hash-fragment "/article-manager"])
+    db))
 
 (reg-event-db
  :publish-failure

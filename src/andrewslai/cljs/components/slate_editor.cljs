@@ -454,11 +454,11 @@
       {:icon        (reagent/create-element Save3)
        :onMouseDown (fn [event]
                       (let [html (serialization/serialize editor-ref)]
-                        (save-fn {:article-tags "thoughts"
-                                  :branch-name  branch-name
-                                  :content      (gstr/format "<div>%s</div>" html)
-                                  :article-url  article-url
-                                  :title        article-title})))}]
+                        (save-fn {:article-tags  "thoughts"
+                                  :branch-name   branch-name
+                                  :content       (gstr/format "<div>%s</div>" html)
+                                  :article-url   article-url
+                                  :article-title article-title})))}]
      (if published-at
        [:> ToolbarButton
         {:icon        (reagent/create-element Hide)

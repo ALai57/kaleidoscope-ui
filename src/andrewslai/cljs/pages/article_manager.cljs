@@ -88,8 +88,24 @@
                            :edit-article!   edit-article!
                            :delete-article! delete-article!}]]]))
 
+(defn title->url
+  [title]
+  (-> title
+      str
+      clojure.string/lower-case
+      (clojure.string/replace  #"[!|.|(|)|]" "")
+      (clojure.string/replace  " " "-")))
+
+(defn add-article!
+  [{:keys [content article-title article-url article-tags branch-name]
+    :or   {article-tags "thoughts"
+           branch-name  "main"
+           content      "Your new article!"}
+    :as   save-data}]
+  (dispatch [:save-article! save-data]))
+
 (defn save-version!
-  [{:keys [content title article-tags branch-name]
+  [{:keys [content article-tags branch-name]
     :or   {article-tags "thoughts"
            branch-name  "main"
            content      "Your new article!"}
@@ -108,7 +124,7 @@
   [{:keys [articles user notification-type]}]
   [-article-manager-page {:user              user
                           :notification-type notification-type
-                          :add-article!      save-version!
+                          :add-article!      add-article!
                           :delete-article!   (fn [& args] (println "Clicked delete!"))
                           :edit-article!     edit-article!
                           :articles          nil

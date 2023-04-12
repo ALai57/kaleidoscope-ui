@@ -19,7 +19,7 @@
     :description "Create and manage Images. Not implemented yet!"
     :alt         "Manage images"
     :src         "/images/images.svg"
-    :on-click    (fn [] (dispatch [:set-hash-fragment "/home"]))}
+    :on-click    (fn [] #_(dispatch [:set-hash-fragment "/home"]))}
    {:name        "Audiences (WIP)"
     :description "Control who has access to your content by defining an Audience"
     :src         "/images/audiences.svg"
@@ -30,7 +30,6 @@
 (defn manager-card
   [{:keys [name src alt on-click description] :as capability}]
   [box {:sx {:display          "flex"
-             :flex-wrap        "wrap"
              "& > :not(style)" {
                                 :m      1
                                 :width  256
@@ -60,6 +59,9 @@
 
 (defn manager-cards
   []
-  [:div {:style {:display "inline-flex"}}
+  [:div {:style {:display         "inline-flex"
+                 :flex-wrap       "wrap"
+                 :flex-direction  "row"
+                 :justify-content "center"}}
    (for [capability CAPABILITIES]
      ^{:key (:name capability)} [manager-card capability])])

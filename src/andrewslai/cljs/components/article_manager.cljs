@@ -95,7 +95,7 @@
                                 :min-width    "350px"}
                     :on-change on-change}]
        [primary-button/primary-button {:text     "Add a new article"
-                                       :on-click (partial add-article! @new-article-title)}]
+                                       :on-click (partial add-article! {:article-title @new-article-title})}]
        ])))
 
 (defn article-manager
