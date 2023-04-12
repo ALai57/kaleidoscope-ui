@@ -10,5 +10,8 @@ aws s3 cp ./resources/public-sahil/images/images.svg     s3://sahiltalkingcents/
 aws s3 cp ./resources/public-sahil/images/writing.svg    s3://sahiltalkingcents/images/writing.svg
 aws s3 cp ./resources/public-sahil/images/audiences.svg  s3://sahiltalkingcents/images/audiences.svg
 
+aws s3 cp --recursive ./resources/public/corporis-fabrica   s3://sahiltalkingcents/corporis-fabrica/
+aws s3 cp ./resources/public-sahil/index.html            s3://sahiltalkingcents/index.html
+
 # Background #0e766d
 # Light      #aeadff00

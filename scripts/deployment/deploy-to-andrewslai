@@ -9,3 +9,4 @@ aws s3 cp ./resources/public/images/writing.svg    s3://andrewslai/images/writin
 aws s3 cp ./resources/public/images/audiences.svg  s3://andrewslai/images/audiences.svg
 
 aws s3 cp -r ./resources/public/corporis-fabrica   s3://andrewslai/corporis-fabrica/
+aws s3 cp ./resources/public/index.html            s3://andrewslai/index.html

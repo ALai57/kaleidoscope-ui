@@ -10,5 +10,7 @@ aws s3 cp ./resources/public/images/images.svg     s3://caheriaguilar/images/ima
 aws s3 cp ./resources/public/images/writing.svg    s3://caheriaguilar/images/writing.svg
 aws s3 cp ./resources/public/images/audiences.svg  s3://caheriaguilar/images/audiences.svg
 
+aws s3 cp --recursive ./resources/public/corporis-fabrica   s3://caheriaguilar/corporis-fabrica/
+aws s3 cp ./resources/public-caheri/index.html     s3://caheriaguilar/index.html
 # Background #0e766d
 # Light      #aeadff00

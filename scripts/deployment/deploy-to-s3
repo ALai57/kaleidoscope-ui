@@ -9,6 +9,5 @@ aws s3 cp ./resources/public/js/compiled/andrewslai/manifest.edn       s3://kale
 aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.edn  s3://kaleidoscope.pub/js/compiled/andrewslai/module-loader.edn
 aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.json s3://kaleidoscope.pub/js/compiled/andrewslai/module-loader.json
 aws s3 cp ./resources/public/silent-check-sso.html                     s3://kaleidoscope.pub/silent-check-sso.html
-aws s3 cp ./resources/public/index.html                                s3://kaleidoscope.pub/index.html
 echo "Incrementing package version..."
 npm version patch
