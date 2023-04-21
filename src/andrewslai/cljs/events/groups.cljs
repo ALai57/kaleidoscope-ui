@@ -1,6 +1,5 @@
 (ns andrewslai.cljs.events.groups
   (:require [ajax.core :as ajax]
-            [andrewslai.cljc.specs.articles]
             [cljs.spec.alpha :as s]
             [day8.re-frame.http-fx]
             [goog.string :as gstr]
