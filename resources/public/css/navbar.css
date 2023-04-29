@@ -6,15 +6,17 @@
 #primary-nav {
 	overflow: hidden;
 	background-color: #333333;
-	height: 125px;
-	min-width: 366px;
+	height: 90px;
+	min-width: 320px;
 }
 
 .navbutton {
 	vertical-align: middle;
 	position: relative;
 	float: right;
-	height: 125px;
+	height: 90px;
+	max-height: 90px;
+	max-width:  90px;
 	padding: 0px 0px;
 
 	display: inline-block;
@@ -37,6 +39,8 @@
 	    position: relative;
 	    float: right;
 	    height: 80px;
+		max-height: 80px;
+		max-width:  80px;
 	    padding: 0px 0px;
 
 	    display: inline-block;

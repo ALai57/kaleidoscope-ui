@@ -2,7 +2,9 @@
   (:require ["@react-three/fiber" :as fiber]
             ["@react-three/drei" :as drei]
             ["react" :as react]
-            [reagent.core :as reagent]))
+            [reagent.core :as reagent]
+            [andrewslai.cljs.utils :as u]
+            ))
 
 #_(defn rotate!
     [ref [dx dy dz]]
@@ -123,18 +125,20 @@
 
 (defn demo
   []
-  [:> fiber/Canvas {:style  {:height     "700px"
-                             :background "black"}
-                    :camera {:position [0 1 0]
-                             :target   [20 0 0]}}
-   [:ambientLight {:intensity 0.2}]
-   [:spotLight {:position  [10 10 10]
-                :intensity 0.5
-                :angle     0.15
-                :penumbra  1}]
-   [:> react/Suspense {:fallback nil}
-    [:f> book]]
-   ;;[:f> box {:position [-1.2 0 0]}]
-   ;;[:f> box {:position [1.2  0 0]}]
-   ;;[:f> sphere {:position [0 0 0]}]
-   [:> drei/OrbitControls]])
+  [u/err-boundary
+   [:> fiber/Canvas {:style  {:height     "700px"
+                              :background "black"}
+                     :camera {:position [0 1 0]
+                              :target   [20 0 0]}}
+    [:ambientLight {:intensity 0.2}]
+    [:spotLight {:position  [10 10 10]
+                 :intensity 0.5
+                 :angle     0.15
+                 :penumbra  1}]
+    [:> react/Suspense {:fallback (fn [& args]
+                                    [:p "Loading Canvas"])}
+     [:f> book]]
+    ;;[:f> box {:position [-1.2 0 0]}]
+    ;;[:f> box {:position [1.2  0 0]}]
+    ;;[:f> sphere {:position [0 0 0]}]
+    [:> drei/OrbitControls]]])

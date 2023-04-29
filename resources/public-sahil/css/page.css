@@ -114,8 +114,8 @@ h2 {font-size: 18;
 div.article-card {
     max-width: 18rem;
     display: inline-block;
-    min-width: 350px;
-    margin: 10px;}
+    min-width: 300px;
+    margin: auto;}
 
 .card-group {
     padding-top: 40px;
