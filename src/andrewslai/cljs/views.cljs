@@ -5,11 +5,11 @@
             [andrewslai.cljs.pages.groups          :as page.groups]
             [andrewslai.cljs.pages.manager         :as page.manager]
             [andrewslai.cljs.pages.article-manager :as page.article-manager]
-            [andrewslai.cljs.utils :refer [lazy-component]]
+            [andrewslai.cljs.utils :as u]
             [goog.string :as gstr]
             ["react" :as react]
             [re-frame.core :refer [subscribe dispatch]]
-            [shadow.lazy :refer [loadable] :as lazy]
+            [shadow.lazy :as lazy]
             [taoensso.timbre :refer-macros [infof]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -71,7 +71,7 @@
              :groups          page.groups/group-page
              :manager         page.manager/manager-page
              :article-manager page.article-manager/article-manager-page
-             :editor          (lazy-component (loadable andrewslai.cljs.pages.article-editor/editor-ui))})
+             :editor          (u/lazy-component (lazy/loadable andrewslai.cljs.pages.article-editor/editor-ui))})
 
 (defn app []
   (let [active-panel @(subscribe [:active-panel])]

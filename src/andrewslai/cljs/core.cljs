@@ -10,13 +10,14 @@
             [andrewslai.cljs.events.user]
             [andrewslai.cljs.keycloak :as keycloak]
             [andrewslai.cljs.subs]   ;; load them (see docs/App-Structure.md)
-            [andrewslai.cljs.views]
+            [andrewslai.cljs.utils :as u]
             [goog.events :as events]
             ;;[devtools.core :as devtools]
             [keycloak-js :as keycloak-js]
             [re-frame.core :refer [dispatch dispatch-sync]]
             [reagent.dom :refer [render]]
-            [secretary.core :as secretary])
+            [secretary.core :as secretary]
+            [shadow.lazy :as lazy])
   (:import [goog History]
            [goog.history EventType]))
 
@@ -54,8 +55,12 @@
 ;;    }
 ;; So this is the entry function that kicks off the app once HTML is loaded
 
+(defn app
+  []
+  (u/lazy-component (lazy/loadable andrewslai.cljs.views/app)))
+
 (defn ^:export main
   []
   ;; `andrewslai.cljs.views/app` is the root view for the entire UI.
-  (render [andrewslai.cljs.views/app]
+  (render [app]
           (.getElementById js/document "app")))

@@ -33,10 +33,11 @@
                 ;; Split up the Frontend UI so that we have two smaller builds, instead of one
                 ;; large Javascript file.
                 :module-loader    true
-                :modules          {:andrewslai {:init-fn andrewslai.cljs.core/main}
+                :modules          {:skeleton   {:init-fn andrewslai.cljs.core/main}
+                                   :andrewslai {:entries    [andrewslai.cljs.views]
+                                                :depends-on #{:skeleton}}
                                    :editor     {:entries    [andrewslai.cljs.pages.article-editor]
-                                                :depends-on #{:andrewslai}}
-                                   }
+                                                :depends-on #{:andrewslai :skeleton}}}
                 :compiler-options {:static-fns          true
                                    :infer-externs       :auto
                                    :optimize-constants  true
