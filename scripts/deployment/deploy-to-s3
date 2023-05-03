@@ -1,6 +1,8 @@
 #!/bin/bash
 
 echo "Deploying frontend to kaleidoscope bucket..."
+aws s3 cp ./resources/public/js/compiled/andrewslai/skeleton.js        s3://kaleidoscope.pub/js/compiled/andrewslai/skeleton.js
+aws s3 cp ./resources/public/js/compiled/andrewslai/skeleton.js.map    s3://kaleidoscope.pub/js/compiled/andrewslai/skeleton.js.map
 aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js      s3://kaleidoscope.pub/js/compiled/andrewslai/andrewslai.js
 aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js.map  s3://kaleidoscope.pub/js/compiled/andrewslai/andrewslai.js.map
 aws s3 cp ./resources/public/js/compiled/andrewslai/editor.js          s3://kaleidoscope.pub/js/compiled/andrewslai/editor.js
