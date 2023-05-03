@@ -12,7 +12,8 @@
     (.createObjectURL js/URL data-blob)))
 
 ;; https://github.com/fricze/code-splitting-clojurescript/blob/master/src/main/demo/util.cljs
-(defn lazy-component [loadable]
+(defn lazy-component
+  [loadable]
   (fn [{:keys [fallback] :as props}]
     (let [component (r/atom (or fallback (fn []
                                            [:p "Loading"])))
