@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.pages.admin
   (:require [ajax.core :refer [POST]]
             [kaleidoscope.ui.navbar :as nav]
-            [kaleidoscope.ui.components.primary-button :as primary-button]
-            [kaleidoscope.ui.components.secondary-button :as secondary-button]
+            [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.side-menu :as side-menu]
             [kaleidoscope.ui.components.input-box :as input-box]
             [kaleidoscope.ui.components.thumbnail :as thumbnail]
@@ -59,15 +58,15 @@
 
   [:div.row.justify-content-center
    [:div.login-wrapper.shadow.p-3.rounded.col-md-4
-    [primary-button/primary-button {:text    "Login via Keycloak"
-                                    :on-click (get user-event-handlers :on-login-click)}]
-    [primary-button/primary-button {:text    "Check if you are logged in"
-                                    :on-click (get user-event-handlers :on-check-auth-click)}]
-    [primary-button/primary-button {:text    "Check if you have admin access"
-                                    :on-click (get user-event-handlers :on-admin-click)}]
+    [button/button {:text    "Login via Keycloak"
+                    :on-click (get user-event-handlers :on-login-click)}]
+    [button/button {:text    "Check if you are logged in"
+                    :on-click (get user-event-handlers :on-check-auth-click)}]
+    [button/button {:text    "Check if you have admin access"
+                    :on-click (get user-event-handlers :on-admin-click)}]
     [:br]
-    [side-menu/side-menu {:expand-button     (fn [props] [primary-button/primary-button (merge props
-                                                                                               {:text "Notification settings"})])
+    [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props
+                                                                               {:text "Notification settings"})])
                           :notification-type notification-type}]]])
 
 ;; Instead of doing this, have the component dispatch on a loaded file as an argument
@@ -120,15 +119,15 @@
                           :readOnly  true}]
     [:br]
     [:br]
-    [primary-button/primary-button {:text     "Edit profile"
-                                    :on-click on-edit-profile-click}]
-    [primary-button/primary-button {:text     "Logout"
-                                    :on-click on-logout-click}]
-    [primary-button/primary-button {:text     "Check user authentication"
-                                    :on-click on-admin-click}]
+    [button/button {:text     "Edit profile"
+                    :on-click on-edit-profile-click}]
+    [button/button {:text     "Logout"
+                    :on-click on-logout-click}]
+    [button/button {:text     "Check user authentication"
+                    :on-click on-admin-click}]
     [:br]
-    [side-menu/side-menu {:expand-button     (fn [props] [primary-button/primary-button (merge props
-                                                                                               {:text "Notification settings"})])
+    [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props
+                                                                               {:text "Notification settings"})])
                           :notification-type notification-type}]]])
 
 (defn login-ui

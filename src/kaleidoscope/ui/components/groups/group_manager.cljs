@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.components.groups.group-manager
   (:require [kaleidoscope.ui.components.table :as table]
-            [kaleidoscope.ui.components.primary-button :as primary-button]
+            [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.input-box :as input-box]
             [kaleidoscope.ui.utils.events :as events]
             [kaleidoscope.ui.utils :as u]
@@ -91,7 +91,7 @@
                     :sx        {:margin-right "20px"
                                 :min-width    "350px"}
                     :on-change on-change-member-email}]
-       [primary-button/primary-button {:text     "Add a member"
+       [button/button {:text     "Add a member"
                                        :on-click (partial add-member! {:alias @new-member-name
                                                                        :email @new-member-email})}]])))
 
@@ -140,7 +140,7 @@
                     :sx        {:margin-right "20px"
                                 :min-width    "350px"}
                     :on-change on-change}]
-       [primary-button/primary-button {:text     "Add a new group"
+       [button/button {:text     "Add a new group"
                                        :on-click (partial add-group! @new-group-name)}]
        ])))
 

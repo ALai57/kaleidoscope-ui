@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.components.article-manager
   (:require [kaleidoscope.ui.components.table :as table]
-            [kaleidoscope.ui.components.primary-button :as primary-button]
+            [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.input-box :as input-box]
             [kaleidoscope.ui.utils.events :as events]
             [kaleidoscope.ui.utils :as u]
@@ -99,7 +99,7 @@
                     :sx        {:margin-right "20px"
                                 :min-width    "350px"}
                     :on-change on-change}]
-       [primary-button/primary-button {:text     "Add a new article"
+       [button/button {:text     "Add a new article"
                                        :on-click (partial add-article! {:article-title @new-article-title})}]
        ])))
 
