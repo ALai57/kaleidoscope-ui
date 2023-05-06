@@ -1,15 +1,15 @@
 #!/bin/bash
 
 echo "Deploying frontend to kaleidoscope bucket..."
-aws s3 cp ./resources/public/js/compiled/andrewslai/skeleton.js        s3://kaleidoscope.pub/js/compiled/andrewslai/skeleton.js
-aws s3 cp ./resources/public/js/compiled/andrewslai/skeleton.js.map    s3://kaleidoscope.pub/js/compiled/andrewslai/skeleton.js.map
-aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js      s3://kaleidoscope.pub/js/compiled/andrewslai/andrewslai.js
-aws s3 cp ./resources/public/js/compiled/andrewslai/andrewslai.js.map  s3://kaleidoscope.pub/js/compiled/andrewslai/andrewslai.js.map
-aws s3 cp ./resources/public/js/compiled/andrewslai/editor.js          s3://kaleidoscope.pub/js/compiled/andrewslai/editor.js
-aws s3 cp ./resources/public/js/compiled/andrewslai/editor.js.map      s3://kaleidoscope.pub/js/compiled/andrewslai/editor.js.map
-aws s3 cp ./resources/public/js/compiled/andrewslai/manifest.edn       s3://kaleidoscope.pub/js/compiled/andrewslai/manifest.edn
-aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.edn  s3://kaleidoscope.pub/js/compiled/andrewslai/module-loader.edn
-aws s3 cp ./resources/public/js/compiled/andrewslai/module-loader.json s3://kaleidoscope.pub/js/compiled/andrewslai/module-loader.json
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/skeleton.js        s3://kaleidoscope.pub/js/compiled/andrewslai/skeleton.js
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/skeleton.js.map    s3://kaleidoscope.pub/js/compiled/andrewslai/skeleton.js.map
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/kaleidoscope.js      s3://kaleidoscope.pub/js/compiled/andrewslai/kaleidoscope.js
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/kaleidoscope.js.map  s3://kaleidoscope.pub/js/compiled/andrewslai/kaleidoscope.js.map
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/editor.js          s3://kaleidoscope.pub/js/compiled/andrewslai/editor.js
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/editor.js.map      s3://kaleidoscope.pub/js/compiled/andrewslai/editor.js.map
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/manifest.edn       s3://kaleidoscope.pub/js/compiled/andrewslai/manifest.edn
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/module-loader.edn  s3://kaleidoscope.pub/js/compiled/andrewslai/module-loader.edn
+aws s3 cp ./resources/public/js/compiled/kaleidoscope/module-loader.json s3://kaleidoscope.pub/js/compiled/andrewslai/module-loader.json
 aws s3 cp ./resources/public/silent-check-sso.html                     s3://kaleidoscope.pub/silent-check-sso.html
 echo "Incrementing package version..."
 npm version patch

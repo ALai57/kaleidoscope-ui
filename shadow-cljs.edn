@@ -27,17 +27,17 @@
                 ;; And https://github.com/ertugrulcetin/racing-game-cljs
                 :js-options {:entry-keys ["module" "browser" "main"]}
 
-                :output-dir "resources/public/js/compiled/andrewslai"
-                :asset-path "js/compiled/andrewslai"
+                :output-dir "resources/public/js/compiled/kaleidoscope"
+                :asset-path "js/compiled/kaleidoscope"
 
                 ;; Split up the Frontend UI so that we have two smaller builds, instead of one
                 ;; large Javascript file.
                 :module-loader    true
-                :modules          {:skeleton   {:init-fn andrewslai.cljs.core/main}
-                                   :andrewslai {:entries    [andrewslai.cljs.views]
-                                                :depends-on #{:skeleton}}
-                                   :editor     {:entries    [andrewslai.cljs.pages.article-editor]
-                                                :depends-on #{:andrewslai :skeleton}}}
+                :modules          {:skeleton     {:init-fn kaleidoscope.cljs.core/main}
+                                   :kaleidoscope {:entries    [kaleidoscope.cljs.views]
+                                                  :depends-on #{:skeleton}}
+                                   :editor       {:entries    [kaleidoscope.cljs.pages.article-editor]
+                                                  :depends-on #{:kaleidoscope :skeleton}}}
                 :compiler-options {:static-fns          true
                                    :infer-externs       :auto
                                    :optimize-constants  true
@@ -48,12 +48,12 @@
                 ;;:devtools   {:after-load app.main/reload!}}
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
-                :dev     {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "http://localhost:8080"
-                                            andrewslai.cljs.keycloak/CLIENTID "test-login"
-                                            andrewslai.cljs.keycloak/REALM    "test"}}
-                :release {:closure-defines {andrewslai.cljs.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
-                                            andrewslai.cljs.keycloak/REALM    "andrewslai"
-                                            andrewslai.cljs.keycloak/CLIENTID "andrewslai-frontend"}
+                :dev     {:closure-defines {kaleidoscope.cljs.keycloak/AUTH_URL "http://localhost:8080"
+                                            kaleidoscope.cljs.keycloak/CLIENTID "test-login"
+                                            kaleidoscope.cljs.keycloak/REALM    "test"}}
+                :release {:closure-defines {kaleidoscope.cljs.keycloak/AUTH_URL "https://keycloak.kaleidoscope.com"
+                                            kaleidoscope.cljs.keycloak/REALM    "andrewslai"
+                                            kaleidoscope.cljs.keycloak/CLIENTID "andrewslai-frontend"}
                           :build-hooks     [(shadow.cljs.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 
