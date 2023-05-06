@@ -12,7 +12,6 @@
                 [hickory "0.7.1"]
                 [nubank/matcher-combinators "3.1.4" :scope "test" :exclusions [org.clojure/spec.alpha]]
                 [re-frame "1.2.0"]
-                [ring/ring-jetty-adapter "1.9.1"]
                 [reagent "1.2.0"]
                 [com.taoensso/timbre "5.1.2"]
 
@@ -46,7 +45,6 @@
                                    :pretty-print        false
                                    :optimization        :advanced
                                    :strip-type-prefixes #{"cljs.pprint"}}
-                ;;:devtools   {:after-load app.main/reload!}}
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
                 :dev     {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "http://localhost:8080"

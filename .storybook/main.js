@@ -1,26 +1,26 @@
 const appConfig = require('../webpack.config.js');
 const webpack = require('webpack');
-
 module.exports = {
-  stories: [
-    "../resources/public/js/compiled/shareable_stories/*_stories.js"
-  ],
-  addons: [
-    "@storybook/addon-links",
-    "@storybook/addon-actions",
-    "@storybook/addon-essentials"
-  ],
-  core: {
-    "builder": "webpack5"
+  stories: ["../resources/public/js/compiled/shareable_stories/*_stories.js"],
+  addons: ["@storybook/addon-links", "@storybook/addon-actions", "@storybook/addon-essentials"],
+  features: {
+    storyStoreV7: false,
   },
-  webpackFinal: (config) => {
-    const { rules } = config.module;
+  webpackFinal: config => {
+    const {
+      rules
+    } = config.module;
     config.module.rules = [...rules, ...appConfig.module.rules];
-
     config.plugins.push(new webpack.ProvidePlugin({
-      process: 'process/browser',
+      process: 'process/browser'
     }));
-
     return config;
   },
-}
+  framework: {
+    name: "@storybook/react-webpack5",
+    options: {}
+  },
+  docs: {
+    autodocs: true
+  }
+};
