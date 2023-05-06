@@ -5,6 +5,7 @@
             [andrewslai.cljs.pages.groups          :as page.groups]
             [andrewslai.cljs.pages.manager         :as page.manager]
             [andrewslai.cljs.pages.article-manager :as page.article-manager]
+            [andrewslai.cljs.components.loading-screen :as loading]
             [andrewslai.cljs.utils :as u]
             [goog.string :as gstr]
             ["react" :as react]
@@ -76,14 +77,21 @@
 (defn app []
   (let [active-panel @(subscribe [:active-panel])]
     (infof "Currently displayed panel %s" active-panel)
-    [(get panels active-panel page.home/home)
-     {;; General settings
-      :notification-type @(subscribe [:notification-type])
-      :login-response    @(subscribe [:login-response]) ;; The last response from a login endpoint
+    [:div {:style {:min-height "100vh"}}
+     [(get panels active-panel page.home/home)
+      {;; General settings
+       :notification-type @(subscribe [:notification-type])
+       :login-response    @(subscribe [:login-response]) ;; The last response from a login endpoint
 
-      ;; User data
-      :user @(subscribe [:user-profile])
+       ;; User data
+       :user @(subscribe [:user-profile])
 
-      ;; User actions
-      :user-event-handlers user-event-handlers}
-     ]))
+       ;; User actions
+       :user-event-handlers user-event-handlers
+
+       ;; Fallback if loading
+       :fallback (fn []
+                   [loading/loading-screen])
+       }
+
+      ]]))

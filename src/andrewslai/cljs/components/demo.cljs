@@ -126,8 +126,9 @@
 (defn demo
   []
   [u/err-boundary
-   [:> fiber/Canvas {:style  {:height     "700px"
-                              :background "black"}
+   [:> fiber/Canvas {:style  {:height     "calc(100vh - 80px)"
+                              :background "black"
+                              :position   "absolute"}
                      :camera {:position [0 1 0]
                               :target   [20 0 0]}}
     [:ambientLight {:intensity 0.2}]

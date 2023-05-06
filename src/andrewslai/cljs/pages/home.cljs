@@ -5,7 +5,7 @@
             ))
 
 (defn home [{:keys [user recent-content notification-type]}]
-  [:div
+  [:div {:style {:min-height "100vh"}}
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
    [demo/demo]])
