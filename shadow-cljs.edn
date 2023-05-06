@@ -52,14 +52,12 @@
                 :dev     {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "http://localhost:8080"
                                             kaleidoscope.ui.keycloak/CLIENTID "test-login"
                                             kaleidoscope.ui.keycloak/REALM    "test"}}
-                :release {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "https://keycloak.kaleidoscope.com"
+                :release {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
                                             kaleidoscope.ui.keycloak/REALM    "andrewslai"
                                             kaleidoscope.ui.keycloak/CLIENTID "andrewslai-frontend"}
                           :build-hooks     [(shadow.ui.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 
-          ;; Stories broke with lazy loading. Presumably because the NPM module works diffently from
-          ;; browser target?
           :stories {:target     :npm-module
                     :ns-regexp  "-stories$"
                     :output-dir "resources/public/js/compiled/shareable_stories"}}}
