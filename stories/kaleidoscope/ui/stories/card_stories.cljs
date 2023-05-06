@@ -4,44 +4,46 @@
             [reagent.core :as reagent]))
 
 (def example-data
-  {:article-title "An example with the default image"
-   :article_url   "https://kaleidoscope.com"
-   :article_id    "1"
-   :timestamp     "2022-01-01T00:00:00"
-   :article-tags  ""})
+  {:article-id    "1"
+   :article-title "An example with the default image"
+   :article-url   "https://kaleidoscope.com"
+   :article-tags  "unrecognized"
+   :created-at    "2022-01-01T00:00:00"})
 
 (def ^:export default
-  (helper/->default {:title     "Article Subcomponents/Article Cards"
-                     :component article-cards/article-card
-                     :args      example-data}))
+  (helper/->default-story
+   {:title      "Article Subcomponents/Article Cards"
+    :component  article-cards/article-card
+    :parameters {:docs
+                 {:description
+                  {:component "A display element representing a particular Article"}}}
 
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [article-cards/article-card (helper/->params args)]))
+    :args     example-data
+    :argTypes {:article-title {:description  "An article's title"
+                               :defaultValue "An example article"}
+               :article-url   {:description  "The article's URL"
+                               :defaultValue "https://kaleidoscope.com"}
+               :created-at    {:description  "When the article was published"
+                               :defaultValue "2022-01-25T00:00:00"}
+               :article-id    {:description  "The article's ID"
+                               :defaultValue "1"}
+               :article-tags  {:description  "The article tags"
+                               :defaultValue "research"
+                               :control      "select"
+                               :options      ["unrecognized" "research" "thoughts" "data-analysis"]}}}))
 
 (def ^:export Default
-  (helper/->story template {:article-title "An example with the default image"
-                            :article-tags  "unrecognized"}))
+  (clj->js {:article-title "An example with the default image"
+            :article-tags  "unrecognized"}))
 
 (def ^:export Research
-  (helper/->story template {:article-title "An example research article"
-                            :article-tags  "research"}))
+  (clj->js {:article-title "An example research article"
+            :article-tags  "research"}))
 
 (def ^:export Thoughts
-  (helper/->story template {:article-title "An example thoughts article"
-                            :article-tags  "thoughts"}))
+  (clj->js {:article-title "An example thoughts article"
+            :article-tags  "thoughts"}))
 
 (def ^:export Data-Analysis
-  (helper/->story template {:article-title "An example data-analysis article"
-                            :article-tags  "data-analysis"}))
-
-(def ^:export About
-  (helper/->story template {:article-title "An example about me article"
-                            :article-tags  "about"}))
-
-(def ^:export Archive
-  (helper/->story template {:article-title "An example archived article"
-                            :article-tags  "archive"}))
+  (clj->js {:article-title "An example data-analysis article"
+            :article-tags  "data-analysis"}))
