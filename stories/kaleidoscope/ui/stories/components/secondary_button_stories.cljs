@@ -4,17 +4,10 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Basic Components/Secondary Button"
-                     :component secondary-button/secondary-button
-                     :argTypes  {:on-click {:action "Clicked Button!"}}
-                     :args      {:text "A button"}}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [secondary-button/secondary-button (helper/->params args)]))
+  (helper/->default-story {:title     "Basic Components/Secondary Button"
+                           :component secondary-button/secondary-button}))
 
 (def ^:export Default-Secondary-Button
-  (helper/->story template {}))
+  (clj->js {:args       {:text "A button"}
+            :argTypes   {:on-click {:action "Clicked Button!"}}
+            :parameters {:viewports {:default "mobile"}}}))

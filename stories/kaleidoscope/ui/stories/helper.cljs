@@ -34,3 +34,19 @@
 (defn ->story-inputs
   [default story]
   (merge default (get-story-args story)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; API V2
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn reactify
+  [story-metadata path]
+  (if (get-in story-metadata path)
+    (update-in story-metadata path reagent/reactify-component)
+    story-metadata))
+
+(defn ->default-story
+  [story-metadata]
+  (-> story-metadata
+      (reactify [:component])
+      clj->js))

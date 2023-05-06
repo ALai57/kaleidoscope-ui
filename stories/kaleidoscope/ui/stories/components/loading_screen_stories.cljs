@@ -5,17 +5,18 @@
             ["@storybook/addon-actions" :refer [action]]))
 
 (def ^:export default
-  (helper/->default {:title     "Basic Components/Loading Screen"
-                     :component loading-screen/loading-screen
-                     :args      {}}))
+  (helper/->default-story {:title     "Basic Components/Loading Screen"
+                           :component (fn [args]
+                                        [:div {:style {:height "800px"}}
+                                         [loading-screen/loading-screen args]])
+                           :tags      ["autodocs"]
+                           :argTypes  {:color {:defaultValue "secondary"
+                                               :description  "The color for the loading bar"
+                                               :control      "select"
+                                               :options      ["primary" "secondary"]}}}))
 
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [loading-screen/loading-screen (helper/->params args)]))
+(def ^:export Loading-Screen-Primary
+  (clj->js {}))
 
-;; https://github.com/arttuka/reagent-material-ui/blob/06d5e6538ac80f6ac9883d40e8db668c44bcef84/example/src/example/data_grid.cljs
-(def ^:export Default-Loading-Screen
-  (helper/->story template {}))
+(def ^:export Loading-Screen-Secondary
+  (clj->js {:args {:color "secondary"}}))
