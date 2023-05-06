@@ -36,7 +36,7 @@
   (let [showing (reagent/atom false)
         current-notification-settings (reagent/atom notification-type)]
     (fn []
-      [:div
+      [:<>
        [expand-button {:on-click (toggle-drawer showing true)}]
        [:div
         [drawer {:anchor             "left"

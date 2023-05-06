@@ -9,6 +9,8 @@
             [kaleidoscope.ui.keycloak :as keycloak]
             [kaleidoscope.ui.modal :refer [modal-template basic-modal]]
             [goog.object :as gobj]
+            [goog.string :as gstr]
+            [reagent-mui.components :refer [stack paper typography]]
             [re-frame.core :refer [dispatch subscribe]]
             [keycloak-js :as keycloak-js]
             [taoensso.timbre :refer-macros [infof info]]))
@@ -49,35 +51,43 @@
   {:modal    modal-notifier
    :snackbar snackbar-notifier})
 
-;; Change to popup!
-#_[:p "kaleidoscope.com uses the open source "
-   [:a {:href "https://www.keycloak.org"} "Keycloak"]
-   " identity provider for authentication. Clicking the link will redirect you to a login site."]
-(defn login-form
-  [{:keys [user-event-handlers login-response notification-type]}]
+(comment
+  ;; Instead of doing this, have the component dispatch on a loaded file as an argument
+  #_(defn load-image [file-added-event]
+      (let [file        (first (array-seq (.. file-added-event -target -files)))
+            file-reader (js/FileReader.)]
+        (set! (.-onload file-reader)
+              (fn [file-load-event]
+                (let [preview (.getElementById js/document "avatar-preview")]
+                  (aset preview "src" (-> file-load-event .-target .-result)))))
+        (.readAsDataURL file-reader file)))
 
-  [:div.row.justify-content-center
-   [:div.login-wrapper.shadow.p-3.rounded.col-md-4
-    [button/button {:text    "Login via Keycloak"
-                    :on-click (get user-event-handlers :on-login-click)}]
-    [button/button {:text    "Check if you are logged in"
+
+
+  ;; One component - Image Loader
+  #_[thumbnail/thumbnail {:image-url avatar_url
+                          :name      "avatar"
+                          :id        "avatar-preview"}]
+  #_[:input.btn-primary {:type      "file"
+                         :accept    "image/png"
+                         :on-change load-image}]
+  #_[:img {:id    "avatar-preview"
+           :name  "avatar"
+           :style {:width "100px"}}]
+  [thumbnail/thumbnail {:image-url avatar_url}]
+  )
+
+(comment
+  ;; Api access tools
+  #_[button/button {:text     "Check user authentication"
+                    :on-click on-admin-click}]
+
+  #_[button/button {:text     "Check if you are logged in"
                     :on-click (get user-event-handlers :on-check-auth-click)}]
-    [button/button {:text    "Check if you have admin access"
+  #_[button/button {:text     "Check if you have admin access"
                     :on-click (get user-event-handlers :on-admin-click)}]
-    [:br]
-    [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props
-                                                                               {:text "Notification settings"})])
-                          :notification-type notification-type}]]])
 
-;; Instead of doing this, have the component dispatch on a loaded file as an argument
-(defn load-image [file-added-event]
-  (let [file        (first (array-seq (.. file-added-event -target -files)))
-        file-reader (js/FileReader.)]
-    (set! (.-onload file-reader)
-          (fn [file-load-event]
-            (let [preview (.getElementById js/document "avatar-preview")]
-              (aset preview "src" (-> file-load-event .-target .-result)))))
-    (.readAsDataURL file-reader file)))
+  )
 
 (defn user-profile [{:keys [avatar_url username given_name family_name email] :as user}
                     {:keys [on-admin-click
@@ -86,49 +96,31 @@
                      :as   user-event-handlers}
                     notification-type]
   [:div#primary-content
-   [:form
-    [thumbnail/thumbnail {:image-url avatar_url}]
-
-    ;; One component - Image Loader
-    #_[thumbnail/thumbnail {:image-url avatar_url
-                            :name      "avatar"
-                            :id        "avatar-preview"}]
-    #_[:input.btn-primary {:type      "file"
-                           :accept    "image/png"
-                           :on-change load-image}]
-    #_[:img {:id    "avatar-preview"
-             :name  "avatar"
-             :style {:width "100px"}}]
-    [:br]
-    [:br]
-    [:br]
-    [input-box/input-box {:value     email
-                          :label     "Email"
-                          :label-for "email"
-                          :disabled  true
-                          :readOnly  true}]
-    [input-box/input-box {:value     (or given_name "<UNKNOWN>")
-                          :label     "First name"
-                          :label-for "firstName"
-                          :disabled  true
-                          :readOnly  true}]
-    [input-box/input-box {:value     (or family_name "<UNKNOWN>")
-                          :label     "Last name"
-                          :label-for "lastName"
-                          :disabled  true
-                          :readOnly  true}]
-    [:br]
-    [:br]
-    [button/button {:text     "Edit profile"
-                    :on-click on-edit-profile-click}]
-    [button/button {:text     "Logout"
-                    :on-click on-logout-click}]
-    [button/button {:text     "Check user authentication"
-                    :on-click on-admin-click}]
-    [:br]
-    [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props
-                                                                               {:text "Notification settings"})])
-                          :notification-type notification-type}]]])
+   [:div {:style {:display         "flex"
+                  :justify-content "center"}}
+    [paper {:elevation 3 :sx {:padding   "15px"
+                              :display   "block"
+                              :flex-grow 1
+                              :max-width "500px"}}
+     [stack {:spacing 2}
+      [:form
+       [typography {:variant "h3"}
+        (if user
+          (gstr/format "Welcome %s %s!" given_name family_name)
+          (gstr/format "Welcome!"))]]
+      [:br]
+      (if user
+        [button/button {:text     "Edit user profile"
+                        :on-click on-edit-profile-click}]
+        [button/button {:text     "Login"
+                        :on-click (get user-event-handlers :on-login-click)}]
+        )
+      [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props {:text "Settings"})])
+                            :notification-type notification-type}]
+      (when user
+        [button/button {:text     "Logout"
+                        :color    "secondary"
+                        :on-click on-logout-click}])]]]])
 
 (defn login-ui
   [{:keys [user user-event-handlers login-response notification-type]}]
@@ -138,11 +130,5 @@
     [:div
      [nav/nav-bar {:user user}]
      [:br]
-
      [notifier login-response]
-     (if user
-       [user-profile user user-event-handlers notification-type]
-       [login-form {:user-event-handlers user-event-handlers
-                    :login-response      login-response
-                    :notification-type   notification-type
-                    }])]))
+     [user-profile user user-event-handlers notification-type]]))
