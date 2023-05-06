@@ -33,10 +33,10 @@
                 ;; Split up the Frontend UI so that we have two smaller builds, instead of one
                 ;; large Javascript file.
                 :module-loader    true
-                :modules          {:skeleton     {:init-fn kaleidoscope.cljs.core/main}
-                                   :kaleidoscope {:entries    [kaleidoscope.cljs.views]
+                :modules          {:skeleton     {:init-fn kaleidoscope.ui.core/main}
+                                   :kaleidoscope {:entries    [kaleidoscope.ui.views]
                                                   :depends-on #{:skeleton}}
-                                   :editor       {:entries    [kaleidoscope.cljs.pages.article-editor]
+                                   :editor       {:entries    [kaleidoscope.ui.pages.article-editor]
                                                   :depends-on #{:kaleidoscope :skeleton}}}
                 :compiler-options {:static-fns          true
                                    :infer-externs       :auto
@@ -48,13 +48,13 @@
                 ;;:devtools   {:after-load app.main/reload!}}
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
-                :dev     {:closure-defines {kaleidoscope.cljs.keycloak/AUTH_URL "http://localhost:8080"
-                                            kaleidoscope.cljs.keycloak/CLIENTID "test-login"
-                                            kaleidoscope.cljs.keycloak/REALM    "test"}}
-                :release {:closure-defines {kaleidoscope.cljs.keycloak/AUTH_URL "https://keycloak.kaleidoscope.com"
-                                            kaleidoscope.cljs.keycloak/REALM    "andrewslai"
-                                            kaleidoscope.cljs.keycloak/CLIENTID "andrewslai-frontend"}
-                          :build-hooks     [(shadow.cljs.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
+                :dev     {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "http://localhost:8080"
+                                            kaleidoscope.ui.keycloak/CLIENTID "test-login"
+                                            kaleidoscope.ui.keycloak/REALM    "test"}}
+                :release {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "https://keycloak.kaleidoscope.com"
+                                            kaleidoscope.ui.keycloak/REALM    "andrewslai"
+                                            kaleidoscope.ui.keycloak/CLIENTID "andrewslai-frontend"}
+                          :build-hooks     [(shadow.ui.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 
           ;; Stories broke with lazy loading. Presumably because the NPM module works diffently from
