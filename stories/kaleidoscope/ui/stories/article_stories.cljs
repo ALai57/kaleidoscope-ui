@@ -1,23 +1,27 @@
 (ns kaleidoscope.ui.stories.article-stories
   (:require [kaleidoscope.ui.article :as article]
-            [kaleidoscope.ui.article-cards :as article-cards]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
-
-(def example-article
-  {:title     "An example article"
-   :author    "Andrew Lai"
-   :timestamp "2022-01-25T00:00:00"
-   :content   "<div><h3>This is some formatted content</h3><p>howdy</p><strong>bold</strong></div>"})
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
-  (helper/->default {:title     "Article Subcomponents/Article"
-                     :component article/article
-                     :args      example-article}))
+  (helper/->default-story
+   {:title      "Article Subcomponents/Article"
+    :component  article/article
+    :parameters {:docs
+                 {:description
+                  {:component "The presentation of an Article: one of the
+                   Kaleidoscope app's main responsibilities" }}}
+    :argTypes   {:article-title {:description  "An article's title"
+                                 :defaultValue "An example article"}
+                 :author        {:description  "The article's author"
+                                 :defaultValue "Andrew Lai"}
+                 :modified-at   {:description  "When the article was published"
+                                 :defaultValue "2022-01-25T00:00:00"}
+                 :content       {:description  "The article itself (in HTML format)"
+                                 :defaultValue "<div><h3>Hello</h3></div>"}}
+    :args       {:article-title "An example article"
+                 :author        "Andrew Lai"
+                 :modified-at   "2022-01-25T00:00:00"
+                 :content       "<div><h3>This is some formatted content</h3><p>howdy</p><strong>bold</strong></div>"}}))
 
-(defn template
-  [args]
-  (reagent/as-element [article/article (helper/->params args)]))
-
-(def ^:export Default-article
-  (helper/->story template {}))
+(def ^:export Example-article
+  (clj->js {}))
