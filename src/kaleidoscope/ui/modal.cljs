@@ -32,19 +32,16 @@
    (when body [:div.modal-body body])])
 
 (defn basic-modal
-  [{:keys [open? title body footer level]
+  [{:keys [open? title body footer level on-close]
     :or   {level "info"
            open? true}}]
   (println "BASIC MODAL open?" open?)
-  (let [showing  (reagent/atom open?)
-        on-close #(reset! showing false)]
-    (fn []
-      [modal {:open          @showing
-              :on-close      on-close
-              :BackdropProps {:style {:background-color MODAL-BACKGROUND}}}
-       [box {:class "modal-box"}
-        [modal-template {:title    title
-                         :body     body
-                         :footer   footer
-                         :on-close on-close
-                         :level    level}]]])))
+  [modal {:open          open?
+          :on-close      on-close
+          :BackdropProps {:style {:background-color MODAL-BACKGROUND}}}
+   [box {:class "modal-box"}
+    [modal-template {:title    title
+                     :body     body
+                     :footer   footer
+                     :on-close on-close
+                     :level    level}]]])

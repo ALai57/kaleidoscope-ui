@@ -16,7 +16,7 @@
     :component  article-cards/article-card
     :parameters {:docs
                  {:description
-                  {:component "A display element representing a particular Article"}}}
+                  {:component "A display element with a thumbnail and link to a particular Article"}}}
 
     :args     example-data
     :argTypes {:article-title {:description  "An article's title"
