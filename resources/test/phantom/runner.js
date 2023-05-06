@@ -22,7 +22,7 @@ page.open(url, function (status) {
   }
 
   page.evaluate(function() {
-      kaleidoscope.cljs.core_test.run();
+      kaleidoscope.ui.core_test.run();
   });
 
   setTimeout(function() { // https://github.com/ariya/phantomjs/issues/12697
