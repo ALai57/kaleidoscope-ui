@@ -1,5 +1,6 @@
 ;; shadow-cljs configuration
 {:source-paths ["src"
+                "stories"
                 "test"]
 
  :dependencies [;; Resolve conflicts
@@ -61,4 +62,4 @@
           ;; browser target?
           :stories {:target     :npm-module
                     :ns-regexp  "-stories$"
-                    :output-dir "public/js/stories"}}}
+                    :output-dir "resources/public/js/compiled/shareable_stories"}}}

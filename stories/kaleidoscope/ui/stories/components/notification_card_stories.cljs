@@ -4,10 +4,10 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:article-title "Notifications/Cards"
-                     :component     notification-card/notification-card
-                     :args          {:title   "My title"
-                                     :message "My message"}}))
+  (helper/->default {:title     "Notifications/Cards"
+                     :component notification-card/notification-card
+                     :args      {:title   "My title"
+                                 :message "My message"}}))
 
 ;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
 (defn template

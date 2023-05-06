@@ -3,7 +3,7 @@ const webpack = require('webpack');
 
 module.exports = {
   stories: [
-    "../public/js/stories/*_stories.js"
+    "../resources/public/js/compiled/shareable_stories/*_stories.js"
   ],
   addons: [
     "@storybook/addon-links",
