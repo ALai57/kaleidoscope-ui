@@ -8,7 +8,7 @@
 (def ^:export default
   (helper/->default-story
    {:title     "Basic Components/Modal"
-    :component (fn [args]
+    :component (fn basic-modal [args]
                  (let [state (reagent/atom false)]
                    (fn []
                      [:div

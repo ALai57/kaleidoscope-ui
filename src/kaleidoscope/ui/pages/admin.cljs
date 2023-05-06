@@ -89,38 +89,35 @@
 
   )
 
-(defn user-profile [{:keys [avatar_url username given_name family_name email] :as user}
-                    {:keys [on-admin-click
-                            on-edit-profile-click
-                            on-logout-click]
-                     :as   user-event-handlers}
-                    notification-type]
-  [:div#primary-content
-   [:div {:style {:display         "flex"
-                  :justify-content "center"}}
-    [paper {:elevation 3 :sx {:padding   "15px"
-                              :display   "block"
-                              :flex-grow 1
-                              :max-width "500px"}}
-     [stack {:spacing 2}
-      [:form
-       [typography {:variant "h3"}
+(defn user-profile [{:keys [user user-event-handlers notification-type]}]
+  (let [{:keys [avatar_url username given_name family_name email]}     user
+        {:keys [on-admin-click on-edit-profile-click on-logout-click]} user-event-handlers]
+    [:div#primary-content
+     [:div {:style {:display         "flex"
+                    :justify-content "center"}}
+      [paper {:elevation 3 :sx {:padding   "15px"
+                                :display   "block"
+                                :flex-grow 1
+                                :max-width "500px"}}
+       [stack {:spacing 2}
+        [:form
+         [typography {:variant "h3"}
+          (if user
+            (gstr/format "Welcome %s %s!" given_name family_name)
+            (gstr/format "Welcome!"))]]
+        [:br]
         (if user
-          (gstr/format "Welcome %s %s!" given_name family_name)
-          (gstr/format "Welcome!"))]]
-      [:br]
-      (if user
-        [button/button {:text     "Edit user profile"
-                        :on-click on-edit-profile-click}]
-        [button/button {:text     "Login"
-                        :on-click (get user-event-handlers :on-login-click)}]
-        )
-      [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props {:text "Settings"})])
-                            :notification-type notification-type}]
-      (when user
-        [button/button {:text     "Logout"
-                        :color    "secondary"
-                        :on-click on-logout-click}])]]]])
+          [button/button {:text     "Edit user profile"
+                          :on-click on-edit-profile-click}]
+          [button/button {:text     "Login"
+                          :on-click (get user-event-handlers :on-login-click)}]
+          )
+        [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props {:text "Settings"})])
+                              :notification-type notification-type}]
+        (when user
+          [button/button {:text     "Logout"
+                          :color    "secondary"
+                          :on-click on-logout-click}])]]]]))
 
 (defn login-ui
   [{:keys [user user-event-handlers login-response notification-type]}]
@@ -131,4 +128,6 @@
      [nav/nav-bar {:user user}]
      [:br]
      [notifier login-response]
-     [user-profile user user-event-handlers notification-type]]))
+     [user-profile {:user                user
+                    :user-event-handlers user-event-handlers
+                    :notification-type   notification-type}]]))
