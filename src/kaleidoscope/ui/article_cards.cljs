@@ -68,7 +68,7 @@
   "For displaying an article's lineage and branches"
   ([article]
    (thin-article-card article {:n-rows 2}))
-  ([{:keys [article-tags article-url article-id branches] :as article}
+  ([{:keys [article-tags article-url article-title article-id branches] :as article}
     {:keys [n-rows on-click] :as options
      :or   {n-rows   2
             on-click log-click}}]
@@ -87,7 +87,7 @@
                                   :height     "100%"}}]]
          [:div.col.bg-light.text-dark.thin-card-description
           [:h6 {:style {:margin "0px"}}
-           (truncate article-url 33 n-rows)
+           (truncate article-title 33 n-rows)
            #_[:a {:href  (gstr/format "#/%s/content/%s" article-tags article-url)
                   :title title}
               (truncate title 33 n-rows)]]
@@ -116,18 +116,19 @@
   (let [grouped-branches (reduce-kv (fn [acc m xs]
                                       (conj acc (assoc m :branches (map #(select-keys % [:branch-name :branch-id :created-at :published-at]) xs))))
                                     []
-                                    (group-by #(select-keys % [:article-id :author :article-url :article-tags]) branches))]
+                                    (group-by #(select-keys % [:article-id :author :article-url :article-title :article-tags]) branches))]
     ;;(println "GROUPED BRANCHES" grouped-branches)
     [:div {:style {:max-width "500px"}}
      (for [{:keys [branches article-id] :as content} grouped-branches]
-       ^{:key (gstr/format "%s-%s" branches article-id)} [thin-article-card content {:on-click on-click}])]))
+       ^{:key (gstr/format "%s-%s" branches article-id)}
+       [thin-article-card content {:on-click on-click}])]))
 
 (defn recent-content-cards
   [{:keys [recent-content]}]
   [:div#recent-content
    [:div#recent-article-cards.card-group
-    (for [{:keys [article-title] :as content} recent-content]
-      ^{:key article-title} [article-card content])]])
+    (for [article recent-content]
+      ^{:key (str article)} [article-card article])]])
 
 (defn recent-content-display
   [content-type]

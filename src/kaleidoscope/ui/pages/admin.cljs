@@ -90,8 +90,8 @@
   )
 
 (defn user-profile [{:keys [user user-event-handlers notification-type]}]
-  (let [{:keys [avatar_url username given_name family_name email]}     user
-        {:keys [on-admin-click on-edit-profile-click on-logout-click]} user-event-handlers]
+  (let [{:keys [avatar_url username given_name family_name email]}                    user
+        {:keys [on-admin-click on-edit-profile-click on-logout-click on-login-click]} user-event-handlers]
     [:div#primary-content
      [:div {:style {:display         "flex"
                     :justify-content "center"}}
@@ -100,17 +100,14 @@
                                 :flex-grow 1
                                 :max-width "500px"}}
        [stack {:spacing 2}
-        [:form
-         [typography {:variant "h3"}
-          (if user
-            (gstr/format "Welcome %s %s!" given_name family_name)
-            (gstr/format "Welcome!"))]]
+        [typography {:variant "h3"}
+         (if user
+           (gstr/format "Welcome %s %s!" given_name family_name)
+           (gstr/format "Welcome!"))]
         [:br]
         (if user
-          [button/button {:text     "Edit user profile"
-                          :on-click on-edit-profile-click}]
-          [button/button {:text     "Login"
-                          :on-click (get user-event-handlers :on-login-click)}]
+          [button/button {:text "Edit user profile" :on-click on-edit-profile-click}]
+          [button/button {:text "Login"             :on-click on-login-click}]
           )
         [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props {:text "Settings"})])
                               :notification-type notification-type}]

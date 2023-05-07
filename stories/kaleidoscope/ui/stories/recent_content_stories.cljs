@@ -4,18 +4,10 @@
             [kaleidoscope.ui.stories.card-stories :as card-stories]
             [reagent.core :as reagent]))
 
-(def ^:export default
-  (helper/->default {:title     "Article Subcomponents/Recent Content"
-                     :component article-cards/recent-content-cards}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  [args]
-  (reagent/as-element [article-cards/recent-content-cards (helper/->params args)]))
-
-(def get-inputs
+(defn get-inputs
   "Extracts inputs from existing card-stories so we can compose story pieces"
-  (partial helper/->story-inputs card-stories/example-data))
+  [story]
+  (merge card-stories/example-data (js->clj story :keywordize-keys true)))
 
 (def example-recent-content
   [(get-inputs card-stories/Default)
@@ -25,5 +17,13 @@
    (get-inputs card-stories/About)
    (get-inputs card-stories/Archive)])
 
+(def ^:export default
+  (helper/->default-story
+   {:title     "Article Subcomponents/Recent Content"
+    :component (fn recent-content-cards
+                 [args]
+                 [article-cards/recent-content-cards (js->clj args :keywordize-keys true)])
+    :args      {:recent-content example-recent-content}}))
+
 (def ^:export Default-recent-content
-  (helper/->story template {:recent-content example-recent-content}))
+  (clj->js {}))
