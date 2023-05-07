@@ -40,7 +40,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Groups Components/Group Manager"
+   {:title     "Kaleidoscope/Managers/Group Manager"
     :component group-manager/group-manager
     :args      {:open   (reagent/atom (vec (repeat (count groups) false)))
                 :groups groups}}))

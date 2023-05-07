@@ -7,7 +7,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Full Pages/Login Page"
+   {:title     "Kaleidoscope/Full Pages/Login Page"
     :component admin/login-ui
     :args      {:user                user-profile/example-user-data
                 :user-event-handlers {:on-login-click        (action "on-login-click")

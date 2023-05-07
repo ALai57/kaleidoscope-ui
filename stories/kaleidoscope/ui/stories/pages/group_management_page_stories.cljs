@@ -7,7 +7,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Full Pages/Group Management Page"
+   {:title     "Kaleidoscope/Full Pages/Group Management Page"
     :component groups/-group-page
     :args      {:user   {}
                 :groups [{:group-id     "group-1"

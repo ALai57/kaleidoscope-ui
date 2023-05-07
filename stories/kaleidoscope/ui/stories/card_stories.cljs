@@ -12,7 +12,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title      "Article Subcomponents/Article Cards"
+   {:title      "Kaleidoscope/Articles/Article Cards"
     :component  article-cards/article-card
     :parameters {:docs
                  {:description

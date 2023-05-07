@@ -11,7 +11,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Article Subcomponents/Article Selector"
+   {:title     "Kaleidoscope/Articles/Article Selector"
     :component article-selector/article-selector
     :args      {:branches      [{:branch-id     1
                                  :branch-name   "main"

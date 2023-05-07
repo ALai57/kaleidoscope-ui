@@ -5,7 +5,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Notifications/Cards"
+   {:title     "Kaleidoscope/Notifications/Cards"
     :component notification-card/notification-card
     :argTypes  {:level {:control "select"
                         :options ["error" "warn"]}}
@@ -16,4 +16,4 @@
   (clj->js {:args {:level "error"}}))
 
 (def ^:export Warn
-  (clj->js {:args {:level "warn"}}))
+  (clj->js {:args {:levl "warn"}}))

@@ -12,7 +12,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "User Subcomponents/User Profile"
+   {:title     "Kaleidoscope/User Profile/User Login Widget"
     :component admin/user-profile
     :args      {:user                example-user-data
                 :user-event-handlers {:on-edit-profile-click (action "Clicked edit profile!")

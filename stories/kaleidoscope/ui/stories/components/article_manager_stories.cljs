@@ -100,7 +100,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Manager Subcomponents/Article Manager"
+   {:title     "Kaleidoscope/Managers/Article Manager"
     :component article-manager/article-manager
     :args      {:open           (reagent/atom (vec (repeat (count article-groups) true)))
                 :article-groups article-groups}}))

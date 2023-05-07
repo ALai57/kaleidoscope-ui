@@ -13,7 +13,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Article Subcomponents/Thin Article Cards"
+   {:title     "Kaleidoscope/Articles/Thin Article Cards"
     :component article-cards/thin-article-card
     :args      example-data}))
 

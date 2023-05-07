@@ -4,7 +4,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title      "Article Subcomponents/Article"
+   {:title      "Kaleidoscope/Articles/Article"
     :component  article/article
     :parameters {:docs
                  {:description

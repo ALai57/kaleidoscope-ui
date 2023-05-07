@@ -5,7 +5,7 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default-story {:title     "Full Pages/Manager Page"
+  (helper/->default-story {:title     "Kaleidoscope/Full Pages/Manager Page"
                            :component pages.manager/manager-page
                            :args      {:user user-profile/example-user-data}}))
 

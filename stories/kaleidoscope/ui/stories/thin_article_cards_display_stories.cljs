@@ -6,7 +6,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Article Subcomponents/Thin Article Cards Content"
+   {:title     "Kaleidoscope/Articles/Thin Article Cards Content"
     :component article-cards/thin-content-cards
     :args      {:branches [{:branch-id     1
                             :branch-name   "main"

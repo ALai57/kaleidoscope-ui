@@ -5,7 +5,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "3D Components/Demo"
+   {:title     "Kaleidoscope/3D Components/Demo"
     :component demo/demo
     :args      {}}))
 

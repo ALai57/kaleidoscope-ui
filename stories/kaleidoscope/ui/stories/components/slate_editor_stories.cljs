@@ -10,7 +10,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Editor Subcomponents/Slate Editor"
+   {:title     "Kaleidoscope/Editor/Slate Editor"
     :component slate-editor/editor
     :args      {:user           {:firstName "Andrew"
                                  :lastName  "Lai"}

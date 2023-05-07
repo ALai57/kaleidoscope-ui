@@ -5,7 +5,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Manager Subcomponents/Manager cards"
+   {:title     "Kaleidoscope/Managers/Manager cards"
     :component manager/manager-cards
     :args      {}}))
 

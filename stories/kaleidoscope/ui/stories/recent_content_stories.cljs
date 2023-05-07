@@ -17,7 +17,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "Article Subcomponents/Recent Content"
+   {:title     "Kaleidoscope/Articles/Recent Content"
     :component article-cards/recent-content-cards
     :args      {:recent-content example-recent-content}}))
 
