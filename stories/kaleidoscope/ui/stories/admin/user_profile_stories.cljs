@@ -21,5 +21,8 @@
                                       :on-logout-click       (action "Clicked logout!")}
                 :notification-type   :modal}}))
 
-(def ^:export Default-user-profile
+(def ^:export Logged-in
   (clj->js {}))
+
+(def ^:export Logged-out
+  (clj->js {:args {:user nil}}))
