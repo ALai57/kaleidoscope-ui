@@ -7,24 +7,14 @@
   {})
 
 (def ^:export default
-  (helper/->default {:title     "Basic Components/Navbar"
-                     :component navbar/nav-bar
-                     :args      {:user example-user-data}}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [navbar/nav-bar (helper/->params args)]))
+  (helper/->default-story
+   {:title     "Basic Components/Navbar"
+    :component navbar/nav-bar
+    :args      {:user              example-user-data
+                :notification-type :modal}}))
 
 (def ^:export Default-logged-in-navbar
-  (helper/->story template {:notification-type :modal}))
+  (clj->js {:args {:notification-type :modal}}))
 
 (def ^:export Logged-out-navbar
-  (helper/->story template {:notification-type :modal
-                            :user              nil}))
-
-(def ^:export Navbar-with-icon
-  (helper/->story template {:notification-type :modal
-                            :user              {:avatar_url "/images/lock.svg"}}))
+  (clj->js {:args {:user nil}}))
