@@ -1,24 +1,22 @@
 (ns kaleidoscope.ui.stories.components.side-menu-stories
   (:require [kaleidoscope.ui.components.side-menu :as side-menu]
+            [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.stories.helper :as helper]
             [reagent-mui.components :refer [button]]
             [reagent.core :as reagent]))
 
 (defn expand-button
   [props]
-  [button props "Click me"])
+  [button props "Toggle side window"])
 
 (def ^:export default
-  (helper/->default {:title     "Basic Components/Side Menu"
-                     :component side-menu/side-menu
-                     :args      {:expand-button expand-button}}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [side-menu/side-menu (helper/->params args)]))
+  (helper/->default-story
+   {:title     "Basic Components/Side Menu"
+    :component side-menu/side-menu
+    :args      {:expand-button     (fn [props]
+                                     [button/button (merge props
+                                                           {:text "Toggle side window"})])
+                :notification-type :modal}}))
 
 (def ^:export Default-Side-Menu
-  (helper/->story template {}))
+  (clj->js {}))

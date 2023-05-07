@@ -8,9 +8,7 @@
 (def ^:export default
   (helper/->default-story
    {:title     "Full Pages/Group Management Page"
-    :component (fn group-page
-                 [args]
-                 [groups/-group-page (js->clj args :keywordize-keys true)])
+    :component groups/-group-page
     :args      {:user   {}
                 :groups [{:group-id     "group-1"
                           :display-name "Family"

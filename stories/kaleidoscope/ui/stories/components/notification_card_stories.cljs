@@ -4,20 +4,16 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Notifications/Cards"
-                     :component notification-card/notification-card
-                     :args      {:title   "My title"
-                                 :message "My message"}}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [notification-card/notification-card (helper/->params args)]))
+  (helper/->default-story
+   {:title     "Notifications/Cards"
+    :component notification-card/notification-card
+    :argTypes  {:level {:control "select"
+                        :options ["error" "warn"]}}
+    :args      {:title   "My title"
+                :message "My message"}}))
 
 (def ^:export Error
-  (helper/->story template {:level "error"}))
+  (clj->js {:args {:level "error"}}))
 
 (def ^:export Warn
-  (helper/->story template {:level "warn"}))
+  (clj->js {:args {:level "warn"}}))

@@ -13,16 +13,12 @@
   [(get-inputs card-stories/Default)
    (get-inputs card-stories/Research)
    (get-inputs card-stories/Thoughts)
-   (get-inputs card-stories/Data-Analysis)
-   (get-inputs card-stories/About)
-   (get-inputs card-stories/Archive)])
+   (get-inputs card-stories/Data-Analysis)])
 
 (def ^:export default
   (helper/->default-story
    {:title     "Article Subcomponents/Recent Content"
-    :component (fn recent-content-cards
-                 [args]
-                 [article-cards/recent-content-cards (js->clj args :keywordize-keys true)])
+    :component article-cards/recent-content-cards
     :args      {:recent-content example-recent-content}}))
 
 (def ^:export Default-recent-content

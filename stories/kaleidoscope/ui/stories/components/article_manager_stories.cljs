@@ -99,18 +99,12 @@
     :created-at          "2023-02-20T03:03:13Z"}])
 
 (def ^:export default
-  (helper/->default {:title     "Manager Subcomponents/Article Manager"
-                     :component article-manager/article-manager
-                     :args      {:open           (reagent/atom (vec (repeat (count article-groups) true)))
-                                 :article-groups article-groups}}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [article-manager/article-manager (helper/->params args)]))
+  (helper/->default-story
+   {:title     "Manager Subcomponents/Article Manager"
+    :component article-manager/article-manager
+    :args      {:open           (reagent/atom (vec (repeat (count article-groups) true)))
+                :article-groups article-groups}}))
 
 ;; https://github.com/arttuka/reagent-material-ui/blob/06d5e6538ac80f6ac9883d40e8db668c44bcef84/example/src/example/data_grid.cljs
 (def ^:export Default-Article-Manager
-  (helper/->story template {}))
+  (clj->js {}))

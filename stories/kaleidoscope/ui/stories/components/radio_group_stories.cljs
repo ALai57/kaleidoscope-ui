@@ -4,29 +4,18 @@
             [reagent.core :as reagent]))
 
 (def ^:export default
-  (helper/->default {:title     "Basic Components/Radio Group"
-                     :component radio-group/basic-radio-group
-                     :args      {}}))
-
-;; A "Templating" example, as an alternative to the JavaScript bind syntax explained in the Storybook docs
-(defn template
-  "The template is a function of arguments because Storybook understands how to
-  translate arguments into interactive controls"
-  [args]
-  (reagent/as-element [radio-group/basic-radio-group (helper/->params args)]))
+  (helper/->default-story
+   {:title     "Basic Components/Radio Group"
+    :component radio-group/basic-radio-group
+    :args      {:group-name "Gender"
+                :state      (reagent/atom "female")
+                :elements   [{:value "female"
+                              :label "Female"}
+                             {:value "male"
+                              :label "Male"}]}}))
 
 (def ^:export Default-Radio-Group
-  (helper/->story template {:group-name "Gender"
-                            :state      (reagent/atom "female")
-                            :elements   [{:value "female"
-                                          :label "Female"}
-                                         {:value "male"
-                                          :label "Male"}]}))
+  (clj->js {}))
 
 (def ^:export Different-Default
-  (helper/->story template {:group-name "Gender"
-                            :state      (reagent/atom "male")
-                            :elements   [{:value "female"
-                                          :label "Female"}
-                                         {:value "male"
-                                          :label "Male"}]}))
+  (clj->js {:args {:state (reagent/atom "male")}}))

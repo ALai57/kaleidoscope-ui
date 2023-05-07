@@ -14,9 +14,7 @@
 (def ^:export default
   (helper/->default-story
    {:title     "Article Subcomponents/Thin Article Cards"
-    :component (fn thin-article-card
-                 [args]
-                 [article-cards/thin-article-card (js->clj args :keywordize-keys true)])
+    :component article-cards/thin-article-card
     :args      example-data}))
 
 (def ^:export Basic-Article-Card

@@ -8,8 +8,7 @@
 (def ^:export default
   (helper/->default-story
    {:title     "Full Pages/Login Page"
-    :component (fn login-ui [args]
-                 [admin/login-ui (js->clj args :keywordize-keys true)])
+    :component admin/login-ui
     :args      {:user                user-profile/example-user-data
                 :user-event-handlers {:on-login-click        (action "on-login-click")
                                       :on-admin-click        (action "on-admin-click")

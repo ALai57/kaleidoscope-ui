@@ -13,8 +13,7 @@
 (def ^:export default
   (helper/->default-story
    {:title     "User Subcomponents/User Profile"
-    :component (fn [args]
-                 [admin/user-profile (js->clj args :keywordize-keys true)])
+    :component admin/user-profile
     :args      {:user                example-user-data
                 :user-event-handlers {:on-edit-profile-click (action "Clicked edit profile!")
                                       :on-admin-click        (action "Clicked admin!")

@@ -7,9 +7,7 @@
 (def ^:export default
   (helper/->default-story
    {:title     "Article Subcomponents/Thin Article Cards Content"
-    :component (fn thin-content-cards
-                 [args]
-                 [article-cards/thin-content-cards (js->clj args :keywordize-keys true)])
+    :component article-cards/thin-content-cards
     :args      {:branches [{:branch-id     1
                             :branch-name   "main"
                             :published-at  "2022-03-01T00:00:00Z"
