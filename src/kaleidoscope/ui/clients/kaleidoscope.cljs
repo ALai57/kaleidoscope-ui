@@ -35,3 +35,42 @@
     :uri             "/branches"
     :format          (ajax/json-request-format)
     :response-format (ajax/json-response-format {:keywords? true})}))
+
+(defn get-portfolio
+  ([]
+   {:method          :get
+    :uri             "/projects-portfolio"
+    :format          (ajax/json-request-format)
+    :response-format (ajax/json-response-format {:keywords? true})}))
+
+(defn title->url
+  [title]
+  (-> title
+      str
+      clojure.string/lower-case
+      (clojure.string/replace  #"[!|.|(|)|]" "")
+      (clojure.string/replace  " " "-")))
+
+(defn save-article-version!
+  [{:keys [article-title branch-name article-url] :as article}]
+  (let [sanitized-title (title->url article-title)]
+    {:method          :post
+     :uri             (gstr/format "/articles/%s/branches/%s/versions" (or article-url sanitized-title) (or branch-name "main"))
+     :params          (assoc article :article-tags "thoughts")
+     :headers         {:Content-Type "application/json"}
+     :format          (ajax/json-request-format)
+     :response-format (ajax/json-response-format {:keywords? true})}))
+
+(defn load-article-branch
+  [{:keys [branch-id] :as article-branch}]
+  {:method          :get
+   :uri             (gstr/format "/branches/%s/versions" branch-id)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn publish-article-branch!
+  [{:keys [branch-name article-url] :as article}]
+  {:method          :put
+   :uri             (gstr/format "/articles/%s/branches/%s/publish" article-url branch-name)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})

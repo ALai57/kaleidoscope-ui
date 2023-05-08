@@ -1,5 +1,6 @@
 (ns kaleidoscope.ui.events.projects-portfolio
   (:require [ajax.core :as ajax]
+            [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
             [taoensso.timbre :refer-macros [infof info debugf]]))
 
@@ -102,23 +103,17 @@
                :selected-resume-category category
                :selected-resume-card name})))
 
-(reg-event-db
- :select-portfolio-card
- select-portfolio-card)
+(reg-event-db :select-portfolio-card
+  select-portfolio-card)
 
-(reg-event-db
- :reset-portfolio-cards
- (fn [db [_ _]]
-   (info "Resetting Portfolio cards")
-   (assoc db :selected-resume-info (:resume-info db))))
+(reg-event-db :reset-portfolio-cards
+  (fn [db [_ _]]
+    (info "Resetting Portfolio cards")
+    (assoc db :selected-resume-info (:resume-info db))))
 
-(reg-event-fx
- :request-portfolio-cards
- (fn [{:keys [db]} [_ article-name]]
-   {:http-xhrio {:method          :get
-                 :uri             "/projects-portfolio"
-                 :format          (ajax/json-request-format)
-                 :response-format (ajax/json-response-format {:keywords? true})
-                 :on-success      [:load-portfolio-cards]
-                 :on-failure      [:load-portfolio-cards]}
-    :db         (assoc db :loading? true)}))
+(reg-event-fx :request-portfolio-cards
+  (fn [{:keys [db]} [_ article-name]]
+    {:http-xhrio (merge (scope-client/get-portfolio)
+                        {:on-success [:load-portfolio-cards]
+                         :on-failure [:load-portfolio-cards]})
+     :db         (assoc db :loading? true)}))

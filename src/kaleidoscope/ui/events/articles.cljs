@@ -62,5 +62,5 @@
     (let [token (or (.-token (:keycloak db)) "test")]
       {:http-xhrio (merge (-> (scope-client/get-branches)
                               (scope-client/with-authorization token))
-                          {:on-success [:load-all-branches]
+                          {:on-success [:load-all-branches.success]
                            :on-failure [:load-all-branches.failure]})})))
