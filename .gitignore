@@ -19,3 +19,5 @@ resources/public/js/test/
 
 # EMACS garbage
 *#*#*
+
+src/kaleidoscope/ui/components/js/*
