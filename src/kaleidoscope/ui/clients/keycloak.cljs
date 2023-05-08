@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.keycloak
+(ns kaleidoscope.ui.clients.keycloak
   (:require ["keycloak-js" :as keycloak-js]
             [re-frame.core :refer [dispatch]]
             [taoensso.timbre :refer-macros [infof debugf warnf]]))

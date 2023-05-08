@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.components.slate.serialization
   "Pretty print a serialized version of the editor state to HTML"
   (:require [kaleidoscope.ui.components.slate.prism :as prism]
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             ["pretty" :as pretty]
             [reagent.core :as reagent]
             ["@udecode/plate" :as plate :refer [serializeHtml

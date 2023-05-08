@@ -47,12 +47,12 @@
                                    :strip-type-prefixes #{"cljs.pprint"}}
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
-                :dev     {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "http://localhost:8080"
-                                            kaleidoscope.ui.keycloak/CLIENTID "test-login"
-                                            kaleidoscope.ui.keycloak/REALM    "test"}}
-                :release {:closure-defines {kaleidoscope.ui.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
-                                            kaleidoscope.ui.keycloak/REALM    "andrewslai"
-                                            kaleidoscope.ui.keycloak/CLIENTID "andrewslai-frontend"}
+                :dev     {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL "http://localhost:8080"
+                                            kaleidoscope.ui.clients.keycloak/CLIENTID "test-login"
+                                            kaleidoscope.ui.clients.keycloak/REALM    "test"}}
+                :release {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
+                                            kaleidoscope.ui.clients.keycloak/REALM    "andrewslai"
+                                            kaleidoscope.ui.clients.keycloak/CLIENTID "andrewslai-frontend"}
                           :build-hooks     [(shadow.ui.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 

@@ -1,5 +1,5 @@
-(ns kaleidoscope.ui.utils.prism-helper
-  (:require [kaleidoscope.ui.utils :as u]))
+(ns kaleidoscope.ui.utils.core.prism-helper
+  (:require [kaleidoscope.ui.utils.core :as u]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Prism syntax highlighting helpers

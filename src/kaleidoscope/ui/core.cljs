@@ -9,9 +9,9 @@
             [kaleidoscope.ui.events.projects-portfolio]
             [kaleidoscope.ui.events.slate-editor]
             [kaleidoscope.ui.events.user]
-            [kaleidoscope.ui.keycloak :as keycloak]
+            [kaleidoscope.ui.clients.keycloak :as keycloak]
             [kaleidoscope.ui.subs]   ;; load them (see docs/App-Structure.md)
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             [goog.events :as events]
             [goog.object :as gobj]
             ;;[devtools.core :as devtools]

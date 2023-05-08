@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.modal
+(ns kaleidoscope.ui.components.modal
   (:require [re-frame.core :refer [dispatch subscribe]]
             [reagent.core :as reagent]
             [reagent-mui.components :refer [modal box]]

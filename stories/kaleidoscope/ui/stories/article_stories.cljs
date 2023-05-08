@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.stories.article-stories
-  (:require [kaleidoscope.ui.article :as article]
+  (:require [kaleidoscope.ui.components.article :as article]
             [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default

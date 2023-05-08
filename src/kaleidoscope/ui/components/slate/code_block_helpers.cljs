@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.components.slate.code-block-helpers
-  (:require [kaleidoscope.ui.utils :as u]
+  (:require [kaleidoscope.ui.utils.core :as u]
             [kaleidoscope.ui.utils.events :as events]
             [kaleidoscope.ui.components.slate.prism :as prism]
             [clojure.string :as string]

@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.components.slate.prism
-  (:require [kaleidoscope.ui.utils :as u]
+  (:require [kaleidoscope.ui.utils.core :as u]
             [goog.object :as g]
             ["./prism" :as prism]
             ["prism-react-renderer" :as Highlight]

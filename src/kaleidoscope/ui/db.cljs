@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.db
   (:require [cljs.spec.alpha :as s]
-            [kaleidoscope.ui.keycloak :as keycloak]))
+            [kaleidoscope.ui.clients.keycloak :as keycloak]))
 
 
 ;; -- Spec --------------------------------------------------------------------

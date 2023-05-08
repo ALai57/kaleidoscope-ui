@@ -1,5 +1,5 @@
-(ns kaleidoscope.ui.modals.editor
-  (:require [kaleidoscope.ui.modal :refer [modal-template]]
+(ns kaleidoscope.ui.components.modals.editor
+  (:require [kaleidoscope.ui.components.modal :refer [modal-template]]
             [taoensso.timbre :refer-macros [infof]]))
 
 (defn create-article-failure [payload]

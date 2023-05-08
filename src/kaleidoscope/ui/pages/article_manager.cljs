@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.pages.article-manager
   (:require [kaleidoscope.ui.components.article-manager :as am]
             [kaleidoscope.ui.navbar :as nav]
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
             [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]

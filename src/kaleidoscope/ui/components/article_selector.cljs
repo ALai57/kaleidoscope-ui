@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.components.article-selector
-  (:require [kaleidoscope.ui.article-cards :as article-cards]
+  (:require [kaleidoscope.ui.components.article-cards :as article-cards]
             [reagent-mui.components :refer [drawer list list-item
                                             list-item-icon list-item-text
                                             button]]

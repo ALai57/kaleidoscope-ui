@@ -1,10 +1,9 @@
-(ns kaleidoscope.ui.article
-  (:require [kaleidoscope.ui.utils :as u]
+(ns kaleidoscope.ui.components.article
+  (:require [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
             [hickory.core :as h]
             [hickory.convert :refer [hickory-to-hiccup]]
             [hickory.select :as hs]
-            [re-frame.core :refer [subscribe]]
             [reagent-mui.components :refer [box]]
             [taoensso.timbre :refer-macros [infof]]))
 

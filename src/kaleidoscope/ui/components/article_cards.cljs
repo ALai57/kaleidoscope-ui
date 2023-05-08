@@ -1,7 +1,7 @@
-(ns kaleidoscope.ui.article-cards
+(ns kaleidoscope.ui.components.article-cards
   (:require ["react" :as react]
             ["@styled-icons/remix-fill/GitBranch" :refer [GitBranch]]
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             [clojure.string :as str]
             [re-frame.core :refer [subscribe]]
             [reagent.core :as reagent :refer [adapt-react-class]]

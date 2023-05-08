@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.events.core
   (:require [kaleidoscope.ui.db :refer [default-db]]
-            [kaleidoscope.ui.keycloak :as keycloak]
+            [kaleidoscope.ui.clients.keycloak :as keycloak]
             [goog.string :as gstr]
             [goog.object :as gobj]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]

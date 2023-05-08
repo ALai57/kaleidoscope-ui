@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.events.slate-editor
   (:require [ajax.core :as ajax]
-            [kaleidoscope.ui.modals.editor :refer [create-article-failure-modal
-                                                     create-article-success-modal]]
+            [kaleidoscope.ui.components.modals.editor :refer [create-article-failure-modal
+                                                              create-article-success-modal]]
             [goog.string :as gstr]
             [re-frame.core :refer [reg-event-db
                                    reg-event-fx

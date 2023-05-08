@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.pages.home
-  (:require [kaleidoscope.ui.article-cards :as cards]
+  (:require [kaleidoscope.ui.components.article-cards :as cards]
             [kaleidoscope.ui.components.demo :as demo]
             [kaleidoscope.ui.navbar :as nav]
             ))

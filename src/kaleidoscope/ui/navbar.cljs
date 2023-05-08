@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.navbar
-  (:require [kaleidoscope.ui.modal :as modal]
+  (:require [kaleidoscope.ui.components.modal :as modal]
             [kaleidoscope.ui.components.side-menu :as side-menu]
             [reagent.core :as reagent]
             [reagent-mui.icons.manage-accounts :refer [manage-accounts]]

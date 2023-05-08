@@ -1,5 +1,5 @@
-(ns kaleidoscope.ui.utils.slate-helper
-  (:require [kaleidoscope.ui.utils :as u]
+(ns kaleidoscope.ui.utils.core.slate-helper
+  (:require [kaleidoscope.ui.utils.core :as u]
             [clojure.string :as string]
             [goog.string :as gstr]
             ["@udecode/plate" :as plate :refer [ELEMENT_CODE_LINE]]

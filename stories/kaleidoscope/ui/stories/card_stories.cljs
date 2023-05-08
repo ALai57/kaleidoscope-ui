@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.stories.card-stories
-  (:require [kaleidoscope.ui.article-cards :as article-cards]
+  (:require [kaleidoscope.ui.components.article-cards :as article-cards]
             [kaleidoscope.ui.stories.helper :as helper]
             [reagent.core :as reagent]))
 

@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.utils
+(ns kaleidoscope.ui.utils.core
   (:require [clojure.string :as str]
             [kaleidoscope.ui.components.notification-card :as n-card]
             [goog.string :as gstr]

@@ -3,7 +3,7 @@
             [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.input-box :as input-box]
             [kaleidoscope.ui.utils.events :as events]
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             [reagent.core :as reagent]
             [reagent-mui.icons.account-circle :refer [account-circle]]
             [reagent-mui.icons.post-add :refer [post-add]]

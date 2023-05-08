@@ -6,7 +6,7 @@
             [kaleidoscope.ui.pages.manager         :as page.manager]
             [kaleidoscope.ui.pages.article-manager :as page.article-manager]
             [kaleidoscope.ui.components.loading-screen :as loading]
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
             ["react" :as react]
             [re-frame.core :refer [subscribe dispatch]]

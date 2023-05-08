@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.events.keycloak
-  (:require [kaleidoscope.ui.keycloak :as keycloak]
-            [kaleidoscope.ui.utils :as u]
+  (:require [kaleidoscope.ui.clients.keycloak :as keycloak]
+            [kaleidoscope.ui.utils.core :as u]
             [ajax.core :as ajax]
             [day8.re-frame.async-flow-fx :as async-flow-fx]
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]

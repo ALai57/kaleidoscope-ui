@@ -1,5 +1,5 @@
 (ns  kaleidoscope.ui.stories.modal-stories
-  (:require [kaleidoscope.ui.modal :as modal]
+  (:require [kaleidoscope.ui.components.modal :as modal]
             [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.stories.helper :as helper]
             [reagent.core :as reagent]

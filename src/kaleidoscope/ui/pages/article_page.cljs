@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.article-page
-  (:require [kaleidoscope.ui.article :as article]
-            [kaleidoscope.ui.article-cards :as cards]
+  (:require [kaleidoscope.ui.components.article :as article]
+            [kaleidoscope.ui.components.article-cards :as cards]
             [kaleidoscope.ui.navbar :as nav]
             [re-frame.core :refer [subscribe dispatch]]
             ))

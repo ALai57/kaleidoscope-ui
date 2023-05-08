@@ -3,7 +3,7 @@
             ["@react-three/drei" :as drei]
             ["react" :as react]
             [reagent.core :as reagent]
-            [kaleidoscope.ui.utils :as u]
+            [kaleidoscope.ui.utils.core :as u]
             ))
 
 #_(defn rotate!
