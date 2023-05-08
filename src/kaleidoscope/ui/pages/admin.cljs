@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.admin
   (:require [ajax.core :refer [POST]]
-            [kaleidoscope.ui.navbar :as nav]
+            [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.side-menu :as side-menu]
             [kaleidoscope.ui.components.input-box :as input-box]

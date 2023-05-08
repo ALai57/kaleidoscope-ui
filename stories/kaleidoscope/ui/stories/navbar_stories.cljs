@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.stories.navbar-stories
-  (:require [kaleidoscope.ui.navbar :as navbar]
+  (:require [kaleidoscope.ui.components.navbar :as navbar]
             [kaleidoscope.ui.stories.helper :as helper]
             [reagent.core :as reagent]))
 

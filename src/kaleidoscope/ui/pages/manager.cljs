@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.manager
   (:require [kaleidoscope.ui.components.manager :as m]
-            [kaleidoscope.ui.navbar :as nav]
+            [kaleidoscope.ui.components.navbar :as nav]
             [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
             [taoensso.timbre :refer-macros [infof info]]

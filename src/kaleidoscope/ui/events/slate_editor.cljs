@@ -13,7 +13,7 @@
   (fn [db [_ response]]
     (infof "Success saving article response: %s" response)
     (dispatch [:show-modal (create-article-success-modal response)])
-    (dispatch [:request-all-branches])
+    (dispatch [:load-all-branches])
     db))
 
 (reg-event-db
@@ -90,8 +90,8 @@
     :publish-success
   (fn [db [_ response]]
     (infof "Success publishing article response: %s" response)
-    (dispatch [:request-all-branches])
-    (dispatch [:request-recent-articles])
+    (dispatch [:load-all-branches])
+    (dispatch [:load-recent-articles])
     (dispatch [:set-hash-fragment "/article-manager"])
     db))
 

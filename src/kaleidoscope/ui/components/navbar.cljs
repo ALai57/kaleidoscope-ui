@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.navbar
+(ns kaleidoscope.ui.components.navbar
   (:require [kaleidoscope.ui.components.modal :as modal]
             [kaleidoscope.ui.components.side-menu :as side-menu]
             [reagent.core :as reagent]

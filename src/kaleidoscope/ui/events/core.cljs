@@ -15,7 +15,7 @@
      :async-flow {:first-dispatch [:keycloak-action :init]
                   :rules          [{:when       :seen?
                                     :events     [[::async-flow-fx/notify :success-load-profile]]
-                                    :dispatch-n [[:request-all-branches]
+                                    :dispatch-n [[:load-all-branches]
                                                  [:request-all-groups]]}
                                    {:when   :seen?
                                     :events [[::async-flow-fx/notify :success-boot]]

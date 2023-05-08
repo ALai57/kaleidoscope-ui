@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.pages.about
-  (:require [kaleidoscope.ui.navbar :as nav]))
+  (:require [kaleidoscope.ui.components.navbar :as nav]))
 
 
 (defn reset-portfolio-cards [x]

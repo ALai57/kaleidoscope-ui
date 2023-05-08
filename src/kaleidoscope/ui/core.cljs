@@ -54,7 +54,7 @@
 
 ;; Use async-flow fx to make a single initialize function
 (dispatch-sync [:boot])
-(dispatch [:request-recent-articles])
+(dispatch [:load-recent-articles])
 (dispatch [:request-portfolio-cards])
 
 ;; -- Debugging aids ----------------------------------------------------------
@@ -69,7 +69,7 @@
   (dispatch [:set-active-panel (keyword path)]))
 (defroute "/:path/content/:content-name" [path content-name]
   (dispatch [:set-active-panel (keyword path)])
-  (dispatch [:request-article content-name]))
+  (dispatch [:load-article content-name]))
 
 
 (def history

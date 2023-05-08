@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.article-editor
   (:require [kaleidoscope.ui.components.slate-editor :as se]
-            [kaleidoscope.ui.navbar :as nav]
+            [kaleidoscope.ui.components.navbar :as nav]
             [goog.string :as gstr]
             [reagent-mui.components :refer [text-field]]
             [re-frame.core :refer [subscribe dispatch]]

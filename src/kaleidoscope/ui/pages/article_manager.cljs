@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.article-manager
   (:require [kaleidoscope.ui.components.article-manager :as am]
-            [kaleidoscope.ui.navbar :as nav]
+            [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
             [reagent.core :as reagent]

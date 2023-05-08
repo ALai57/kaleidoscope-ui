@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.components.slate-editor
   (:require [kaleidoscope.ui.components.article-cards :as article-cards]
-            [kaleidoscope.ui.navbar :as navbar]
+            [kaleidoscope.ui.components.navbar :as navbar]
             [kaleidoscope.ui.components.article-selector :as article-selector]
             [kaleidoscope.ui.components.slate.serialization :as serialization]
             [kaleidoscope.ui.components.slate.prism :as prism]
