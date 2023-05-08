@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.events.slate-editor
+(ns kaleidoscope.ui.events.article-editor
   (:require [ajax.core :as ajax]
             [kaleidoscope.ui.components.modals.editor :refer [create-article-failure-modal
                                                               create-article-success-modal]]
@@ -7,7 +7,7 @@
             [re-frame.core :refer [reg-event-db
                                    reg-event-fx
                                    dispatch]]
-            [taoensso.timbre :refer-macros [infof errorf]]))
+            [taoensso.timbre :refer-macros [infof errorf debugf]]))
 
 (reg-event-db :update-editor-branch-id
   (fn [db [_ new-id]]
@@ -16,7 +16,32 @@
       new-db)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Article-related events
+;; Loading all branches
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(reg-event-db :load-all-branches.success
+  (fn load-all-branches-success
+    [db [_ response]]
+    (infof "Retrieved all branches: found %s" (count response))
+    (debugf "Branches %s" response)
+    (assoc db :branches response)))
+
+(reg-event-db :load-all-branches.failure
+  (fn load-all-branches-failure
+    [db [_ response]]
+    (errorf "Failed to retrieve branches %s" response)
+    db))
+
+(reg-event-fx :load-all-branches
+  (fn [{:keys [db]} [_]]
+    (infof "Requesting all branches")
+    (let [token (or (.-token (:keycloak db)) "test")]
+      {:http-xhrio (merge (-> (scope-client/get-branches)
+                              (scope-client/with-authorization token))
+                          {:on-success [:load-all-branches.success]
+                           :on-failure [:load-all-branches.failure]})})))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Load an article into the editor
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (reg-event-db :load-latest-version.success
   (fn [db [_ response]]
@@ -39,6 +64,9 @@
                            :on-failure [:load-latest-version.failure]})})))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Save an article version
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (reg-event-db :save-article.success
   (fn [db [_ response]]
     (infof "Success saving article response: %s" response)
@@ -62,7 +90,9 @@
                            :on-failure [:save-article.failure]})})))
 
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Publish a branch
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (reg-event-db :publish-branch.success
   (fn [db [_ response]]
     (infof "Success publishing article response: %s" response)

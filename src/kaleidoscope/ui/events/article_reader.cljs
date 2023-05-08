@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.events.articles
+(ns kaleidoscope.ui.events.article-reader
   (:require [day8.re-frame.http-fx]
             [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
             [re-frame.core :refer [reg-event-db reg-event-fx]]
@@ -39,28 +39,3 @@
                         {:on-success [:load-recent-articles.success]
                          :on-failure [:load-recent-articles.success]})}))
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Loading all branches
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(reg-event-db :load-all-branches.success
-  (fn load-all-branches-success
-    [db [_ response]]
-    (infof "Retrieved all branches: found %s" (count response))
-    (debugf "Branches %s" response)
-    (assoc db :branches response)))
-
-(reg-event-db :load-all-branches.failure
-  (fn load-all-branches-failure
-    [db [_ response]]
-    (errorf "Failed to retrieve branches %s" response)
-    db))
-
-(reg-event-fx :load-all-branches
-  (fn [{:keys [db]} [_]]
-    (infof "Requesting all branches")
-    (let [token (or (.-token (:keycloak db)) "test")]
-      {:http-xhrio (merge (-> (scope-client/get-branches)
-                              (scope-client/with-authorization token))
-                          {:on-success [:load-all-branches.success]
-                           :on-failure [:load-all-branches.failure]})})))

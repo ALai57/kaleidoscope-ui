@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.events.articles-test
-  (:require [kaleidoscope.ui.events.articles :as a]
+  (:require [kaleidoscope.ui.events.article-reader :as a]
             [cljs.test :refer-macros [deftest is testing]]
             [matcher-combinators.standalone :as sa]))
 

@@ -17,6 +17,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HTTP API
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Portfolio
+(defn get-portfolio
+  ([]
+   {:method          :get
+    :uri             "/projects-portfolio"
+    :format          (ajax/json-request-format)
+    :response-format (ajax/json-response-format {:keywords? true})}))
+
+;; Articles
 (defn get-articles
   ([]
    {:method          :get
@@ -33,13 +43,6 @@
   ([]
    {:method          :get
     :uri             "/branches"
-    :format          (ajax/json-request-format)
-    :response-format (ajax/json-response-format {:keywords? true})}))
-
-(defn get-portfolio
-  ([]
-   {:method          :get
-    :uri             "/projects-portfolio"
     :format          (ajax/json-request-format)
     :response-format (ajax/json-response-format {:keywords? true})}))
 
@@ -73,4 +76,51 @@
   {:method          :put
    :uri             (gstr/format "/articles/%s/branches/%s/publish" article-url branch-name)
    :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+;; Groups
+(defn delete-group-member!
+  [{:keys [group-id] :as group} member-id]
+  {:method          :delete
+   :uri             (gstr/format "/groups/%s/members/%s" group-id member-id)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn add-group-member!
+  [{:keys [group-id] :as group} member]
+  {:method          :post
+   :uri             (gstr/format "/groups/%s/members" group-id)
+   :params          member
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn delete-group!
+  [{:keys [group-id] :as group}]
+  {:method          :delete
+   :uri             (gstr/format "/groups/%s" group-id)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn add-group!
+  [group-name]
+  {:method          :post
+   :uri             "/groups"
+   :params          {:display-name group-name}
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn get-groups
+  []
+  {:method          :get
+   :uri             "/groups"
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+
+(defn get-admin-route
+  []
+  {:method          :get
+   :uri             "/admin"
+   ;; The response isn't in JSON when the user is not
+   ;; authenticated - they just get a 401
    :response-format (ajax/json-response-format {:keywords? true})})

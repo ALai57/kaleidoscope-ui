@@ -6,12 +6,11 @@
             [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
             [taoensso.timbre :refer-macros [debugf infof warnf]]))
 
-(reg-event-fx
- :keycloak-action
- (fn [cofx [_ action]]
-   (infof "Keycloak action: %s" action)
-   {:keycloak {:action           action
-               :keycloak-adapter (get-in cofx [:db :keycloak])}}))
+(reg-event-fx :keycloak-action
+  (fn [cofx [_ action]]
+    (infof "Keycloak action: %s" action)
+    {:keycloak {:action           action
+                :keycloak-adapter (get-in cofx [:db :keycloak])}}))
 
 (defn keycloak-effect
   [{:keys [action keycloak-adapter]}]
