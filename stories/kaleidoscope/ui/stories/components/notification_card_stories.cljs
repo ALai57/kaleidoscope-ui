@@ -16,4 +16,4 @@
   (clj->js {:args {:level "error"}}))
 
 (def ^:export Warn
-  (clj->js {:args {:levl "warn"}}))
+  (clj->js {:args {:level "warn"}}))
