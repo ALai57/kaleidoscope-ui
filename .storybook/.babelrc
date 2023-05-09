@@ -1,5 +1,0 @@
-{
-  "ignore": [
-    "resources/public/js/compiled/shareable_stories/**/*.js"
-  ]
-}
