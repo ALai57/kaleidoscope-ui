@@ -1,6 +1,7 @@
 (ns kaleidoscope.ui.core
   (:require-macros [secretary.core :refer [defroute]])
   (:require [goog.events :as events]
+            [goog.dom :as gdom]
             [kaleidoscope.ui.components.loading-screen :as loading]
             [kaleidoscope.ui.events.article-reader]
             [kaleidoscope.ui.events.article-editor]
@@ -12,9 +13,12 @@
             [kaleidoscope.ui.subs]
             [kaleidoscope.ui.utils.core :as u]
             [re-frame.core :refer [dispatch dispatch-sync]]
-            [reagent.dom :refer [render]]
             [secretary.core :as secretary]
-            [shadow.lazy :as lazy])
+            [shadow.lazy :as lazy]
+
+            ;; Just to get React 18
+            ["react-dom/client" :as react-dom]
+            [reagent.core :as r])
   (:import [goog History]
            [goog.history EventType]))
 
@@ -54,9 +58,14 @@
   []
   (u/lazy-component (lazy/loadable kaleidoscope.ui.views/app)))
 
+
+;; Support for React 18
+(defonce root
+  (react-dom/createRoot (gdom/getElement "app")))
+
 (defn ^:export main
   []
   ;; `kaleidoscope.ui.views/app` is the root view for the entire UI.
-  (render [app {:fallback (fn []
-                            [loading/loading-screen])}]
-          (.getElementById js/document "app")))
+  (.render root
+           (r/as-element [app {:fallback (fn []
+                                           [loading/loading-screen])}])))
