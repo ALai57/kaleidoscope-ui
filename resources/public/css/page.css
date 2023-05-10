@@ -426,3 +426,33 @@ pre {
   right: 0px;
   opacity: 0.5;
 }
+
+
+
+
+
+.photo-placeholder {
+  height: 300px;
+  width: 100vw;
+}
+
+.gallery-image {
+    max-height: 400px;
+    max-width: 400px;
+}
+
+.thumbnail {
+  position: relative;
+  width: 350px;
+  height: 400px;
+  overflow: hidden;
+}
+
+.thumbnail-img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%,-50%);
+      -ms-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
+}
