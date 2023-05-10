@@ -14,8 +14,7 @@
             [re-frame.core :refer [dispatch subscribe]]
             [keycloak-js :as keycloak-js]
             [taoensso.timbre :refer-macros [infof info]]
-            ;;["../components/js/Example" :as ex]
-            ;;["../components/js/ImageThumbnail" :as it]
+            [kaleidoscope.ui.components.example :as example]
             ))
 
 (defn authentication-failure
@@ -124,12 +123,10 @@
   (when login-response
     (info "Checked if user is authenticated:" login-response))
   ;;(js/console.log "BAR" ex)
-  (js/console.log "THUMB")
   (let [notifier (get NOTIFIERS notification-type modal-notifier)]
     [:div
      [nav/nav-bar {:user user}]
-     ;;[ex/myComponent]
-     ;;[:f> it/ImageThumbnail {:src "https://andrewslai.com/images/nav-bar/favicon.svg"}]
+     [example/example-js]
      [:br]
      [notifier login-response]
      [user-profile {:user                user

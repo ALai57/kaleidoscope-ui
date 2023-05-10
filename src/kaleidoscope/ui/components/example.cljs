@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.components.example
-  (:require ["./js/Example" :refer [myComponent]]))
+  (:require ["kaleidoscope-js/ui/components/Example" :refer [myComponent]]))
 
 (defn example-js
   []
