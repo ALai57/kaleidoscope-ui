@@ -17,7 +17,7 @@ const onChange = (onAdd, onRemove) =>
       }
       }
 
-const InputTags = ({options,
+const InputTags = ({options=[],
                     width=500,
                     onAdd=logger,
                     vals,

@@ -5,7 +5,7 @@
 
 (def ^:export default
   (helper/->default-story
-   {:title     "JSX Components/Image Card Gallery"
+   {:title     "JSX Components/Images/Image Card Gallery"
     :component image-card-gallery/image-card-gallery
     :args      {:images [{:src   "https://avatars.githubusercontent.com/u/20470027?v=4",
                           :alt   "Click me"}
