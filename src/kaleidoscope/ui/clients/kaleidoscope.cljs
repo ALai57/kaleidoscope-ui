@@ -124,3 +124,13 @@
    ;; The response isn't in JSON when the user is not
    ;; authenticated - they just get a 401
    :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn get-image-metadata
+  "For now, we get image metadata from the `processed/` endpoint, which
+  returns a list of the contents of the `processed` folder. Should be
+  replaced with a mechanism for indexing images outside S3."
+  []
+  {:method          :get
+   :uri             "/media/"
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})

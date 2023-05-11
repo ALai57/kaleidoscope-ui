@@ -6,6 +6,7 @@
             [kaleidoscope.ui.events.article-reader]
             [kaleidoscope.ui.events.article-editor]
             [kaleidoscope.ui.events.core]
+            [kaleidoscope.ui.events.image-editor]
             [kaleidoscope.ui.events.group-management]
             [kaleidoscope.ui.events.keycloak]
             [kaleidoscope.ui.events.projects-portfolio]

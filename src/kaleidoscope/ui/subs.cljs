@@ -101,6 +101,11 @@
  (fn [db]
    (:groups db)))
 
+(reg-sub
+ :keycloak
+ (fn [db]
+   (:keycloak db)))
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;

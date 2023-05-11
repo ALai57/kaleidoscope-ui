@@ -8,14 +8,16 @@
             [taoensso.timbre :refer-macros [infof info]]
             ))
 
-(defn -image-manager-page [{:keys [images albums user notification-type]}]
+(defn -image-manager-page [{:keys [images albums user notification-type auth-token]}]
   [:div
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
    [:div {:margin "10px"}
-    [ib/image-browser {:images images}]]])
+    [ib/image-browser {:images     images
+                       :auth-token auth-token}]]])
 
 (defn image-manager-page
   [{:keys [images user notification-type]}]
   [-image-manager-page {:user              user
+                        :auth-token        (or (.-token ^js @(subscribe [:keycloak])) "test")
                         :notification-type notification-type}])

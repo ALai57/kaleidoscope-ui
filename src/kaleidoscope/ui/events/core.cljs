@@ -15,6 +15,7 @@
                   :rules          [{:when       :seen?
                                     :events     [[::async-flow-fx/notify :success-load-profile]]
                                     :dispatch-n [[:load-all-branches]
+                                                 [:load-image-metadata]
                                                  [:request-all-groups]]}
                                    {:when   :seen?
                                     :events [[::async-flow-fx/notify :success-boot]]
