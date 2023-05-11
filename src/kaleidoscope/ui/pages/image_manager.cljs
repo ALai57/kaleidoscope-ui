@@ -23,5 +23,5 @@
 
                         ;; Currently we don't actually require authentication for media/
                         :auth-token        (or (.-token ^js @(subscribe [:keycloak])) "test")
-                        :images            @subscribe([:images-metadata])
+                        :images            @(subscribe [:images-metadata])
                         :notification-type notification-type}])
