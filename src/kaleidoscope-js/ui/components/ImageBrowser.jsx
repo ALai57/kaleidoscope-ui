@@ -13,7 +13,6 @@ const styleFocus = {
   boxShadow: 24,
   p:         4,
   display:   'inline-block',
-  float:     'left'
 };
 
 const editorStyle = {
