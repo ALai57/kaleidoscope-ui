@@ -12,7 +12,8 @@
   [:div
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
-   [ib/image-browser {:images images}]])
+   [:div {:margin "10px"}
+    [ib/image-browser {:images images}]]])
 
 (defn image-manager-page
   [{:keys [images user notification-type]}]
