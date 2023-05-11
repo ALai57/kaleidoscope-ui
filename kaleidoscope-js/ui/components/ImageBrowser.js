@@ -18,8 +18,7 @@ const styleFocus = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
-  display: 'inline-block',
-  float: 'left'
+  display: 'inline-block'
 };
 const editorStyle = {
   top: '0%',
