@@ -106,6 +106,11 @@
  (fn [db]
    (:keycloak db)))
 
+(reg-sub
+ :images-metadata
+ (fn [db]
+   (:images-metadata db)))
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;

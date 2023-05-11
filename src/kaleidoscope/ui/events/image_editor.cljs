@@ -46,6 +46,21 @@
   [{:keys [type] :as image-metadata}]
   (= "file" type))
 
+(comment
+  ;; Raw metadata
+  [{:path "media/",                               :key "media/", :storage-class "STANDARD", :name "", :type "directory", :etag "d41d8cd98f00b204e9800998ecf8427e", :last-modified "2023-02-05T22:57:46.000Z", :size 0, :bucket-name "andrewslai"}
+   {:path "media/2023-02-12-blue-jeans-frog.jpg", :key "media/2023-02-12-blue-jeans-frog.jpg", :storage-class "STANDARD", :name "2023-02-12-blue-jeans-frog.jpg", :type "file", :etag "947ef8f403b46c99a3adb736f4e0be9b", :last-modified "2023-02-13T04:42:41.000Z", :size 65976, :bucket-name "andrewslai"}
+   {:path "media/2023-02-12-cacao-plant.jpg",     :key "media/2023-02-12-cacao-plant.jpg", :storage-class "STANDARD", :name "2023-02-12-cacao-plant.jpg", :type "file", :etag "a246132f7e90e32f2ec56347a0634fc7", :last-modified "2023-02-13T04:42:42.000Z", :size 282887, :bucket-name "andrewslai"}
+   {:path "media/2023-02-12-coati.jpg",           :key "media/2023-02-12-coati.jpg", :storage-class "STANDARD", :name "2023-02-12-coati.jpg", :type "file", :etag "c91763dd9780116abc97d147be6e74b5", :last-modified "2023-02-13T04:42:42.000Z", :size 258322, :bucket-name "andrewslai"}]
+
+  ;; Translated
+  [{:name "media/2023-02-12-blue-jeans-frog.jpg",      :created_at "2023-02-13T04:42:41.000Z", :creator "Andrew Lai", :title nil, :alt nil, :versions {:thumbnail {:src "media/2023-02-12-blue-jeans-frog.jpg"}, :raw {:src "media/2023-02-12-blue-jeans-frog.jpg"}}}
+   {:name "media/2023-02-12-cacao-plant.jpg",          :created_at "2023-02-13T04:42:42.000Z", :creator "Andrew Lai", :title nil, :alt nil, :versions {:thumbnail {:src "media/2023-02-12-cacao-plant.jpg"}, :raw {:src "media/2023-02-12-cacao-plant.jpg"}}}
+   {:name "media/2023-02-12-coati.jpg",                :created_at "2023-02-13T04:42:42.000Z", :creator "Andrew Lai", :title nil, :alt nil, :versions {:thumbnail {:src "media/2023-02-12-coati.jpg"}, :raw {:src "media/2023-02-12-coati.jpg"}}}
+   {:name "media/2023-02-12-costa-rican-backyard.jpg", :created_at "2023-02-13T04:42:43.000Z", :creator "Andrew Lai", :title nil, :alt nil, :versions {:thumbnail {:src "media/2023-02-12-costa-rican-backyard.jpg"}, :raw {:src "media/2023-02-12-costa-rican-backyard.jpg"}}}
+   {:name "media/2023-02-12-elegant-euphonia.jpg",     :created_at "2023-02-13T04:42:43.000Z", :creator "Andrew Lai", :title nil, :alt nil, :versions {:thumbnail {:src "media/2023-02-12-elegant-euphonia.jpg"}, :raw {:src "media/2023-02-12-elegant-euphonia.jpg"}}}]
+  )
+
 (reg-event-db :load-image-metadata.success
   (fn load-image-metadata-success
     [db [_ response]]
