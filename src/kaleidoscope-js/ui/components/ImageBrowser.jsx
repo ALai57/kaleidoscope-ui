@@ -6,41 +6,41 @@ import { ImageThumbnail } from './ImageThumbnail';
 import { InputTags }      from './InputTags';
 
 const styleFocus = {
-  position:  'absolute',
-  top:       '20%',
-  left:      '50%',
-  transform: 'translate(-50%, -20%)',
   width:     'auto',
+  minWidth:  '50%',
+  maxHeight: '60vh',
   bgcolor:   'background.paper',
   boxShadow: 24,
   p:         4,
+  display:   'inline-block',
+  float:     'left'
 };
 
 const editorStyle = {
-  position:  'absolute',
   top:       '0%',
   left:      '0%',
   //transform: 'translate(-50%, -50%)',
   width:     '20vw',
-  height:    '100vh',
+  height:    '70vh',
   bgcolor:   'background.paper',
   boxShadow: 24,
   p:         4,
   padding:  "4px",
-  overflowY: 'scroll'
+  overflowY: 'scroll',
+  display:   'inline-block',
+  float:     'left'
 };
 
 const styleThumbnails = {
-  position:  'absolute',
   bottom:    '10px',
   left:      '0%',
-  width:     '78vw',
   height:    '128px',
   bgcolor:   'background.paper',
   boxShadow: 24,
   p:         4,
   padding:   "2px",
   overflowX: "scroll",
+
 };
 
 const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0}) => {
@@ -74,34 +74,41 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0}) => {
       default: break;
     };}
 
+  const defaultImage = {src: 'https://andrewslai.com/images/nav-bar/favicon.svg'}
+
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)
   //       Allow the user to jump to the thumbnail somehow (from the image modal viewer)?
   return (
     <div>
-      <Box sx={{...editorStyle, overflow: 'hidden'}}>
-        <form>
-          <br/>
-          <EditableField label='Name'         id='name'       val={images[selectedImage].name}       disabled={true}/>
-          <EditableField label='Created At'   id='created_at' val={images[selectedImage].created_at} disabled={true}/>
-          <EditableField label='Creator'      id='creator'    val={images[selectedImage].creator}    disabled={true}/>
-          <EditableField label='Title'        id='title'      val={images[selectedImage].title}/>
-          <EditableField label='Alt'          id='alt'        val={images[selectedImage].alt}/>
+      <Box sx={{width: '100vw', height: '75vh', textAlign: 'center'}}>
+    <Box sx={{...editorStyle, overflow: 'hidden'}}>
+      <form>
+        <br/>
+        <EditableField label='Name'         id='name'       val={images && images[selectedImage].name}       disabled={true}/>
+        <EditableField label='Created At'   id='created_at' val={images && images[selectedImage].created_at} disabled={true}/>
+        <EditableField label='Creator'      id='creator'    val={images && images[selectedImage].creator}    disabled={true}/>
+        <EditableField label='Title'        id='title'      val={images && images[selectedImage].title}/>
+        <EditableField label='Alt'          id='alt'        val={images && images[selectedImage].alt}/>
 
-          <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
-        </form>
+        <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
+      </form>
+    </Box>
+
+    <Box sx={styleFocus}>
+        <FullImageCard image={images ? images[selectedImage].versions.raw : defaultImage } authToken={authToken}/>
       </Box>
-      <Box sx={{position: 'absolute', left: '21vw', height: '100vh', width: '80vw'}}>
-        <Box sx={styleFocus}>
-          <FullImageCard image={images[selectedImage].versions.raw} authToken={authToken}/>
-        </Box>
-        <Box sx={styleThumbnails}>
-          {images && images.map((image, index) =>
-            <ImageThumbnail image    ={image.versions.thumbnail}
-                            authToken={authToken}
-                            key      ={'tmb' + image.versions.thumbnail.src}
-                            onClick  ={() => jumpTo(index)}/>)}
-        </Box>
       </Box>
+      <div>
+        <Box>
+          <Box sx={styleThumbnails}>
+            {images && images.map((image, index) =>
+              <ImageThumbnail image    ={image.versions.thumbnail}
+                              authToken={authToken}
+                              key      ={'tmb' + image.versions.thumbnail.src}
+                              onClick  ={() => jumpTo(index)}/>)}
+          </Box>
+        </Box>
+      </div>
     </div>
   );
 };

@@ -19,7 +19,7 @@
     :description "Create and manage Images. Not implemented yet!"
     :alt         "Manage images"
     :src         "/images/images.svg"
-    :on-click    (fn [] #_(dispatch [:set-hash-fragment "/home"]))}
+    :on-click    (fn [] (dispatch [:set-hash-fragment "/image-manager"]))}
    {:name        "Audiences (WIP)"
     :description "Control who has access to your content by defining an Audience"
     :src         "/images/audiences.svg"
