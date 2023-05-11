@@ -58,6 +58,7 @@
     "test": "test"
   },
   "scripts": {
+    "watch-js": "npx babel src/kaleidoscope-js --out-dir kaleidoscope-js --watch",
     "watch": "shadow-cljs watch app stories",
     "build-release": "shadow-cljs release app",
     "deploy": "./scripts/deployment/deploy-to-s3",
