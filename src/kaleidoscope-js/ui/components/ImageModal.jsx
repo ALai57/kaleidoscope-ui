@@ -93,7 +93,7 @@ const ImageModal = ({images, authToken=null, albums=[], open=false, handleClose,
                <EditableField3 label='Creator'      id='creator'    val={images[selectedImage].creator}    disabled={true}/>
                <EditableField3 label='Title'        id='title'      val={images[selectedImage].title}/>
                <EditableField3 label='Alt'          id='alt'        val={images[selectedImage].alt}/>
-               <InputTags      options={albums}     width='20vw'    vals={} onAdd={InputTags.logger}  onRemove={InputTags.logger}/>
+               <InputTags      options={albums}     width='20vw'    onAdd={InputTags.logger}  onRemove={InputTags.logger}/>
              </form>
            </Box>
            <Box sx={{position: 'absolute', left: '21vw', height: '100vh', width: '80vw'}}>

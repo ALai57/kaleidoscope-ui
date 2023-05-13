@@ -28,14 +28,15 @@ const FullImageCard = ({image, authToken=null, forceRerender=false}) => {
                   );
 
   return (
-    <Card sx={{ float: "left", margin: "5px", minHeight: "200px", display: 'inherit'}}>
-      <CardActionArea>
+    <Card sx={{ float: "left", margin: "5px", minHeight: "200px", display: 'inherit', height: '100%'}}>
+      <CardActionArea sx={{height: '100%'}}>
         <CardMedia
           id           ={'full-' + image.src}
           component    ="img"
           height       ={image.height}
           alt          ={image.alt}
-          className    ='lazyload thumbnail'
+          className    ='lazyload'
+          sx = {{height: '100%'}}
         />
       </CardActionArea>
     </Card>

@@ -13,8 +13,9 @@ var _InputTags = require("./InputTags");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 const styleFocus = {
   width: 'auto',
-  minWidth: '50%',
-  maxHeight: '60vh',
+  maxHeight: '100%',
+  maxWidth: '75%',
+  height: '95%',
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
