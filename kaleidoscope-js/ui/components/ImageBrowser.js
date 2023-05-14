@@ -100,6 +100,16 @@ const ImageBrowser = ({
   const defaultImage = {
     src: 'https://andrewslai.com/images/nav-bar/favicon.svg'
   };
+  const date = new Date(Date.parse(images[selectedImage].created_at));
+  const dateFormat = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    timeZoneName: 'short'
+  };
 
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)
   //       Allow the user to jump to the thumbnail somehow (from the image modal viewer)?
@@ -122,7 +132,7 @@ const ImageBrowser = ({
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Created At",
     id: "created_at",
-    val: images && images[selectedImage].created_at,
+    val: images && date.toLocaleString('en-US', dateFormat),
     disabled: true
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Creator",

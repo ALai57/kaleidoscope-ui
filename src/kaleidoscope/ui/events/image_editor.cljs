@@ -124,12 +124,14 @@
   (fn add-photo-success
     [db [_ response]]
     (infof "Added photos! %s" response)
+    (dispatch [:load-image-metadata])
     db))
 
 (reg-event-db :add-photo.failure
   (fn add-photo-failure
     [db [_ response]]
-    (infof "Failed adding photos! %s" response)))
+    (infof "Failed adding photos! %s" response)
+    db))
 
 (reg-event-fx :add-photo!
   (fn [{:keys [db]} [_ files]]

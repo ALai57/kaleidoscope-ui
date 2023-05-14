@@ -80,6 +80,9 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
 
   const defaultImage = {src: 'https://andrewslai.com/images/nav-bar/favicon.svg'}
 
+  const date = new Date( Date.parse(images[selectedImage].created_at) );
+  const dateFormat = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'};
+
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)
   //       Allow the user to jump to the thumbnail somehow (from the image modal viewer)?
   return (
@@ -89,7 +92,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
           <form>
             <br/>
             <EditableField label='Name'         id='name'       val={images && images[selectedImage].name}       disabled={true}/>
-            <EditableField label='Created At'   id='created_at' val={images && images[selectedImage].created_at} disabled={true}/>
+            <EditableField label='Created At'   id='created_at' val={images && date.toLocaleString('en-US', dateFormat)} disabled={true}/>
             <EditableField label='Creator'      id='creator'    val={images && images[selectedImage].creator}    disabled={true}/>
             <EditableField label='Title'        id='title'      val={images && images[selectedImage].title}/>
             <EditableField label='Alt'          id='alt'        val={images && images[selectedImage].alt}/>
