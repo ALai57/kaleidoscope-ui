@@ -5,8 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ImageBrowser = void 0;
 var _react = _interopRequireDefault(require("react"));
-var _Box = _interopRequireDefault(require("@mui/material/Box"));
-var _TextField = _interopRequireDefault(require("@mui/material/TextField"));
+var _material = require("@mui/material");
+var _ImageAdd = require("@styled-icons/boxicons-regular/ImageAdd");
 var _FullImageCard = require("./FullImageCard");
 var _ImageThumbnail = require("./ImageThumbnail");
 var _InputTags = require("./InputTags");
@@ -45,13 +45,20 @@ const styleThumbnails = {
   padding: "2px",
   overflowX: "scroll"
 };
+const logger = event => console.log('Clicked!', event.target.files);
 const ImageBrowser = ({
   images,
   authToken = null,
   albums = [],
-  startingImage = 0
+  startingImage = 0,
+  photoManager = {}
 }) => {
-  console.log("ARGUMENTS", images, albums);
+  // console.log("ARGUMENTS", images, albums);
+  // console.log("PHOTO MANAGER", photoManager);
+
+  const {
+    addPhoto = logger
+  } = photoManager;
   const [selectedImage, jumpTo] = _react.default.useState(startingImage);
   const focusNext = () => jumpTo(selectedImage === len(images) ? len(images) : selectedImage + 1);
   const focusBack = () => jumpTo(selectedImage === 0 ? 0 : selectedImage - 1);
@@ -63,7 +70,7 @@ const ImageBrowser = ({
     val,
     disabled
   }) => {
-    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_TextField.default, {
+    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_material.TextField, {
       label: label,
       id: id,
       type: "text",
@@ -96,13 +103,13 @@ const ImageBrowser = ({
 
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)
   //       Allow the user to jump to the thumbnail somehow (from the image modal viewer)?
-  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Box.default, {
+  return /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       width: '100vw',
       height: '75vh',
       textAlign: 'center'
     }
-  }, /*#__PURE__*/_react.default.createElement(_Box.default, {
+  }, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: {
       ...editorStyle,
       overflow: 'hidden'
@@ -136,12 +143,25 @@ const ImageBrowser = ({
     vals: [],
     onAdd: () => console.log('Added!'),
     onRemove: () => console.log('Removed!')
-  }))), /*#__PURE__*/_react.default.createElement(_Box.default, {
+  })), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement(_material.Button, {
+    variant: "contained",
+    startIcon: /*#__PURE__*/_react.default.createElement(_ImageAdd.ImageAdd, {
+      style: {
+        height: '20px'
+      }
+    }),
+    component: "label"
+  }, "Add photo", /*#__PURE__*/_react.default.createElement("input", {
+    accept: "image/*",
+    type: "file",
+    hidden: true,
+    onChange: addPhoto
+  }))), /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: styleFocus
   }, /*#__PURE__*/_react.default.createElement(_FullImageCard.FullImageCard, {
     image: images ? images[selectedImage].versions.raw : defaultImage,
     authToken: authToken
-  }))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_Box.default, null, /*#__PURE__*/_react.default.createElement(_Box.default, {
+  }))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: styleThumbnails
   }, images && images.map((image, index) => /*#__PURE__*/_react.default.createElement(_ImageThumbnail.ImageThumbnail, {
     image: image.versions.thumbnail,

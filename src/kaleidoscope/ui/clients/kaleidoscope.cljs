@@ -125,12 +125,42 @@
    ;; authenticated - they just get a 401
    :response-format (ajax/json-response-format {:keywords? true})})
 
+
+;; Image management
+#_(defn get-image-metadata
+    "For now, we get image metadata from the `processed/` endpoint, which
+  returns a list of the contents of the `processed` folder. Should be
+  replaced with a mechanism for indexing images outside S3."
+    []
+    {:method          :get
+     :uri             "/media/"
+     :format          (ajax/json-request-format)
+     :response-format (ajax/json-response-format {:keywords? true})})
+
 (defn get-image-metadata
+  "Uses the new /v2/photos endpoint"
+  []
+  {:method          :get
+   :uri             "/v2/photos"
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn add-photo!
   "For now, we get image metadata from the `processed/` endpoint, which
   returns a list of the contents of the `processed` folder. Should be
   replaced with a mechanism for indexing images outside S3."
-  []
-  {:method          :get
-   :uri             "/media/"
-   :format          (ajax/json-request-format)
-   :response-format (ajax/json-response-format {:keywords? true})})
+  [^js files]
+  (let [form-data (new js/FormData)]
+    #_(doseq [file (js->clj files)]
+        (js/console.log "FILE UPLOAD" file)
+        (println "FILE UPLOAD" file)
+        (.append form-data "file" file))
+    (.append form-data "file" (aget files 0))
+
+    ;; TODO: Return here! Having problems uploading form data
+    ;; Possibly need to create intermediate state instead of referring to the event?
+    (js/console.log "FORM DATA" (map js->clj (.entries form-data)))
+    {:method          :post
+     :uri             "/v2/photos"
+     :body            form-data
+     :response-format (ajax/json-response-format {:keywords? true})}))

@@ -1,6 +1,6 @@
 import React          from 'react';
-import Box            from '@mui/material/Box';
-import TextField      from "@mui/material/TextField";
+import { Box, TextField, Button} from '@mui/material';
+import { ImageAdd } from '@styled-icons/boxicons-regular/ImageAdd';
 import { FullImageCard }  from './FullImageCard';
 import { ImageThumbnail } from './ImageThumbnail';
 import { InputTags }      from './InputTags';
@@ -43,10 +43,14 @@ const styleThumbnails = {
 
 };
 
-const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0}) => {
+const logger = (event) => console.log('Clicked!', event.target.files);
 
-  console.log("ARGUMENTS", images, albums);
+const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photoManager={}}) => {
 
+  // console.log("ARGUMENTS", images, albums);
+  // console.log("PHOTO MANAGER", photoManager);
+
+  const { addPhoto = logger } = photoManager;
   const [selectedImage, jumpTo] = React.useState(startingImage);
   const focusNext = () => jumpTo(selectedImage === len(images) ? len(images) : selectedImage + 1);
   const focusBack = () => jumpTo(selectedImage === 0 ? 0 : selectedImage - 1);
@@ -81,22 +85,29 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0}) => {
   return (
     <div>
       <Box sx={{width: '100vw', height: '75vh', textAlign: 'center'}}>
-    <Box sx={{...editorStyle, overflow: 'hidden'}}>
-      <form>
-        <br/>
-        <EditableField label='Name'         id='name'       val={images && images[selectedImage].name}       disabled={true}/>
-        <EditableField label='Created At'   id='created_at' val={images && images[selectedImage].created_at} disabled={true}/>
-        <EditableField label='Creator'      id='creator'    val={images && images[selectedImage].creator}    disabled={true}/>
-        <EditableField label='Title'        id='title'      val={images && images[selectedImage].title}/>
-        <EditableField label='Alt'          id='alt'        val={images && images[selectedImage].alt}/>
+        <Box sx={{...editorStyle, overflow: 'hidden'}}>
+          <form>
+            <br/>
+            <EditableField label='Name'         id='name'       val={images && images[selectedImage].name}       disabled={true}/>
+            <EditableField label='Created At'   id='created_at' val={images && images[selectedImage].created_at} disabled={true}/>
+            <EditableField label='Creator'      id='creator'    val={images && images[selectedImage].creator}    disabled={true}/>
+            <EditableField label='Title'        id='title'      val={images && images[selectedImage].title}/>
+            <EditableField label='Alt'          id='alt'        val={images && images[selectedImage].alt}/>
 
-        <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
-      </form>
-    </Box>
+            <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
+          </form>
+          <br/>
+          <br/>
+          <Button variant='contained' startIcon={<ImageAdd style={{height: '20px'}}/>} component='label'>
+            Add photo
+            <input accept='image/*' type="file" hidden onChange={addPhoto}>
+            </input>
+          </Button>
+        </Box>
 
-    <Box sx={styleFocus}>
-        <FullImageCard image={images ? images[selectedImage].versions.raw : defaultImage } authToken={authToken}/>
-      </Box>
+        <Box sx={styleFocus}>
+          <FullImageCard image={images ? images[selectedImage].versions.raw : defaultImage } authToken={authToken}/>
+        </Box>
       </Box>
       <div>
         <Box>

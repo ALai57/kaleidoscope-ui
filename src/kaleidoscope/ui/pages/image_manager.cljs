@@ -2,11 +2,18 @@
   (:require [kaleidoscope.ui.components.image-browser :as ib]
             [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.core :as u]
+            [kaleidoscope.ui.utils.events :as e]
             [goog.string :as gstr]
             [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
             [taoensso.timbre :refer-macros [infof info]]
             ))
+
+(defn -add-photo!
+  [event]
+  (let [files (e/event-files event)]
+    (js/console.log "UPLOAD EVENT" files)
+    (dispatch [:add-photo! files])))
 
 (defn -image-manager-page [{:keys [images albums user notification-type auth-token]}]
   [:div
@@ -15,6 +22,7 @@
    [:div {:margin "10px"}
     [ib/image-browser {:images     images
                        ;;:auth-token auth-token
+                       :photo-manager {:add-photo -add-photo!}
                        }]]])
 
 (defn image-manager-page
