@@ -53,7 +53,7 @@ const ImageBrowser = ({
   startingImage = 0,
   photoManager = {}
 }) => {
-  // console.log("ARGUMENTS", images, albums);
+  //console.log("ARGUMENTS", images, albums);
   // console.log("PHOTO MANAGER", photoManager);
 
   const {
@@ -100,7 +100,7 @@ const ImageBrowser = ({
   const defaultImage = {
     src: 'https://andrewslai.com/images/nav-bar/favicon.svg'
   };
-  const date = new Date(Date.parse(images[selectedImage].created_at));
+  const date = Date.parse(images && images[selectedImage].created_at);
   const dateFormat = {
     year: 'numeric',
     month: 'short',
@@ -132,7 +132,7 @@ const ImageBrowser = ({
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Created At",
     id: "created_at",
-    val: images && date.toLocaleString('en-US', dateFormat),
+    val: images && date && new Date(date).toLocaleString('en-US', dateFormat),
     disabled: true
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Creator",
@@ -165,7 +165,8 @@ const ImageBrowser = ({
     accept: "image/*",
     type: "file",
     hidden: true,
-    onChange: addPhoto
+    onChange: addPhoto,
+    multiple: true
   }))), /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: styleFocus
   }, /*#__PURE__*/_react.default.createElement(_FullImageCard.FullImageCard, {

@@ -151,15 +151,9 @@
   replaced with a mechanism for indexing images outside S3."
   [^js files]
   (let [form-data (new js/FormData)]
-    #_(doseq [file (js->clj files)]
-        (js/console.log "FILE UPLOAD" file)
-        (println "FILE UPLOAD" file)
-        (.append form-data "file" file))
-    (.append form-data "file" (aget files 0))
-
-    ;; TODO: Return here! Having problems uploading form data
-    ;; Possibly need to create intermediate state instead of referring to the event?
-    (js/console.log "FORM DATA" (map js->clj (.entries form-data)))
+    (doseq [file files]
+      (js/console.log "Attaching file to upload request: " file)
+      (.append form-data (.-name file) file))
     {:method          :post
      :uri             "/v2/photos"
      :body            form-data

@@ -47,7 +47,7 @@ const logger = (event) => console.log('Clicked!', event.target.files);
 
 const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photoManager={}}) => {
 
-  // console.log("ARGUMENTS", images, albums);
+  //console.log("ARGUMENTS", images, albums);
   // console.log("PHOTO MANAGER", photoManager);
 
   const { addPhoto = logger } = photoManager;
@@ -80,7 +80,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
 
   const defaultImage = {src: 'https://andrewslai.com/images/nav-bar/favicon.svg'}
 
-  const date = new Date( Date.parse(images[selectedImage].created_at) );
+  const date = Date.parse(images && images[selectedImage].created_at) ;
   const dateFormat = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'};
 
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)
@@ -92,7 +92,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
           <form>
             <br/>
             <EditableField label='Name'         id='name'       val={images && images[selectedImage].name}       disabled={true}/>
-            <EditableField label='Created At'   id='created_at' val={images && date.toLocaleString('en-US', dateFormat)} disabled={true}/>
+            <EditableField label='Created At'   id='created_at' val={images && date && new Date(date).toLocaleString('en-US', dateFormat)} disabled={true}/>
             <EditableField label='Creator'      id='creator'    val={images && images[selectedImage].creator}    disabled={true}/>
             <EditableField label='Title'        id='title'      val={images && images[selectedImage].title}/>
             <EditableField label='Alt'          id='alt'        val={images && images[selectedImage].alt}/>
@@ -103,7 +103,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
           <br/>
           <Button variant='contained' startIcon={<ImageAdd style={{height: '20px'}}/>} component='label'>
             Add photo
-            <input accept='image/*' type="file" hidden onChange={addPhoto}>
+            <input accept='image/*' type="file" hidden onChange={addPhoto} multiple>
             </input>
           </Button>
         </Box>

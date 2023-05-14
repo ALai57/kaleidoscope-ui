@@ -18,7 +18,6 @@
                           :title    "This is someone else",
                           :alt      "An image"
                           :creator  "andrewslai"
-                          :created_at "2023-06-14T16:12:50Z"
                           :versions {:raw       {:src "https://avatars.githubusercontent.com/u/20470078?v=4",}
                                      :thumbnail {:src "https://avatars.githubusercontent.com/u/20470078?s=40&v=4",}}}
                          {:name     "A big image"
