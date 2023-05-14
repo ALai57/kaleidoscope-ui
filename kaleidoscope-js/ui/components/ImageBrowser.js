@@ -100,7 +100,7 @@ const ImageBrowser = ({
   const defaultImage = {
     src: 'https://andrewslai.com/images/nav-bar/favicon.svg'
   };
-  const date = Date.parse(images && images[selectedImage].created_at);
+  const date = Date.parse(images && images[selectedImage] && images[selectedImage].created_at);
   const dateFormat = {
     year: 'numeric',
     month: 'short',

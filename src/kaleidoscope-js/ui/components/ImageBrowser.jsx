@@ -80,7 +80,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
 
   const defaultImage = {src: 'https://andrewslai.com/images/nav-bar/favicon.svg'}
 
-  const date = Date.parse(images && images[selectedImage].created_at) ;
+  const date = Date.parse(images && images[selectedImage] && images[selectedImage].created_at) ;
   const dateFormat = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'};
 
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)

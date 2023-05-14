@@ -2,11 +2,11 @@
 
 echo "Deploying frontend to kaleidoscope bucket..."
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/skeleton.js        s3://kaleidoscope.pub/js/compiled/kaleidoscope/skeleton.js
-aws s3 cp ./resources/public/js/compiled/kaleidoscope/skeleton.js.map    s3://kaleidoscope.pub/js/compiled/kaleidoscope/skeleton.js.map
+#aws s3 cp ./resources/public/js/compiled/kaleidoscope/skeleton.js.map    s3://kaleidoscope.pub/js/compiled/kaleidoscope/skeleton.js.map
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/kaleidoscope.js      s3://kaleidoscope.pub/js/compiled/kaleidoscope/kaleidoscope.js
-aws s3 cp ./resources/public/js/compiled/kaleidoscope/kaleidoscope.js.map  s3://kaleidoscope.pub/js/compiled/kaleidoscope/kaleidoscope.js.map
+#aws s3 cp ./resources/public/js/compiled/kaleidoscope/kaleidoscope.js.map  s3://kaleidoscope.pub/js/compiled/kaleidoscope/kaleidoscope.js.map
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/editor.js          s3://kaleidoscope.pub/js/compiled/kaleidoscope/editor.js
-aws s3 cp ./resources/public/js/compiled/kaleidoscope/editor.js.map      s3://kaleidoscope.pub/js/compiled/kaleidoscope/editor.js.map
+#aws s3 cp ./resources/public/js/compiled/kaleidoscope/editor.js.map      s3://kaleidoscope.pub/js/compiled/kaleidoscope/editor.js.map
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/manifest.edn       s3://kaleidoscope.pub/js/compiled/kaleidoscope/manifest.edn
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/module-loader.edn  s3://kaleidoscope.pub/js/compiled/kaleidoscope/module-loader.edn
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/module-loader.json s3://kaleidoscope.pub/js/compiled/kaleidoscope/module-loader.json
