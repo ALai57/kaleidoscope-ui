@@ -127,7 +127,7 @@ const ImageBrowser = ({
   }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Name",
     id: "name",
-    val: images && images[selectedImage].name,
+    val: images && images[selectedImage] && images[selectedImage].name,
     disabled: true
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Created At",
@@ -137,16 +137,16 @@ const ImageBrowser = ({
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Creator",
     id: "creator",
-    val: images && images[selectedImage].creator,
+    val: images && images[selectedImage] && images[selectedImage].creator,
     disabled: true
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Title",
     id: "title",
-    val: images && images[selectedImage].title
+    val: images && images[selectedImage] && images[selectedImage].title
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Alt",
     id: "alt",
-    val: images && images[selectedImage].alt
+    val: images && images[selectedImage] && images[selectedImage].alt
   }), /*#__PURE__*/_react.default.createElement(_InputTags.InputTags, {
     options: albums,
     width: "100%",
@@ -170,7 +170,7 @@ const ImageBrowser = ({
   }))), /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: styleFocus
   }, /*#__PURE__*/_react.default.createElement(_FullImageCard.FullImageCard, {
-    image: images ? images[selectedImage].versions.raw : defaultImage,
+    image: images && images[selectedImage] ? images[selectedImage].versions.raw : defaultImage,
     authToken: authToken
   }))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: styleThumbnails
