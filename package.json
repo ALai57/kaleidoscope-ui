@@ -1,7 +1,7 @@
 {
   "name": "kaleidoscope-ui",
   "description": "Front end app UI for Kaleidoscope",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "devDependencies": {
     "@babel/cli": "^7.21.5",
     "@babel/core": "^7.21.8",
