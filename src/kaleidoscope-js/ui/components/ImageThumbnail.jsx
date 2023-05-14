@@ -24,7 +24,7 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
   //imageElement.onload = () => URL.revokeObjectUrl(objectUrl);
 }
 
-const ImageThumbnail = ({image, authToken=null, onClick}) => {
+const ImageThumbnail = ({image={}, authToken=null, onClick}) => {
   const { observe, inView } = useInView({unobserveOnEnter: true,
                                          rootMargin:      "5px",
                                          onEnter: ({unobserve}) => { console.log(`Loading Thumbnail ${image.src}!`);

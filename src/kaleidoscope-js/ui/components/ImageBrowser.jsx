@@ -80,7 +80,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
 
   const defaultImage = {src: 'https://andrewslai.com/images/nav-bar/favicon.svg'}
 
-  const date = Date.parse(images && images[selectedImage] && images[selectedImage].created_at) ;
+  const date = Date.parse(images && images[selectedImage]?.created_at) ;
   const dateFormat = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'};
 
   // TODO: Add a focus button to the Image Thumbnails (highlight yellow or something like that?)
@@ -91,11 +91,11 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
         <Box sx={{...editorStyle, overflow: 'hidden'}}>
           <form>
             <br/>
-            <EditableField label='Name'         id='name'       val={images && images[selectedImage] && images[selectedImage].name}       disabled={true}/>
+            <EditableField label='Name'         id='name'       val={images && images[selectedImage]?.name}       disabled={true}/>
             <EditableField label='Created At'   id='created_at' val={images && date && new Date(date).toLocaleString('en-US', dateFormat)} disabled={true}/>
-            <EditableField label='Creator'      id='creator'    val={images && images[selectedImage] && images[selectedImage].creator}    disabled={true}/>
-            <EditableField label='Title'        id='title'      val={images && images[selectedImage] && images[selectedImage].title}/>
-            <EditableField label='Alt'          id='alt'        val={images && images[selectedImage] && images[selectedImage].alt}/>
+            <EditableField label='Creator'      id='creator'    val={images && images[selectedImage]?.creator}    disabled={true}/>
+            <EditableField label='Title'        id='title'      val={images && images[selectedImage]?.title}/>
+            <EditableField label='Alt'          id='alt'        val={images && images[selectedImage]?.alt}/>
 
             <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
           </form>
@@ -116,9 +116,9 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
         <Box>
           <Box sx={styleThumbnails}>
             {images && images.map((image, index) =>
-              <ImageThumbnail image    ={image.versions.thumbnail}
+              <ImageThumbnail image    ={image?.versions?.thumbnail}
                               authToken={authToken}
-                              key      ={'tmb' + image.versions.thumbnail.src}
+                              key      ={'tmb' + image?.versions?.thumbnail?.src}
                               onClick  ={() => jumpTo(index)}/>)}
           </Box>
         </Box>

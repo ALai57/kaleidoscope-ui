@@ -36,7 +36,7 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
 }
 
 const ImageThumbnail = ({
-  image,
+  image = {},
   authToken = null,
   onClick
 }) => {

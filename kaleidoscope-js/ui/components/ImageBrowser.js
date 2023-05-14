@@ -100,7 +100,7 @@ const ImageBrowser = ({
   const defaultImage = {
     src: 'https://andrewslai.com/images/nav-bar/favicon.svg'
   };
-  const date = Date.parse(images && images[selectedImage] && images[selectedImage].created_at);
+  const date = Date.parse(images && images[selectedImage]?.created_at);
   const dateFormat = {
     year: 'numeric',
     month: 'short',
@@ -127,7 +127,7 @@ const ImageBrowser = ({
   }, /*#__PURE__*/_react.default.createElement("form", null, /*#__PURE__*/_react.default.createElement("br", null), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Name",
     id: "name",
-    val: images && images[selectedImage] && images[selectedImage].name,
+    val: images && images[selectedImage]?.name,
     disabled: true
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Created At",
@@ -137,16 +137,16 @@ const ImageBrowser = ({
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Creator",
     id: "creator",
-    val: images && images[selectedImage] && images[selectedImage].creator,
+    val: images && images[selectedImage]?.creator,
     disabled: true
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Title",
     id: "title",
-    val: images && images[selectedImage] && images[selectedImage].title
+    val: images && images[selectedImage]?.title
   }), /*#__PURE__*/_react.default.createElement(EditableField, {
     label: "Alt",
     id: "alt",
-    val: images && images[selectedImage] && images[selectedImage].alt
+    val: images && images[selectedImage]?.alt
   }), /*#__PURE__*/_react.default.createElement(_InputTags.InputTags, {
     options: albums,
     width: "100%",
@@ -175,9 +175,9 @@ const ImageBrowser = ({
   }))), /*#__PURE__*/_react.default.createElement("div", null, /*#__PURE__*/_react.default.createElement(_material.Box, null, /*#__PURE__*/_react.default.createElement(_material.Box, {
     sx: styleThumbnails
   }, images && images.map((image, index) => /*#__PURE__*/_react.default.createElement(_ImageThumbnail.ImageThumbnail, {
-    image: image.versions.thumbnail,
+    image: image?.versions?.thumbnail,
     authToken: authToken,
-    key: 'tmb' + image.versions.thumbnail.src,
+    key: 'tmb' + image?.versions?.thumbnail?.src,
     onClick: () => jumpTo(index)
   }))))));
 };
