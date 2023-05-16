@@ -44,18 +44,26 @@
                                    :output-feature-set  :es-next
                                    :pretty-print        false
                                    :optimization        :advanced
+                                   :warnings            {:redef false}
                                    :strip-type-prefixes #{"cljs.pprint"}}
 
+                :closure-defines {;; Impossible to keep this API key safe, so Bugsnag makes it write-only
+                                  ;; https://github.com/bugsnag/bugsnag-js/issues/595
+                                  kaleidoscope.ui.clients.bugsnag/BUGSNAG_KEY "249774a7ded14185c826a7f33d609794"
+                                  kaleidoscope.ui.version/VERSION             "0.0.1"
+                                  }
+
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
-                :dev     {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL "http://localhost:8080"
-                                            kaleidoscope.ui.clients.keycloak/CLIENTID "test-login"
-                                            kaleidoscope.ui.clients.keycloak/REALM    "test"}}
-                :release {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL "https://keycloak.andrewslai.com"
-                                            kaleidoscope.ui.clients.keycloak/REALM    "andrewslai"
-                                            kaleidoscope.ui.clients.keycloak/CLIENTID "andrewslai-frontend"}
+                :dev     {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL   "http://localhost:8080"
+                                            kaleidoscope.ui.clients.keycloak/REALM      "test"
+                                            kaleidoscope.ui.clients.keycloak/CLIENTID   "test-login"}}
+                :release {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL   "https://keycloak.andrewslai.com"
+                                            kaleidoscope.ui.clients.keycloak/REALM      "andrewslai"
+                                            kaleidoscope.ui.clients.keycloak/CLIENTID   "andrewslai-frontend"}
                           :build-hooks     [(shadow.ui.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 
-          :stories {:target     :npm-module
-                    :ns-regexp  "-stories$"
-                    :output-dir "resources/public/js/compiled/shareable_stories"}}}
+          :stories {:target           :npm-module
+                    :ns-regexp        "-stories$"
+                    :output-dir       "resources/public/js/compiled/shareable_stories"
+                    :compiler-options {:warnings {:redef false}}}}}

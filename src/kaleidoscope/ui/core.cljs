@@ -2,6 +2,7 @@
   (:require-macros [secretary.core :refer [defroute]])
   (:require [goog.events :as events]
             [goog.dom :as gdom]
+            [kaleidoscope.ui.clients.bugsnag :as bugsnag]
             [kaleidoscope.ui.components.loading-screen :as loading]
             [kaleidoscope.ui.events.article-reader]
             [kaleidoscope.ui.events.article-editor]
@@ -68,5 +69,6 @@
   []
   ;; `kaleidoscope.ui.views/app` is the root view for the entire UI.
   (.render root
-           (r/as-element [app {:fallback (fn []
-                                           [loading/loading-screen])}])))
+           (r/as-element [:> bugsnag/ErrorBoundary
+                          [app {:fallback (fn []
+                                            [loading/loading-screen])}]])))
