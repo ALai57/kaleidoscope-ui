@@ -50,7 +50,7 @@
                 :closure-defines {;; Impossible to keep this API key safe, so Bugsnag makes it write-only
                                   ;; https://github.com/bugsnag/bugsnag-js/issues/595
                                   kaleidoscope.ui.clients.bugsnag/BUGSNAG_KEY "249774a7ded14185c826a7f33d609794"
-                                  kaleidoscope.ui.version/VERSION             "0.0.2"
+                                  kaleidoscope.ui.version/VERSION             "1.0.27"
                                   }
 
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration

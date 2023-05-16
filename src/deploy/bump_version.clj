@@ -19,7 +19,12 @@
   (string/join "." [major minor patch]))
 
 (def VERSION-REGEX
+  "For the shadow-cljs.edn file"
   #"(?<versionKey>kaleidoscope\.ui\.version/VERSION\s*)\"(?<version>.*)\"")
+
+(def VERSION-REGEX-PACKAGE-JSON
+  "For the package.json file"
+  #"(?<versionKey>\"version\": )\"(?<version>.*)\",")
 
 (defn increment
   [increment-type]
@@ -31,9 +36,14 @@
         new-release (-> release-map
                         (update (keyword increment-type) inc)
                         release-map->release-string)
-        new-shadow  (.replaceAll (re-matcher VERSION-REGEX shadow-raw) (format "${versionKey}\"%s\"" new-release))]
+        new-shadow  (.replaceAll (re-matcher VERSION-REGEX shadow-raw) (format "${versionKey}\"%s\"" new-release))
+
+        pkg-raw (slurp (io/file "package.json"))
+        new-pkg (.replaceAll (re-matcher VERSION-REGEX-PACKAGE-JSON pkg-raw) (format "${versionKey}\"%s\"," new-release))
+        ]
     (println (format "Bumped version %s -> %s" old-release new-release))
-    (spit "shadow-cljs.edn" new-shadow)))
+    (spit "shadow-cljs.edn" new-shadow)
+    (spit "package.json" new-pkg)))
 
 (comment
   (def shadow-raw
@@ -45,6 +55,20 @@
     (re-find matcher)
     {:version    (.group matcher "version")
      :versionKey (.group matcher "versionKey")})
+
+  (def pkg-raw
+    (-> "/home/andrew/dev/kaleidoscope-ui/package.json"
+        io/file
+        slurp))
+
+  (let [matcher (re-matcher VERSION-REGEX-PACKAGE-JSON pkg-raw)]
+    (re-find matcher)
+    {:version    (.group matcher "version")
+     :versionKey (.group matcher "versionKey")})
+
+  (.replaceAll (re-matcher VERSION-REGEX-PACKAGE-JSON pkg-raw)
+               (format "${versionKey}\"%s\"," "0.0.0.0.0"))
+
   )
 
 (comment
