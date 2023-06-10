@@ -41,6 +41,7 @@ const InputTags = ({
     id: "tags-standard",
     options: options,
     getOptionLabel: option => option.title,
+    isOptionEqualToValue: (option, value) => option.title === value.title,
     onChange: onChangeHandler,
     defaultValue: vals,
     renderInput: params => /*#__PURE__*/_react.default.createElement(_TextField.default, _extends({}, params, {

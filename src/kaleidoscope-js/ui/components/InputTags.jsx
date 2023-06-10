@@ -30,9 +30,10 @@ const InputTags = ({options=[],
     <Stack spacing={3} sx={{ width: {width} }}>
       <Autocomplete
         multiple
-        id             ="tags-standard"
-        options        ={options}
-        getOptionLabel ={(option) => option.title}
+        id                  ="tags-standard"
+        options             ={options}
+        getOptionLabel      ={(option) => option.title}
+        isOptionEqualToValue={(option, value) => option.title === value.title}
         onChange       ={onChangeHandler}
         defaultValue   ={vals}
         renderInput    ={(params) => (<TextField
