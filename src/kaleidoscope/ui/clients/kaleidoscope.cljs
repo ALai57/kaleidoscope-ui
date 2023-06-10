@@ -116,7 +116,25 @@
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})
 
+;; Article audiences
+(defn add-audience!
+  [{:keys [article-id] :as article}
+   {:keys [group-id] :as group}]
+  {:method          :put
+   :uri             "/article-audiences"
+   :params          {:article-id article-id
+                     :group-id   group-id}
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
 
+(defn delete-audience!
+  [{:keys [id] :as audience}]
+  {:method          :put
+   :uri             (gstr/format "/article-audiences/%s" id)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+;; Admin
 (defn get-admin-route
   []
   {:method          :get

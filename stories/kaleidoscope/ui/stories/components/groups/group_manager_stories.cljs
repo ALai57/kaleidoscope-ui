@@ -34,7 +34,7 @@
                     :email                 "Sahil@email.com"}
                    ]}
    {:group-id     "group-3"
-    :display-name "Empty"
+    :display-name "Empty group"
     :memberships  []}
    ])
 

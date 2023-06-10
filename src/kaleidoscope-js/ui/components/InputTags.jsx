@@ -21,7 +21,8 @@ const InputTags = ({options=[],
                     width=500,
                     onAdd=logger,
                     vals,
-                    onRemove=logger}) => {
+                    onRemove=logger,
+                    tagType="Albums"}) => {
 
   const onChangeHandler = onChange(onAdd, onRemove);
 
@@ -37,8 +38,8 @@ const InputTags = ({options=[],
         renderInput    ={(params) => (<TextField
                                         {...params}
                                         type       ="text"
-                                        label      ="Albums"
-                                        placeholder="Albums"
+                                        label      ={tagType}
+                                        placeholder={tagType}
                                         size       ='small'
                                       />
                                      )}

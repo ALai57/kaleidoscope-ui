@@ -25,7 +25,8 @@ const InputTags = ({
   width = 500,
   onAdd = logger,
   vals,
-  onRemove = logger
+  onRemove = logger,
+  tagType = "Albums"
 }) => {
   const onChangeHandler = onChange(onAdd, onRemove);
   return /*#__PURE__*/_react.default.createElement(_Stack.default, {
@@ -44,8 +45,8 @@ const InputTags = ({
     defaultValue: vals,
     renderInput: params => /*#__PURE__*/_react.default.createElement(_TextField.default, _extends({}, params, {
       type: "text",
-      label: "Albums",
-      placeholder: "Albums",
+      label: tagType,
+      placeholder: tagType,
       size: "small"
     }))
   }));

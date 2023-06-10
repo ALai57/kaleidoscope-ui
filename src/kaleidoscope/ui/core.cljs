@@ -9,6 +9,7 @@
             [kaleidoscope.ui.events.core]
             [kaleidoscope.ui.events.image-editor]
             [kaleidoscope.ui.events.group-management]
+            [kaleidoscope.ui.events.audience-management]
             [kaleidoscope.ui.events.keycloak]
             [kaleidoscope.ui.events.projects-portfolio]
             [kaleidoscope.ui.events.user-management]

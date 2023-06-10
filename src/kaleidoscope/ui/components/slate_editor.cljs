@@ -154,8 +154,10 @@
   (fn [message url line column e]
     ;;(js/console.log "MY CUSTOM logger MESSAGE")
     ;;(js/console.log message url line column (type message) (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message))
-    (if-not (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message)
-      (logger message))))
+    (cond
+      (not (string? message))                                                       (js/console.log "Unknown error" message)
+      (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message) nil
+      :else                                                                         (logger message))))
 
 (do
   (let [new-console (update (u/clojurize js/console)
