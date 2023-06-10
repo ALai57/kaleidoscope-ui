@@ -84,6 +84,7 @@
      [:div#primary-content
       [am/article-manager {:article-groups  article-groups
                            :open            (reagent/atom (vec (repeat (count article-groups) true)))
+                           :groups          groups
                            :add-article!    add-article!
                            :edit-article!   edit-article!
                            :delete-article! delete-article!}]]]))
@@ -128,4 +129,5 @@
                           :delete-article!   (fn [& args] (println "Clicked delete!"))
                           :edit-article!     edit-article!
                           :articles          nil
+                          :groups            @(subscribe [:groups])
                           :branches          @(subscribe [:branches])}])

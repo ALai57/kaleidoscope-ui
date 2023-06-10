@@ -9,11 +9,11 @@ const logger = (event, list, reason, detail) => console.log(event, list, reason,
 const onChange = (onAdd, onRemove) =>
       (event, list, reason, detail) =>
       { if (reason === 'selectOption') {
-        console.log('Added!');
-        onAdd(event, list, reason, detail);
+        console.log('Added!', event, list, reason, detail);
+        onAdd(detail);
       } else if (reason === 'removeOption'){
         console.log('Removed!');
-        onRemove(event, list, reason, detail);
+        onRemove(detail);
       }
       }
 

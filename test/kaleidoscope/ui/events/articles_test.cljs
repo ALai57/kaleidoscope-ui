@@ -4,13 +4,13 @@
             [matcher-combinators.standalone :as sa]))
 
 (def example-article
-  {:title "article"
+  {:title        "article"
    :article_tags "tag"
-   :author "Andrew Lai"
-   :timestamp "2021-04-05"
-   :article_url "http://google.com"
-   :article_id 1
-   :content "content"})
+   :author       "Andrew Lai"
+   :timestamp    "2021-04-05"
+   :article_url  "http://google.com"
+   :article_id   1
+   :content      "content"})
 
 (deftest articles-db-events 
   (testing "Load article"

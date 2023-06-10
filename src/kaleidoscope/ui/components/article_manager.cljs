@@ -2,6 +2,7 @@
   (:require [kaleidoscope.ui.components.table :as table]
             [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.input-box :as input-box]
+            [kaleidoscope.ui.components.modals.audience-manager :as am]
             [kaleidoscope.ui.utils.events :as events]
             [kaleidoscope.ui.utils.core :as u]
             [reagent.core :as reagent]
@@ -33,7 +34,7 @@
 
 (defn article-row
   [{:keys [article-created-date article-title published-at] :as article-branch}
-   {:keys [delete-article! edit-article! publish-article!] :as article-actions}]
+   {:keys [delete-article! edit-article! publish-article! toggle-audience-manager] :as article-actions}]
   [list-item {:sx              {:padding-right "150px"}
               :secondaryAction (reagent/as-element
                                 [box
@@ -47,8 +48,7 @@
 
                                  [tooltip {:id "settings-tooltip" :title "Settings (WIP)"}
                                   [icon-button {:edge     "end"
-                                                :on-click (fn [& x]
-                                                            (println "Clicked settings"))}
+                                                :on-click (partial toggle-audience-manager article-branch)}
                                    [settings]]]
                                  [:div {:style {:width   "20px"
                                                 :display "inline-block"}}]
@@ -100,31 +100,45 @@
                                 :min-width    "350px"}
                     :on-change on-change}]
        [button/button {:text     "Add a new article"
-                                       :on-click (partial add-article! {:article-title @new-article-title})}]
+                       :on-click (partial add-article! {:article-title @new-article-title})}]
        ])))
 
 (defn article-manager
-  [{:keys [article-groups open
+  [{:keys [article-groups open groups
            add-article! delete-article! edit-article! publish-article!]
     :or   {add-article!     (fn [article-title] (infof "Adding article `%s`!" article-title))
            delete-article!  (fn [article] (infof "Deleting article!"))
            edit-article!    (fn [article] (infof "Loading article!"))
            publish-article! (fn [article] (infof "Publishing article!"))}}]
-  (let [indexed-groups (map-indexed (fn [idx article-group]
-                                      (assoc article-group
-                                             :idx      idx
-                                             :on-click (fn [] (swap! open update idx not))))
-                                    article-groups)]
-    [:div
-     [add-article-form {:add-article! add-article!}]
-     [divider]
-     [list
-      (for [{:keys [idx] :as article-group} (map (fn [article-group open?]
-                                                   (assoc article-group :open? open?))
-                                                 indexed-groups
-                                                 @open)]
-        ^{:key (str "idx-" idx "-ge")} [article-group-accordion article-group
-                                        {:delete-article!  delete-article!
-                                         :edit-article!    edit-article!
-                                         :add-article!     add-article!
-                                         :publish-article! publish-article!}])]]))
+  (let [indexed-groups          (map-indexed (fn [idx article-group]
+                                               (assoc article-group
+                                                      :idx      idx
+                                                      :on-click (fn [] (swap! open update idx not))))
+                                             article-groups)
+        state                   (reagent/atom false)
+        current-article         (reagent/atom nil)
+        toggle-audience-manager (fn [article-branch & args]
+                                  (reset! current-article article-branch)
+                                  (swap! state not))]
+    (fn []
+      [:div
+       [add-article-form {:add-article! add-article!}]
+       [am/edit-audiences-modal {:open?     @state
+                                 :on-close  toggle-audience-manager
+                                 :article   @current-article
+                                 :audiences []
+                                 :groups    (map (fn [group]
+                                                   (assoc group :title (:display-name group)))
+                                                 (or groups []))}]
+       [divider]
+       [list
+        (for [{:keys [idx] :as article-group} (map (fn [article-group open?]
+                                                     (assoc article-group :open? open?))
+                                                   indexed-groups
+                                                   @open)]
+          ^{:key (str "idx-" idx "-ge")} [article-group-accordion article-group
+                                          {:delete-article!         delete-article!
+                                           :edit-article!           edit-article!
+                                           :add-article!            add-article!
+                                           :publish-article!        publish-article!
+                                           :toggle-audience-manager toggle-audience-manager}])]])))

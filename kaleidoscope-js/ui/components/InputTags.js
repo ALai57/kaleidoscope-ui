@@ -13,11 +13,11 @@ function _extends() { _extends = Object.assign ? Object.assign.bind() : function
 const logger = (event, list, reason, detail) => console.log(event, list, reason, detail);
 const onChange = (onAdd, onRemove) => (event, list, reason, detail) => {
   if (reason === 'selectOption') {
-    console.log('Added!');
-    onAdd(event, list, reason, detail);
+    //console.log('Added!', event, list, reason, detail);
+    onAdd(detail);
   } else if (reason === 'removeOption') {
-    console.log('Removed!');
-    onRemove(event, list, reason, detail);
+    //console.log('Removed!');
+    onRemove(detail);
   }
 };
 const InputTags = ({
