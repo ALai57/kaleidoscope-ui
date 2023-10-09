@@ -126,20 +126,21 @@
 (defn demo
   []
   [u/err-boundary
-   [:> fiber/Canvas {:style  {:height     "calc(100vh - 80px)"
-                              :background "black"
-                              :position   "absolute"}
-                     :camera {:position [0 1 0]
-                              :target   [20 0 0]}}
-    [:ambientLight {:intensity 0.2}]
-    [:spotLight {:position  [10 10 10]
-                 :intensity 0.5
-                 :angle     0.15
-                 :penumbra  1}]
-    [:> react/Suspense {:fallback (fn [& args]
-                                    [:p "Loading Canvas"])}
-     [:f> book]]
-    ;;[:f> box {:position [-1.2 0 0]}]
-    ;;[:f> box {:position [1.2  0 0]}]
-    ;;[:f> sphere {:position [0 0 0]}]
-    [:> drei/OrbitControls]]])
+   [:div#three-dimensional-demo
+    [:> fiber/Canvas {:style  {:height     "calc(100vh - 80px)"
+                               :background "black"
+                               :position   "absolute"}
+                      :camera {:position [0 1 0]
+                               :target   [20 0 0]}}
+     [:ambientLight {:intensity 0.2}]
+     [:spotLight {:position  [10 10 10]
+                  :intensity 0.5
+                  :angle     0.15
+                  :penumbra  1}]
+     [:> react/Suspense {:fallback (fn [& args]
+                                     [:p "Loading Canvas"])}
+      [:f> book]]
+     ;;[:f> box {:position [-1.2 0 0]}]
+     ;;[:f> box {:position [1.2  0 0]}]
+     ;;[:f> sphere {:position [0 0 0]}]
+     [:> drei/OrbitControls]]]])

@@ -10,17 +10,18 @@
   ([{:keys [color]
      :or   {color "primary"}
      :as   x}]
-   [:div {:style {:background-image      "url(\"/images/nav-bar/favicon.svg\")"
-                  :background-color      "#333333"
-                  :background-size       "40vmin"
-                  :background-repeat     "no-repeat"
-                  :background-position-x "45%"
-                  :background-position-y "30%"
+   [:div#initial-loading-screen
+    {:style {:background-image      "url(\"/images/nav-bar/favicon.svg\")"
+             :background-color      "#333333"
+             :background-size       "40vmin"
+             :background-repeat     "no-repeat"
+             :background-position-x "45%"
+             :background-position-y "30%"
 
-                  :padding-top "65vh"
-                  :position    "absolute"
-                  :height      "100%"
-                  :width       "100%"}}
+             :padding-top "65vh"
+             :position    "absolute"
+             :height      "100%"
+             :width       "100%"}}
     [box {:sx {:width       "80%"
                :margin      "auto"
                :align-items "center"}}

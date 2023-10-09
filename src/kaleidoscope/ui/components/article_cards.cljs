@@ -17,11 +17,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn article-tags->icon [article-tags]
   (case article-tags
-    "research" "images/nav-bar/neuron-icon.svg"
-    "archive"  "images/nav-bar/archive-icon.svg"
-    "about"    "images/nav-bar/andrew-silhouette-icon.svg"
-    "thoughts" "images/nav-bar/andrew-head-icon.svg"
-    "images/nav-bar/unknown-user.svg"))
+    "research" "/images/nav-bar/neuron-icon.svg"
+    "archive"  "/images/nav-bar/archive-icon.svg"
+    "about"    "/images/nav-bar/andrew-silhouette-icon.svg"
+    "thoughts" "/images/nav-bar/andrew-head-icon.svg"
+    "/images/nav-bar/unknown-user.svg"))
 
 (defn article-card
   [{:keys [article-tags article-title article-url article-id created-at] :as article}]
