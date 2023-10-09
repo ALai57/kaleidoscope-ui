@@ -10,12 +10,14 @@ easily create and publish blog content.
      Front end: Re-frame SPA written in Clojurescript
 
 # Installation
+
 ## Clojurescript
 
-
 # Development
+
 For local development using Storybook
-``` sh
+
+```sh
 // Rebuild every time the program is changed and start Storybook
 npm run watch
 npm run storybook
@@ -26,15 +28,35 @@ source .env.local
 lein run
 
 ```
+
 # Deployment
+
 To deploy,
 (1) Build a `release` artifact.
 (2) Deploy the release artifact to S3.
 
-``` sh
+```sh
 npm run build-release
 npm run deploy
 ```
+
+# cypress
+
+Start the `kaleidoscope` app locally,
+
+```sh
+cd ~/code/kaleidoscope
+./bin/run --environment=.env.local
+```
+
+Then start cypress:
+
+```sh
+cd ~/code/kaleidoscope-ui
+npx cypress open
+```
+
+:
 
 TODO:
 ;; Add button to go back to article manager from editor
