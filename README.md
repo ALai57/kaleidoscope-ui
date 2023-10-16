@@ -21,10 +21,8 @@ npm run watch
 npm run storybook
 
 // Serve from andrewslai for E2E development
-cd <PATH>/andrewslai
-source .env.local
-lein run
-
+cd <PATH>/kaleidoscope
+./bin/run --environment=.env.local
 ```
 # Deployment
 To deploy,

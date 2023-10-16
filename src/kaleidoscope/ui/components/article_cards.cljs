@@ -34,7 +34,7 @@
         [:img.fa.fa-2x {:src (article-tags->icon article-tags)
                         :style {:width "100%"}}]]]]
      [:div.col-sm-9.bg-light.text-dark.card-description
-      [:h5.card-title>a {:href (gstr/format "#/%s/content/%s" article-tags article-url)}
+      [:h5.card-title>a {:href (gstr/format "#/content/%s" article-url)}
        article-title]
       [:p.card-text (u/date created-at)]]]]])
 

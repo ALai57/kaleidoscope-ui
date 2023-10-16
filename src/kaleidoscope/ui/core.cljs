@@ -38,17 +38,18 @@
   (dispatch [:set-active-panel :home]))
 (defroute "/:path" [path]
   (dispatch [:set-active-panel (keyword path)]))
-(defroute "/:path/content/:content-name" [path content-name]
-  (dispatch [:set-active-panel (keyword path)])
+(defroute "/content/:content-name" [content-name]
+  (dispatch [:set-active-panel :content])
   (dispatch [:load-article content-name]))
 
 
-(def history
-  (doto (History.)
-    (events/listen EventType.NAVIGATE
-                   (fn [event] (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
+(def HISTORY
+  (History.))
 
+(doto HISTORY
+  (events/listen EventType.NAVIGATE
+                 (fn [event] (secretary/dispatch! (.-token event))))
+  (.setEnabled true))
 
 ;; -- Entry Point -------------------------------------------------------------
 ;; Within ../../resources/public/index.html you'll see this code

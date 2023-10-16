@@ -1,22 +1,16 @@
 (ns kaleidoscope.ui.components.slate-editor
-  (:require [kaleidoscope.ui.components.article-cards :as article-cards]
-            [kaleidoscope.ui.components.navbar :as navbar]
-            [kaleidoscope.ui.components.article-selector :as article-selector]
+  (:require [kaleidoscope.ui.components.navbar :as navbar]
             [kaleidoscope.ui.components.slate.serialization :as serialization]
-            [kaleidoscope.ui.components.slate.prism :as prism]
             [kaleidoscope.ui.components.slate.code-block-helpers :as cb]
             [kaleidoscope.ui.components.modal :refer [modal-template MODAL-BACKGROUND]]
             [kaleidoscope.ui.core-api.user :as user]
             [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
-            [re-frame.core :refer [dispatch]]
             [reagent.core :as reagent]
-            [reagent-mui.components :refer [text-field button tooltip modal box]]
+            [reagent-mui.components :refer [modal box]]
             ["@styled-icons/boxicons-regular/CodeAlt"      :refer [CodeAlt]]
             ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
-            ["@styled-icons/boxicons-regular/Hide"         :refer [Hide]]
             ["@styled-icons/boxicons-regular/ImageAdd"     :refer [ImageAdd]]
-            ["@styled-icons/boxicons-regular/Library"      :refer [Library]]
             ["@styled-icons/boxicons-regular/Rocket"       :refer [Rocket]]
             ["@styled-icons/material/Check"                :refer [Check]]
             ["@styled-icons/material/FormatAlignCenter"    :refer [FormatAlignCenter]]
@@ -61,7 +55,6 @@
 
               createFontColorPlugin
               createFontBackgroundColorPlugin
-              createFontSizePlugin
               createIndentPlugin
 
               createAutoformatPlugin
@@ -69,21 +62,16 @@
               insertEmptyCodeBlock
 
               createSoftBreakPlugin
-              SoftBreakPlugin
 
               createTrailingBlockPlugin
-              TrailingBlockPlugin
 
               createExitBreakPlugin
-              ExitBreakPlugin
 
               createImagePlugin
               createMediaEmbedPlugin
 
               Plate
-              TEditableProps
 
-              CodeBlockElement
               CodeBlockToolbarButton
               createPlateUI
 
@@ -106,8 +94,6 @@
               MARK_CODE
               MARK_ITALIC
               MARK_STRIKETHROUGH
-              MARK_SUBSCRIPT
-              MARK_SUPERSCRIPT
               MARK_UNDERLINE
               MARK_BG_COLOR
               MARK_COLOR
@@ -136,8 +122,7 @@
               usePlateEditorRef
 
               PlateFloatingLink
-              ]]
-            [taoensso.timbre :refer-macros [infof]]))
+              ]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Log suppresion for known spammy logs
@@ -363,6 +348,12 @@
                       ]
                  #js {:components PLATE-UI}))
 
+
+(def nav-images-path "images/nav-bar/")
+(defn img-path
+  [fname]
+  (str nav-images-path fname))
+
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn editing-toolbar
@@ -371,11 +362,10 @@
         editor-ref (usePlateEditorRef editor-id)]
     ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
     [:<>
-     [:a.zoom-icon.bg-primary {:style {:float            "left"
-                                       :height           "48px"
-                                       :margin-right     "20px"
-                                       :background-color ""}}
-      [:img.navbutton {:src      (navbar/img-path "favicon.svg")
+     [:> navbar/zoom-icon {:style {:float            "left"
+                                   :height           "48px"
+                                   :margin-right     "20px"}}
+      [:img.navbutton {:src      (img-path "favicon.svg")
                        :style    {:height "48px"}
                        :on-click (fn [event]
                                    (reset! show-modal true))}]]

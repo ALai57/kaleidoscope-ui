@@ -10,7 +10,8 @@ aws s3 cp ./resources/public/js/compiled/kaleidoscope/editor.js          s3://ka
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/manifest.edn       s3://kaleidoscope.pub/js/compiled/kaleidoscope/manifest.edn
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/module-loader.edn  s3://kaleidoscope.pub/js/compiled/kaleidoscope/module-loader.edn
 aws s3 cp ./resources/public/js/compiled/kaleidoscope/module-loader.json s3://kaleidoscope.pub/js/compiled/kaleidoscope/module-loader.json
-aws s3 cp ./resources/public/silent-check-sso.html                     s3://kaleidoscope.pub/silent-check-sso.html
+aws s3 cp ./resources/public/silent-check-sso.html                       s3://kaleidoscope.pub/silent-check-sso.html
+aws s3 cp ./resources/public/index.html                                  s3://kaleidoscope/index.html
 
 #echo "Incrementing package version..."
 #npm version patch
