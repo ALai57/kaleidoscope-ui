@@ -22,15 +22,13 @@
 
 (defn article-card
   [{:keys [article-tags article-title article-url article-id created-at] :as article}]
-  (let [t            (useTheme)
-        main-color   (.. t -palette -primary -main)
-        accent-color (.. t -palette -accent -main)]
+  (let [palette (:palette (u/clojurize (useTheme)))]
     [card {:class "text-white bg-light mb-3 article-card"}
      [:div.container-fluid
       [:div.row
        [:div.text-xs-center.card-icon {:style {:background (gstr/format "linear-gradient(30deg, %s 6%, %s 100%)"
-                                                                        main-color
-                                                                        accent-color)}}
+                                                                        (get-in palette [:primary :main])
+                                                                        (get-in palette [:accent :main]))}}
         [:div.p-y-2
          [:h1.p-y-2
           [:img.fa.fa-2x {:src   (article-tags->icon article-tags)
@@ -39,7 +37,7 @@
         [:h5.card-title>a {:href (gstr/format "#/content/%s" article-url)}
          article-title]
         [:p.card-text (u/date created-at)]
-        [:p.card-text "    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]]]]]))
+        [:p.card-text "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]]]]]))
 
 
 (defn truncate
