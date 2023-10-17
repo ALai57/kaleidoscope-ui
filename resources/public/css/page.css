@@ -43,16 +43,6 @@ h2 {font-size: 18;
   width: 90%;
   margin-left: auto;
   margin-right: auto;
-  font-size: 18pt;
-}
-
-.card-title {
-  font-size: 18pt;
-  font-weight: bold;
-}
-
-.card-text {
-  font-size: 16pt;
 }
 
 /* Desktop  */
@@ -61,15 +51,6 @@ h2 {font-size: 18;
   #primary-content{
     width:     70%;
     max-width: 90%;
-    font-size: 20pt;
-  }
-
-  .card-title {
-    font-weight: normal;
-  }
-
-  .card-text {
-    font-size: 14pt;
   }
 
 }
@@ -103,15 +84,15 @@ h2 {font-size: 18;
 /** Article cards  **/
 /*****************************************************/
 div.article-card {
-    max-width: 18rem;
+    max-width: 40rem;
     display: inline-block;
-    min-width: 300px;
     margin: auto;}
 
 .card-group {
     padding-top: 40px;
     bottom: 0;
     justify-content: center;
+    flex-flow: column;
     width: 100%;}
 
 div.card-icon {

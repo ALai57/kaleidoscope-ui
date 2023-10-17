@@ -1,15 +1,12 @@
 (ns kaleidoscope.ui.components.article-cards
   (:require ["react" :as react]
+            ["@mui/material/styles" :refer [useTheme]]
             ["@styled-icons/remix-fill/GitBranch" :refer [GitBranch]]
             [kaleidoscope.ui.utils.core :as u]
-            [clojure.string :as str]
-            [re-frame.core :refer [subscribe]]
-            [reagent.core :as reagent :refer [adapt-react-class]]
+            [reagent.core :as reagent]
             [reagent-mui.components :refer [card card-action-area
                                             accordion accordion-details accordion-summary
                                             button]]
-            [goog.date.DateTime :as gdatetime]
-            [goog.i18n.DateTimeFormat :as gdatetimefmt]
             [goog.string :as gstr]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -25,18 +22,25 @@
 
 (defn article-card
   [{:keys [article-tags article-title article-url article-id created-at] :as article}]
-  [card {:class "text-white bg-light mb-3 article-card"}
-   [:div.container-fluid
-    [:div.row.flex-items-xs-middle
-     [:div.col-sm-3.bg-primary.text-xs-center.card-icon
-      [:div.p-y-3
-       [:h1.p-y-2
-        [:img.fa.fa-2x {:src (article-tags->icon article-tags)
-                        :style {:width "100%"}}]]]]
-     [:div.col-sm-9.bg-light.text-dark.card-description
-      [:h5.card-title>a {:href (gstr/format "#/content/%s" article-url)}
-       article-title]
-      [:p.card-text (u/date created-at)]]]]])
+  (let [t            (useTheme)
+        main-color   (.. t -palette -primary -main)
+        accent-color (.. t -palette -accent -main)]
+    [card {:class "text-white bg-light mb-3 article-card"}
+     [:div.container-fluid
+      [:div.row
+       [:div.text-xs-center.card-icon {:style {:background (gstr/format "linear-gradient(30deg, %s 6%, %s 100%)"
+                                                                        main-color
+                                                                        accent-color)}}
+        [:div.p-y-2
+         [:h1.p-y-2
+          [:img.fa.fa-2x {:src   (article-tags->icon article-tags)
+                          :style {:width "100%"}}]]]]
+       [:div.col-sm-9.text-dark.card-description
+        [:h5.card-title>a {:href (gstr/format "#/content/%s" article-url)}
+         article-title]
+        [:p.card-text (u/date created-at)]
+        [:p.card-text "    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]]]]]))
+
 
 (defn truncate
   [article-title chars-per-row rows]
@@ -125,16 +129,8 @@
 
 (defn recent-content-cards
   [{:keys [recent-content]}]
-  [:div#recent-content
+  [:div#recent-content {:style {:display         "grid"
+                                :justify-content "center"}}
    [:div#recent-article-cards.card-group
     (for [article recent-content]
-      ^{:key (str article)} [article-card article])]])
-
-(defn recent-content-display
-  [content-type]
-  (let [recent-content @(subscribe [:recent-content])
-        the-content (if content-type
-                      (filter #(= (:article-tags %1) content-type)
-                              recent-content)
-                      recent-content)]
-    [recent-content-cards {:recent-content the-content}]))
+      ^{:key (str article)} [:f> article-card article])]])
