@@ -27,16 +27,20 @@
                "&:hover"   #js {:transform "scale(1.2)"}}))))
 
 (defn -nav-bar [{:keys [icons]}]
-  [app-bar {:position "static"}
-   [container {:max-width "xl"}
-    [toolbar {:disable-gutters true}
-     [:> zoom-icon {:href "#/home"}
-      [:img.navbutton {:src      "images/nav-bar/favicon.svg"
-                       :on-click navigate-home!}]]
-     ;; Spacing - before this goes left and after goes right
-     [box {:sx {:flex-grow 1}}]
-     [box {:sx {:display {:xs "none" :sm "block"}}}
-      icons]]]])
+  (let [palette (:palette (u/clojurize (useTheme)))]
+    [app-bar {:position "static"
+              :sx       {:background (gstr/format "linear-gradient(4deg, %s 40%, %s 100%)"
+                                                  (get-in palette [:primary :light])
+                                                  (get-in palette [:accent :main]))}}
+     [container {:max-width "xl"}
+      [toolbar {:disable-gutters true}
+       [:> zoom-icon {:href "#/home"}
+        [:img.navbutton {:src      "images/nav-bar/favicon.svg"
+                         :on-click navigate-home!}]]
+       ;; Spacing - before this goes left and after goes right
+       [box {:sx {:flex-grow 1}}]
+       [box {:sx {:display {:xs "none" :sm "block"}}}
+        icons]]]]))
 
 (defn avatar-icon
   [{:keys [user]}]
@@ -53,13 +57,13 @@
               :src       "images/nav-bar/user.svg"}]]))
 
 (defn nav-bar [{:keys [user]}]
-  [-nav-bar {:icons (cond-> [:<> ]
-                      true (conj [:f> avatar-icon {:user user}])
-                      user (conj [:> zoom-icon {:href "#/manager"}
-                                  [:img.navbutton
-                                   {:src      "images/nav-bar/resources.svg"
-                                    :on-click navigate-manager!}]])
-                      true (conj [:> zoom-icon {:href "#/archive"}
-                                  [:img.navbutton
-                                   {:src      "images/nav-bar/articles.svg"
-                                    :on-click navigate-archive!}]]))}])
+  [:f> -nav-bar {:icons (cond-> [:<> ]
+                          true (conj [:f> avatar-icon {:user user}])
+                          user (conj [:> zoom-icon {:href "#/manager"}
+                                      [:img.navbutton
+                                       {:src      "images/nav-bar/resources.svg"
+                                        :on-click navigate-manager!}]])
+                          true (conj [:> zoom-icon {:href "#/archive"}
+                                      [:img.navbutton
+                                       {:src      "images/nav-bar/articles.svg"
+                                        :on-click navigate-archive!}]]))}])
