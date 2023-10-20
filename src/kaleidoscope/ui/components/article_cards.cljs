@@ -21,7 +21,7 @@
     "images/nav-bar/unknown-user.svg"))
 
 (defn article-card
-  [{:keys [article-tags article-title article-url article-id created-at] :as article}]
+  [{:keys [article-tags article-title article-url article-id created-at summary] :as article}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [card {:class "text-white bg-light mb-3 article-card"}
      [:div.container-fluid
@@ -37,7 +37,7 @@
         [:h5.card-title>a {:href (gstr/format "#/content/%s" article-url)}
          article-title]
         [:p.card-text (u/date created-at)]
-        [:p.card-text "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."]]]]]))
+        [:p.card-text summary]]]]]))
 
 
 (defn truncate
