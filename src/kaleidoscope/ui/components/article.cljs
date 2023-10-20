@@ -11,7 +11,7 @@
 ;; Helper functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn string->tokens
-  "Takes a string with syles and parses it into properties and value tokens"
+  "Takes a string with styles and parses it into properties and value tokens"
   [style]
   {:pre [(string? style)]
    :post [(even? (count %))]}
@@ -29,7 +29,7 @@
           (keep-indexed #(if (odd? %1) %2) tokens)))
 
 (defn style->map
-  "Takes an inline style attribute stirng and converts it to a React Style map"
+  "Takes an inline style attribute string and converts it to a React Style map"
   [style]
   (if (empty? style)
     style
