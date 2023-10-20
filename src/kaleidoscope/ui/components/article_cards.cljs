@@ -130,5 +130,5 @@
   [:div#recent-content {:style {:display         "grid"
                                 :justify-content "center"}}
    [:div#recent-article-cards.card-group
-    (for [article recent-content]
+    (for [article (reverse (sort-by :published-at recent-content))]
       ^{:key (str article)} [:f> article-card article])]])
