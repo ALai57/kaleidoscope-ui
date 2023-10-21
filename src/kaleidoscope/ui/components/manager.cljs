@@ -29,14 +29,20 @@
     :src         "/images/audiences.svg"
     :alt         "Manage audiences"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/groups"]))
-    }])
+    }
+   {:name        "UI Customization (WIP)"
+    :description "Customize the look and feel of the site"
+    :src         "/images/audiences.svg"
+    :alt         "Manage UI Customization"
+    :on-click    (fn [] (dispatch [:set-hash-fragment "/ui-manager"]))
+    }
+   ])
 
 (defn manager-card
   [{:keys [name src alt on-click description] :as capability}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [box {:sx {:display          "flex"
-               "& > :not(style)" {
-                                  :m      1
+               "& > :not(style)" {:m      1
                                   :width  256
                                   :height 256}}}
      [card {:elevation 10}
@@ -49,7 +55,7 @@
                                                        :margin-top    "5px"
                                                        :margin-bottom "5px"}
                                     "&"               {:border-radius "0px"
-                                                       :background (gstr/format "linear-gradient(4deg, %s 70%, %s 100%)"
+                                                       :background (gstr/format "linear-gradient(15deg, %s 30%, %s 100%)"
                                                                                 (get-in palette [:primary :light])
                                                                                 (get-in palette [:accent :main]))}
                                     }}

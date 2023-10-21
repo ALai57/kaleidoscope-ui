@@ -176,3 +176,10 @@
      :uri             "/v2/photos"
      :body            form-data
      :response-format (ajax/json-response-format {:keywords? true})}))
+
+(defn get-themes
+  []
+  {:method          :get
+   :uri             "/themes"
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})

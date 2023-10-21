@@ -13,6 +13,7 @@
             [kaleidoscope.ui.events.keycloak]
             [kaleidoscope.ui.events.projects-portfolio]
             [kaleidoscope.ui.events.user-management]
+            [kaleidoscope.ui.events.ui-customization]
             [kaleidoscope.ui.subs]
             [kaleidoscope.ui.utils.core :as u]
             [re-frame.core :refer [dispatch dispatch-sync]]

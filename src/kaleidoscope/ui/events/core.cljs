@@ -11,6 +11,7 @@
   (fn [_ _]
     (infof "Initializing the web app!")
     {:db         default-db
+     :dispatch   [:load-themes]
      :async-flow {:first-dispatch [:keycloak-action :init]
                   :rules          [{:when       :seen?
                                     :events     [[::async-flow-fx/notify :success-load-profile]]

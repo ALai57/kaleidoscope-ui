@@ -1,40 +1,38 @@
 @charset "UTF-8";
 /* CSS Document*/
 
-
 /* Smartphones (portrait) ———– */
 .navbutton {
-	vertical-align: middle;
-	position: relative;
-	float: right;
-	height: 90px;
-	max-height: 90px;
-	max-width:  90px;
-	padding: 0px 0px;
+  vertical-align: middle;
+  position: relative;
+  float: right;
+  height: 90px;
+  max-height: 90px;
+  max-width: 90px;
+  padding: 0px 0px;
 
-	display: inline-block;
-	text-align: center;
-	text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
 }
 
 /* Smartphones (landscape) ———– */
 @media only screen and (min-width: 450px) {
-	.navbutton {
-	    vertical-align: middle;
-	    position: relative;
-	    float: right;
-	    height: 80px;
-		max-height: 80px;
-		max-width:  80px;
-	    padding: 0px 0px;
+  .navbutton {
+    vertical-align: middle;
+    position: relative;
+    float: right;
+    height: 80px;
+    max-height: 80px;
+    max-width: 80px;
+    padding: 0px 0px;
 
-	    display: inline-block;
-	    text-align: center;
-	    text-decoration: none;
-	}
-
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+  }
 }
 
 image.homenav {
-	vertical-align: middle;
+  vertical-align: middle;
 }
