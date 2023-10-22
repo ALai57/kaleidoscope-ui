@@ -8,6 +8,7 @@
             [kaleidoscope.ui.pages.manager         :as page.manager]
             [kaleidoscope.ui.pages.article-manager :as page.article-manager]
             [kaleidoscope.ui.pages.image-manager   :as page.image-manager]
+            [kaleidoscope.ui.pages.ui-manager      :as page.ui-manager]
             [kaleidoscope.ui.components.loading-screen :as loading]
             [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
@@ -76,6 +77,7 @@
              :manager         page.manager/manager-page
              :article-manager page.article-manager/article-manager-page
              :image-manager   page.image-manager/image-manager-page
+             :ui-manager      page.ui-manager/ui-manager-page
              :editor          (u/lazy-component (lazy/loadable kaleidoscope.ui.pages.article-editor/editor-ui))})
 
 (defn app []
