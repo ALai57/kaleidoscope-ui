@@ -2,13 +2,24 @@
   (:require [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.core :as u]
             [kaleidoscope.ui.utils.events :as e]
+            ["@mui/material/styles" :refer [styled useTheme]]
+            ["@mui/material/Paper" :as paper]
             [goog.string :as gstr]
             [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
+            [reagent-mui.components :refer [box container stack]]
             [taoensso.timbre :refer-macros [infof info]]
             ["react-colorful" :as rc]
             ["react" :as react]
             ))
+
+(def Item
+  ((styled paper/default)
+   (fn [theme]
+     (clj->js {:transition "transform 0.3s"
+               :padding    "right"
+               :text-align "center"
+               :position   "relative"}))))
 
 ;; https://github.com/omgovich/react-colorful
 ;; https://codesandbox.io/s/6fp23?file=/src/App.js
@@ -33,44 +44,42 @@
                                  :on-change (fn [new-color]
                                               (reset! color new-color))}]])])))
 
+(def palette-colors
+  [:primary :secondary :error :warning :info :success :accent])
+
+(defn color-picker-group
+  [{:keys [color-name]}]
+  [box
+   [stack {:spacing 2}
+    [:> Item
+     [:div {:style {:display "inline-flex" :padding-right "25px"}}
+      "Main: "
+      [:f> popover-picker {:initial-color "#AAAAAA"}]]
+     [:div {:style {:display "inline-flex" :padding-right "25px"}}
+      "Dark: "
+      [:f> popover-picker {:initial-color "#AAAAAA"}]]
+     [:div {:style {:display "inline-flex" :padding-right "25px"}}
+      "Light: "
+      [:f> popover-picker {:initial-color "#AAAAAA"}]]
+     [:div {:style {:display "inline-flex" :padding-right "25px"}}
+      "Subtle: "
+      [:f> popover-picker {:initial-color "#AAAAAA"}]]]
+    ]]
+  )
+
 (defn -ui-manager-page [{:keys [images albums user notification-type auth-token]}]
-  [:div
-   [nav/nav-bar {:user              user
-                 :notification-type notification-type}]
-   [:div {:margin "10px"}
-    [:f> popover-picker {:initial-color "#AAAAAA"}]]])
+  (let [palette (:palette (u/clojurize (useTheme)))]
+    [:div
+     [nav/nav-bar {:user              user
+                   :notification-type notification-type}]
+     [:div {:margin "10px"}
+
+      (for [palette-color palette-colors]
+        [:div
+         palette-color
+         [color-picker-group]])]]))
 
 (defn ui-manager-page
   [{:keys [images user notification-type]}]
-  [-ui-manager-page {:user              user
-                     :notification-type notification-type}])
-
-
-;;import React, { useCallback, useRef, useState } from "react";
-;;import { HexColorPicker } from "react-colorful";
-;;
-;;import useClickOutside from "./useClickOutside";
-;;
-;;export const PopoverPicker = ({ color, onChange }) => {
-;;  const popover = useRef();
-;;  const [isOpen, toggle] = useState(false);
-;;
-;;  const close = useCallback(() => toggle(false), []);
-;;  useClickOutside(popover, close);
-;;
-;;  return (
-;;    <div className="picker">
-;;      <div
-;;        className="swatch"
-;;        style={{ backgroundColor: color }}
-;;        onClick={() => toggle(true)}
-;;      />
-;;
-;;      {isOpen && (
-;;        <div className="popover" ref={popover}>
-;;          <HexColorPicker color={color} onChange={onChange} />
-;;        </div>
-;;      )}
-;;    </div>
-;;  );
-;;};
+  [:f> -ui-manager-page {:user              user
+                         :notification-type notification-type}])
