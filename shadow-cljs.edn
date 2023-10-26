@@ -25,7 +25,8 @@
                 ;; shadow/Closure compiler.
                 ;; https://clojurians-log.clojureverse.org/shadow-cljs/2021-06-17
                 ;; And https://github.com/ertugrulcetin/racing-game-cljs
-                :js-options {:entry-keys ["module" "browser" "main"]}
+                :js-options {:entry-keys ["module" "browser" "main"]
+                             :extensions [".js" ".mjs"]}
 
                 :output-dir "resources/public/js/compiled/kaleidoscope"
                 :asset-path "js/compiled/kaleidoscope"

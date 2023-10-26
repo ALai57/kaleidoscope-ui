@@ -1,15 +1,13 @@
 (ns kaleidoscope.ui.pages.ui-manager
   (:require [kaleidoscope.ui.components.navbar :as nav]
+            [kaleidoscope.ui.components.colors.color-picker :refer [color-picker]]
             [kaleidoscope.ui.utils.core :as u]
-            [kaleidoscope.ui.utils.events :as e]
+            [kaleidoscope.ui.clients.leonardo] ;; DELETEME
             ["@mui/material/styles" :refer [styled useTheme]]
             ["@mui/material/Paper" :as paper]
-            [goog.string :as gstr]
-            [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
-            [reagent-mui.components :refer [box container stack]]
+            [reagent-mui.components :refer [box stack]]
             [taoensso.timbre :refer-macros [infof info]]
-            ["react-colorful" :as rc]
             ["react" :as react]
             ))
 
@@ -21,29 +19,6 @@
                :text-align "center"
                :position   "relative"}))))
 
-;; https://github.com/omgovich/react-colorful
-;; https://codesandbox.io/s/6fp23?file=/src/App.js
-(defn popover-picker
-  [{:keys [initial-color on-change]}]
-  (let [color (reagent/atom initial-color)
-        open? (reagent/atom false)]
-    (fn []
-      [:div
-       [:div {:style   {:background-color @color
-                        :width            "28px"
-                        :height           "28px"
-                        :border-radius    "8px"
-                        :border           "3px solid #fff"
-                        :box-shadow       "0 0 0 1px rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(0, 0, 0, 0.1)"
-                        :cursor           "pointer"}
-              :onClick (fn [_]
-                         (swap! open? not))}]
-       (when @open?
-         [:div
-          [:> rc/HexColorPicker {:color     @color
-                                 :on-change (fn [new-color]
-                                              (reset! color new-color))}]])])))
-
 (def palette-colors
   [:primary :secondary :error :warning :info :success :accent])
 
@@ -54,16 +29,16 @@
     [:> Item
      [:div {:style {:display "inline-flex" :padding-right "25px"}}
       "Main: "
-      [:f> popover-picker {:initial-color "#AAAAAA"}]]
+      [:f> color-picker {:initial-color "#AAAAAA"}]]
      [:div {:style {:display "inline-flex" :padding-right "25px"}}
       "Dark: "
-      [:f> popover-picker {:initial-color "#AAAAAA"}]]
+      [:f> color-picker {:initial-color "#AAAAAA"}]]
      [:div {:style {:display "inline-flex" :padding-right "25px"}}
       "Light: "
-      [:f> popover-picker {:initial-color "#AAAAAA"}]]
+      [:f> color-picker {:initial-color "#AAAAAA"}]]
      [:div {:style {:display "inline-flex" :padding-right "25px"}}
       "Subtle: "
-      [:f> popover-picker {:initial-color "#AAAAAA"}]]]
+      [:f> color-picker {:initial-color "#AAAAAA"}]]]
     ]]
   )
 

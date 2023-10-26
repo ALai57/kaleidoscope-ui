@@ -23,6 +23,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
+    "@adobe/leonardo-contrast-colors": "^1.0.0-alpha.13",
     "@bugsnag/js": "^7.20.2",
     "@bugsnag/plugin-react": "^7.19.0",
     "@emotion/react": "11.7.1",

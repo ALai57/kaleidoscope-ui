@@ -23,7 +23,7 @@
   ((styled "a")
    (fn [{:keys [theme]}]
      (clj->js {:transition "transform 0.3s"
-               :max-width  "100%"
+               :maxWidth   "100%"
                :float      "right"
                :position   "relative"
                "&:hover"   #js {:z-index   1000
