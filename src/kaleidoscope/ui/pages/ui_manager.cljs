@@ -29,15 +29,6 @@
     [:> Item
      [:div {:style {:display "inline-flex" :padding-right "25px"}}
       "Main: "
-      [:f> color-picker {:initial-color "#AAAAAA"}]]
-     [:div {:style {:display "inline-flex" :padding-right "25px"}}
-      "Dark: "
-      [:f> color-picker {:initial-color "#AAAAAA"}]]
-     [:div {:style {:display "inline-flex" :padding-right "25px"}}
-      "Light: "
-      [:f> color-picker {:initial-color "#AAAAAA"}]]
-     [:div {:style {:display "inline-flex" :padding-right "25px"}}
-      "Subtle: "
       [:f> color-picker {:initial-color "#AAAAAA"}]]]
     ]]
   )

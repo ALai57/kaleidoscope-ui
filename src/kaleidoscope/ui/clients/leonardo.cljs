@@ -22,6 +22,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn make-color
   [color]
+  (new lcc/Color (clj->js color)))
+
+(defn make-background
+  [color]
   (new lcc/BackgroundColor (clj->js color)))
 
 (defn make-theme
@@ -36,9 +40,14 @@
                :colorKeys ["#bababa"],
                :ratios    [2, 3, 4.5, 8]}))
 
+(def BACKGROUND
+  (make-background {:name      "bg",
+                    :colorKeys ["#bababa"],
+                    :ratios    [2, 3, 4.5, 8]}))
+
 (def THEME
   (make-theme {:colors          [GRAY]
-               :backgroundColor GRAY
+               :backgroundColor BACKGROUND
                :lightness       97}))
 
 

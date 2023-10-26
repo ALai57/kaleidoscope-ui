@@ -14,6 +14,7 @@
                   {:component "An RGB color picker component"}}}
 
     :args     {:initial-color "#DDDDDD"
+               :collapsable   true
                :on-change     (fn [& args]
                                 (action "on-change"))}
     :argTypes {:initial-color {:description  "The initial color to start with"
