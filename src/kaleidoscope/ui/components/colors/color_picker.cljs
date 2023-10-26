@@ -8,11 +8,15 @@
             [goog.string :as gstr]
             [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
-            [reagent-mui.components :refer [box container stack]]
+            [reagent-mui.components :refer [box container stack text-field]]
             [taoensso.timbre :refer-macros [infof info]]
             ["react-colorful" :as rc]
             ["react" :as react]
             ))
+
+(defn upcase
+  [^js s]
+  (.toUpperCase s))
 
 ;; https://github.com/omgovich/react-colorful
 ;; https://codesandbox.io/s/6fp23?file=/src/App.js
@@ -35,4 +39,9 @@
          [:div
           [:> rc/HexColorPicker {:color     @color
                                  :on-change (fn [new-color]
-                                              (reset! color new-color))}]])])))
+                                              (reset! color (upcase new-color)))}]
+          [text-field {:label     "RGB value"
+                       :value     @color
+                       :on-change (fn [e]
+                                    (reset! color (upcase (e/event-value e))))}]])
+       ])))

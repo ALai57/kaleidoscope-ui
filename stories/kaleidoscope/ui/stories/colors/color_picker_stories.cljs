@@ -22,5 +22,8 @@
                                :defaultValue (fn [& args]
                                                (action "on-change"))}}}))
 
-(def ^:export Default
+(def ^:export Gray
   (clj->js {}))
+
+(def ^:export Red
+  (clj->js {:args {:initial-color "#FF0000"}}))

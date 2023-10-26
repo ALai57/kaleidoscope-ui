@@ -1,4 +1,5 @@
 (ns kaleidoscope.ui.clients.leonardo
+  "A CLJS wrapper for the Leonardo adaptive color generation library"
   (:require ["@adobe/leonardo-contrast-colors" :as lcc]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
