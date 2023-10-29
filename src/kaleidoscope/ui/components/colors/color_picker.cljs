@@ -1,26 +1,40 @@
 (ns kaleidoscope.ui.components.colors.color-picker
   (:require [kaleidoscope.ui.utils.events :as e]
             [reagent.core :as reagent]
-            [reagent-mui.components :refer [box container stack text-field]]
-            [taoensso.timbre :refer-macros [infof info]]
+            [reagent.impl.template :as tmpl]
+            [reagent-mui.components :refer [outlined-input text-field input-adornment]]
+            ["@mui/material/styles" :refer [styled]]
+            ["@mui/material/Paper" :as paper]
             ["react-colorful" :as rc]
-            ["react" :as react]
             ))
 
 (defn upcase
   [^js s]
   (.toUpperCase s))
 
+(def Paper
+  ((styled paper/default)
+   (fn [obj]
+     (let [spacing-fn (.. obj -theme -spacing)]
+       (clj->js {:transition "transform 0.3s"
+                 :padding    (spacing-fn 2)
+                 :text-align "center"})))))
+
 (defn basic-color-picker
   [{:keys [color on-change]}]
-  [:div
+  [:> Paper
    [:> rc/HexColorPicker {:color     color
-                          :on-change on-change}]
+                          :on-change on-change
+                          :style     {:height "200px"
+                                      :width  "100%"}}]
    [:br]
-   [text-field {:label     "RGB value"
-                :size      "small"
-                :value     color
-                :on-change (comp on-change e/event-value)}]])
+   [outlined-input {;;:label          "RGB value"
+                    :size           "small"
+                    :value          color
+                    :on-change      (comp on-change e/event-value)
+                    :startAdornment (reagent/as-element [:div {:style {:background-color color
+                                                                       :width            "50%"
+                                                                       :height           "30px"}}])}]])
 
 ;; https://github.com/omgovich/react-colorful
 ;; https://codesandbox.io/s/6fp23?file=/src/App.js

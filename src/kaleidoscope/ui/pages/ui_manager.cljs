@@ -5,9 +5,7 @@
             [kaleidoscope.ui.clients.leonardo] ;; DELETEME
             ["@mui/material/styles" :refer [styled useTheme]]
             ["@mui/material/Paper" :as paper]
-            [re-frame.core :refer [subscribe dispatch]]
             [reagent-mui.components :refer [box stack]]
-            [taoensso.timbre :refer-macros [infof info]]
             ["react" :as react]
             ))
 
