@@ -3,6 +3,7 @@
             [kaleidoscope.ui.stories.helper :as helper]
             [reagent.core :as reagent]
             ["@storybook/addon-actions" :refer [action]]
+            ["@mui/material/colors" :refer [red purple blue green]]
             ))
 
 (def ^:export default
@@ -13,22 +14,15 @@
                  {:description
                   {:component "An RGB color theme editor"}}}
 
-    :args     {:theme-elements      #js[#js {:family-name "Primary"
-                                             :base-color  "#3B4173"}
-                                        #js {:family-name "Error"
-                                             :base-color  "#FFFFFF"}
-                                        #js {:family-name "Success"
-                                             :base-color  "#31BB28"}]
-               :background-elements #js[#js {:family-name "Gray"
-                                             :base-color  "#BBBBBB"}
-                                        #js {:family-name "Black"
-                                             :base-color  "#000000"}]}
-    :argTypes {:background-elements {:description  "The Backgrounds"
-                                     :defaultValue [{:family-name "Black"
-                                                     :base-color  "#000000"}]}
-               :theme-elements      {:description  "The Theme"
-                                     :defaultValue [{:family-name "Primary"
-                                                     :base-color  "#FFFFFF"}]}}}))
+    :args     (clj->js {:palette {:primary          {:main (aget blue 600)}
+                                  :secondary        {:main (aget purple 600)}
+                                  :error            {:main (aget red 600)}
+                                  :success          {:main (aget green 600)}
+                                  :accent           {:main "#e3bef6"}
+                                  :background-light {:main "#FFFFFF"}
+                                  :background-dark  {:main "#000000"}
+                                  }})}))
+
 
 (def ^:export Basic-Theme
   (clj->js {}))
