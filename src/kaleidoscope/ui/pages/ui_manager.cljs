@@ -7,14 +7,6 @@
             ["@mui/material/Paper" :as paper]
             ))
 
-(def Item
-  ((styled paper/default)
-   (fn [theme]
-     (clj->js {:transition "transform 0.3s"
-               :padding    "right"
-               :text-align "center"
-               :position   "relative"}))))
-
 (defn -ui-manager-page [{:keys [user notification-type auth-token]}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [:div
