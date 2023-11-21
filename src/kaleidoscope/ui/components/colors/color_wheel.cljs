@@ -1,10 +1,14 @@
 (ns kaleidoscope.ui.components.colors.color-wheel
   (:require [goog.string :as gstr]
             ["@mui/material/styles" :refer [styled useTheme]]
+            ["@mui/material/Slider" :as slider]
             [kaleidoscope.ui.utils.events :as events]
             [reagent.core :as reagent]
             [reagent-mui.components :refer [stack input slider typography box grid]]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Pre-styled components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (def ColorWheel
   ((styled "div")
    (fn [theme]
@@ -47,6 +51,19 @@
                :left            "90px"
                :top             "90px"}))))
 
+(def NoTrackSlider
+  ((styled slider/default)
+   (fn [theme]
+     (clj->js {:position             "absolute"
+               "& .MuiSlider-thumb"  {:width  "50px"
+                                      :height "50px"}
+               "& .MuiSlider-track"  {"visibility" "hidden"}
+               "& .MuiSlider-rail"   {"visibility" "hidden"}
+               "& .MuiSlider-active" {"color" "green"}}))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helpers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn coords->rads
   [x y]
   (js/Math.atan2 x y))
@@ -115,6 +132,9 @@
    ]
   )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Markers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;https://www.useragentman.com/blog/2013/03/03/animating-circular-paths-using-css3-transitions/
 (defn- hue-marker
   [{:keys [hue radius wheel-radius wheel-thickness opacity]}]
@@ -167,6 +187,9 @@
                           :transform  (gstr/format "translateX(-%spx)" radius)
                           :background background}}]])
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Big components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn- two-D-saturation-lightness-grid
   [{:keys [saturation-active? wheel-radius background on-click disabled?]}]
   [:div {:on-mouse-move (fn [event]
@@ -344,15 +367,18 @@
        ;; Controls
        [:br]
        [stack {:direction "column"
-               :spacing   2}
+               :spacing   3}
         [color-control {:max-width wheel-diameter
                         :state     hue
                         :slider-el [:> ColorBand {:style {:height   (/ ring-thickness 2)
                                                           :position "relative"}}
-                                    [control-marker {:radius     (/ ring-thickness 4)
-                                                     :opacity    90
-                                                     :percent    (* 100 (/ @hue 360))
-                                                     :background (hsl @hue 100 50)}]]
+                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue 100 50)}}
+                                                       :value     (* 100 (/ @hue 360))
+                                                       :on-change (fn [event]
+                                                                    (reset! hue (-> event
+                                                                                    events/event-value
+                                                                                    (* 360)
+                                                                                    (/ 100))))}]]
                         :min       0
                         :max       360}]
         [color-control {:max-width wheel-diameter
@@ -360,36 +386,23 @@
                         :slider-el [saturation-band {:hue       @hue
                                                      :lightness @lightness
                                                      :height    (/ ring-thickness 2)}
-                                    [control-marker {:radius     (/ ring-thickness 4)
-                                                     :opacity    90
-                                                     :percent    @saturation
-                                                     :background (hsl @hue @saturation @lightness)}]
-                                    ]}]
+                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue @saturation @lightness)}}
+                                                       :value     @saturation
+                                                       :on-change (fn [event]
+                                                                    (reset! saturation (events/event-value event)))}]]}]
         [color-control {:max-width wheel-diameter
                         :state     lightness
                         :slider-el [lightness-band {:hue        @hue
                                                     :saturation @saturation
                                                     :height     (/ ring-thickness 2)}
-                                    [control-marker {:radius     (/ ring-thickness 4)
-                                                     :opacity    90
-                                                     :percent    @lightness
-                                                     :background (hsl @hue @saturation @lightness)}]
-                                    ]}]]
-
-       ;; Deleting these
-       [value-slider {:label     "Saturation"
-                      :state     saturation
-                      :max-width wheel-diameter}]
-       [value-slider {:label     "Lightness"
-                      :state     lightness
-                      :max-width wheel-diameter}]
-
-       [:br]
-       [value-slider {:label     "Secondary angle"
-                      :state     angle
-                      :max-width wheel-diameter
-                      :max       180}]
-       ])))
+                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue @saturation @lightness)}}
+                                                       :value     @lightness
+                                                       :on-change (fn [event]
+                                                                    (reset! lightness (events/event-value event)))}]]}]
+        [value-slider {:label     "Secondary angle"
+                       :state     angle
+                       :max-width wheel-diameter
+                       :max       180}]]])))
 
 
 

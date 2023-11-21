@@ -4,7 +4,6 @@
             [kaleidoscope.ui.utils.core :as u]
             [kaleidoscope.ui.clients.leonardo] ;; DELETEME
             ["@mui/material/styles" :refer [styled useTheme]]
-            ["@mui/material/Paper" :as paper]
             ))
 
 (defn -ui-manager-page [{:keys [user notification-type auth-token]}]
