@@ -3,6 +3,7 @@
             ["@mui/material/styles" :refer [styled useTheme]]
             ["@mui/material/Slider" :as slider]
             [kaleidoscope.ui.utils.events :as events]
+            [kaleidoscope.ui.components.colors.saturation-lightness-grid :as slg]
             [reagent.core :as reagent]
             [reagent-mui.components :refer [stack input slider typography box grid]]))
 
@@ -23,7 +24,6 @@
      (clj->js {:height       "50px"
                :borderRadius "10px"
                :background   "linear-gradient(to right, red,#ff0,#0f0,#0ff,#00f,#f0f,red)"}))))
-
 
 (def Donut
   ((styled "div")
@@ -110,26 +110,83 @@
   [hue saturation lightness]
   (gstr/format "hsl(%s, %s%, %s%)" hue saturation lightness))
 
+(defn- mini-square
+  [{:keys [size r theta n hue lightness saturation]}]
+  (let [mini-size (/ size 6)
+        padding   (/ mini-size 4)
+        position  (case n
+                    1 {:left (str padding "px")
+                       :top  (str (+ (* 3 padding)
+                                     (* 2 mini-size)) "px")}
+                    2 {:left (str padding "px")
+                       :top  (str (+ (* 2 padding)
+                                     (* 1 mini-size)) "px")}
+                    3 {:left (str padding "px")
+                       :top  (str padding "px")}
+                    4 {:left (str (+ (* 2 padding)
+                                     (* 1 mini-size)) "px")
+                       :top  (str padding "px")}
+                    5 {:left (str (+ (* 3 padding)
+                                     (* 2 mini-size)) "px")
+                       :top  (str padding "px")}
+                    )
+
+        new-sl (slg/secondary-marker {:base-saturation saturation
+                                      :base-lightness  lightness
+                                      :theta           theta
+                                      :r               (* (case n
+                                                            1 -2
+                                                            2 -1
+                                                            3 0
+                                                            4 1
+                                                            5 2) r)})
+        color (hsl hue (:saturation new-sl) (:lightness new-sl))]
+    [:div {:style (merge {:width            (str mini-size "px")
+                          :height           (str mini-size "px")
+                          :position         "absolute"
+                          :background-color color}
+                         position)}])
+  )
+
 (defn- color-squares
-  [{:keys [size primary complementary secondary tertiary saturation lightness]}]
+  [{:keys [size primary complementary secondary tertiary saturation lightness r theta] :as args}]
+
+
   [:div {:style {:width            (str (* 2 size) "px")
                  :height           (str (* 2 size) "px")
                  :background-color "grey"}}
    [stack {:direction "row"}
     [:div {:style {:width            (str size "px")
                    :height           (str size "px")
-                   :background-color (hsl primary saturation lightness)}}]
+                   :background-color (hsl primary saturation lightness)
+                   :position         "relative"}}
+     (for [n (range 1 6)]
+       ^{:key (str "primary-" n)}
+       [mini-square (assoc args :n n :hue primary)])]
     [:div {:style {:width            (str size "px")
                    :height           (str size "px")
-                   :background-color (hsl complementary saturation lightness)}}]]
+                   :background-color (hsl tertiary saturation lightness)
+                   :position         "relative"}}
+     (for [n (range 1 6)]
+       ^{:key (str "tertiary-" n)}
+       [mini-square (assoc args :n n :hue tertiary)])
+     ]
+    ]
    [stack {:direction "row"}
     [:div {:style {:width            (str size "px")
                    :height           (str size "px")
-                   :background-color (hsl secondary saturation lightness)}}]
+                   :background-color (hsl secondary saturation lightness)
+                   :position         "relative"}}
+     (for [n (range 1 6)]
+       ^{:key (str "secondary-" n)}
+       [mini-square (assoc args :n n :hue secondary)])]
     [:div {:style {:width            (str size "px")
                    :height           (str size "px")
-                   :background-color (hsl tertiary saturation lightness)}}]]
-   ]
+                   :background-color (hsl complementary saturation lightness)
+                   :position         "relative"}}
+     (for [n (range 1 6)]
+       ^{:key (str "complementary-" n)}
+       [mini-square (assoc args :n n :hue complementary)])]]]
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -148,92 +205,9 @@
                            :opacity   (or opacity "50%")
                            :transform (gstr/format "rotate(%sdeg) translateX(%spx)" hue translation)}}]))
 
-(defn- sl-marker
-  [{:keys [radius opacity]}]
-  [:> HueMarker {:on-mouse-down (fn [event]
-                                  (.stopPropagation event)
-                                  (js/console.log "DRAG"))
-                 :on-mouse-move (fn [event]
-                                  (.stopPropagation event)
-                                  (js/console.log "DRAG"))
-
-                 :style {:width      (str (* radius 2) "px")
-                         :height     (str (* radius 2) "px")
-                         :left       (str offset "px")
-                         :top        (str offset "px")
-                         :opacity    (or opacity "50%")
-                         :background "white"}}])
-
-(defn- control-marker
-  [{:keys [percent radius opacity background]}]
-  [:div {:on-mouse-down (fn [event]
-                          (.stopPropagation event)
-                          (js/console.log "DRAG"))
-         :on-mouse-move (fn [event]
-                          (.stopPropagation event)
-                          (js/console.log "DRAG"))}
-   [:> HueMarker {:style {:width      (str (+ 8 (* radius 2)) "px")
-                          :height     (str (+ 8 (* radius 2)) "px")
-                          :opacity    (or opacity "50%")
-                          :left       (str percent "%")
-                          :top        "-4px"
-                          :transform  (gstr/format "translateX(-%spx)" (+ radius 4))
-                          :background "black"}}]
-   [:> HueMarker {:style {:width      (str (* radius 2) "px")
-                          :height     (str (* radius 2) "px")
-                          :opacity    (or opacity "50%")
-                          :left       (str percent "%")
-                          :top        "0px"
-                          :transform  (gstr/format "translateX(-%spx)" radius)
-                          :background background}}]])
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Big components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn- two-D-saturation-lightness-grid
-  [{:keys [saturation-active? wheel-radius background on-click disabled?]}]
-  [:div {:on-mouse-move (fn [event]
-                          (.stopPropagation event))
-         :on-mouse-down (fn [event]
-                          (.stopPropagation event)
-                          (reset! saturation-active? true))
-         :on-mouse-up   (fn [event]
-                          (.stopPropagation event)
-                          (reset! saturation-active? false))
-         :on-click      (fn [event]
-                          (.stopPropagation event)
-                          (on-click event))
-         :z-index       100}
-   [:div {:style {:width      (str wheel-radius "px")
-                  :height     (str wheel-radius "px")
-                  :left       (str (/ wheel-radius 4) "px")
-                  :top        (str (/ wheel-radius 4) "px")
-                  :position   "absolute"
-                  :background background}}]
-   [:div
-    {:style {:width      (str wheel-radius "px")
-             :height     (str wheel-radius "px")
-             :left       (str (/ wheel-radius 4) "px")
-             :top        (str (/ wheel-radius 4) "px")
-             :position   "absolute"
-             :background "linear-gradient(to right, #fff, rgba(255,255,255,0))"}}]
-   [:div
-    {:style {:width      (str wheel-radius "px")
-             :height     (str wheel-radius "px")
-             :left       (str (/ wheel-radius 4) "px")
-             :top        (str (/ wheel-radius 4) "px")
-             :position   "absolute"
-             :background "linear-gradient(to top, #000, rgba(0,0,0,0))"}}]
-   (when disabled?
-     [:div
-      {:style {:width      (str wheel-radius "px")
-               :height     (str wheel-radius "px")
-               :left       (str (/ wheel-radius 4) "px")
-               :top        (str (/ wheel-radius 4) "px")
-               :position   "absolute"
-               :background "darkgrey"}}])
-   ])
-
 (defn value-slider
   [{:keys [label state min max max-width]}]
   [box {:sx {:max-width (str max-width "px")}}
@@ -302,27 +276,33 @@
 
 ;; https://github.com/caub/color-wheel/blob/master/src/Wheel.js
 ;; https://paletton.com/#uid=34r0j0kiCr0tbkIoQoDbjvO66AW
+;;
+;; I couldn't tell if the animation for a rotating set of dots was slow.  It was
+;; definitely slower when loading inside storybook. But when  loading the app in
+;; my browser, it seems to be performing OK using `transform: translate(X)
+;; rotate(Y)` Could also try putting in `react/useEffect`...
 (defn color-wheel
   [{:keys [initial-hue initial-saturation initial-lightness
            initial-angle
            ring-thickness wheel-radius]}]
-  (let [hue                (reagent/atom (or initial-hue 0))
-        saturation         (reagent/atom (or initial-saturation 50))
-        lightness          (reagent/atom (or initial-lightness 50))
-        angle              (reagent/atom (or initial-angle 45))
-        hue-active?        (reagent/atom false)
-        saturation-active? (reagent/atom false)
-        !color-wheel       (reagent/atom nil)
-        ring-thickness     (or ring-thickness 50)
-        wheel-radius       (or wheel-radius 200)
+  (let [hue          (reagent/atom (or initial-hue 0))
+        saturation   (reagent/atom (or initial-saturation 50))
+        lightness    (reagent/atom (or initial-lightness 50))
+        r            (reagent/atom 15)
+        theta        (reagent/atom 45)
+        angle        (reagent/atom (or initial-angle 45)) ;; secondary angle
+        hue-active?  (reagent/atom false)
+        !color-wheel (reagent/atom nil)
+
+        ring-thickness        (or ring-thickness 50)
+        wheel-radius          (or wheel-radius 200)
+        wheel-diameter        (* wheel-radius 2)
+        donut-diameter        (* 2 (- wheel-radius ring-thickness))
+        control-bar-thickness (/ ring-thickness 2)
 
         hue-marker-props {:radius          10
                           :wheel-radius    wheel-radius
-                          :wheel-thickness ring-thickness}
-
-        wheel-diameter (* wheel-radius 2)
-        donut-diameter (* 2 (- wheel-radius ring-thickness))
-        ]
+                          :wheel-thickness ring-thickness}]
     (fn []
       [:div {:style {:position "relative"}}
        [stack {:direction "row"}
@@ -341,15 +321,26 @@
                                             (reset! hue (calculate-angle @!color-wheel event))))
                         :on-click       (fn [event]
                                           (reset! hue (calculate-angle @!color-wheel event)))}
-         [:> Donut {:style {:width  (str donut-diameter "px")
+         [:> Donut {:class "thedonut"
+                    :style {:width  (str donut-diameter "px")
                             :height (str donut-diameter "px")}}
-          [two-D-saturation-lightness-grid {:wheel-radius       wheel-radius
-                                            :background         (hsl @hue 100 50)
-                                            :disabled?          @hue-active?
-                                            :saturation-active? saturation-active?
-                                            :on-click           (fn [event]
-                                                                  (js/console.log "EVENT" event))}]
-          [sl-marker (merge hue-marker-props {:radius 6})]]
+          [:div {:style {:position "relative"
+                         :left     (str (/ wheel-radius 4) "px")
+                         :top      (str (/ wheel-radius 4) "px")}}
+
+           ^{:key @hue}
+           [slg/saturation-lightness-grid
+            {:grid-size        wheel-radius
+             :hue              @hue
+             :on-change        (fn [new-coordinates]
+                                 ;;(println "New coordinates" new-coordinates)
+                                 (reset! saturation (:saturation new-coordinates))
+                                 (reset! lightness (:lightness new-coordinates))
+                                 (reset! r (:r new-coordinates))
+                                 (reset! theta (:theta new-coordinates))
+                                 )
+             :saturation-state saturation
+             :lightness-state  lightness}]]]
 
          [hue-marker (merge hue-marker-props {:hue (+ @hue 270) :radius 15})]
          [hue-marker (merge hue-marker-props {:hue (+ @hue 90) :opacity "10%"})]
@@ -362,7 +353,8 @@
                         :tertiary      (+ @hue 180 (- @angle))
                         :saturation    @saturation
                         :lightness     @lightness
-                        }]]
+                        :r             @r
+                        :theta         @theta}]]
 
        ;; Controls
        [:br]
@@ -370,7 +362,7 @@
                :spacing   3}
         [color-control {:max-width wheel-diameter
                         :state     hue
-                        :slider-el [:> ColorBand {:style {:height   (/ ring-thickness 2)
+                        :slider-el [:> ColorBand {:style {:height   control-bar-thickness
                                                           :position "relative"}}
                                     [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue 100 50)}}
                                                        :value     (* 100 (/ @hue 360))
@@ -385,7 +377,7 @@
                         :state     saturation
                         :slider-el [saturation-band {:hue       @hue
                                                      :lightness @lightness
-                                                     :height    (/ ring-thickness 2)}
+                                                     :height    control-bar-thickness}
                                     [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue @saturation @lightness)}}
                                                        :value     @saturation
                                                        :on-change (fn [event]
@@ -394,7 +386,7 @@
                         :state     lightness
                         :slider-el [lightness-band {:hue        @hue
                                                     :saturation @saturation
-                                                    :height     (/ ring-thickness 2)}
+                                                    :height     control-bar-thickness}
                                     [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue @saturation @lightness)}}
                                                        :value     @lightness
                                                        :on-change (fn [event]
