@@ -111,7 +111,7 @@
   (gstr/format "hsl(%s, %s%, %s%)" hue saturation lightness))
 
 (defn- mini-square
-  [{:keys [size r theta n hue lightness saturation]}]
+  [{:keys [size spacing theta n hue lightness saturation]}]
   (let [mini-size (/ size 6)
         padding   (/ mini-size 4)
         position  (case n
@@ -131,16 +131,16 @@
                        :top  (str padding "px")}
                     )
 
-        new-sl (slg/secondary-marker {:base-saturation saturation
-                                      :base-lightness  lightness
-                                      :theta           theta
-                                      :r               (* (case n
-                                                            1 -2
-                                                            2 -1
-                                                            3 0
-                                                            4 1
-                                                            5 2) r)})
-        color (hsl hue (:saturation new-sl) (:lightness new-sl))]
+        new-sl (slg/calculate-marker-coordinates {:base-saturation saturation
+                                                  :base-lightness  lightness
+                                                  :theta           theta
+                                                  :r               (* (case n
+                                                                        1 -2
+                                                                        2 -1
+                                                                        3 0
+                                                                        4 1
+                                                                        5 2) spacing)})
+        color  (hsl hue (:saturation new-sl) (:lightness new-sl))]
     [:div {:style (merge {:width            (str mini-size "px")
                           :height           (str mini-size "px")
                           :position         "absolute"
@@ -288,7 +288,7 @@
   (let [hue          (reagent/atom (or initial-hue 0))
         saturation   (reagent/atom (or initial-saturation 50))
         lightness    (reagent/atom (or initial-lightness 50))
-        r            (reagent/atom 15)
+        spacing      (reagent/atom 15)
         theta        (reagent/atom 45)
         angle        (reagent/atom (or initial-angle 45)) ;; secondary angle
         hue-active?  (reagent/atom false)
@@ -330,17 +330,16 @@
 
            ^{:key @hue}
            [slg/saturation-lightness-grid
-            {:grid-size        wheel-radius
-             :hue              @hue
-             :on-change        (fn [new-coordinates]
-                                 ;;(println "New coordinates" new-coordinates)
-                                 (reset! saturation (:saturation new-coordinates))
-                                 (reset! lightness (:lightness new-coordinates))
-                                 (reset! r (:r new-coordinates))
-                                 (reset! theta (:theta new-coordinates))
-                                 )
-             :saturation-state saturation
-             :lightness-state  lightness}]]]
+            {:grid-size wheel-radius
+             :hue       @hue
+             :on-change (fn [new-coordinates]
+                          ;;(println "New coordinates" new-coordinates)
+                          (reset! saturation (:saturation new-coordinates))
+                          (reset! lightness (:lightness new-coordinates))
+                          (reset! spacing (:spacing new-coordinates))
+                          (reset! theta (:theta new-coordinates)))
+             :origin    {:saturation-state saturation
+                         :lightness-state  lightness}}]]]
 
          [hue-marker (merge hue-marker-props {:hue (+ @hue 270) :radius 15})]
          [hue-marker (merge hue-marker-props {:hue (+ @hue 90) :opacity "10%"})]
@@ -353,7 +352,7 @@
                         :tertiary      (+ @hue 180 (- @angle))
                         :saturation    @saturation
                         :lightness     @lightness
-                        :r             @r
+                        :spacing       @spacing
                         :theta         @theta}]]
 
        ;; Controls

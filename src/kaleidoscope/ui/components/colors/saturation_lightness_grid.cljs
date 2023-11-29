@@ -2,10 +2,44 @@
   (:require [goog.string :as gstr]
             [reagent.core :as reagent]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Helper functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn hsl
   [hue saturation lightness]
   (gstr/format "hsl(%s, %s%, %s%)" hue saturation lightness))
 
+(defn deg->rad
+  [deg]
+  (/ (* deg Math/PI)
+     180))
+
+(defn rad->deg
+  [rad]
+  (* 180 (/ rad Math/PI)))
+
+(defn clamp
+  [val {:keys [min max]
+        :or   {min 0
+               max 100}}]
+  (cond
+    (< val min) min
+    (> val max) max
+    :else       val))
+
+(defn euclidean-distance
+  [[x1 y1] [x2 y2]]
+  (Math/sqrt
+   (+ (Math/pow (- x1 x2) 2)
+      (Math/pow (- y1 y2) 2))))
+
+(defn coords->rads
+  [x y]
+  (js/Math.atan2 x y))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Coordinate grid helpers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn calculate-sl-coordinates
   "Calculate the saturation (x), lightness (y) coordinates"
   [grid-ref event]
@@ -35,61 +69,10 @@
     ;;(js/console.log "New Saturation: " saturation ", New lightness" lightness)
     ;;(js/console.log (.-target event))
 
-    [saturation lightness]
-    ))
+    {:saturation saturation
+     :lightness  lightness}))
 
-(defn -centered-dot
-  [{:keys [radius opacity]}]
-  [:div {:class "centered"
-         :style {:position "relative"
-                 :transform (gstr/format "translateX(-%spx) translateY(-%spx)"
-                                         radius
-                                         radius)}}
-   [:div {:class "dot"
-          :style {:width        (str (* radius 2) "px")
-                  :height       (str (* radius 2) "px")
-                  :opacity      (or opacity "50%")
-                  :borderRadius "50%"
-                  :position     "relative"
-                  :background   "white"}}]])
-
-(defn- marker
-  [{:keys [border-size radius opacity saturation lightness activate deactivate]}]
-  (let [normalized-saturation (* border-size (/ saturation 100))
-        normalized-lightness  (- (* border-size (/ lightness 100)))]
-    [:div {:on-mouse-down (fn [event]
-                            (.stopPropagation event)
-                            (js/console.log "down")
-                            (activate event))
-           :on-mouse-up   (fn [event]
-                            (.stopPropagation event)
-                            (deactivate event))
-           :style         {:position "relative"
-                           :transform (gstr/format "translateX(%spx) translateY(%spx)"
-                                                   normalized-saturation
-                                                   normalized-lightness)}}
-
-     [:div {:class "origin-bottom-left"
-            :style {:position  "absolute"
-                    :transform (gstr/format "translateY(%spx)" border-size)}}
-      [-centered-dot {:radius  radius
-                      :opacity (or opacity "50%")}]]]))
-
-(defn clamp
-  [val {:keys [min max]
-        :or   {min 0
-               max 100}}]
-  (cond
-    (< val min) min
-    (> val max) max
-    :else       val))
-
-(defn deg->rad
-  [deg]
-  (/ (* deg Math/PI)
-     180))
-
-(defn secondary-marker
+(defn calculate-marker-coordinates
   [{:keys [base-saturation base-lightness r theta]
     :or   {r     20
            theta -45}}]
@@ -107,10 +90,98 @@
     {:saturation new-saturation
      :lightness  new-lightness}))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn -centered-dot
+  [{:keys [radius opacity units-from-origin]}]
+  [:div {:class "centered"
+         :style {:position  "relative"
+                 :transform (gstr/format "translateX(-%spx) translateY(-%spx)"
+                                         radius
+                                         radius)}}
+   [:div {:class           "dot"
+          :unitsfromorigin units-from-origin
+          :style           {:width        (str (* radius 2) "px")
+                            :height       (str (* radius 2) "px")
+                            :opacity      (or opacity "50%")
+                            :borderRadius "50%"
+                            :position     "relative"
+                            :background   "white"}}]])
+
+(defn- marker
+  [{:keys [border-size radius opacity units-from-origin
+           base-saturation base-lightness r theta
+           activate deactivate]}]
+  (let [{:keys [saturation lightness]} (calculate-marker-coordinates {:base-saturation base-saturation
+                                                                      :base-lightness  base-lightness
+                                                                      :r               r
+                                                                      :theta           theta})
+
+        normalized-saturation (* border-size (/ saturation 100))
+        normalized-lightness  (- (* border-size (/ lightness 100)))]
+    [:div {:on-mouse-down (fn [event]
+                            (.stopPropagation event)
+                            (activate event))
+           :on-mouse-up   (fn [event]
+                            (.stopPropagation event)
+                            (deactivate event))
+           :style         {:position  "relative"
+                           :transform (gstr/format "translateX(%spx) translateY(%spx)"
+                                                   normalized-saturation
+                                                   normalized-lightness)}}
+
+     [:div {:class "origin-bottom-left"
+            :style {:position  "absolute"
+                    :transform (gstr/format "translateY(%spx)" border-size)}}
+      [-centered-dot {:radius            radius
+                      :units-from-origin units-from-origin
+                      :opacity           (str (or opacity 50) "%")}]]]))
+
+(defn translate-origin!
+  [{:keys [mouse-coordinates origin on-change spacing theta]}]
+  ;;(println "Translating origin")
+  (let [{:keys [saturation lightness]} mouse-coordinates
+
+        saturation (clamp saturation {:min 0 :max 100})
+        lightness  (clamp lightness {:min 0 :max 100})
+
+        {:keys [saturation-state lightness-state]} origin]
+    (reset! lightness-state lightness)
+    (reset! saturation-state saturation)
+    (on-change {:saturation saturation
+                :lightness  lightness
+                :spacing    spacing
+                :theta      theta})))
+
+(defn rotate!
+  [{:keys [mouse-coordinates origin on-change spacing theta units-from-origin]}]
+  ;;(println "Rotating about origin")
+  (let [{:keys [saturation lightness]} mouse-coordinates
+        saturation                     (clamp saturation {:min 0 :max 100})
+        lightness                      (clamp lightness {:min 0 :max 100})
+
+        {origin-saturation :saturation
+         origin-lightness  :lightness} origin
+
+        new-spacing (/ (euclidean-distance [saturation lightness]
+                                           [origin-saturation origin-lightness])
+                       units-from-origin)
+
+        dx        (- origin-saturation saturation)
+        dy        (- origin-lightness lightness)
+        new-theta (- 90 (rad->deg (coords->rads dx dy)))
+        ]
+    ;;(js/console.log new-spacing new-theta)
+    (reset! spacing new-spacing)
+    (reset! theta new-theta)
+    (on-change {:saturation origin-saturation
+                :lightness  origin-lightness
+                :spacing    new-spacing
+                :theta      new-theta})))
+
 (defn saturation-lightness-grid
-  [{:keys [grid-size on-change
-           saturation-state lightness-state
-           hue]}]
+  [{:keys [grid-size on-change origin hue]}]
   (let [!grid-ref      (reagent/atom nil)
         active-element (reagent/atom nil)
 
@@ -118,65 +189,58 @@
                     :height   (str grid-size "px")
                     :position "absolute"}
 
-        marker-props {:activate    (fn [event] (reset! active-element (.-target event)))
-                      :deactivate  (fn [_event] (reset! active-element nil))
-                      :radius      10
-                      :border-size grid-size}
+        {:keys [saturation-state lightness-state]} origin
 
-        r     15
-        theta 45]
+        spacing (reagent/atom 15)
+        theta   (reagent/atom 45)
+
+        origin-marker? (fn [el]
+                         (= "0" (.getAttribute el "unitsfromorigin")))]
     (fn []
       [:div {:ref           (fn [el] (reset! !grid-ref el))
-             :on-mouse-move (fn [event]
-                              (.stopPropagation event)
-                              (when @active-element
-                                (let [[new-saturation new-lightness] (calculate-sl-coordinates @!grid-ref event)
-
-                                      new-saturation (clamp new-saturation {:min 0 :max 100})
-                                      new-lightness  (clamp new-lightness {:min 0 :max 100})]
-                                  (reset! lightness-state new-lightness)
-                                  (reset! saturation-state new-saturation)
-                                  (on-change {:saturation new-saturation
-                                              :lightness  new-lightness
-                                              :r          r
-                                              :theta      theta}))))
-             :on-mouse-up   (fn [event]
-                              (.stopPropagation event))
-             :on-mouse-down (fn [event]
-                              (.stopPropagation event))
-             :on-click      (fn [event]
-                              (.stopPropagation event))
+             :on-mouse-move
+             (fn [event]
+               (.stopPropagation event)
+               (when @active-element
+                 (if (origin-marker? @active-element)
+                   (translate-origin! {:mouse-coordinates (calculate-sl-coordinates @!grid-ref event)
+                                       :origin            {:saturation-state saturation-state
+                                                           :lightness-state  lightness-state}
+                                       :on-change         on-change
+                                       :spacing           @spacing
+                                       :theta             @theta})
+                   (rotate! {:mouse-coordinates (calculate-sl-coordinates @!grid-ref event)
+                             :origin            {:saturation @saturation-state
+                                                 :lightness  @lightness-state}
+                             :on-change         on-change
+                             :spacing           spacing
+                             :theta             theta
+                             :units-from-origin (int (.getAttribute @active-element "unitsfromorigin"))}))))
+             :on-mouse-up   (fn [event] (.stopPropagation event))
+             :on-mouse-down (fn [event] (.stopPropagation event))
+             :on-click      (fn [event] (.stopPropagation event))
              :position      "absolute"
              :style         grid-props
              "z-index"      100}
 
        ;; Make the 2d saturation-lightness grid out of 3 overlapping gradients
-       [:div {:style (merge grid-props {:background (hsl hue 100 50)})}]
-       [:div {:style (merge grid-props {:background "linear-gradient(to right, #fff, rgba(255,255,255,0))"})}]
-       [:div {:style (merge grid-props {:background "linear-gradient(to top, #000, rgba(0,0,0,0))"})}]
+       (for [background [(hsl hue 100 50)
+                         "linear-gradient(to right, #fff, rgba(255,255,255,0))"
+                         "linear-gradient(to top, #000, rgba(0,0,0,0))"]]
+         ^{:key (str "background-component-" background)}
+         [:div {:style (merge grid-props
+                              {:background background})}])
 
-       [marker (merge marker-props
-                      {:saturation @saturation-state
-                       :lightness  @lightness-state})]
-       [marker (merge marker-props
-                      (secondary-marker {:base-saturation @saturation-state
-                                         :base-lightness  @lightness-state
-                                         :r               (* r -2)
-                                         :theta           theta
-                                         }))]
-       [marker (merge marker-props
-                      (secondary-marker {:base-saturation @saturation-state
-                                         :base-lightness  @lightness-state
-                                         :r               (- r)
-                                         :theta           theta
-                                         }))]
-       [marker (merge marker-props
-                      (secondary-marker {:base-saturation @saturation-state
-                                         :base-lightness  @lightness-state
-                                         :r               r
-                                         :theta           theta}))]
-       [marker (merge marker-props
-                      (secondary-marker {:base-saturation @saturation-state
-                                         :base-lightness  @lightness-state
-                                         :r               (* 2 r)
-                                         :theta           theta}))]])))
+       (doall
+        (for [n (range -2 3)]
+          ^{:key (str "marker-" n)}
+          [marker {:units-from-origin n
+                   :activate          (fn [event] (reset! active-element (.-target event)))
+                   :deactivate        (fn [_event] (reset! active-element nil))
+                   :radius            10
+                   :border-size       grid-size
+                   :base-saturation   @saturation-state
+                   :base-lightness    @lightness-state
+                   :opacity           (if (zero? n) 70 30)
+                   :r                 (* n @spacing)
+                   :theta             @theta}]))])))
