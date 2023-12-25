@@ -289,20 +289,16 @@
 (defn color-wheel
   [{:keys [initial-palette
            ring-thickness wheel-radius
-           on-change]}]
+           on-change]
+    :or   {on-change (fn [new-palette]
+                       ;;(js/console.log "Updated Palette" new-palette)
+                       )}}]
   (let [{initial-hue        :hue
          initial-saturation :saturation
          initial-lightness  :lightness
          initial-spacing    :spacing
          initial-angle      :angle
          initial-theta      :theta} initial-palette
-
-        hue        (reagent/atom (or initial-hue 0))
-        saturation (reagent/atom (or initial-saturation 50))
-        lightness  (reagent/atom (or initial-lightness 50))
-        spacing    (reagent/atom (or initial-spacing 15))
-        theta      (reagent/atom (or initial-theta 45))
-        angle      (reagent/atom (or initial-angle 45)) ;; secondary angle
 
         palette (reagent/atom {:hue        (or initial-hue 0)
                                :saturation (or initial-saturation 50)
@@ -326,7 +322,11 @@
 
         hue-marker-props {:radius          10
                           :wheel-radius    wheel-radius
-                          :wheel-thickness ring-thickness}]
+                          :wheel-thickness ring-thickness}
+
+        update-palette! (fn [new-palette]
+                          (swap! palette merge new-palette)
+                          (on-change @palette))]
     (fn []
       [:div {:style {:position "relative"}}
        [stack {:direction "row"}
@@ -334,17 +334,14 @@
                         :style          {:width  (str wheel-diameter "px")
                                          :height (str wheel-diameter "px")}
                         :ref            (fn [el] (reset! !color-wheel el))
-                        :on-mouse-down  (fn [_event]
-                                          (reset! hue-active? true))
-                        :on-mouse-up    (fn [_event]
-                                          (reset! hue-active? false))
-                        :on-mouse-leave (fn [_event]
-                                          (reset! hue-active? false))
+                        :on-mouse-down  (fn [_event] (reset! hue-active? true))
+                        :on-mouse-up    (fn [_event] (reset! hue-active? false))
+                        :on-mouse-leave (fn [_event] (reset! hue-active? false))
                         :on-mouse-move  (fn [event]
                                           (when @hue-active?
-                                            (swap! palette merge {:hue (calculate-angle @!color-wheel event)})))
+                                            (update-palette! {:hue (calculate-angle @!color-wheel event)})))
                         :on-click       (fn [event]
-                                          (swap! palette merge {:hue (calculate-angle @!color-wheel event)}))}
+                                          (update-palette! {:hue (calculate-angle @!color-wheel event)}))}
          [:> Donut {:class "thedonut"
                     :style {:width  (str donut-diameter "px")
                             :height (str donut-diameter "px")}}
@@ -354,15 +351,9 @@
                            :transform (gstr/format "translate(%spx,%spx)" offset offset)}}
 
              ^{:key (:hue @palette)}
-             [slg/saturation-lightness-grid
-              {:grid-size sat-lightness-grid-width
-               :hue       (:hue @palette)
-               :on-change (fn [new-coordinates]
-                            ;;(println "New coordinates" new-coordinates)
-                            (swap! palette merge new-coordinates))
-               ;; Trying to get this to work now
-               :origin    palette #_{:saturation-state saturation
-                                     :lightness-state  lightness}}]])]
+             [slg/saturation-lightness-grid {:grid-size sat-lightness-grid-width
+                                             :origin    palette
+                                             :on-change update-palette!}]])]
 
          [hue-marker (merge hue-marker-props {:hue (+ (:hue @palette) 270) :radius 15})]
          [hue-marker (merge hue-marker-props {:hue (+ (:hue @palette) 90) :opacity "10%"})]
@@ -384,14 +375,15 @@
                         :state-key :hue
                         :slider-el [:> ColorBand {:style {:height   control-bar-thickness
                                                           :position "relative"}}
-                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette) 100 50)}
-                                                                   :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
-                                                       :value     (* 100 (/ (:hue @palette) 360))
-                                                       :on-change (fn [event]
-                                                                    (swap! palette merge {:hue (-> event
-                                                                                                   events/event-value
-                                                                                                   (* 360)
-                                                                                                   (/ 100))}))}]]
+                                    [:> NoTrackSlider
+                                     {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette) 100 50)}
+                                                  :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
+                                      :value     (* 100 (/ (:hue @palette) 360))
+                                      :on-change (fn [event]
+                                                   (update-palette! {:hue (-> event
+                                                                              events/event-value
+                                                                              (* 360)
+                                                                              (/ 100))}))}]]
                         :min       0
                         :max       360}]
         [color-control {:max-width wheel-diameter
@@ -400,26 +392,28 @@
                         :slider-el [saturation-band {:hue       (:hue @palette)
                                                      :lightness (:lightness @palette)
                                                      :height    control-bar-thickness}
-                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette)
-                                                                                                     (:saturation @palette)
-                                                                                                     (:lightness @palette))}
-                                                                   :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
-                                                       :value     (:saturation @palette)
-                                                       :on-change (fn [event]
-                                                                    (swap! palette merge {:saturation (events/event-value event)}))}]]}]
+                                    [:> NoTrackSlider
+                                     {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette)
+                                                                                    (:saturation @palette)
+                                                                                    (:lightness @palette))}
+                                                  :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
+                                      :value     (:saturation @palette)
+                                      :on-change (fn [event]
+                                                   (update-palette! {:saturation (events/event-value event)}))}]]}]
         [color-control {:max-width wheel-diameter
                         :state     palette
                         :state-key :lightness
                         :slider-el [lightness-band {:hue        (:hue @palette)
                                                     :saturation (:saturation @palette)
                                                     :height     control-bar-thickness}
-                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette)
-                                                                                                     (:saturation @palette)
-                                                                                                     (:lightness @palette))}
-                                                                   :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
-                                                       :value     (:lightness @palette)
-                                                       :on-change (fn [event]
-                                                                    (swap! palette merge {:lightness (events/event-value event)}))}]]}]
+                                    [:> NoTrackSlider
+                                     {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette)
+                                                                                    (:saturation @palette)
+                                                                                    (:lightness @palette))}
+                                                  :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
+                                      :value     (:lightness @palette)
+                                      :on-change (fn [event]
+                                                   (update-palette! {:lightness (events/event-value event)}))}]]}]
         [value-slider {:label     "Secondary angle"
                        :state     palette
                        :state-key :angle
