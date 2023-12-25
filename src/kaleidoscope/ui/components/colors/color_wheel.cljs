@@ -56,7 +56,9 @@
    (fn [theme]
      (clj->js {:position             "absolute"
                "& .MuiSlider-thumb"  {:width  "50px"
-                                      :height "50px"}
+                                      :height "50px"
+                                      :top    "0px"
+                                      :border "2px solid black"}
                "& .MuiSlider-track"  {"visibility" "hidden"}
                "& .MuiSlider-rail"   {"visibility" "hidden"}
                "& .MuiSlider-active" {"color" "green"}}))))
@@ -209,7 +211,7 @@
 ;; Big components
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn value-slider
-  [{:keys [label state min max max-width]}]
+  [{:keys [label state state-key min max max-width]}]
   [box {:sx {:max-width (str max-width "px")}}
    [typography label]
    [grid {:container   true
@@ -217,36 +219,39 @@
           :align-items "center"}
     [grid {:item true
            :xs   true}
-     [slider {:value     @state
+     [slider {:value     (get @state state-key)
               :min       (or min 0)
               :max       (or max 100)
               :on-change (fn [event]
-                           (reset! state (events/event-value event)))}]]
+                           (swap! state merge {state-key (events/event-value event)}))}]]
     [grid {:item true}
-     [input {:value      @state
+     [input {:value      (get @state state-key)
              :on-change  (fn [event]
-                           (reset! state (events/event-value event)))
+                           (swap! state merge {state-key (events/event-value event)}))
              :inputProps {:step 1
                           :min  (or min 0)
                           :max  (or max 100)
                           :type "number"}}]]]])
 
 (defn color-control
-  [{:keys [max-width state min max slider-el]}]
-  [box {:sx {:max-width     (str max-width "px")
+  [{:keys [max-width state state-key min max slider-el]}]
+  [box {:class "color-control"
+        :sx {:max-width     (str max-width "px")
              :position      "relative"
              :padding-right "10px"}}
    [grid {:container   true
           :spacing     2
           :align-items "center"}
-    [grid {:item true
+    [grid {:class "slider-container"
+           :item true
            :xs   9}
      slider-el]
     [grid {:item true
            :xs   3}
-     [input {:value      @state
+     [input {:class      "slider-input"
+             :value      (get @state state-key)
              :on-change  (fn [event]
-                           (reset! state (events/event-value event)))
+                           (swap! state merge {state-key (events/event-value event)}))
              :inputProps {:step 1
                           :min  (or min 0)
                           :max  (or max 100)
@@ -282,23 +287,42 @@
 ;; my browser, it seems to be performing OK using `transform: translate(X)
 ;; rotate(Y)` Could also try putting in `react/useEffect`...
 (defn color-wheel
-  [{:keys [initial-hue initial-saturation initial-lightness
-           initial-angle
-           ring-thickness wheel-radius]}]
-  (let [hue          (reagent/atom (or initial-hue 0))
-        saturation   (reagent/atom (or initial-saturation 50))
-        lightness    (reagent/atom (or initial-lightness 50))
-        spacing      (reagent/atom 15)
-        theta        (reagent/atom 45)
-        angle        (reagent/atom (or initial-angle 45)) ;; secondary angle
+  [{:keys [initial-palette
+           ring-thickness wheel-radius
+           on-change]}]
+  (let [{initial-hue        :hue
+         initial-saturation :saturation
+         initial-lightness  :lightness
+         initial-spacing    :spacing
+         initial-angle      :angle
+         initial-theta      :theta} initial-palette
+
+        hue        (reagent/atom (or initial-hue 0))
+        saturation (reagent/atom (or initial-saturation 50))
+        lightness  (reagent/atom (or initial-lightness 50))
+        spacing    (reagent/atom (or initial-spacing 15))
+        theta      (reagent/atom (or initial-theta 45))
+        angle      (reagent/atom (or initial-angle 45)) ;; secondary angle
+
+        palette (reagent/atom {:hue        (or initial-hue 0)
+                               :saturation (or initial-saturation 50)
+                               :lightness  (or initial-lightness 50)
+                               :spacing    (or initial-spacing 15)
+                               :theta      (or initial-theta 45)
+                               :angle      (or initial-angle 45)})
+        ;; Replace all @hue with hue from palette
+        ;; Extract all HSL Angle etc to single state store.
+        ;; then on-change update the entire store
+
         hue-active?  (reagent/atom false)
         !color-wheel (reagent/atom nil)
 
-        ring-thickness        (or ring-thickness 50)
-        wheel-radius          (or wheel-radius 200)
-        wheel-diameter        (* wheel-radius 2)
-        donut-diameter        (* 2 (- wheel-radius ring-thickness))
-        control-bar-thickness (/ ring-thickness 2)
+        ring-thickness           (or ring-thickness 50)
+        wheel-radius             (or wheel-radius 200)
+        wheel-diameter           (* wheel-radius 2)
+        donut-diameter           (* 2 (- wheel-radius ring-thickness))
+        control-bar-thickness    (/ ring-thickness 2)
+        sat-lightness-grid-width (/ donut-diameter (js/Math.sqrt 2))
 
         hue-marker-props {:radius          10
                           :wheel-radius    wheel-radius
@@ -318,80 +342,87 @@
                                           (reset! hue-active? false))
                         :on-mouse-move  (fn [event]
                                           (when @hue-active?
-                                            (reset! hue (calculate-angle @!color-wheel event))))
+                                            (swap! palette merge {:hue (calculate-angle @!color-wheel event)})))
                         :on-click       (fn [event]
-                                          (reset! hue (calculate-angle @!color-wheel event)))}
+                                          (swap! palette merge {:hue (calculate-angle @!color-wheel event)}))}
          [:> Donut {:class "thedonut"
                     :style {:width  (str donut-diameter "px")
                             :height (str donut-diameter "px")}}
-          [:div {:style {:position "relative"
-                         :left     (str (/ wheel-radius 4) "px")
-                         :top      (str (/ wheel-radius 4) "px")}}
+          (let [offset (- (/ donut-diameter 2)
+                          (/ sat-lightness-grid-width 2))]
+            [:div {:style {:position  "relative"
+                           :transform (gstr/format "translate(%spx,%spx)" offset offset)}}
 
-           ^{:key @hue}
-           [slg/saturation-lightness-grid
-            {:grid-size wheel-radius
-             :hue       @hue
-             :on-change (fn [new-coordinates]
-                          ;;(println "New coordinates" new-coordinates)
-                          (reset! saturation (:saturation new-coordinates))
-                          (reset! lightness (:lightness new-coordinates))
-                          (reset! spacing (:spacing new-coordinates))
-                          (reset! theta (:theta new-coordinates)))
-             :origin    {:saturation-state saturation
-                         :lightness-state  lightness}}]]]
+             ^{:key (:hue @palette)}
+             [slg/saturation-lightness-grid
+              {:grid-size sat-lightness-grid-width
+               :hue       (:hue @palette)
+               :on-change (fn [new-coordinates]
+                            ;;(println "New coordinates" new-coordinates)
+                            (swap! palette merge new-coordinates))
+               ;; Trying to get this to work now
+               :origin    palette #_{:saturation-state saturation
+                                     :lightness-state  lightness}}]])]
 
-         [hue-marker (merge hue-marker-props {:hue (+ @hue 270) :radius 15})]
-         [hue-marker (merge hue-marker-props {:hue (+ @hue 90) :opacity "10%"})]
-         [hue-marker (merge hue-marker-props {:hue (+ @hue 90 @angle) :opacity "30%"})]
-         [hue-marker (merge hue-marker-props {:hue (+ @hue 90 (- @angle)) :opacity "30%"})]]
-        [color-squares {:size          wheel-radius
-                        :primary       @hue
-                        :complementary (+ @hue 180)
-                        :secondary     (+ @hue 180 @angle)
-                        :tertiary      (+ @hue 180 (- @angle))
-                        :saturation    @saturation
-                        :lightness     @lightness
-                        :spacing       @spacing
-                        :theta         @theta}]]
+         [hue-marker (merge hue-marker-props {:hue (+ (:hue @palette) 270) :radius 15})]
+         [hue-marker (merge hue-marker-props {:hue (+ (:hue @palette) 90) :opacity "10%"})]
+         [hue-marker (merge hue-marker-props {:hue (+ (:hue @palette) 90 (:angle @palette)) :opacity "30%"})]
+         [hue-marker (merge hue-marker-props {:hue (+ (:hue @palette) 90 (- (:angle @palette))) :opacity "30%"})]]
+        [color-squares (merge {:size          wheel-radius
+                               :primary       (:hue @palette)
+                               :complementary (+ (:hue @palette) 180)
+                               :secondary     (+ (:hue @palette) 180 (:angle @palette))
+                               :tertiary      (+ (:hue @palette) 180 (- (:angle @palette)))}
+                              @palette)]]
 
        ;; Controls
        [:br]
        [stack {:direction "column"
                :spacing   3}
         [color-control {:max-width wheel-diameter
-                        :state     hue
+                        :state     palette
+                        :state-key :hue
                         :slider-el [:> ColorBand {:style {:height   control-bar-thickness
                                                           :position "relative"}}
-                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue 100 50)}}
-                                                       :value     (* 100 (/ @hue 360))
+                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette) 100 50)}
+                                                                   :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
+                                                       :value     (* 100 (/ (:hue @palette) 360))
                                                        :on-change (fn [event]
-                                                                    (reset! hue (-> event
-                                                                                    events/event-value
-                                                                                    (* 360)
-                                                                                    (/ 100))))}]]
+                                                                    (swap! palette merge {:hue (-> event
+                                                                                                   events/event-value
+                                                                                                   (* 360)
+                                                                                                   (/ 100))}))}]]
                         :min       0
                         :max       360}]
         [color-control {:max-width wheel-diameter
-                        :state     saturation
-                        :slider-el [saturation-band {:hue       @hue
-                                                     :lightness @lightness
+                        :state     palette
+                        :state-key :saturation
+                        :slider-el [saturation-band {:hue       (:hue @palette)
+                                                     :lightness (:lightness @palette)
                                                      :height    control-bar-thickness}
-                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue @saturation @lightness)}}
-                                                       :value     @saturation
+                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette)
+                                                                                                     (:saturation @palette)
+                                                                                                     (:lightness @palette))}
+                                                                   :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
+                                                       :value     (:saturation @palette)
                                                        :on-change (fn [event]
-                                                                    (reset! saturation (events/event-value event)))}]]}]
+                                                                    (swap! palette merge {:saturation (events/event-value event)}))}]]}]
         [color-control {:max-width wheel-diameter
-                        :state     lightness
-                        :slider-el [lightness-band {:hue        @hue
-                                                    :saturation @saturation
+                        :state     palette
+                        :state-key :lightness
+                        :slider-el [lightness-band {:hue        (:hue @palette)
+                                                    :saturation (:saturation @palette)
                                                     :height     control-bar-thickness}
-                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl @hue @saturation @lightness)}}
-                                                       :value     @lightness
+                                    [:> NoTrackSlider {:sx        {"& .MuiSlider-thumb" {:color (hsl (:hue @palette)
+                                                                                                     (:saturation @palette)
+                                                                                                     (:lightness @palette))}
+                                                                   :transform           (gstr/format "translate(0px,%spx)" (/ control-bar-thickness 2))}
+                                                       :value     (:lightness @palette)
                                                        :on-change (fn [event]
-                                                                    (reset! lightness (events/event-value event)))}]]}]
+                                                                    (swap! palette merge {:lightness (events/event-value event)}))}]]}]
         [value-slider {:label     "Secondary angle"
-                       :state     angle
+                       :state     palette
+                       :state-key :angle
                        :max-width wheel-diameter
                        :max       180}]]])))
 

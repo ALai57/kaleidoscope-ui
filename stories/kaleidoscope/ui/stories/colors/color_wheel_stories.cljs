@@ -13,9 +13,14 @@
                  {:description
                   {:component "A hue-based color wheel"}}}
 
-    :args     {:initial-hue 0}
+    :args     {:initial-hue     0
+               :initial-palette {:hue 0}}
     :argTypes {:initial-hue {:description  "The initial hue angle to start with (degrees - 0 is red)"
                              :defaultValue 0}}}))
 
 (def ^:export Default
   (clj->js {:args {}}))
+
+(def ^:export Bigger
+  (clj->js {:args {:wheel-radius   300
+                   :ring-thickness 100}}))

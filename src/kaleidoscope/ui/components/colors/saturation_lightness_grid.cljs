@@ -139,30 +139,25 @@
                       :opacity           (str (or opacity 50) "%")}]]]))
 
 (defn translate-origin!
-  [{:keys [mouse-coordinates origin on-change spacing theta]}]
+  [{:keys [mouse-coordinates origin on-change]}]
   ;;(println "Translating origin")
   (let [{:keys [saturation lightness]} mouse-coordinates
 
         saturation (clamp saturation {:min 0 :max 100})
-        lightness  (clamp lightness {:min 0 :max 100})
-
-        {:keys [saturation-state lightness-state]} origin]
-    (reset! lightness-state lightness)
-    (reset! saturation-state saturation)
-    (on-change {:saturation saturation
-                :lightness  lightness
-                :spacing    spacing
-                :theta      theta})))
+        lightness  (clamp lightness {:min 0 :max 100})]
+    (swap! origin merge {:lightness  lightness
+                         :saturation saturation})
+    (on-change @origin)))
 
 (defn rotate!
-  [{:keys [mouse-coordinates origin on-change spacing theta units-from-origin]}]
+  [{:keys [mouse-coordinates origin on-change units-from-origin]}]
   ;;(println "Rotating about origin")
   (let [{:keys [saturation lightness]} mouse-coordinates
         saturation                     (clamp saturation {:min 0 :max 100})
         lightness                      (clamp lightness {:min 0 :max 100})
 
         {origin-saturation :saturation
-         origin-lightness  :lightness} origin
+         origin-lightness  :lightness} @origin
 
         new-spacing (/ (euclidean-distance [saturation lightness]
                                            [origin-saturation origin-lightness])
@@ -173,26 +168,18 @@
         new-theta (- 90 (rad->deg (coords->rads dx dy)))
         ]
     ;;(js/console.log new-spacing new-theta)
-    (reset! spacing new-spacing)
-    (reset! theta new-theta)
-    (on-change {:saturation origin-saturation
-                :lightness  origin-lightness
-                :spacing    new-spacing
-                :theta      new-theta})))
+    (swap! origin merge {:spacing new-spacing
+                         :theta   new-theta})
+    (on-change @origin)))
 
 (defn saturation-lightness-grid
-  [{:keys [grid-size on-change origin hue]}]
+  [{:keys [grid-size on-change origin]}]
   (let [!grid-ref      (reagent/atom nil)
         active-element (reagent/atom nil)
 
         grid-props {:width    (str grid-size "px")
                     :height   (str grid-size "px")
                     :position "absolute"}
-
-        {:keys [saturation-state lightness-state]} origin
-
-        spacing (reagent/atom 15)
-        theta   (reagent/atom 45)
 
         origin-marker? (fn [el]
                          (= "0" (.getAttribute el "unitsfromorigin")))]
@@ -204,17 +191,11 @@
                (when @active-element
                  (if (origin-marker? @active-element)
                    (translate-origin! {:mouse-coordinates (calculate-sl-coordinates @!grid-ref event)
-                                       :origin            {:saturation-state saturation-state
-                                                           :lightness-state  lightness-state}
-                                       :on-change         on-change
-                                       :spacing           @spacing
-                                       :theta             @theta})
+                                       :origin            origin
+                                       :on-change         on-change})
                    (rotate! {:mouse-coordinates (calculate-sl-coordinates @!grid-ref event)
-                             :origin            {:saturation @saturation-state
-                                                 :lightness  @lightness-state}
+                             :origin            origin
                              :on-change         on-change
-                             :spacing           spacing
-                             :theta             theta
                              :units-from-origin (int (.getAttribute @active-element "unitsfromorigin"))}))))
              :on-mouse-up   (fn [event] (.stopPropagation event))
              :on-mouse-down (fn [event] (.stopPropagation event))
@@ -224,7 +205,7 @@
              "z-index"      100}
 
        ;; Make the 2d saturation-lightness grid out of 3 overlapping gradients
-       (for [background [(hsl hue 100 50)
+       (for [background [(hsl (:hue @origin) 100 50)
                          "linear-gradient(to right, #fff, rgba(255,255,255,0))"
                          "linear-gradient(to top, #000, rgba(0,0,0,0))"]]
          ^{:key (str "background-component-" background)}
@@ -239,8 +220,8 @@
                    :deactivate        (fn [_event] (reset! active-element nil))
                    :radius            10
                    :border-size       grid-size
-                   :base-saturation   @saturation-state
-                   :base-lightness    @lightness-state
+                   :base-saturation   (:saturation @origin)
+                   :base-lightness    (:lightness @origin)
                    :opacity           (if (zero? n) 70 30)
-                   :r                 (* n @spacing)
-                   :theta             @theta}]))])))
+                   :r                 (* n (:spacing @origin))
+                   :theta             (:theta @origin)}]))])))
