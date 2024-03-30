@@ -365,7 +365,7 @@
      [:> navbar/zoom-icon {:style {:float            "left"
                                    :height           "48px"
                                    :margin-right     "20px"}}
-      [:img.navbutton {:src      (img-path "favicon.svg")
+      [:img.navbutton {:src      (img-path "static/favicon.svg")
                        :style    {:height "48px"}
                        :on-click (fn [event]
                                    (reset! show-modal true))}]]

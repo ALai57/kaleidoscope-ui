@@ -107,7 +107,7 @@
 
 (defn book
   []
-  (let [gltf  (drei/useGLTF "/corporis-fabrica/scene.gltf")
+  (let [gltf  (drei/useGLTF "static/corporis-fabrica/scene.gltf")
         scene (.-scene gltf)]
     ;;(js/console.log "********************")
     ;;(js/console.log (.. gltf -scene -position -x))
@@ -121,7 +121,7 @@
                              )
                  :position [0 0 0]}]))
 
-(drei/useGLTF.preload "/corporis-fabrica/scene.gltf")
+(drei/useGLTF.preload "static/corporis-fabrica/scene.gltf")
 
 (defn demo
   []

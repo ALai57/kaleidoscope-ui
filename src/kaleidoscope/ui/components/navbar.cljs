@@ -38,7 +38,7 @@
      [container {:max-width "xl"}
       [toolbar {:disable-gutters true}
        [:> zoom-icon {:href "#/home"}
-        [:img.navbutton {:src      "images/nav-bar/favicon.svg"
+        [:img.navbutton {:src      "static/images/nav-bar/favicon.svg"
                          :on-click navigate-home!}]]
        ;; Spacing - before this goes left and after goes right
        [box {:sx {:flex-grow 1}}]

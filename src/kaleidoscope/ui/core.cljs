@@ -16,6 +16,12 @@
             [kaleidoscope.ui.events.ui-customization]
             [kaleidoscope.ui.subs]
             [kaleidoscope.ui.utils.core :as u]
+
+            [kaleidoscope.ui.pages.home            :as page.home]
+            [reitit.frontend :as rf]
+            [reitit.frontend.easy :as rfe]
+            [reitit.coercion.spec :as rss]
+
             [re-frame.core :refer [dispatch dispatch-sync]]
             [secretary.core :as secretary]
             [shadow.lazy :as lazy]
@@ -64,13 +70,31 @@
   (u/lazy-component (lazy/loadable kaleidoscope.ui.views/app)))
 
 
+(def routes
+  [["/test"
+    {:name ::home
+     :view page.home/home}]])
+
 ;; Support for React 18
+;; `kaleidoscope.ui.views/app` is the root view for the entire UI.
 (defonce root
   (react-dom/createRoot (gdom/getElement "app")))
 
+
+
+#_(defn init! []
+    (r/render [current-page] (.getElementById js/document "app")))
+
+(defonce match (r/atom nil))
+
+(rfe/start!
+ (rf/router routes {:data {:coercion rss/coercion}})
+ (fn [m] (reset! match m))
+ ;; set to false to enable HistoryAPI
+ {:use-fragment true})
+
 (defn ^:export main
   []
-  ;; `kaleidoscope.ui.views/app` is the root view for the entire UI.
   (.render root
            (r/as-element [:> bugsnag/ErrorBoundary
                           [app {:fallback (fn []

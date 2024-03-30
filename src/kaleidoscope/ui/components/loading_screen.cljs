@@ -10,7 +10,7 @@
   ([{:keys [color]
      :or   {color "primary"}
      :as   x}]
-   [:div {:style {:background-image      "url(\"/images/nav-bar/favicon.svg\")"
+   [:div {:style {:background-image      "url(\"/static/images/nav-bar/favicon.svg\")"
                   :background-color      "#333333"
                   :background-size       "40vmin"
                   :background-repeat     "no-repeat"
