@@ -1,12 +1,13 @@
 #!/bin/bash
 
-# Deploy images
-aws s3 cp --recursive ./resources/public/images/nav-bar s3://andrewslai/images/nav-bar
-aws s3 cp --recursive ./resources/public/css            s3://andrewslai/css
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
-aws s3 cp ./resources/public/images/images.svg     s3://andrewslai/images/images.svg
-aws s3 cp ./resources/public/images/writing.svg    s3://andrewslai/images/writing.svg
-aws s3 cp ./resources/public/images/audiences.svg  s3://andrewslai/images/audiences.svg
+pushd "$SCRIPT_DIR/../../"
 
-aws s3 cp -r ./resources/public/corporis-fabrica   s3://andrewslai/corporis-fabrica/
-aws s3 cp ./resources/public/index.html            s3://andrewslai/index.html
+echo "Deploying frontend to kaleidoscope bucket..."
+
+aws s3 sync resources/static s3://andrewslai/static \
+    --exclude "*/cljs-runtime/*" \
+    --exclude "*/shareable_stories/*" # --dryrun
+
+popd
