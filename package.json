@@ -68,7 +68,7 @@
     "deploy": "./scripts/deployment/deploy-to-s3",
     "bump": "shadow-cljs run deploy.bump-version/increment",
     "pack": "webpack --watch",
-    "storybook": "storybook dev -s ../resources/public -p 6006",
+    "storybook": "storybook dev -s ../resources/static -p 6006",
     "build-storybook": "storybook build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
