@@ -15,7 +15,7 @@
 (def Paper
   ((styled paper/default)
    (fn [obj]
-     (let [spacing-fn (.. obj -theme -spacing)]
+     (let [spacing-fn (.. ^js obj -theme -spacing)]
        (clj->js {:transition "transform 0.3s"
                  :padding    (spacing-fn 2)
                  :text-align "center"})))))
