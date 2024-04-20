@@ -6,6 +6,7 @@
             [kaleidoscope.ui.components.modal :refer [basic-modal]]
             [goog.string :as gstr]
             [reagent-mui.components :refer [stack paper typography]]
+            [reagent.core :as reagent]
             [taoensso.timbre :refer-macros [info]]
             ))
 
@@ -28,9 +29,17 @@
 (defn modal-notifier
   [response]
   (cond
-    (success? response) [basic-modal (assoc (authentication-success) :open? true)]
+    (success? response) (let [open (reagent/atom true)]
+                          (fn []
+                            [basic-modal (assoc (authentication-success)
+                                                :open?    @open
+                                                :on-close (partial reset! open false))]))
     (nil? response)     nil
-    :else               [basic-modal (assoc (authentication-failure) :open? true)]))
+    :else               (let [open (reagent/atom true)]
+                          (fn []
+                            [basic-modal (assoc (authentication-failure)
+                                                :open?    @open
+                                                :on-close (partial reset! open false))]))))
 
 (defn snackbar-notifier
   [response]
