@@ -23,5 +23,5 @@
                             :secondary {:main secondary}
                             :error     {:main (aget red 600)}
                             :success   {:main (aget green 600)}
-                            :accent    {:main "#e3bef6"}}
+                            :accent    {:main tertiary}}
               :transitions {}})))

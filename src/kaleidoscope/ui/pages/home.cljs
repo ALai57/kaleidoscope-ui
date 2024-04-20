@@ -12,29 +12,23 @@
             [reagent.core :as reagent]
             ))
 
-(defn home [{:keys [user notification-type]}]
-  (let [theme (reagent/atom theme/BASE-THEME)]
-    (fn []
-      [:div {:style {:min-height "100vh"}}
-       [nav/nav-bar {:user              user
-                     :notification-type notification-type}]
-       [box {:display        "flex"
-             :alignItems     "center"
-             :justifyContent "center"}
-        [:f> cw/color-wheel {:wheel-radius   200
-                             :ring-thickness 60
-                             :on-change      (fn reset-theme
-                                               [event]
-                                               (reset! theme (theme/make-theme event))
-                                               )}]]
+(defn home [{:keys [user notification-type theme-event-handlers]}]
+  (fn []
+    [:div {:style {:min-height "100vh"}}
+     [nav/nav-bar {:user              user
+                   :notification-type notification-type}]
+     [box {:display        "flex"
+           :alignItems     "center"
+           :justifyContent "center"}
+      [:f> cw/color-wheel {:wheel-radius   200
+                           :ring-thickness 60
+                           :on-change      (:on-change theme-event-handlers)}]]
 
-       [:br]
-       [:br]
+     [:br]
+     [:br]
 
-       [:> mui/ThemeProvider
-        {:theme (createTheme @theme)}
-        [box {:display        "flex"
-              :alignItems     "center"
-              :justifyContent "center"}
-         [button/button {:text "Example button"}]]]
-       #_[demo/demo]])))
+     [box {:display        "flex"
+           :alignItems     "center"
+           :justifyContent "center"}
+      [button/button {:text "Example button"}]]
+     #_[demo/demo]]))

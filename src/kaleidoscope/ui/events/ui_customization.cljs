@@ -18,3 +18,8 @@
     {:http-xhrio (merge (scope-client/get-themes)
                         {:on-success      [:get-themes.success]
                          :on-failure      [:get-themes.failure]})}))
+
+(reg-event-db :set-local-theme
+  (fn [db [_ new-theme]]
+    (infof "Reset local theme")
+    (assoc db :theme new-theme)))

@@ -13,6 +13,7 @@
             [kaleidoscope.ui.components.loading-screen :as loading]
             [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
+            [reagent.core :as reagent]
             ["react" :as react]
             [re-frame.core :refer [subscribe dispatch]]
             [shadow.lazy :as lazy]
@@ -82,10 +83,11 @@
              :editor          (u/lazy-component (lazy/loadable kaleidoscope.ui.pages.article-editor/editor-ui))})
 
 (defn app []
-  (let [active-panel @(subscribe [:active-panel])]
+  (let [active-panel @(subscribe [:active-panel])
+        theme        (createTheme @(subscribe [:theme]))]
     (infof "Currently displayed panel %s" active-panel)
     [:> mui/ThemeProvider
-     {:theme (createTheme theme/BASE-THEME)}
+     {:theme theme}
      [:div {:style {:min-height "100vh"}}
       [(get panels active-panel page.home/home)
        {;; General settings
@@ -97,6 +99,9 @@
 
         ;; User actions
         :user-event-handlers user-event-handlers
+        :theme-event-handlers {:on-change (fn [new-color-coordinates]
+
+                                            (dispatch [:set-local-theme (theme/make-theme new-color-coordinates)]))}
 
         ;; Fallback if loading
         :fallback (fn []

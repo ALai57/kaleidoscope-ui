@@ -111,6 +111,10 @@
  (fn [db]
    (:images-metadata db)))
 
+(reg-sub
+ :theme
+ (fn [db]
+   (:theme db)))
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;
