@@ -84,10 +84,10 @@
 
 (defn app []
   (let [active-panel @(subscribe [:active-panel])
-        theme        (createTheme @(subscribe [:theme]))]
+        theme        @(subscribe [:theme])]
     (infof "Currently displayed panel %s" active-panel)
     [:> mui/ThemeProvider
-     {:theme theme}
+     {:theme (createTheme (theme/make-theme theme))}
      [:div {:style {:min-height "100vh"}}
       [(get panels active-panel page.home/home)
        {;; General settings
@@ -98,10 +98,10 @@
         :user @(subscribe [:user-profile])
 
         ;; User actions
-        :user-event-handlers user-event-handlers
+        :user-event-handlers  user-event-handlers
+        :theme                theme
         :theme-event-handlers {:on-change (fn [new-color-coordinates]
-
-                                            (dispatch [:set-local-theme (theme/make-theme new-color-coordinates)]))}
+                                            (dispatch [:set-local-theme new-color-coordinates]))}
 
         ;; Fallback if loading
         :fallback (fn []

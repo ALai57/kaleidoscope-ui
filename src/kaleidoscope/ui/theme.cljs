@@ -12,7 +12,11 @@
             :transitions #js {}}))
 
 (def BASE-THEME
-  DEFAULT)
+  {:hue        217
+   :saturation 65
+   :lightness  40
+   :angle      103
+   :theta      45})
 
 (defn make-theme
   [{:keys [hue saturation lightness spacing theta angle] :as clj-theme}]

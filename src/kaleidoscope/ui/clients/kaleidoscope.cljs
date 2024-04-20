@@ -183,3 +183,12 @@
    :uri             "/themes"
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn update-theme!
+  [{:keys [config id display-name] :as theme}]
+  {:method          :put
+   :uri             (gstr/format "/themes/%s" id)
+   :params          theme
+   :headers         {:Content-Type "application/json"}
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})

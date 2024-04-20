@@ -6,7 +6,9 @@
 (reg-event-db :get-themes.success
   (fn [db [_ response]]
     (infof "Loaded %s themes" (count response))
-    (assoc db :themes response)))
+    (let [first-theme (first response)]
+      (infof "Using first theme: %s" first-theme)
+      (assoc db :theme (:config first-theme)))))
 
 (reg-event-db :get-themes.failure
   (fn [db [_ response]]
@@ -21,5 +23,28 @@
 
 (reg-event-db :set-local-theme
   (fn [db [_ new-theme]]
-    (infof "Reset local theme")
+    ;;(infof "Reset local theme")
     (assoc db :theme new-theme)))
+
+
+(reg-event-db :add-theme.success
+  (fn [db [_ response]]
+    (assoc db :theme-response {:status 200
+                               :body   response})))
+
+(reg-event-db :add-theme.failure
+  (fn [db [_ response]]
+    (assoc db :theme-response {:status nil
+                               :body   response})))
+
+(reg-event-fx :save-theme!
+  (fn [{:keys [db]} [_ clj-theme]]
+    (infof "Persisting theme: " clj-theme)
+    (let [token (or (.-token (:keycloak db)) "test")]
+      {:http-xhrio (merge (-> (scope-client/update-theme! {:config       clj-theme
+                                                           :id           "00000000-0000-0000-0000-000000000000"
+                                                           :display-name "My test theme"})
+                              (scope-client/with-authorization token))
+                          {:on-success      [:add-theme.success]
+                           :on-failure      [:add-theme.failure]})
+       :db         (assoc db :theme-response nil)})))
