@@ -9,8 +9,8 @@ figwheel_server.log
 log.txt
 node_modules
 build-reports
-resources/public/js/compiled/
-resources/public/js/test/
+resources/static/js/compiled/
+resources/static/js/test/
 /public/
 
 .idea/

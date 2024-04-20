@@ -1,15 +1,12 @@
 (ns kaleidoscope.ui.components.article-cards
   (:require ["react" :as react]
+            ["@mui/material/styles" :refer [useTheme]]
             ["@styled-icons/remix-fill/GitBranch" :refer [GitBranch]]
             [kaleidoscope.ui.utils.core :as u]
-            [clojure.string :as str]
-            [re-frame.core :refer [subscribe]]
-            [reagent.core :as reagent :refer [adapt-react-class]]
+            [reagent.core :as reagent]
             [reagent-mui.components :refer [card card-action-area
                                             accordion accordion-details accordion-summary
                                             button]]
-            [goog.date.DateTime :as gdatetime]
-            [goog.i18n.DateTimeFormat :as gdatetimefmt]
             [goog.string :as gstr]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -17,26 +14,31 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn article-tags->icon [article-tags]
   (case article-tags
-    "research" "/images/nav-bar/neuron-icon.svg"
-    "archive"  "/images/nav-bar/archive-icon.svg"
-    "about"    "/images/nav-bar/andrew-silhouette-icon.svg"
-    "thoughts" "/images/nav-bar/andrew-head-icon.svg"
-    "/images/nav-bar/unknown-user.svg"))
+    "research" "static/images/nav-bar/neuron-icon.svg"
+    "archive"  "static/images/nav-bar/archive-icon.svg"
+    "about"    "static/images/nav-bar/andrew-silhouette-icon.svg"
+    "thoughts" "static/images/nav-bar/andrew-head-icon.svg"
+    "images/nav-bar/unknown-user.svg"))
 
 (defn article-card
-  [{:keys [article-tags article-title article-url article-id created-at] :as article}]
-  [card {:class "text-white bg-light mb-3 article-card"}
-   [:div.container-fluid
-    [:div.row.flex-items-xs-middle
-     [:div.col-sm-3.bg-primary.text-xs-center.card-icon
-      [:div.p-y-3
-       [:h1.p-y-2
-        [:img.fa.fa-2x {:src (article-tags->icon article-tags)
-                        :style {:width "100%"}}]]]]
-     [:div.col-sm-9.bg-light.text-dark.card-description
-      [:h5.card-title>a {:href (gstr/format "#/%s/content/%s" article-tags article-url)}
-       article-title]
-      [:p.card-text (u/date created-at)]]]]])
+  [{:keys [article-tags article-title article-url article-id created-at summary] :as article}]
+  (let [palette (:palette (u/clojurize (useTheme)))]
+    [card {:class "text-white bg-light mb-3 article-card"}
+     [:div.container-fluid
+      [:div.row
+       [:div.text-xs-center.card-icon {:style {:background (gstr/format "linear-gradient(30deg, %s 6%, %s 100%)"
+                                                                        (get-in palette [:primary :main])
+                                                                        (get-in palette [:accent :main]))}}
+        [:div.p-y-2
+         [:h1.p-y-2
+          [:img.fa.fa-2x {:src   (article-tags->icon article-tags)
+                          :style {:width "100%"}}]]]]
+       [:div.col-sm-9.text-dark.card-description
+        [:h5.card-title>a {:href (gstr/format "#/content/%s" article-url)}
+         article-title]
+        [:p.card-text (u/date created-at)]
+        [:p.card-text summary]]]]]))
+
 
 (defn truncate
   [article-title chars-per-row rows]
@@ -125,16 +127,8 @@
 
 (defn recent-content-cards
   [{:keys [recent-content]}]
-  [:div#recent-content
+  [:div#recent-content {:style {:display         "grid"
+                                :justify-content "center"}}
    [:div#recent-article-cards.card-group
-    (for [article recent-content]
-      ^{:key (str article)} [article-card article])]])
-
-(defn recent-content-display
-  [content-type]
-  (let [recent-content @(subscribe [:recent-content])
-        the-content (if content-type
-                      (filter #(= (:article-tags %1) content-type)
-                              recent-content)
-                      recent-content)]
-    [recent-content-cards {:recent-content the-content}]))
+    (for [article (reverse (sort-by :published-at recent-content))]
+      ^{:key (str article)} [:f> article-card article])]])

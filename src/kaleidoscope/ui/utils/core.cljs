@@ -57,8 +57,11 @@
 
 (defn format-date
   [date-fmt s]
-  (let [formatter (new goog.i18n.DateTimeFormat date-fmt)]
-    (.format formatter (gdatetime/fromIsoString s))))
+  (try
+    (let [formatter (new goog.i18n.DateTimeFormat date-fmt)]
+      (.format formatter (gdatetime/fromIsoString s)))
+    (catch js/Object _e
+      "Couldn't format date")))
 
 (defn err-boundary
   "https://lilac.town/writing/modern-react-in-cljs-error-boundaries/"

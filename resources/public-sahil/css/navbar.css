@@ -3,13 +3,6 @@
 
 
 /* Smartphones (portrait) ———– */
-#primary-nav {
-	overflow: hidden;
-	background-color: #2f1b56;
-	height: 90px;
-	min-width: 320px;
-}
-
 
 .navbutton {
 	vertical-align: middle;
@@ -27,13 +20,6 @@
 
 /* Smartphones (landscape) ———– */
 @media only screen and (min-width: 450px) {
-
-	#primary-nav {
-	    overflow: hidden;
-	    background-color: #2f1b56;
-	    height: 80px;
-	}
-
 
 	.navbutton {
 	    vertical-align: middle;

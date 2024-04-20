@@ -1,65 +1,73 @@
 (ns kaleidoscope.ui.components.navbar
-  (:require [kaleidoscope.ui.components.modal :as modal]
-            [kaleidoscope.ui.components.side-menu :as side-menu]
-            [reagent.core :as reagent]
-            [reagent-mui.icons.manage-accounts :refer [manage-accounts]]
-            [reagent-mui.components :refer [avatar badge]]
-            [reagent-mui.icons.menu :refer [menu]]
-            [reagent-mui.icons.help :refer [help]]
-            [reagent-mui.icons.check-circle :refer [check-circle]]
-            [re-frame.core :refer [dispatch subscribe]]))
+  (:require ["@mui/material/styles" :refer [styled useTheme]]
+            [reagent-mui.icons.edit :refer [edit]]
+            [goog.string :as gstr]
+            [kaleidoscope.ui.utils.core :as u]
+            [re-frame.core :refer [dispatch]]
+            [reagent-mui.components :refer [app-bar avatar box container toolbar]]))
 
-(def nav-images-path "images/nav-bar/")
 
 (defn navigate-home!
   []
   (dispatch [:set-active-panel :home]))
 
-(defn- nav-icon
-  [route src]
-  [:a.zoom-icon {:href (str "#/" route)}
-   [:img.navbutton
-    {:src      src
-     :on-click #(dispatch [:set-active-panel (keyword route)])}]])
+(defn navigate-manager!
+  []
+  (dispatch [:set-active-panel :manager]))
 
-(defn img-path
-  [fname]
-  (str nav-images-path fname))
+(defn navigate-archive!
+  []
+  (dispatch [:set-active-panel :archive]))
 
-(defn login-icon
-  [route src user]
-  [:a.zoom-icon {:href (str "#/" route)}
-   [badge {:overlap       "circular"
-           :class         "navbutton"
-           :anchor-origin {:vertical   "bottom"
-                           :horizontal "right"}
-           :badge-content (if user
-                            (reagent/as-element [check-circle {:font-size "large"
-                                                               :sx        {:padding-bottom   "10px"
-                                                                           :padding-right    "10px"
-                                                                           :color            "green"
-                                                                           :background-color "#333333"}}])
-                            (reagent/as-element [help {:font-size "large"
-                                                       :sx        {:color            "primary.main"
-                                                                   :padding-bottom   "10px"
-                                                                   :padding-right    "10px"
-                                                                   :background-color "#333333"}}]))}
-    [avatar {:alt       (if user (:firstName user) "Not logged in")
-             :class     "navbutton"
-             :sx        {:width  "inherit"
-                         :height "inherit"}
-             :img-props {:class "navbutton"}
-             :src       src}]]])
+(def zoom-icon
+  ((styled "a")
+   (fn [{:keys [theme]}]
+     (clj->js {:transition "transform 0.3s"
+               :maxWidth   "100%"
+               :float      "right"
+               :position   "relative"
+               "&:hover"   #js {:z-index   1000
+                                :transform "scale(1.12)"}}))))
 
-(defn nav-bar [{:keys [user notification-type]}]
-  [:div#primary-nav
-   [:a.zoom-icon {:href  "#/home"
-                  :style {:float "left"}}
-    [:img.navbutton {:src      (img-path "favicon.svg")
-                     :on-click #(dispatch [:set-active-panel :home])}]]
-   [:div#secondary-nav
-    [login-icon "admin" (img-path "user.svg") user]
-    (when user
-      [:<>
-       [nav-icon "manager"  (img-path "resources.svg")]])
-    [nav-icon "archive"  (img-path "articles.svg")]]])
+(defn -nav-bar [{:keys [icons]}]
+  (let [palette (:palette (u/clojurize (useTheme)))]
+    [app-bar {:position "static"
+              :sx       {:background (gstr/format "linear-gradient(4deg, %s 40%, %s 100%)"
+                                                  (get-in palette [:primary :light])
+                                                  (get-in palette [:accent :main]))}}
+     [container {:max-width "xl"}
+      [toolbar {:disable-gutters true}
+       [:> zoom-icon {:href "#/home"}
+        [:img.navbutton {:src      "static/images/nav-bar/favicon.svg"
+                         :on-click navigate-home!}]]
+       ;; Spacing - before this goes left and after goes right
+       [box {:sx {:flex-grow 1}}]
+       [box {:sx {:display {:xs "none" :sm "block"}}}
+        icons]]]]))
+
+(defn avatar-icon
+  [{:keys [user src href]} & children]
+  (let [palette (:palette (u/clojurize (useTheme)))]
+    [:> zoom-icon {:href href}
+     (into [avatar (cond-> {:alt       (if user (:firstName user) "Not logged in")
+                            :class     "navbutton"
+                            :sx        {:width  "inherit"
+                                        :height "inherit"
+                                        :padding "10px"
+                                        :background (gstr/format "linear-gradient(30deg, %s 40%, %s 100%)"
+                                                                 (get-in palette [:primary :light])
+                                                                 (get-in palette [:accent :main]))}
+                            :img-props {:class "navbutton"}}
+                     src (assoc :src src))]
+           children)]))
+
+(defn nav-bar [{:keys [user]}]
+  [:f> -nav-bar {:icons (cond-> [:<> ]
+                          true (conj [:f> avatar-icon {:user user :href "#/admin" :src "static/images/nav-bar/user.svg" }])
+                          user (conj [:f> avatar-icon {:user user :href "#/manager"}
+                                      [edit {:class-name "navbutton"
+                                             :color      "white"
+                                             :sx         {:color  "white"
+                                                          :width  "100%"
+                                                          :height "100%"}}]])
+                          true (conj [:f> avatar-icon {:user user :href "#/archive" :src "static/images/nav-bar/articles.svg"}]))}])

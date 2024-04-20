@@ -10,13 +10,12 @@
   ([{:keys [color]
      :or   {color "primary"}
      :as   x}]
-   [:div#initial-loading-screen
-    {:style {:background-image      "url(\"/images/nav-bar/favicon.svg\")"
-             :background-color      "#333333"
-             :background-size       "40vmin"
-             :background-repeat     "no-repeat"
-             :background-position-x "45%"
-             :background-position-y "30%"
+   [:div {:style {:background-image      "url(\"/static/images/nav-bar/favicon.svg\")"
+                  :background-color      "#333333"
+                  :background-size       "40vmin"
+                  :background-repeat     "no-repeat"
+                  :background-position-x "45%"
+                  :background-position-y "30%"
 
              :padding-top "65vh"
              :position    "absolute"

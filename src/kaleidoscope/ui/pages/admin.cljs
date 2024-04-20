@@ -1,19 +1,12 @@
 (ns kaleidoscope.ui.pages.admin
-  (:require [ajax.core :refer [POST]]
-            [kaleidoscope.ui.components.navbar :as nav]
+  (:require [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.side-menu :as side-menu]
-            [kaleidoscope.ui.components.input-box :as input-box]
-            [kaleidoscope.ui.components.thumbnail :as thumbnail]
             [kaleidoscope.ui.components.snackbar :as snackbar]
-            [kaleidoscope.ui.clients.keycloak :as keycloak]
-            [kaleidoscope.ui.components.modal :refer [modal-template basic-modal]]
-            [goog.object :as gobj]
+            [kaleidoscope.ui.components.modal :refer [basic-modal]]
             [goog.string :as gstr]
             [reagent-mui.components :refer [stack paper typography]]
-            [re-frame.core :refer [dispatch subscribe]]
-            [keycloak-js :as keycloak-js]
-            [taoensso.timbre :refer-macros [infof info]]
+            [taoensso.timbre :refer-macros [info]]
             ))
 
 (defn authentication-failure
@@ -52,44 +45,6 @@
   {:modal    modal-notifier
    :snackbar snackbar-notifier})
 
-(comment
-  ;; Instead of doing this, have the component dispatch on a loaded file as an argument
-  #_(defn load-image [file-added-event]
-      (let [file        (first (array-seq (.. file-added-event -target -files)))
-            file-reader (js/FileReader.)]
-        (set! (.-onload file-reader)
-              (fn [file-load-event]
-                (let [preview (.getElementById js/document "avatar-preview")]
-                  (aset preview "src" (-> file-load-event .-target .-result)))))
-        (.readAsDataURL file-reader file)))
-
-
-
-  ;; One component - Image Loader
-  #_[thumbnail/thumbnail {:image-url avatar_url
-                          :name      "avatar"
-                          :id        "avatar-preview"}]
-  #_[:input.btn-primary {:type      "file"
-                         :accept    "image/png"
-                         :on-change load-image}]
-  #_[:img {:id    "avatar-preview"
-           :name  "avatar"
-           :style {:width "100px"}}]
-  [thumbnail/thumbnail {:image-url avatar_url}]
-  )
-
-(comment
-  ;; Api access tools
-  #_[button/button {:text     "Check user authentication"
-                    :on-click on-admin-click}]
-
-  #_[button/button {:text     "Check if you are logged in"
-                    :on-click (get user-event-handlers :on-check-auth-click)}]
-  #_[button/button {:text     "Check if you have admin access"
-                    :on-click (get user-event-handlers :on-admin-click)}]
-
-  )
-
 (defn user-profile [{:keys [user user-event-handlers notification-type]}]
   (let [{:keys [avatar_url username given_name family_name email]}                    user
         {:keys [on-admin-click on-edit-profile-click on-logout-click on-login-click]} user-event-handlers]
@@ -107,8 +62,10 @@
            (gstr/format "Welcome!"))]
         [:br]
         (if user
-          [button/button {:text "Edit user profile" :on-click on-edit-profile-click}]
-          [button/button {:text "Login"             :on-click on-login-click}]
+          [button/button {:text     "Edit user profile"
+                          :on-click on-edit-profile-click}]
+          [button/button {:text     "Login"
+                          :on-click on-login-click}]
           )
         [side-menu/side-menu {:expand-button     (fn [props] [button/button (merge props {:text "Settings"})])
                               :notification-type notification-type}]
@@ -126,6 +83,6 @@
      [nav/nav-bar {:user user}]
      [:br]
      [notifier login-response]
-     [user-profile {:user                user
-                    :user-event-handlers user-event-handlers
-                    :notification-type   notification-type}]]))
+     [:f> user-profile {:user                user
+                        :user-event-handlers user-event-handlers
+                        :notification-type   notification-type}]]))

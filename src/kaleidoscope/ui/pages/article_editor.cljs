@@ -51,6 +51,9 @@
                ;; Editor data
                :branches            @(subscribe [:branches])
                :editor-branch-id    @(subscribe [:editor-branch-id])
+
+               ;; This should be fetched based on the URI
+               ;; Add Clojurescript routing using Reitit
                :initial-editor-data @(subscribe [:initial-editor-data])
 
                ;; Editor actions

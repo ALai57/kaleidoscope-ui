@@ -28,8 +28,10 @@
     [:button.close {:on-click   on-close
                     :type       "reset"
                     :aria-label "Close"}
-     [close {:class "close-button"}]]]
-   (when body [:div.modal-body body])])
+     [close {:class "close-button"
+             :sx    {:padding "5px"}}]]]
+   (when body [:div.modal-body body])
+   (when footer [:div.modal-footer footer])])
 
 (defn basic-modal
   [{:keys [open? title body footer level on-close]

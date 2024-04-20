@@ -1,14 +1,19 @@
 (ns kaleidoscope.ui.views
-  (:require [kaleidoscope.ui.pages.admin           :as page.admin]
+  (:require ["@mui/material" :as mui]
+            ["@mui/material/styles" :refer [createTheme]]
+            [kaleidoscope.ui.theme :as theme]
+            [kaleidoscope.ui.pages.admin           :as page.admin]
             [kaleidoscope.ui.pages.article-page    :as page.article]
             [kaleidoscope.ui.pages.home            :as page.home]
             [kaleidoscope.ui.pages.groups          :as page.groups]
             [kaleidoscope.ui.pages.manager         :as page.manager]
             [kaleidoscope.ui.pages.article-manager :as page.article-manager]
             [kaleidoscope.ui.pages.image-manager   :as page.image-manager]
+            [kaleidoscope.ui.pages.ui-manager      :as page.ui-manager]
             [kaleidoscope.ui.components.loading-screen :as loading]
             [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
+            [reagent.core :as reagent]
             ["react" :as react]
             [re-frame.core :refer [subscribe dispatch]]
             [shadow.lazy :as lazy]
@@ -67,33 +72,40 @@
 
 ;;"https://code.thheller.com/blog/shadow-cljs/2019/03/03/code-splitting-clojurescript.html"
 (def panels {:home            page.home/home
-             :thoughts        page.article/article-page
-             :archive         page.article/article-page
+             :content         page.article/article-page
+             :archive         page.article/archive-page
              :admin           page.admin/login-ui
              :groups          page.groups/group-page
              :manager         page.manager/manager-page
              :article-manager page.article-manager/article-manager-page
              :image-manager   page.image-manager/image-manager-page
+             :ui-manager      page.ui-manager/ui-manager-page
              :editor          (u/lazy-component (lazy/loadable kaleidoscope.ui.pages.article-editor/editor-ui))})
 
 (defn app []
-  (let [active-panel @(subscribe [:active-panel])]
+  (let [active-panel @(subscribe [:active-panel])
+        theme        (createTheme @(subscribe [:theme]))]
     (infof "Currently displayed panel %s" active-panel)
-    [:div {:style {:min-height "100vh"}}
-     [(get panels active-panel page.home/home)
-      {;; General settings
-       :notification-type @(subscribe [:notification-type])
-       :login-response    @(subscribe [:login-response]) ;; The last response from a login endpoint
+    [:> mui/ThemeProvider
+     {:theme theme}
+     [:div {:style {:min-height "100vh"}}
+      [(get panels active-panel page.home/home)
+       {;; General settings
+        :notification-type @(subscribe [:notification-type])
+        :login-response    @(subscribe [:login-response]) ;; The last response from a login endpoint
 
-       ;; User data
-       :user @(subscribe [:user-profile])
+        ;; User data
+        :user @(subscribe [:user-profile])
 
-       ;; User actions
-       :user-event-handlers user-event-handlers
+        ;; User actions
+        :user-event-handlers user-event-handlers
+        :theme-event-handlers {:on-change (fn [new-color-coordinates]
 
-       ;; Fallback if loading
-       :fallback (fn []
-                   [loading/loading-screen])
-       }
+                                            (dispatch [:set-local-theme (theme/make-theme new-color-coordinates)]))}
 
-      ]]))
+        ;; Fallback if loading
+        :fallback (fn []
+                    [loading/loading-screen])
+        }
+
+       ]]]))

@@ -1,5 +1,6 @@
 (ns kaleidoscope.ui.db
   (:require [cljs.spec.alpha :as s]
+            [kaleidoscope.ui.theme :as theme]
             [kaleidoscope.ui.clients.keycloak :as keycloak]))
 
 
@@ -22,6 +23,7 @@
    :selected-resume-category nil
    :selected-resume-card     nil
    :recent-content           nil
+   :theme                    theme/BASE-THEME
    :loading?                 false
    :loading-resume?          false
    :notification-type        :modal

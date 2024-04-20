@@ -11,6 +11,7 @@
                 [day8.re-frame/async-flow-fx "0.3.0"] ;; For better async startup
                 [hickory "0.7.1"]
                 [nubank/matcher-combinators "3.1.4" :scope "test" :exclusions [org.clojure/spec.alpha]]
+                [metosin/reitit "0.7.0-alpha7"]
                 [re-frame "1.2.0"]
                 [reagent "1.2.0"]
                 [com.taoensso/timbre "5.1.2"]
@@ -25,10 +26,11 @@
                 ;; shadow/Closure compiler.
                 ;; https://clojurians-log.clojureverse.org/shadow-cljs/2021-06-17
                 ;; And https://github.com/ertugrulcetin/racing-game-cljs
-                :js-options {:entry-keys ["module" "browser" "main"]}
+                :js-options {:entry-keys ["module" "browser" "main"]
+                             :extensions [".js" ".mjs"]}
 
-                :output-dir "resources/public/js/compiled/kaleidoscope"
-                :asset-path "js/compiled/kaleidoscope"
+                :output-dir "resources/static/js/compiled/kaleidoscope"
+                :asset-path "static/js/compiled/kaleidoscope"
 
                 ;; Split up the Frontend UI so that we have two smaller builds, instead of one
                 ;; large Javascript file.
@@ -65,5 +67,5 @@
 
           :stories {:target           :npm-module
                     :ns-regexp        "-stories$"
-                    :output-dir       "resources/public/js/compiled/shareable_stories"
+                    :output-dir       "resources/static/js/compiled/shareable_stories"
                     :compiler-options {:warnings {:redef false}}}}}

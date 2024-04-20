@@ -1,11 +1,34 @@
 (ns kaleidoscope.ui.pages.home
   (:require [kaleidoscope.ui.components.article-cards :as cards]
             [kaleidoscope.ui.components.demo :as demo]
+            [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.navbar :as nav]
+            [kaleidoscope.ui.components.colors.color-wheel :as cw]
+            [reagent-mui.components :refer [box]]
+
+            ["@mui/material" :as mui]
+            ["@mui/material/styles" :refer [createTheme]]
+            [kaleidoscope.ui.theme :as theme]
+            [reagent.core :as reagent]
             ))
 
-(defn home [{:keys [user recent-content notification-type]}]
-  [:div {:style {:min-height "100vh"}}
-   [nav/nav-bar {:user              user
-                 :notification-type notification-type}]
-   [demo/demo]])
+(defn home [{:keys [user notification-type theme-event-handlers]}]
+  (fn []
+    [:div {:style {:min-height "100vh"}}
+     [nav/nav-bar {:user              user
+                   :notification-type notification-type}]
+     [box {:display        "flex"
+           :alignItems     "center"
+           :justifyContent "center"}
+      [:f> cw/color-wheel {:wheel-radius   200
+                           :ring-thickness 60
+                           :on-change      (:on-change theme-event-handlers)}]]
+
+     [:br]
+     [:br]
+
+     [box {:display        "flex"
+           :alignItems     "center"
+           :justifyContent "center"}
+      [button/button {:text "Example button"}]]
+     #_[demo/demo]]))

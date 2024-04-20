@@ -19,7 +19,7 @@
 
 (defn create-article-success [{:keys [title author timestamp
                                       article_tags article_url] :as article}]
-  (let [url (str "/#/" article_tags "/content/" article_url)
+  (let [url (str "/#/content/" article_url)
         close-fn (fn []
                    (do (infof "Failed to close")
                        (set! (.-href (.-location js/document)) url)))]
