@@ -7,6 +7,7 @@
             [reagent-mui.components :refer [box]]
 
             ["@mui/material" :as mui]
+            ["@mui/material/styles" :refer [createTheme]]
             [kaleidoscope.ui.theme :as theme]
             [reagent.core :as reagent]
             ))
@@ -22,12 +23,18 @@
              :justifyContent "center"}
         [:f> cw/color-wheel {:wheel-radius   200
                              :ring-thickness 60
-                             :on-change      (fn [event]
-                                               (js/console.log "Changed theme")
-                                               ;; Reset theme
-                                               )}]
+                             :on-change      (fn reset-theme
+                                               [event]
+                                               (reset! theme (theme/make-theme event))
+                                               )}]]
 
-        [:> mui/ThemeProvider
-         {:theme theme}
-         [button/button]]]
+       [:br]
+       [:br]
+
+       [:> mui/ThemeProvider
+        {:theme (createTheme @theme)}
+        [box {:display        "flex"
+              :alignItems     "center"
+              :justifyContent "center"}
+         [button/button {:text "Example button"}]]]
        #_[demo/demo]])))

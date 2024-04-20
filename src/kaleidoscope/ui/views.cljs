@@ -1,5 +1,6 @@
 (ns kaleidoscope.ui.views
   (:require ["@mui/material" :as mui]
+            ["@mui/material/styles" :refer [createTheme]]
             [kaleidoscope.ui.theme :as theme]
             [kaleidoscope.ui.pages.admin           :as page.admin]
             [kaleidoscope.ui.pages.article-page    :as page.article]
@@ -84,7 +85,7 @@
   (let [active-panel @(subscribe [:active-panel])]
     (infof "Currently displayed panel %s" active-panel)
     [:> mui/ThemeProvider
-     {:theme theme/BASE-THEME}
+     {:theme (createTheme theme/BASE-THEME)}
      [:div {:style {:min-height "100vh"}}
       [(get panels active-panel page.home/home)
        {;; General settings

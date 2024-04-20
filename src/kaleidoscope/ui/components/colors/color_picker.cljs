@@ -42,7 +42,6 @@
   [{:keys [initial-color on-change collapsable]}]
   (let [color (reagent/atom initial-color)
         open? (reagent/atom (if collapsable false true))]
-    (println "RENDERING COLOR PICKER" collapsable)
     (fn []
       [:div
        [:div {:style   {:background-color @color

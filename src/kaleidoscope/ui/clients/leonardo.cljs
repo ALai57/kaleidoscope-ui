@@ -51,5 +51,5 @@
                :lightness       97}))
 
 
-(js/console.log "GRAY" GRAY)
-(js/console.log "THEME" THEME)
+;;(js/console.log "GRAY" GRAY)
+;;(js/console.log "LEONARDO THEME" THEME)
