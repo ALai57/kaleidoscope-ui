@@ -16,23 +16,23 @@
 (def CAPABILITIES
   [{:name        "Articles"
     :description "Create and manage Articles"
-    :src         "/images/writing.svg"
+    :src         "/static/images/writing.svg"
     :alt         "Manage articles"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/article-manager"]))}
    {:name        "Images (WIP)"
     :description "Create and manage Images. Not implemented yet!"
     :alt         "Manage images"
-    :src         "/images/images.svg"
+    :src         "/static/images/images.svg"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/image-manager"]))}
    {:name        "Audiences (WIP)"
     :description "Control who has access to your content by defining an Audience"
-    :src         "/images/audiences.svg"
+    :src         "/static/images/audiences.svg"
     :alt         "Manage audiences"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/groups"]))
     }
    {:name        "UI Customization (WIP)"
     :description "Customize the look and feel of the site"
-    :src         "/images/audiences.svg"
+    :src         "/static/images/audiences.svg"
     :alt         "Manage UI Customization"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/ui-manager"]))
     }
