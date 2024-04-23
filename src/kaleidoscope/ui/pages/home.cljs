@@ -4,18 +4,31 @@
             [reagent.core :as reagent]
             ))
 
+(def ROW-CONFIG
+  {:direction "row"
+   :sx        {:padding {:xs "2px"
+                         :sm "5px"
+                         :md "10px"
+                         :lg "10px"
+                         :xl "10px"}}})
+
 (defn icon [{:keys [tooltip-text src]}]
   [tooltip {:title tooltip-text}
-   [icon-button {:sx {:width  {:xs   "40px"
-                               :sm   "60px"
-                               :md   "80px"
-                               :lg   "100px"
-                               :xl   "100px"}
+   [icon-button {:sx {:padding {:xs "2px"
+                                :sm "5px"
+                                :md "8px"
+                                :lg "8px"
+                                :xl "10px"}
+                      :width  {:xs   "40px"
+                               :sm   "50px"
+                               :md   "70px"
+                               :lg   "90px"
+                               :xl   "90px"}
                       :height {:xs   "40px"
-                               :sm   "60px"
-                               :md   "80px"
-                               :lg   "100px"
-                               :xl   "100px"}}}
+                               :sm   "50px"
+                               :md   "70px"
+                               :lg   "90px"
+                               :xl   "90px"}}}
     [box {:component      "img"
           :display        "flex"
           :justifyContent "center"
@@ -78,56 +91,59 @@
            :md   10
            :lg   10
            :xl   8}
-     [paper {:height     60
-             :lineHeight "60px"
-             :elevation  8}
-      [stack {:direction "row" :padding "10px"}
+     [stack ROW-CONFIG
+      [paper {:elevation 8
+              :sx        {:width  "50%"
+                          :margin "10px"}}
        [stack {:direction "column"
-               :sx        {:width "50%"}
+               :width     "100%"
                :padding   "10px"}
-        [typography {:variant "h4"}
+        [typography {:variant "h5"}
          "Languages I use"]
 
         [:br]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Go" :src "/static/images/golang.svg"}]]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
          [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
          [icon {:tooltip-text "Reframe" :src "/static/images/re-frame.png"}]]
 
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
          [icon {:tooltip-text "Typescript" :src "/static/images/typescript.svg"}]
          [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
          [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
          [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]]
 
-        [stack {:direction "row" :padding "10px"}
-         [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]]]
+        [stack ROW-CONFIG
+         [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]]]]
+
+      [paper {:elevation 8
+              :sx        {:width  "50%"
+                          :margin "10px"}}
        [stack {:direction "column"
-               :sx        {:width "50%"}
+               :width     "100%"
                :padding   "10px"}
-        [typography {:variant "h4"}
+        [typography {:variant "h5"}
          "Tools I use"]
 
         [:br]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
          [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
 
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]
          [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
          [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
          [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
-        [stack {:direction "row" :padding "10px"}
-         [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]
-      ]]
+        [stack ROW-CONFIG
+         [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]]]
 
     [grid {:item true
            :p    2 ;; padding
@@ -139,29 +155,29 @@
      [paper {:height     60
              :lineHeight "60px"
              :elevation  8}
-      [stack {:direction "row" :padding "10px"}
+      [stack ROW-CONFIG
        [stack {:direction "column"
                :sx        {:width "50%"}
                :padding   "10px"}
-        [typography {:variant "h4"}
+        [typography {:variant "h5"}
          "Built with"]
 
         [:br]
         ;; Languages
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]
          [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
          [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
          [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]
          ]
 
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]
          [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
          [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
 
         ;;
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
          [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
          [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
@@ -171,19 +187,19 @@
        [stack {:direction "column"
                :sx        {:width "50%"}
                :padding   "10px"}
-        [typography {:variant "h4"}
+        [typography {:variant "h5"}
          "Deployed with"]
 
         [:br]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
          [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
          [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
-        [stack {:direction "row" :padding "10px"}
+        [stack ROW-CONFIG
          [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]
 
         ]]
