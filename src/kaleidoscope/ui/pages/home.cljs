@@ -12,7 +12,7 @@
                                :lg   "100px"
                                :xl   "100px"}
                       :height {:xs   "40px"
-                               :sm   "50px"
+                               :sm   "60px"
                                :md   "80px"
                                :lg   "100px"
                                :xl   "100px"}}}
@@ -81,9 +81,68 @@
      [paper {:height     60
              :lineHeight "60px"
              :elevation  8}
-      [stack {:direction "row"}
+      [stack {:direction "row" :padding "10px"}
        [stack {:direction "column"
-               :sx        {:width "50%"}}
+               :sx        {:width "50%"}
+               :padding   "10px"}
+        [typography {:variant "h4"}
+         "Languages I use"]
+
+        [:br]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Go" :src "/static/images/golang.svg"}]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
+         [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
+         [icon {:tooltip-text "Reframe" :src "/static/images/re-frame.png"}]]
+
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
+         [icon {:tooltip-text "Typescript" :src "/static/images/typescript.svg"}]
+         [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
+         [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
+         [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]]
+
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]]]
+       [stack {:direction "column"
+               :sx        {:width "50%"}
+               :padding   "10px"}
+        [typography {:variant "h4"}
+         "Tools I use"]
+
+        [:br]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
+         [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
+
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]
+         [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
+         [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
+         [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]
+      ]]
+
+    [grid {:item true
+           :p    2 ;; padding
+           :xs   12
+           :sm   12
+           :md   10
+           :lg   10
+           :xl   8}
+     [paper {:height     60
+             :lineHeight "60px"
+             :elevation  8}
+      [stack {:direction "row" :padding "10px"}
+       [stack {:direction "column"
+               :sx        {:width "50%"}
+               :padding   "10px"}
         [typography {:variant "h4"}
          "Built with"]
 
@@ -92,7 +151,9 @@
         [stack {:direction "row" :padding "10px"}
          [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]
          [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
-         [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]]
+         [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
+         [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]
+         ]
 
         [stack {:direction "row" :padding "10px"}
          [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]
@@ -113,15 +174,16 @@
         [typography {:variant "h4"}
          "Deployed with"]
 
-        [stack {:direction "row"}
+        [:br]
+        [stack {:direction "row" :padding "10px"}
          [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]]
-        [stack {:direction "row"}
+        [stack {:direction "row" :padding "10px"}
          [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
          [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
          [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
-        [stack {:direction "row"}
+        [stack {:direction "row" :padding "10px"}
          [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
-        [stack {:direction "row"}
+        [stack {:direction "row" :padding "10px"}
          [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]
 
         ]]
