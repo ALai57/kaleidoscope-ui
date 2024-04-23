@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.home
   (:require [kaleidoscope.ui.components.navbar :as nav]
-            [reagent-mui.components :refer [box grid paper stack typography]]
+            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip]]
             [reagent.core :as reagent]
             ))
 
@@ -64,9 +64,124 @@
        [stack {:direction "column"
                :sx        {:width "50%"}}
         [typography {:variant "h4"}
-         "Built with"]]
+         "Built with"]
+
+        [:br]
+        ;; Languages
+        [stack {:direction "row"
+                :padding   "10px"}
+         [tooltip {:title "Clojure"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/clojure-logo-2.svg"}]]]
+         [tooltip {:title "Clojurescript"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/cljs.svg"}]]]
+         [tooltip {:title "Javascript"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/javascript.svg"}]]]]
+
+        [stack {:direction "row"
+                :padding   "10px"}
+         [tooltip {:title "Storybook"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/storybook-icon.svg"}]]]
+         [tooltip {:title "Swagger/Open API"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/swagger.png"}]]]
+         [tooltip {:title "Open Telemetry"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/otel.svg"}]]]]
+
+        ;;
+        [stack {:direction "row"
+                :padding   "10px"}
+         [tooltip {:title "React"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/react.svg"}]]]
+         [tooltip {:title "Material UI"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/material-ui-logo.svg"}]]]
+         [tooltip {:title "Shadow CLJS"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/shadow-cljs.png"}]]]
+         [tooltip {:title "Reframe"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/re-frame.png"}]]]]
+
+        ]
        [stack {:direction "column"
-               :sx        {:width "50%"}}
+               :sx        {:width "50%"}
+               :padding   "10px"}
         [typography {:variant "h4"}
          "Deployed with"]]
        ]
