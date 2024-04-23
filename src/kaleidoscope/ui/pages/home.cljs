@@ -183,8 +183,74 @@
                :sx        {:width "50%"}
                :padding   "10px"}
         [typography {:variant "h4"}
-         "Deployed with"]]
-       ]
+         "Deployed with"]
+
+        [stack {:direction "row"}
+         [tooltip {:title "AWS"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/aws.svg"}]]]]
+        [stack {:direction "row"}
+         [tooltip {:title "Sumologic"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/sumo.svg"}]]]
+         [tooltip {:title "Grafana Loki"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/grafana.svg"}]]]
+         [tooltip {:title "Bugsnag"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/bugsnag.svg"}]]]]
+        [stack {:direction "row"}
+         [tooltip {:title "Keycloak"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/keycloak-logo.png"}]]]]
+        [stack {:direction "row"}
+         [tooltip {:title "Docker"}
+          [icon-button {:sx {:width  "100px"
+                             :height "100px"}}
+           [box {:component      "img"
+                 :display        "flex"
+                 :justifyContent "center"
+                 :alignItems     "center"
+                 :sx             {:max-width  "100%"
+                                  :max-height "100%"}
+                 :src            "/static/images/docker.png"}]]]]
+
+        ]]
       ]]]
 
    ])
