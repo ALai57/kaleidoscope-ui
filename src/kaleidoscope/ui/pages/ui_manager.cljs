@@ -37,8 +37,8 @@
                        :on-click (partial -save-theme! theme)}]]
       #_[demo/demo]
 
-      [color-theme {:theme-elements      {}
-                    :background-elements {}}]]]))
+      #_[color-theme {:theme-elements      {}
+                      :background-elements {}}]]]))
 
 (defn ui-manager-page
   [{:keys [user notification-type theme-event-handlers theme]}]
