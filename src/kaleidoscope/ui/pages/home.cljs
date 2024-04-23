@@ -4,6 +4,27 @@
             [reagent.core :as reagent]
             ))
 
+(defn icon [{:keys [tooltip-text src]}]
+  [tooltip {:title tooltip-text}
+   [icon-button {:sx {:width  {:xs   "40px"
+                               :sm   "60px"
+                               :md   "80px"
+                               :lg   "100px"
+                               :xl   "100px"}
+                      :height {:xs   "40px"
+                               :sm   "50px"
+                               :md   "80px"
+                               :lg   "100px"
+                               :xl   "100px"}}}
+    [box {:component      "img"
+          :display        "flex"
+          :justifyContent "center"
+          :alignItems     "center"
+          :sx             {:max-width  "100%"
+                           :max-height "100%"}
+          :src            src}]]])
+
+
 (defn home [{:keys [user notification-type]}]
   [:div {:style {:min-height "100vh"}}
    [nav/nav-bar {:user              user
@@ -68,115 +89,22 @@
 
         [:br]
         ;; Languages
-        [stack {:direction "row"
-                :padding   "10px"}
-         [tooltip {:title "Clojure"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/clojure-logo-2.svg"}]]]
-         [tooltip {:title "Clojurescript"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/cljs.svg"}]]]
-         [tooltip {:title "Javascript"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/javascript.svg"}]]]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]
+         [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
+         [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]]
 
-        [stack {:direction "row"
-                :padding   "10px"}
-         [tooltip {:title "Storybook"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/storybook-icon.svg"}]]]
-         [tooltip {:title "Swagger/Open API"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/swagger.png"}]]]
-         [tooltip {:title "Open Telemetry"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/otel.svg"}]]]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]
+         [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
+         [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
 
         ;;
-        [stack {:direction "row"
-                :padding   "10px"}
-         [tooltip {:title "React"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/react.svg"}]]]
-         [tooltip {:title "Material UI"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/material-ui-logo.svg"}]]]
-         [tooltip {:title "Shadow CLJS"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/shadow-cljs.png"}]]]
-         [tooltip {:title "Reframe"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/re-frame.png"}]]]]
+        [stack {:direction "row" :padding "10px"}
+         [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
+         [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
+         [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
+         [icon {:tooltip-text "Reframe" :src "/static/images/re-frame.png"}]]
 
         ]
        [stack {:direction "column"
@@ -186,69 +114,15 @@
          "Deployed with"]
 
         [stack {:direction "row"}
-         [tooltip {:title "AWS"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/aws.svg"}]]]]
+         [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]]
         [stack {:direction "row"}
-         [tooltip {:title "Sumologic"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/sumo.svg"}]]]
-         [tooltip {:title "Grafana Loki"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/grafana.svg"}]]]
-         [tooltip {:title "Bugsnag"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/bugsnag.svg"}]]]]
+         [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
+         [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
+         [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
         [stack {:direction "row"}
-         [tooltip {:title "Keycloak"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/keycloak-logo.png"}]]]]
+         [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
         [stack {:direction "row"}
-         [tooltip {:title "Docker"}
-          [icon-button {:sx {:width  "100px"
-                             :height "100px"}}
-           [box {:component      "img"
-                 :display        "flex"
-                 :justifyContent "center"
-                 :alignItems     "center"
-                 :sx             {:max-width  "100%"
-                                  :max-height "100%"}
-                 :src            "/static/images/docker.png"}]]]]
+         [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]
 
         ]]
       ]]]
