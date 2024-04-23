@@ -2,6 +2,7 @@
   (:require ["@mui/material" :as mui]
             ["@mui/material/styles" :refer [createTheme]]
             [kaleidoscope.ui.theme :as theme]
+            [kaleidoscope.ui.pages.about-this-site :as page.about-this-site]
             [kaleidoscope.ui.pages.admin           :as page.admin]
             [kaleidoscope.ui.pages.article-page    :as page.article]
             [kaleidoscope.ui.pages.home            :as page.home]
@@ -75,6 +76,7 @@
              :content         page.article/article-page
              :archive         page.article/archive-page
              :admin           page.admin/login-ui
+             :about-this-site page.about-this-site/about-this-site
              :groups          page.groups/group-page
              :manager         page.manager/manager-page
              :article-manager page.article-manager/article-manager-page
