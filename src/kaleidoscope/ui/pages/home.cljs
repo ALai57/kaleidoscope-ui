@@ -17,8 +17,8 @@
    :xs   12
    :sm   12
    :md   11
-   :lg   11
-   :xl   10})
+   :lg   10
+   :xl   8})
 
 (def GRID-CONTAINER
   {:container      true
@@ -127,7 +127,9 @@
     [grid {:item true
            :xs   11
            :sm   11
-           :md   5}
+           :md   5
+           :lg   5
+           :xl   4}
      [paper {:elevation 8
              :sx        {:margin {:xs "5px"
                                   :sm "5px"}}}
@@ -159,7 +161,9 @@
     [grid {:item true
            :xs   11
            :sm   11
-           :md   5}
+           :md   5
+           :lg   5
+           :xl   4}
      [paper {:elevation 8
              :sx        {:margin {:xs "5px"
                                   :sm "5px"}}}
