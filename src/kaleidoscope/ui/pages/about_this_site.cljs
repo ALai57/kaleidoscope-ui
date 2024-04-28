@@ -62,16 +62,16 @@
            :lg   8
            :xl   6}
      [stack {:direction "column"}
-      [typography {:variant "h5"}
+      [typography {:variant "body1"}
        "This website is hosted on the "
-       [link {:variant "h5"
+       [link {:variant "body1"
               :href    "https://github.com/ALai57/kaleidoscope"}
         "kaleidoscope.pub"]
        " project. Kaleidoscope.pub is an open source CMS that's under active development."
        ]
 
       [:br]
-      [typography {:variant "h5"}
+      [typography {:variant "body1"}
        "Kaleidoscope.pub is a content publishing platform that allows users to selectively share their content only with users they select, like family or friends."]
 
       [:br]
