@@ -135,7 +135,7 @@
                                   :sm "5px"}}}
       [stack {:direction "column"
               :width     "100%"}
-       [typography {:variant "h5"}
+       [typography {:variant "h4"}
         "Languages I use"]
 
        [:br]
@@ -169,7 +169,7 @@
                                   :sm "5px"}}}
       [stack {:direction "column"
               :width     "100%"}
-       [typography {:variant "h5"}
+       [typography {:variant "h4"}
         "Tools I use"]
 
        [:br]
@@ -194,7 +194,7 @@
      [divider {:flexItem true}]
      [grid (merge BREAKPOINTS
                   {:item true})
-      [typography {:variant "h3"}
+      [typography {:variant "h4"}
        "About me"]
       [typography {:variant "body1"}
        " When I'm not working or thinking about software, you can find me learning new recipes, practicing Spanish, playing board games, or spending time outdoors. "
