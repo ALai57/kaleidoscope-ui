@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.views
   (:require ["@mui/material" :as mui]
-            ["@mui/material/styles" :refer [createTheme]]
+            ["@mui/material/styles" :refer [createTheme responsiveFontSizes]]
             [kaleidoscope.ui.theme :as theme]
             [kaleidoscope.ui.pages.about-this-site :as page.about-this-site]
             [kaleidoscope.ui.pages.admin           :as page.admin]
@@ -89,7 +89,7 @@
         theme        @(subscribe [:theme])]
     (infof "Currently displayed panel %s" active-panel)
     [:> mui/ThemeProvider
-     {:theme (createTheme (theme/make-theme theme))}
+     {:theme (responsiveFontSizes (createTheme (theme/make-theme theme)))}
      [:div {:style {:min-height "100vh"}}
       [(get panels active-panel page.home/home)
        {;; General settings

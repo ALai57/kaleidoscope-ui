@@ -1,6 +1,7 @@
 (ns kaleidoscope.ui.components.navbar
   (:require ["@mui/material/styles" :refer [styled useTheme]]
             [reagent-mui.icons.edit :refer [edit]]
+            [reagent-mui.icons.info :refer [info]]
             [goog.string :as gstr]
             [kaleidoscope.ui.utils.core :as u]
             [re-frame.core :refer [dispatch]]
@@ -89,10 +90,16 @@
 
 (defn nav-bar [{:keys [user]}]
   [:f> -nav-bar {:icons (cond-> [:<> ]
+                          true (conj [:f> avatar-icon {:user user :href "#/about-this-site"}
+                                      [info {:color "white"
+                                             :sx    {:color  "white"
+                                                     :width  "100%"
+                                                     :height "100%"}}]])
                           true (conj [:f> avatar-icon {:user user :href "#/admin" :src "static/images/nav-bar/user.svg" }])
                           user (conj [:f> avatar-icon {:user user :href "#/manager"}
                                       [edit {:color "white"
                                              :sx    {:color  "white"
                                                      :width  "100%"
                                                      :height "100%"}}]])
-                          true (conj [:f> avatar-icon {:user user :href "#/archive" :src "static/images/nav-bar/articles.svg"}]))}])
+                          true (conj [:f> avatar-icon {:user user :href "#/archive" :src "static/images/nav-bar/articles.svg"}])
+                          )}])

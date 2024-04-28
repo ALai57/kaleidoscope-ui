@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.pages.about-this-site
   (:require [kaleidoscope.ui.components.navbar :as nav]
-            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip]]
+            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link]]
             [reagent.core :as reagent]
             ))
 
@@ -63,7 +63,12 @@
            :xl   6}
      [stack {:direction "column"}
       [typography {:variant "h5"}
-       "This website is hosted on the kaleidoscope.pub project. Kaleidoscope.pub is an open source CMS that's under active development."]
+       "This website is hosted on the "
+       [link {:variant "h5"
+              :href    "https://github.com/ALai57/kaleidoscope"}
+        "kaleidoscope.pub"]
+       " project. Kaleidoscope.pub is an open source CMS that's under active development."
+       ]
 
       [:br]
       [typography {:variant "h5"}
