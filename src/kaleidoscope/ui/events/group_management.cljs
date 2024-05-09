@@ -16,9 +16,9 @@
     (errorf "Failed to retrieve groups %s" response)
     db))
 
-(reg-event-fx :request-all-groups
+(reg-event-fx :load-all-groups
   (fn [{:keys [db]} [_]]
-    (infof "Requesting all groups")
+    (infof "Loading all groups")
     (let [token (or (.-token (:keycloak db)) "test")]
       {:http-xhrio (merge (-> (scope-client/get-groups)
                               (scope-client/with-authorization token))
@@ -31,7 +31,7 @@
   (fn [cofx [_ response]]
     (infof "Saved group `%s`" response)
     {:db (:db cofx)
-     :fx [[:dispatch [:request-all-groups]]]}))
+     :fx [[:dispatch [:load-all-groups]]]}))
 
 (reg-event-db :save-group.failure
   (fn [db [_ response]]
@@ -52,7 +52,7 @@
   (fn [cofx [_ response]]
     (infof "Deleted group `%s`" response)
     {:db (:db cofx)
-     :fx [[:dispatch [:request-all-groups]]]}))
+     :fx [[:dispatch [:load-all-groups]]]}))
 
 (reg-event-db :delete-group.failure
   (fn [db [_ response]]
@@ -74,7 +74,7 @@
   (fn [cofx [_ response]]
     (infof "Saved member `%s`" response)
     {:db (:db cofx)
-     :fx [[:dispatch [:request-all-groups]]]}))
+     :fx [[:dispatch [:load-all-groups]]]}))
 
 (reg-event-db :save-member.failure
   (fn [db [_ response]]
@@ -95,7 +95,7 @@
   (fn [cofx [_ response]]
     (infof "Deleted member `%s`" response)
     {:db (:db cofx)
-     :fx [[:dispatch [:request-all-groups]]]}))
+     :fx [[:dispatch [:load-all-groups]]]}))
 
 (reg-event-db :delete-member.failure
   (fn [db [_ response]]

@@ -115,6 +115,13 @@
  :theme
  (fn [db]
    (:theme db)))
+
+(reg-sub
+ :audience-editor-modal-initial-values
+ (fn [db]
+   (:audience-editor-modal-initial-values db)))
+
+
 ;; -------------------------------------------------------------------------------------
 ;; Layer 3:: Subscription handler
 ;;

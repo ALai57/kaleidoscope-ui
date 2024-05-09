@@ -119,6 +119,8 @@
         current-article         (reagent/atom nil)
         toggle-audience-manager (fn [article-branch & args]
                                   (reset! current-article article-branch)
+                                  (when (:article-id @current-article)
+                                    (dispatch [:get-audiences-for-article article-branch]))
                                   (swap! state not))]
     (fn []
       [:div

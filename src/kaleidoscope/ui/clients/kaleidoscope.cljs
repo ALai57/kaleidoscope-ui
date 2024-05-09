@@ -129,8 +129,16 @@
 
 (defn delete-audience!
   [{:keys [id] :as audience}]
-  {:method          :put
+  {:method          :delete
    :uri             (gstr/format "/article-audiences/%s" id)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn get-audiences-for-article
+  [{:keys [article-id] :as article}]
+  {:method          :get
+   :uri             "/article-audiences"
+   :params          {:article-id article-id}
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})
 
