@@ -37,7 +37,7 @@
   [{:keys [open? title body footer level on-close]
     :or   {level "info"
            open? true}}]
-  (println "BASIC MODAL open?" open?)
+  ;;(println "BASIC MODAL open?" open?)
   [modal {:open          open?
           :on-close      on-close
           :BackdropProps {:style {:background-color MODAL-BACKGROUND}}}

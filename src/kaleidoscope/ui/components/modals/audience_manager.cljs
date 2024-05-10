@@ -67,12 +67,11 @@
       :on-close on-close})))
 
 (defn edit-audiences-modal
-  [{:keys [open? on-close audiences groups article] :as args}]
-  (let [initial-values @(subscribe [:audience-editor-modal-initial-values])]
-    (println "INITIAL VALUES" initial-values)
-    (-edit-audiences-modal
-     (assoc args
-            :initial-values   initial-values
-            :add-audience!    add-audience!
-            :delete-audience! delete-audience!)))
+  [{:keys [open? on-close audiences groups article initial-values] :as args}]
+  ;;(println "INITIAL VALUES" initial-values)
+  (-edit-audiences-modal
+   (assoc args
+          :initial-values   initial-values
+          :add-audience!    add-audience!
+          :delete-audience! delete-audience!))
   )

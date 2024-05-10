@@ -98,12 +98,32 @@
     :article-created-at  "2023-02-20T03:03:13Z",
     :created-at          "2023-02-20T03:03:13Z"}])
 
+(defn example-manager
+  [{:keys [article-groups]}]
+  (let [open            (reagent/atom (vec (repeat (count article-groups) true)))
+        modal-open      (reagent/atom false)
+        current-article (reagent/atom nil)
+        initial-values  (reagent/atom nil)]
+    (fn []
+      [article-manager/-article-manager
+       {:open                    open
+        :initial-values          @initial-values
+        :edit-modal-open?        @modal-open
+        :toggle-audience-manager (fn [article-branch & args]
+                                   (reset! current-article article-branch)
+                                   (reset! initial-values nil)
+                                   (js/setTimeout (fn []
+                                                    (println "Delayed execution - simulating loading groups")
+                                                    (reset! initial-values {:response [{:group-id "1"}]})) 1000)
+                                   (swap! modal-open not))
+        :groups                  [{:group-id "1", :display-name "abc"}]
+        :article-groups          article-groups}])))
+
 (def ^:export default
   (helper/->default-story
    {:title     "Kaleidoscope/Managers/Article Manager"
-    :component article-manager/article-manager
-    :args      {:open           (reagent/atom (vec (repeat (count article-groups) true)))
-                :article-groups article-groups}}))
+    :component example-manager
+    :args      {:article-groups article-groups}}))
 
 ;; https://github.com/arttuka/reagent-material-ui/blob/06d5e6538ac80f6ac9883d40e8db668c44bcef84/example/src/example/data_grid.cljs
 (def ^:export Default-Article-Manager
