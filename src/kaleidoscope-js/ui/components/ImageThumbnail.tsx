@@ -9,6 +9,11 @@ function fetchWithAuthentication(url, authToken) {
   return fetch(url, { headers });
 }
 
+type Image = {
+    src?: string,
+    alt?: string
+}
+
 // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
 async function displayProtectedImage(imageId, imageUrl, authToken) {
   // Fetch the image.
@@ -19,12 +24,13 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
   const objectUrl = URL.createObjectURL(blob);
 
   // Update the source of the image.
-  const imageElement = document.getElementById('thumbnail-' + imageId);
+  const imageElement = document.getElementById('thumbnail-' + imageId) as HTMLImageElement;
   imageElement.src = objectUrl;
   //imageElement.onload = () => URL.revokeObjectUrl(objectUrl);
 }
 
-const ImageThumbnail = ({image={}, authToken=null, onClick}) => {
+const ImageThumbnail = ({image={}, authToken=null, onClick} :
+                        {image: Image, authToken: any, onClick: any}) => {
   const { observe, inView } = useInView({unobserveOnEnter: true,
                                          rootMargin:      "5px",
                                          onEnter: ({unobserve}) => { console.log(`Loading Thumbnail ${image.src}!`);
