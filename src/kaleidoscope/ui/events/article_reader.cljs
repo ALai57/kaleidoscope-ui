@@ -19,9 +19,11 @@
 
 (reg-event-fx :load-article
   (fn [{:keys [db]} [_ article-name]]
-    {:http-xhrio (merge (scope-client/get-articles article-name)
-                        {:on-success      [:load-article.success]
-                         :on-failure      [:load-article.failure]})}))
+    (let [token (or (.-token (:keycloak db)) "test")]
+      {:http-xhrio (merge (-> (scope-client/get-articles article-name)
+                              (scope-client/with-authorization token))
+                          {:on-success      [:load-article.success]
+                           :on-failure      [:load-article.failure]})})))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -35,7 +37,8 @@
 
 (reg-event-fx :load-recent-articles
   (fn [{:keys [db]} [_]]
-    {:http-xhrio (merge (scope-client/get-articles)
-                        {:on-success [:load-recent-articles.success]
-                         :on-failure [:load-recent-articles.success]})}))
-
+    (let [token (or (.-token (:keycloak db)) "test")]
+      {:http-xhrio (merge (-> (scope-client/get-articles)
+                              (scope-client/with-authorization token))
+                          {:on-success [:load-recent-articles.success]
+                           :on-failure [:load-recent-articles.success]})})))
