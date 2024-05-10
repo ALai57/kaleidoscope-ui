@@ -17,7 +17,8 @@
                                     :events     [[::async-flow-fx/notify :success-load-profile]]
                                     :dispatch-n [[:load-all-branches]
                                                  [:load-image-metadata]
-                                                 [:load-all-groups]]}
+                                                 [:load-all-groups]
+                                                 [:load-recent-articles]]}
                                    {:when   :seen?
                                     :events [[::async-flow-fx/notify :success-boot]]
                                     :halt?  true}

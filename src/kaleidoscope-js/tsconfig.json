@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "../../kaleidoscope-js/ui/components"
+  },
+  "include": [
+    "**/ui/components"
+  ],
+  "exclude": [
+    "**/node_modules/*",
+    "../../node_modules/@types/react-is/node_modules/@types/react/index.d.ts",
+    "**/*.spec.ts"
+  ]
+}
