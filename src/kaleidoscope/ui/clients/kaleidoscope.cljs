@@ -12,7 +12,9 @@
 
 (defn with-authorization
   [request token]
-  (assoc-in request [:headers :Authorization] (auth-header token)))
+  (if token
+    (assoc-in request [:headers :Authorization] (auth-header token))
+    request))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HTTP API
