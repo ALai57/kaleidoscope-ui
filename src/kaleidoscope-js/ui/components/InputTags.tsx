@@ -22,7 +22,13 @@ const InputTags = ({options=[],
                     onAdd=logger,
                     vals,
                     onRemove=logger,
-                    tagType="Albums"}) => {
+                    tagType="Albums"} :
+                  {options: any,
+                  width: any,
+                  onAdd: any,
+                  vals: any,
+                  onRemove: any,
+                  tagType?: string}) => {
 
   const onChangeHandler = onChange(onAdd, onRemove);
 

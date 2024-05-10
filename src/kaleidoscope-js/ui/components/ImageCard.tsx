@@ -23,7 +23,7 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
   const objectUrl = URL.createObjectURL(blob);
 
   // Update the source of the image.
-  const imageElement = document.getElementById(imageId);
+  const imageElement = document.getElementById(imageId) as HTMLImageElement;
   imageElement.src = objectUrl;
   //imageElement.onload = () => URL.revokeObjectUrl(objectUrl);
 }
