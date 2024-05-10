@@ -1,9 +1,9 @@
-# Setting up JSX module interop with CLJS
+# Setting up TSX module interop with CLJS
 Some of the kaleidoscope-ui components are written in Javascript and JS.  These
 components need to be incorporated into the Shadow build in order to get
 hot-code reloading in Storybook.
 
-## Transpiling JSX to JS
+## Transpiling TSX to JS
 
 From `kaleidoscope-ui` root, watch the JSX files and transpile them to JS.  We
 want to transpile them into the `kaleidoscope-js` output folder because that
@@ -11,7 +11,7 @@ folder already has a `package.json` file we can use to install the files as a
 `node_module`.
 
 ``` sh
-npx babel src/kaleidoscope-js --out-dir kaleidoscope-js --watch
+tsc --jsx react --watch
 ```
 
 ## Install the transpiled library
