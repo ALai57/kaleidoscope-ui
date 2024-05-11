@@ -22,13 +22,15 @@ const InputTags = ({options=[],
                     onAdd=logger,
                     vals,
                     onRemove=logger,
-                    tagType="Albums"} :
+                    tagType="Albums",
+                    disabled=false} :
                   {options: any,
                   width: any,
                   onAdd: any,
                   vals: any,
                   onRemove: any,
-                  tagType?: string}) => {
+                  tagType?: string
+                  disabled?: boolean}) => {
 
   const onChangeHandler = onChange(onAdd, onRemove);
 
@@ -36,6 +38,7 @@ const InputTags = ({options=[],
     <Stack spacing={3} sx={{ width: {width} }}>
       <Autocomplete
         multiple
+        disabled            ={disabled}
         id                  ="tags-standard"
         options             ={options}
         getOptionLabel      ={(option) => option.title}

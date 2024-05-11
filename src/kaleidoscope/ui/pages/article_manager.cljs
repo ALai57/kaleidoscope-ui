@@ -81,7 +81,7 @@
    [:br]
    [:br]
    [:div#primary-content
-    ^{:key (str "manager-" (count article-groups))}
+    ^{:key (str "manager-" (count article-groups) "-" (count groups))}
     [am/article-manager {:article-groups  article-groups
                          :open            (reagent/atom (vec (repeat (count article-groups) true)))
                          :groups          groups
@@ -123,8 +123,8 @@
 
 (defn article-manager-page
   [{:keys [user notification-type]}]
-  (let [groups         (subscribe [:groups])
-        branches       (subscribe [:branches])]
+  (let [groups   (subscribe [:groups])
+        branches (subscribe [:branches])]
     (fn []
       [-article-manager-page {:user              user
                               :notification-type notification-type
@@ -133,4 +133,4 @@
                               :edit-article!     edit-article!
                               :articles          nil
                               :article-groups    (group-branches @branches)
-                              :branches          @groups}])))
+                              :groups            @groups}])))

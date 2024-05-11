@@ -114,3 +114,27 @@
                               (scope-client/with-authorization token))
                           {:on-success [:publish-branch.success]
                            :on-failure [:publish-branch.failure]})})))
+
+
+
+(reg-event-db :toggle-public-visibility.success
+  (fn [db [_ response]]
+    (infof "Success toggling article visibility: %s" response)
+    (dispatch [:load-all-branches])
+    (dispatch [:load-recent-articles])
+    db))
+
+(reg-event-db :toggle-public-visibility.failure
+  (fn [db [_ response]]
+    (infof "Toggling article public visibility failure: %s" response)
+    db))
+
+(reg-event-fx :toggle-public-visibility!
+  (fn [{:keys [db]} [_ {:keys [id article-id] :as article} new-state]]
+    (println "Article id" article-id " " id)
+    (infof "Toggling article `%s` visibility to %s" article-id new-state)
+    (let [token (or (.-token (:keycloak db)) "test")]
+      {:http-xhrio (merge (-> (scope-client/toggle-public-visibility! article new-state)
+                              (scope-client/with-authorization token))
+                          {:on-success [:toggle-public-visibility.success]
+                           :on-failure [:toggle-public-visibility.failure]})})))

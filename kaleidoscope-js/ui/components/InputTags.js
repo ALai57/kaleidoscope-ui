@@ -33,9 +33,9 @@ var onChange = function (onAdd, onRemove) {
     };
 };
 var InputTags = function (_a) {
-    var _b = _a.options, options = _b === void 0 ? [] : _b, _c = _a.width, width = _c === void 0 ? 500 : _c, _d = _a.onAdd, onAdd = _d === void 0 ? logger : _d, vals = _a.vals, _e = _a.onRemove, onRemove = _e === void 0 ? logger : _e, _f = _a.tagType, tagType = _f === void 0 ? "Albums" : _f;
+    var _b = _a.options, options = _b === void 0 ? [] : _b, _c = _a.width, width = _c === void 0 ? 500 : _c, _d = _a.onAdd, onAdd = _d === void 0 ? logger : _d, vals = _a.vals, _e = _a.onRemove, onRemove = _e === void 0 ? logger : _e, _f = _a.tagType, tagType = _f === void 0 ? "Albums" : _f, _g = _a.disabled, disabled = _g === void 0 ? false : _g;
     var onChangeHandler = onChange(onAdd, onRemove);
     return (react_1.default.createElement(Stack_1.default, { spacing: 3, sx: { width: { width: width } } },
-        react_1.default.createElement(Autocomplete_1.default, { multiple: true, id: "tags-standard", options: options, getOptionLabel: function (option) { return option.title; }, isOptionEqualToValue: function (option, value) { return option.title === value.title; }, onChange: onChangeHandler, defaultValue: vals, renderInput: function (params) { return (react_1.default.createElement(TextField_1.default, __assign({}, params, { type: "text", label: tagType, placeholder: tagType, size: 'small' }))); } })));
+        react_1.default.createElement(Autocomplete_1.default, { multiple: true, disabled: disabled, id: "tags-standard", options: options, getOptionLabel: function (option) { return option.title; }, isOptionEqualToValue: function (option, value) { return option.title === value.title; }, onChange: onChangeHandler, defaultValue: vals, renderInput: function (params) { return (react_1.default.createElement(TextField_1.default, __assign({}, params, { type: "text", label: tagType, placeholder: tagType, size: 'small' }))); } })));
 };
 exports.InputTags = InputTags;

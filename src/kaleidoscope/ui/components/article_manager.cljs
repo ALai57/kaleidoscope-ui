@@ -112,13 +112,14 @@
                                     article-groups)]
     [:div
      [add-article-form {:add-article! add-article!}]
-     [am/edit-audiences-modal {:open?          edit-modal-open?
-                               :on-close       toggle-audience-manager
-                               :article        current-article
-                               :initial-values initial-values
-                               :groups         (map (fn [group]
-                                                      (assoc group :title (:display-name group)))
-                                                    (or groups []))}]
+     [am/edit-audiences-modal {:open?            edit-modal-open?
+                               :on-close         toggle-audience-manager
+                               :article          current-article
+                               :initial-values   initial-values
+                               :publicly-visible true
+                               :groups           (map (fn [group]
+                                                        (assoc group :title (:display-name group)))
+                                                      (or groups []))}]
      [divider]
      [list
       (for [{:keys [idx] :as article-group} (map (fn [article-group open?]

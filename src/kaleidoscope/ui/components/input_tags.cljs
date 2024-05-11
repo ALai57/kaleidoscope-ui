@@ -2,9 +2,10 @@
   (:require ["kaleidoscope-js/ui/components/InputTags" :refer [InputTags]]))
 
 (defn input-tags
-  [{:keys [options on-add on-remove values tag-type] :as args}]
+  [{:keys [options on-add on-remove values tag-type disabled] :as args}]
   [:f> InputTags (clj->js {:options  options
                            :onAdd    on-add
                            :onRemove on-remove
                            :vals     values
+                           :disabled disabled
                            :tagType  tag-type})])
