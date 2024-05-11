@@ -125,11 +125,11 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
         <Box sx={{...editorStyle, overflow: 'hidden'}}>
           <form>
             <br/>
-            <EditableField key={theSelectedImage.name || "ef-1"}        label='Name'        id='name'        disabled={true}  val={theSelectedImage.name} />
-            <EditableField key={theSelectedImage.created_at || "ef-2"}  label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
-            <EditableField key={theSelectedImage.creator || "ef-3"}     label='Creator'     id='creator'     disabled={true}  val={theSelectedImage.creator}/>
-            <EditableField key={theSelectedImage.title || "ef-4"}       label='Title'       id='title'       disabled={false} val={title}       onChange={(x) => setTitle(x.target.value)}/>
-            <EditableField key={theSelectedImage.description || "ef-5"} label='Description' id='description' disabled={false} val={description} onChange={(x) => setDescription(x.target.value)}/>
+            <EditableField key={theSelectedImage.name + "ef-1"} label='Name'        id='name'        disabled={true}  val={theSelectedImage.name} />
+            <EditableField key={theSelectedImage.name + "ef-2"} label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
+            <EditableField key={theSelectedImage.name + "ef-3"} label='Creator'     id='creator'     disabled={true}  val={theSelectedImage.creator}/>
+            <EditableField key={theSelectedImage.name + "ef-4"} label='Title'       id='title'       disabled={false} val={title}       onChange={(x) => setTitle(x.target.value)}/>
+            <EditableField key={theSelectedImage.name + "ef-5"} label='Description' id='description' disabled={false} val={description} onChange={(x) => setDescription(x.target.value)}/>
 
             <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
 
