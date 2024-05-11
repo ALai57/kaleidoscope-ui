@@ -83,7 +83,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
   const currentImageVersions = images && images[selectedImageIndex]?.versions
   const [selectedVersion, setSelectedVersion] = React.useState(currentImageVersions?.raw || defaultImage);
 
-  const theSelectedImage = images && images[selectedImageIndex];
+  const theSelectedImage = images ? images[selectedImageIndex] : {};
 
   const [title, setTitle] = React.useState(theSelectedImage.title);
   const [description, setDescription] = React.useState(theSelectedImage.description);
@@ -125,12 +125,11 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
         <Box sx={{...editorStyle, overflow: 'hidden'}}>
           <form>
             <br/>
-            {/* For some reason, this isn't refreshing when I update */}
-            <EditableField key={theSelectedImage.name}        label='Name'        id='name'        disabled={true}  val={theSelectedImage.name} />
-            <EditableField key={theSelectedImage.date}        label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
-            <EditableField key={theSelectedImage.creator}     label='Creator'     id='creator'     disabled={true}  val={theSelectedImage.creator}/>
-            <EditableField key={theSelectedImage.title}       label='Title'       id='title'       disabled={false} val={title}       onChange={(x) => setTitle(x.target.value)}/>
-            <EditableField key={theSelectedImage.description} label='Description' id='description' disabled={false} val={description} onChange={(x) => setDescription(x.target.value)}/>
+            <EditableField key={theSelectedImage.name || "ef-1"}        label='Name'        id='name'        disabled={true}  val={theSelectedImage.name} />
+            <EditableField key={theSelectedImage.date || "ef-2"}        label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
+            <EditableField key={theSelectedImage.creator || "ef-3"}     label='Creator'     id='creator'     disabled={true}  val={theSelectedImage.creator}/>
+            <EditableField key={theSelectedImage.title || "ef-4"}       label='Title'       id='title'       disabled={false} val={title}       onChange={(x) => setTitle(x.target.value)}/>
+            <EditableField key={theSelectedImage.description || "ef-5"} label='Description' id='description' disabled={false} val={description} onChange={(x) => setDescription(x.target.value)}/>
 
             <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
 

@@ -71,7 +71,7 @@ var ImageBrowser = function (_a) {
     var _l = react_1.default.useState(startingImage), selectedImageIndex = _l[0], setSelectedImageIndex = _l[1];
     var currentImageVersions = images && ((_b = images[selectedImageIndex]) === null || _b === void 0 ? void 0 : _b.versions);
     var _m = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _m[0], setSelectedVersion = _m[1];
-    var theSelectedImage = images && images[selectedImageIndex];
+    var theSelectedImage = images ? images[selectedImageIndex] : {};
     var _o = react_1.default.useState(theSelectedImage.title), title = _o[0], setTitle = _o[1];
     var _p = react_1.default.useState(theSelectedImage.description), description = _p[0], setDescription = _p[1];
     var jumpTo = function (newIndex) {
@@ -104,11 +104,11 @@ var ImageBrowser = function (_a) {
             react_1.default.createElement(material_1.Box, { sx: __assign(__assign({}, editorStyle), { overflow: 'hidden' }) },
                 react_1.default.createElement("form", null,
                     react_1.default.createElement("br", null),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.name, label: 'Name', id: 'name', disabled: true, val: theSelectedImage.name }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.date, label: 'Created At', id: 'created_at', disabled: true, val: displayDate }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.creator, label: 'Creator', id: 'creator', disabled: true, val: theSelectedImage.creator }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.title, label: 'Title', id: 'title', disabled: false, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.description, label: 'Description', id: 'description', disabled: false, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.name || "ef-1", label: 'Name', id: 'name', disabled: true, val: theSelectedImage.name }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.date || "ef-2", label: 'Created At', id: 'created_at', disabled: true, val: displayDate }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.creator || "ef-3", label: 'Creator', id: 'creator', disabled: true, val: theSelectedImage.creator }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.title || "ef-4", label: 'Title', id: 'title', disabled: false, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.description || "ef-5", label: 'Description', id: 'description', disabled: false, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
                     react_1.default.createElement(InputTags_1.InputTags, { options: albums, width: '100%', vals: [], onAdd: function () { return console.log('Added!'); }, onRemove: function () { return console.log('Removed!'); } }),
                     react_1.default.createElement("br", null),
                     react_1.default.createElement(material_1.FormControl, { fullWidth: true },
