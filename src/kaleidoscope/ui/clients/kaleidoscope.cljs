@@ -187,6 +187,14 @@
      :body            form-data
      :response-format (ajax/json-response-format {:keywords? true})}))
 
+(defn edit-photo!
+  [{:keys [photo-id] :as payload}]
+  {:method          :put
+   :uri             (gstr/format "/v2/photos/%s" photo-id)
+   :params          (dissoc payload :photo-id)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
 (defn get-themes
   []
   {:method          :get

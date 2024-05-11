@@ -3,10 +3,11 @@
 
 (defn image-browser
   [{:keys [images auth-token albums photo-manager] :as args}]
-  (let [{:keys [add-photo]} photo-manager]
+  (let [{:keys [add-photo edit-photo]} photo-manager]
     [:f> ImageBrowser (clj->js {:images       images
                                 :authToken    auth-token
                                 :albums       (or albums [])
                                 :photoManager (if photo-manager
-                                                {:addPhoto add-photo}
+                                                {:addPhoto  add-photo
+                                                 :editPhoto edit-photo}
                                                 {})})]))

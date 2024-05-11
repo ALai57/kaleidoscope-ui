@@ -64,6 +64,7 @@ function displayProtectedImage(imageId, imageUrl, authToken) {
                     objectUrl = URL.createObjectURL(blob);
                     imageElement = document.getElementById('full-' + imageId);
                     imageElement.src = objectUrl;
+                    imageElement.onload = function () { return URL.revokeObjectURL(objectUrl); };
                     return [2];
             }
         });
@@ -74,8 +75,8 @@ var FullImageCard = function (_a) {
     react_1.default.useEffect(function () {
         console.log("Loading ".concat(image.src));
         displayProtectedImage(image.src, image.src, authToken);
-    });
-    return (react_1.default.createElement(material_1.Card, { sx: { float: "left", margin: "5px", minHeight: "200px", display: 'inherit', height: '100%' } },
+    }, [image]);
+    return (react_1.default.createElement(material_1.Card, { sx: { float: "left", margin: "5px", display: 'inherit', height: '100%', maxHeight: '100%', width: '100%' } },
         react_1.default.createElement(material_1.CardActionArea, { sx: { height: '100%' } },
             react_1.default.createElement(material_1.CardMedia, { id: 'full-' + image.src, component: "img", height: image.height, alt: image.alt, className: 'lazyload', sx: { height: '100%' } }))));
 };

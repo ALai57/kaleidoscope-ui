@@ -19,16 +19,17 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
   // Update the source of the image.
   const imageElement = document.getElementById('full-' + imageId) as HTMLImageElement;
   imageElement.src = objectUrl;
-  //imageElement.onload = () => URL.revokeObjectUrl(objectUrl);
+
+  imageElement.onload = () => URL.revokeObjectURL(objectUrl);
 }
 
 const FullImageCard = ({image, authToken=null, forceRerender=false}) => {
   React.useEffect(() => {console.log(`Loading ${image.src}`);
                          displayProtectedImage(image.src, image.src, authToken);},
-                  );
+                  [image]);
 
   return (
-    <Card sx={{ float: "left", margin: "5px", minHeight: "200px", display: 'inherit', height: '100%'}}>
+    <Card sx={{ float: "left", margin: "5px", display: 'inherit', height: '100%', maxHeight: '100%', width: '100%'}}>
       <CardActionArea sx={{height: '100%'}}>
         <CardMedia
           id           ={'full-' + image.src}

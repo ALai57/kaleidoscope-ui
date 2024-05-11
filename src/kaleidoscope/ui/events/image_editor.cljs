@@ -43,17 +43,17 @@
     )
 
 (defn grouped-metadata->gallery-object
-  [[{:keys [hostname photo-id photo-title alt] :as group} images]]
+  [[{:keys [hostname photo-id photo-title description] :as group} images]]
   (let [first-image (first images)]
-    {:name       photo-id
-     :created_at (:created-at first-image)
-     :creator    "Andrew Lai"
-     :title      photo-title
-     :alt        alt
-     :versions   (reduce (fn [acc {:keys [image-category path] :as image}]
-                           (assoc acc (keyword image-category) {:src path}))
-                         {}
-                         images)}))
+    {:name        photo-id
+     :created_at  (:created-at first-image)
+     :creator     "Andrew Lai"
+     :title       photo-title
+     :description description
+     :versions    (reduce (fn [acc {:keys [image-category path] :as image}]
+                            (assoc acc (keyword image-category) {:src path}))
+                          {}
+                          images)}))
 
 (comment
   ;; Raw metadata
@@ -100,7 +100,7 @@
                             (filter (fn [{:keys [path image-category]}]
                                       (and path image-category)))
                             (group-by (fn [photo]
-                                        (select-keys photo [:hostname :photo-id :photo-title])))
+                                        (select-keys photo [:hostname :photo-id :photo-title :description])))
                             (map grouped-metadata->gallery-object))]
       (infof "Transformed image metadata %s" xformed-data)
       (assoc db :images-metadata xformed-data))))
@@ -141,3 +141,25 @@
                               (scope-client/with-authorization token))
                           {:on-success [:add-photo.success]
                            :on-failure [:add-photo.failure]})})))
+
+(reg-event-db :edit-photo.success
+  (fn edit-photo-success
+    [db [_ response]]
+    (infof "Edited photos! %s" response)
+    (dispatch [:load-image-metadata])
+    db))
+
+(reg-event-db :edit-photo.failure
+  (fn edit-photo-failure
+    [db [_ response]]
+    (infof "Failed editing photos! %s" response)
+    db))
+
+(reg-event-fx :edit-photo!
+  (fn [{:keys [db]} [_ payload]]
+    (infof "Editing Photo" payload)
+    (let [token (or (.-token (:keycloak db)) "test")]
+      {:http-xhrio (merge (-> (scope-client/edit-photo! payload)
+                              (scope-client/with-authorization token))
+                          {:on-success [:edit-photo.success]
+                           :on-failure [:edit-photo.failure]})})))

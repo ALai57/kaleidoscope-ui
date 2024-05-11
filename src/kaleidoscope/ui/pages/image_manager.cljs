@@ -12,17 +12,23 @@
 (defn -add-photo!
   [event]
   (let [files (e/event-files event)]
-    (js/console.log "UPLOAD EVENT" files)
+    (js/console.log "Upload photo" files)
     (dispatch [:add-photo! files])))
+
+(defn -edit-photo!
+  [^js payload]
+  (js/console.log "Edit photo: " payload)
+  (dispatch [:edit-photo! (u/clojurize payload)]))
 
 (defn -image-manager-page [{:keys [images albums user notification-type auth-token]}]
   [:div
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
    [:div {:margin "10px"}
-    [ib/image-browser {:images     images
+    [ib/image-browser {:images        images
                        ;;:auth-token auth-token
-                       :photo-manager {:add-photo -add-photo!}
+                       :photo-manager {:add-photo  -add-photo!
+                                       :edit-photo -edit-photo!}
                        }]]])
 
 (defn image-manager-page
