@@ -110,9 +110,9 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
     };}
 
 
-  const date = Date.parse(images && images[selectedImageIndex]?.created_at) ;
+  const date = Date.parse(theSelectedImage?.created_at);
   const dateFormat: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short'};
-  const displayDate = images && date && new Date(date).toLocaleString('en-US', dateFormat)
+  const displayDate = new Date(date).toLocaleString('en-US', dateFormat)
 
   //console.log("CurrentImageVersions: ", currentImageVersions);
   //console.log("Selected Image:", theSelectedImage)
@@ -126,7 +126,7 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
           <form>
             <br/>
             <EditableField key={theSelectedImage.name || "ef-1"}        label='Name'        id='name'        disabled={true}  val={theSelectedImage.name} />
-            <EditableField key={theSelectedImage.date || "ef-2"}        label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
+            <EditableField key={theSelectedImage.created_at || "ef-2"}  label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
             <EditableField key={theSelectedImage.creator || "ef-3"}     label='Creator'     id='creator'     disabled={true}  val={theSelectedImage.creator}/>
             <EditableField key={theSelectedImage.title || "ef-4"}       label='Title'       id='title'       disabled={false} val={title}       onChange={(x) => setTitle(x.target.value)}/>
             <EditableField key={theSelectedImage.description || "ef-5"} label='Description' id='description' disabled={false} val={description} onChange={(x) => setDescription(x.target.value)}/>

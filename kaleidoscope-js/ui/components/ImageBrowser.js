@@ -64,16 +64,16 @@ var EditableField = function (_a) {
         react_1.default.createElement("br", null));
 };
 var ImageBrowser = function (_a) {
-    var _b, _c, _d;
-    var images = _a.images, _e = _a.authToken, authToken = _e === void 0 ? null : _e, _f = _a.albums, albums = _f === void 0 ? [] : _f, _g = _a.startingImage, startingImage = _g === void 0 ? 0 : _g, _h = _a.photoManager, photoManager = _h === void 0 ? {} : _h;
+    var _b, _c;
+    var images = _a.images, _d = _a.authToken, authToken = _d === void 0 ? null : _d, _e = _a.albums, albums = _e === void 0 ? [] : _e, _f = _a.startingImage, startingImage = _f === void 0 ? 0 : _f, _g = _a.photoManager, photoManager = _g === void 0 ? {} : _g;
     var defaultImage = { src: 'https://andrewslai.com/static/images/nav-bar/favicon.svg' };
-    var _j = photoManager.addPhoto, addPhoto = _j === void 0 ? logger : _j, _k = photoManager.editPhoto, editPhoto = _k === void 0 ? logger : _k;
-    var _l = react_1.default.useState(startingImage), selectedImageIndex = _l[0], setSelectedImageIndex = _l[1];
+    var _h = photoManager.addPhoto, addPhoto = _h === void 0 ? logger : _h, _j = photoManager.editPhoto, editPhoto = _j === void 0 ? logger : _j;
+    var _k = react_1.default.useState(startingImage), selectedImageIndex = _k[0], setSelectedImageIndex = _k[1];
     var currentImageVersions = images && ((_b = images[selectedImageIndex]) === null || _b === void 0 ? void 0 : _b.versions);
-    var _m = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _m[0], setSelectedVersion = _m[1];
+    var _l = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _l[0], setSelectedVersion = _l[1];
     var theSelectedImage = images ? images[selectedImageIndex] : {};
-    var _o = react_1.default.useState(theSelectedImage.title), title = _o[0], setTitle = _o[1];
-    var _p = react_1.default.useState(theSelectedImage.description), description = _p[0], setDescription = _p[1];
+    var _m = react_1.default.useState(theSelectedImage.title), title = _m[0], setTitle = _m[1];
+    var _o = react_1.default.useState(theSelectedImage.description), description = _o[0], setDescription = _o[1];
     var jumpTo = function (newIndex) {
         var _a;
         setSelectedImageIndex(newIndex);
@@ -96,16 +96,16 @@ var ImageBrowser = function (_a) {
         }
         ;
     };
-    var date = Date.parse(images && ((_c = images[selectedImageIndex]) === null || _c === void 0 ? void 0 : _c.created_at));
+    var date = Date.parse(theSelectedImage === null || theSelectedImage === void 0 ? void 0 : theSelectedImage.created_at);
     var dateFormat = { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', timeZoneName: 'short' };
-    var displayDate = images && date && new Date(date).toLocaleString('en-US', dateFormat);
+    var displayDate = new Date(date).toLocaleString('en-US', dateFormat);
     return (react_1.default.createElement("div", null,
         react_1.default.createElement(material_1.Box, { sx: { width: '100vw', height: '75vh', textAlign: 'center' } },
             react_1.default.createElement(material_1.Box, { sx: __assign(__assign({}, editorStyle), { overflow: 'hidden' }) },
                 react_1.default.createElement("form", null,
                     react_1.default.createElement("br", null),
                     react_1.default.createElement(EditableField, { key: theSelectedImage.name || "ef-1", label: 'Name', id: 'name', disabled: true, val: theSelectedImage.name }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.date || "ef-2", label: 'Created At', id: 'created_at', disabled: true, val: displayDate }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.created_at || "ef-2", label: 'Created At', id: 'created_at', disabled: true, val: displayDate }),
                     react_1.default.createElement(EditableField, { key: theSelectedImage.creator || "ef-3", label: 'Creator', id: 'creator', disabled: true, val: theSelectedImage.creator }),
                     react_1.default.createElement(EditableField, { key: theSelectedImage.title || "ef-4", label: 'Title', id: 'title', disabled: false, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
                     react_1.default.createElement(EditableField, { key: theSelectedImage.description || "ef-5", label: 'Description', id: 'description', disabled: false, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
@@ -115,7 +115,7 @@ var ImageBrowser = function (_a) {
                         react_1.default.createElement(material_1.InputLabel, { id: "version-select" }, "Version"),
                         react_1.default.createElement(material_1.Select, { id: "version-select", onChange: function (ev) {
                                 setSelectedVersion(ev.target.value);
-                            }, value: selectedVersion }, currentImageVersions && ((_d = Object.entries(currentImageVersions)) === null || _d === void 0 ? void 0 : _d.map(function (_a) {
+                            }, value: selectedVersion }, currentImageVersions && ((_c = Object.entries(currentImageVersions)) === null || _c === void 0 ? void 0 : _c.map(function (_a) {
                             var name = _a[0], version = _a[1];
                             return react_1.default.createElement(material_1.MenuItem, { key: name, value: version }, name);
                         }))))),
