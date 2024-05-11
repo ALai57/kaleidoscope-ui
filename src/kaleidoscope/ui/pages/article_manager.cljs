@@ -73,21 +73,21 @@
     :branch-name        "test",
     :published-at       nil,}])
 
-(defn -article-manager-page [{:keys [articles branches user groups notification-type
+(defn -article-manager-page [{:keys [article-groups user groups notification-type
                                      add-article! delete-article! edit-article!]}]
-  (let [article-groups (group-branches branches)]
-    [:div
-     [nav/nav-bar {:user              user
-                   :notification-type notification-type}]
-     [:br]
-     [:br]
-     [:div#primary-content
-      [am/article-manager {:article-groups  article-groups
-                           :open            (reagent/atom (vec (repeat (count article-groups) true)))
-                           :groups          groups
-                           :add-article!    add-article!
-                           :edit-article!   edit-article!
-                           :delete-article! delete-article!}]]]))
+  [:div
+   [nav/nav-bar {:user              user
+                 :notification-type notification-type}]
+   [:br]
+   [:br]
+   [:div#primary-content
+    ^{:key (str "manager-" (count article-groups))}
+    [am/article-manager {:article-groups  article-groups
+                         :open            (reagent/atom (vec (repeat (count article-groups) true)))
+                         :groups          groups
+                         :add-article!    add-article!
+                         :edit-article!   edit-article!
+                         :delete-article! delete-article!}]]])
 
 (defn title->url
   [title]
@@ -122,12 +122,15 @@
   (dispatch [:set-hash-fragment "/editor"]))
 
 (defn article-manager-page
-  [{:keys [articles user notification-type]}]
-  [-article-manager-page {:user              user
-                          :notification-type notification-type
-                          :add-article!      add-article!
-                          :delete-article!   (fn [& args] (println "Clicked delete!"))
-                          :edit-article!     edit-article!
-                          :articles          nil
-                          :groups            @(subscribe [:groups])
-                          :branches          @(subscribe [:branches])}])
+  [{:keys [user notification-type]}]
+  (let [groups         (subscribe [:groups])
+        branches       (subscribe [:branches])]
+    (fn []
+      [-article-manager-page {:user              user
+                              :notification-type notification-type
+                              :add-article!      add-article!
+                              :delete-article!   (fn [& args] (println "Clicked delete!"))
+                              :edit-article!     edit-article!
+                              :articles          nil
+                              :article-groups    (group-branches @branches)
+                              :branches          @groups}])))

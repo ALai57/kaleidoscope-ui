@@ -146,9 +146,9 @@
                                     (dispatch [:get-audiences-for-article article-branch]))
                                   (swap! modal-open? not))]
     (fn []
-      [-article-manager (assoc args
-                               :initial-values @initial-values
-                               :edit-modal-open? @modal-open?
-                               :article-groups article-groups
-                               :toggle-audience-manager toggle-audience-manager
-                               :current-article @current-article)])))
+      [-article-manager (merge args
+                               {:initial-values          @initial-values
+                                :edit-modal-open?        @modal-open?
+                                :article-groups          article-groups
+                                :toggle-audience-manager toggle-audience-manager
+                                :current-article         @current-article})])))
