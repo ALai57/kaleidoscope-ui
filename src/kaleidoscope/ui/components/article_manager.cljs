@@ -5,7 +5,7 @@
             [reagent.core :as reagent]
             [reagent-mui.icons.post-add :refer [post-add]]
             [reagent-mui.icons.rocket-launch :refer [rocket-launch]]
-            [reagent-mui.icons.settings :refer [settings]]
+            [reagent-mui.icons.group :refer [group]]
             [reagent-mui.icons.article :as icons.article]
             [reagent-mui.icons.delete :refer [delete]]
             [reagent-mui.components :refer [box
@@ -19,6 +19,8 @@
                                             list-item-text
 
                                             tooltip
+                                            toggle-button
+                                            toggle-button-group
                                             text-field
                                             ]]
             [re-frame.core :refer [dispatch subscribe]]
@@ -26,31 +28,58 @@
 
 (def SUCCESS-GREEN "#08b383")
 
-(defn article-row
-  [{:keys [article-created-date article-title published-at] :as article-branch}
-   {:keys [delete-article! edit-article! publish-article! toggle-audience-manager] :as article-actions}]
-  [list-item {:sx              {:padding-right "150px"}
-              :secondaryAction (reagent/as-element
-                                [box
-                                 [tooltip {:id    "publish-tooltip"
-                                           :title (if published-at (str "Published on " published-at) "Publish article")}
-                                  [:span
-                                   [icon-button {:edge     "end"
-                                                 :disabled (if published-at true false)
-                                                 :on-click publish-article!}
-                                    [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]
+(defn -toggle-public-visibility!
+  [{:keys [article-title article-id article-url] :as article} new-state]
+  ;;(js/console.log "Toggling public visibility" article new-state)
+  (infof "Changing article `%s` (article-id `%s`, url `%s`) public visibility to `%s`"
+         article-title
+         article-id
+         article-url
+         new-state)
+  (dispatch [:toggle-public-visibility! article new-state]))
 
-                                 [tooltip {:id "settings-tooltip" :title "Settings (WIP)"}
-                                  [icon-button {:edge     "end"
-                                                :on-click (partial toggle-audience-manager article-branch)}
-                                   [settings]]]
-                                 [:div {:style {:width   "20px"
-                                                :display "inline-block"}}]
-                                 [tooltip {:id "settings-tooltip" :title "Delete article (WIP)"}
-                                  [icon-button {:edge     "end"
-                                                :on-click delete-article!}
-                                   [delete]]]
-                                 ])}
+(defn article-row
+  [{:keys [article-created-date article-title published-at public-visibility] :as article-branch}
+   {:keys [delete-article! edit-article! publish-article!
+           toggle-public-visibility! toggle-audience-manager] :as article-actions}]
+  [list-item
+   {:sx              {:padding-right "150px"}
+    :secondaryAction (reagent/as-element
+                      [box
+                       [tooltip {:id    "publish-tooltip"
+                                 :title (if published-at (str "Published on " published-at) "Publish article")}
+                        [:span
+                         [icon-button {:edge     "end"
+                                       :disabled (if published-at true false)
+                                       :on-click publish-article!
+                                       :sx       {:margin-right "3px"}}
+                          [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]
+
+                       [tooltip {:id    "settings-tooltip-visibility"
+                                 :title "Determine who can see your article. If the setting is 'Non-public', then only the audience you specify can view the article"}
+                        [toggle-button-group {:value     public-visibility
+                                              :exclusive true
+                                              :onChange  (fn [event]
+                                                           ;;(println "Changed value" (events/event-value event))
+                                                           (toggle-public-visibility! article-branch (events/event-value event)))}
+                         [toggle-button {:value true} "Public"]
+                         [toggle-button {:value false} "Non-public"]]]
+
+                       [tooltip {:id    "audiences-tooltip"
+                                 :title "Audience: Who can see the article. Only applies when the article visibility is 'Non-Public'"}
+                        [icon-button {:edge     "end"
+                                      :on-click (partial toggle-audience-manager article-branch)
+
+                                      ;; If the article is public, it makes no sense to set an audience for it
+                                      :disabled public-visibility}
+                         [group]]]
+                       [:div {:style {:width   "20px"
+                                      :display "inline-block"}}]
+                       [tooltip {:id "delete-tooltip" :title "Delete article (WIP)"}
+                        [icon-button {:edge     "end"
+                                      :on-click delete-article!}
+                         [delete]]]
+                       ])}
    [tooltip {:id "edit-tooltip" :title "Edit article"}
     [list-item-button {:on-click (fn [event]
                                    (edit-article! article-branch))}
@@ -71,8 +100,9 @@
               :timeout       "auto"
               :unmountOnExit true}
     [list-item {:style {:display "block"}}
-     (for [{:keys [article-created-at article-title branch-name] :as article} articles]
-       ^{:key (str article-title article-created-at branch-name)} [article-row article article-actions])]]])
+     (for [{:keys [article-created-at article-title branch-name public-visibility] :as article} articles]
+       ^{:key (str article-title article-created-at branch-name public-visibility)}
+       [article-row article article-actions])]]])
 
 (defn add-article-form
   [{:keys [add-article!]}]
@@ -112,26 +142,26 @@
                                     article-groups)]
     [:div
      [add-article-form {:add-article! add-article!}]
-     [am/edit-audiences-modal {:open?            edit-modal-open?
-                               :on-close         toggle-audience-manager
-                               :article          current-article
-                               :initial-values   initial-values
-                               :publicly-visible true
-                               :groups           (map (fn [group]
-                                                        (assoc group :title (:display-name group)))
-                                                      (or groups []))}]
+     [am/edit-audiences-modal {:open?          edit-modal-open?
+                               :on-close       toggle-audience-manager
+                               :article        current-article
+                               :initial-values initial-values
+                               :groups         (map (fn [group]
+                                                      (assoc group :title (:display-name group)))
+                                                    (or groups []))}]
      [divider]
      [list
       (for [{:keys [idx] :as article-group} (map (fn [article-group open?]
                                                    (assoc article-group :open? open?))
                                                  indexed-groups
                                                  @open)]
-        ^{:key (str "idx-" idx "-ge")} [article-group-accordion article-group
-                                        {:delete-article!         delete-article!
-                                         :edit-article!           edit-article!
-                                         :add-article!            add-article!
-                                         :publish-article!        publish-article!
-                                         :toggle-audience-manager toggle-audience-manager}])]]))
+        ^{:key article-group} [article-group-accordion article-group
+                               {:delete-article!           delete-article!
+                                :edit-article!             edit-article!
+                                :add-article!              add-article!
+                                :publish-article!          publish-article!
+                                :toggle-public-visibility! -toggle-public-visibility!
+                                :toggle-audience-manager   toggle-audience-manager}])]]))
 
 
 (defn article-manager

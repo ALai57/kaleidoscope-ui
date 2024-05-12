@@ -81,9 +81,9 @@
    :response-format (ajax/json-response-format {:keywords? true})})
 
 (defn toggle-public-visibility!
-  [{:keys [article-id] :as article} public-visibility]
+  [{:keys [article-url] :as article} public-visibility]
   {:method          :put
-   :uri             (gstr/format "/articles/%s" article-id)
+   :uri             (gstr/format "/articles/%s" article-url)
    :params          {:public-visibility public-visibility}
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})

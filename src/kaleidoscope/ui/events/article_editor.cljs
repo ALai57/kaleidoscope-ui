@@ -130,9 +130,8 @@
     db))
 
 (reg-event-fx :toggle-public-visibility!
-  (fn [{:keys [db]} [_ {:keys [id article-id] :as article} new-state]]
-    (println "Article id" article-id " " id)
-    (infof "Toggling article `%s` visibility to %s" article-id new-state)
+  (fn [{:keys [db]} [_ {:keys [id article-url] :as article} new-state]]
+    (infof "Toggling article `%s` visibility to %s" article-url new-state)
     (let [token (or (.-token (:keycloak db)) "test")]
       {:http-xhrio (merge (-> (scope-client/toggle-public-visibility! article new-state)
                               (scope-client/with-authorization token))

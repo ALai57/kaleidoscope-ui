@@ -81,7 +81,7 @@
    [:br]
    [:br]
    [:div#primary-content
-    ^{:key (str "manager-" (count article-groups) "-" (count groups))}
+    ^{:key (str "manager-" (hash article-groups) "-" (count groups))}
     [am/article-manager {:article-groups  article-groups
                          :open            (reagent/atom (vec (repeat (count article-groups) true)))
                          :groups          groups

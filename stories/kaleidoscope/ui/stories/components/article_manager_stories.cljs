@@ -10,24 +10,30 @@
     :articles     [{:article-id           1
                     :article-title        "My first article"
                     :article-created-date "Jan 01"
+                    :public-visibility    true
                     :published-at         "2023-01-01T00:00:00Z"}
                    {:article-id           2
                     :article-title        "My second article"
+                    :public-visibility    false
                     :article-created-date "Jan 02"}
                    {:article-id           3
                     :article-title        "A third article"
                     :article-created-date "Jan 03"
+                    :public-visibility    true
                     :published-at         "2023-01-01T00:00:00Z"}]}
    {:group-name   "February 2023"
     :display-name "February 2023"
     :articles     [{:article-id           4
                     :article-title        "Yet another"
+                    :public-visibility    true
                     :article-created-date "Feb 01"}
                    {:article-id           5
                     :article-title        "I keep writing things!"
+                    :public-visibility    true
                     :article-created-date "Feb 02"}
                    {:article-id           6
                     :article-title        "Last one, I promise"
+                    :public-visibility    true
                     :article-created-date "Feb 03"}]}])
 
 (def branches
@@ -44,6 +50,7 @@
     :article-tags        "thoughts",
     :article-url         "neural-network-explanation",
     :article-created-at  "2022-04-01T00:00:00Z",
+    :public-visibility   true
     :created-at          "2022-03-01T00:00:00Z"}
    {:branch-id           5,
     :hostname            "kaleidoscope.com",
@@ -57,6 +64,7 @@
     :article-tags        "thoughts",
     :article-url         "neural-network-explanation",
     :article-created-at  "2022-04-01T00:00:00Z",
+    :public-visibility   false
     :created-at          "2022-03-01T00:00:00Z"}
    {:branch-id           1005,
     :hostname            "kaleidoscope.com",
@@ -70,6 +78,7 @@
     :article-tags        "thoughts",
     :article-url         "our-trip-to-santa-elena",
     :article-created-at  "2023-02-05T23:12:40Z",
+    :public-visibility   false
     :created-at          "2023-02-05T23:12:40Z"}
    {:branch-id           1006,
     :hostname            "kaleidoscope.com",
@@ -83,6 +92,7 @@
     :article-tags        "thoughts",
     :article-url         "wildlife-in-costa-rica",
     :article-created-at  "2023-02-13T04:48:46Z",
+    :public-visibility   true
     :created-at          "2023-02-13T04:48:46Z"}
    {:branch-id           1007,
     :hostname            "kaleidoscope.com",
@@ -96,6 +106,7 @@
     :article-tags        "thoughts",
     :article-url         "malli-[:or]-considered-harmful-when-using-reitit-coercion",
     :article-created-at  "2023-02-20T03:03:13Z",
+    :public-visibility   true
     :created-at          "2023-02-20T03:03:13Z"}])
 
 (defn example-manager
