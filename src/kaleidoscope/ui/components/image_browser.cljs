@@ -2,12 +2,14 @@
   (:require ["kaleidoscope-js/ui/components/ImageBrowser" :refer [ImageBrowser]]))
 
 (defn image-browser
-  [{:keys [images auth-token albums photo-manager] :as args}]
-  (let [{:keys [add-photo edit-photo]} photo-manager]
+  [{:keys [images auth-token albums photo-manager mode] :as args}]
+  (let [{:keys [add-photo edit-photo select-photo]} photo-manager]
     [:f> ImageBrowser (clj->js {:images       images
                                 :authToken    auth-token
                                 :albums       (or albums [])
+                                :mode         (or mode "edit")
                                 :photoManager (if photo-manager
-                                                {:addPhoto  add-photo
-                                                 :editPhoto edit-photo}
+                                                {:addPhoto    add-photo
+                                                 :editPhoto   edit-photo
+                                                 :selectPhoto select-photo}
                                                 {})})]))

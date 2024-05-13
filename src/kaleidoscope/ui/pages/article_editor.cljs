@@ -46,17 +46,18 @@
 (defn editor-ui
   [{:keys [user save-fn load-fn initial-editor-data branches] :as args}]
   [-editor-ui {;; User data
-               :user                @(subscribe [:user-profile])
+               :user @(subscribe [:user-profile])
 
                ;; Editor data
-               :branches            @(subscribe [:branches])
-               :editor-branch-id    @(subscribe [:editor-branch-id])
+               :branches         @(subscribe [:branches])
+               :editor-branch-id @(subscribe [:editor-branch-id])
 
                ;; This should be fetched based on the URI
                ;; Add Clojurescript routing using Reitit
                :initial-editor-data @(subscribe [:initial-editor-data])
+               :images              @(subscribe [:images-metadata])
 
                ;; Editor actions
-               :publish-fn          publish-article!
-               :load-fn             load-latest-version!
-               :save-fn             save-version!}])
+               :publish-fn publish-article!
+               :load-fn    load-latest-version!
+               :save-fn    save-version!}])

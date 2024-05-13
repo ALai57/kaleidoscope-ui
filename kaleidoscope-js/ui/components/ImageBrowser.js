@@ -65,15 +65,15 @@ var EditableField = function (_a) {
 };
 var ImageBrowser = function (_a) {
     var _b, _c;
-    var images = _a.images, _d = _a.authToken, authToken = _d === void 0 ? null : _d, _e = _a.albums, albums = _e === void 0 ? [] : _e, _f = _a.startingImage, startingImage = _f === void 0 ? 0 : _f, _g = _a.photoManager, photoManager = _g === void 0 ? {} : _g;
+    var images = _a.images, _d = _a.authToken, authToken = _d === void 0 ? null : _d, _e = _a.albums, albums = _e === void 0 ? [] : _e, _f = _a.startingImage, startingImage = _f === void 0 ? 0 : _f, _g = _a.photoManager, photoManager = _g === void 0 ? {} : _g, _h = _a.mode, mode = _h === void 0 ? "edit" : _h;
     var defaultImage = { src: 'https://andrewslai.com/static/images/nav-bar/favicon.svg' };
-    var _h = photoManager.addPhoto, addPhoto = _h === void 0 ? logger : _h, _j = photoManager.editPhoto, editPhoto = _j === void 0 ? logger : _j;
-    var _k = react_1.default.useState(startingImage), selectedImageIndex = _k[0], setSelectedImageIndex = _k[1];
+    var _j = photoManager.addPhoto, addPhoto = _j === void 0 ? logger : _j, _k = photoManager.editPhoto, editPhoto = _k === void 0 ? logger : _k, _l = photoManager.selectPhoto, selectPhoto = _l === void 0 ? logger : _l;
+    var _m = react_1.default.useState(startingImage), selectedImageIndex = _m[0], setSelectedImageIndex = _m[1];
     var currentImageVersions = images && ((_b = images[selectedImageIndex]) === null || _b === void 0 ? void 0 : _b.versions);
-    var _l = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _l[0], setSelectedVersion = _l[1];
+    var _o = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _o[0], setSelectedVersion = _o[1];
     var theSelectedImage = images ? images[selectedImageIndex] : {};
-    var _m = react_1.default.useState(theSelectedImage.title), title = _m[0], setTitle = _m[1];
-    var _o = react_1.default.useState(theSelectedImage.description), description = _o[0], setDescription = _o[1];
+    var _p = react_1.default.useState(theSelectedImage.title), title = _p[0], setTitle = _p[1];
+    var _q = react_1.default.useState(theSelectedImage.description), description = _q[0], setDescription = _q[1];
     var jumpTo = function (newIndex) {
         var _a;
         setSelectedImageIndex(newIndex);
@@ -107,8 +107,8 @@ var ImageBrowser = function (_a) {
                     react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-1", label: 'Name', id: 'name', disabled: true, val: theSelectedImage.name }),
                     react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-2", label: 'Created At', id: 'created_at', disabled: true, val: displayDate }),
                     react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-3", label: 'Creator', id: 'creator', disabled: true, val: theSelectedImage.creator }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-4", label: 'Title', id: 'title', disabled: false, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
-                    react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-5", label: 'Description', id: 'description', disabled: false, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-4", label: 'Title', id: 'title', disabled: mode === 'edit' ? false : true, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
+                    react_1.default.createElement(EditableField, { key: theSelectedImage.name + "ef-5", label: 'Description', id: 'description', disabled: mode === 'edit' ? false : true, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
                     react_1.default.createElement(InputTags_1.InputTags, { options: albums, width: '100%', vals: [], onAdd: function () { return console.log('Added!'); }, onRemove: function () { return console.log('Removed!'); } }),
                     react_1.default.createElement("br", null),
                     react_1.default.createElement(material_1.FormControl, { fullWidth: true },
@@ -121,14 +121,18 @@ var ImageBrowser = function (_a) {
                         }))))),
                 react_1.default.createElement("br", null),
                 react_1.default.createElement("br", null),
-                react_1.default.createElement(material_1.Button, { variant: 'contained', startIcon: react_1.default.createElement(Save_1.Save, { style: { height: '20px' } }), component: 'label', onClick: function (x) {
-                        var _a;
-                        return editPhoto({ photo_title: title, description: description, "photo-id": (_a = images[selectedImageIndex]) === null || _a === void 0 ? void 0 : _a.name });
-                    } }, "Save"),
-                " ",
-                react_1.default.createElement(material_1.Button, { variant: 'contained', startIcon: react_1.default.createElement(ImageAdd_1.ImageAdd, { style: { height: '20px' } }), component: 'label' },
-                    "Add new photo",
-                    react_1.default.createElement("input", { accept: 'image/*', type: "file", hidden: true, onChange: addPhoto, multiple: true }))),
+                mode === 'edit' ?
+                    react_1.default.createElement(react_1.default.Fragment, null,
+                        react_1.default.createElement(material_1.Button, { variant: 'contained', startIcon: react_1.default.createElement(Save_1.Save, { style: { height: '20px' } }), component: 'label', onClick: function (x) {
+                                var _a;
+                                return editPhoto({ photo_title: title, description: description, "photo-id": (_a = images[selectedImageIndex]) === null || _a === void 0 ? void 0 : _a.name });
+                            } }, "Save"),
+                        " ",
+                        react_1.default.createElement(material_1.Button, { variant: 'contained', startIcon: react_1.default.createElement(ImageAdd_1.ImageAdd, { style: { height: '20px' } }), component: 'label' },
+                            "Add new photo",
+                            react_1.default.createElement("input", { accept: 'image/*', type: "file", hidden: true, onChange: addPhoto, multiple: true })))
+                    :
+                        react_1.default.createElement(material_1.Button, { variant: 'contained', component: 'label', onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")),
             react_1.default.createElement(material_1.Box, { sx: styleFocus },
                 react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken }))),
         react_1.default.createElement("div", null,

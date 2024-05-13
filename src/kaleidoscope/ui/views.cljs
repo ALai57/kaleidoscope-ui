@@ -53,11 +53,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editor events
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn publish-article!
-  [{:keys [article-url branch-name] :as article-branch}]
-  (infof "Publishing branch %s of article %s" branch-name article-url)
-  (dispatch [:publish-branch! article-branch]))
-
 (defn load-latest-version!
   [{:keys [article-id branch-id] :as article-branch}]
   (infof "Updating editor article id to %s" article-id)

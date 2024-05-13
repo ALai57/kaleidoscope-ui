@@ -1,8 +1,9 @@
 (ns kaleidoscope.ui.components.slate-editor
-  (:require [kaleidoscope.ui.components.navbar :as navbar]
+  (:require [kaleidoscope.ui.components.image-browser :as ib]
+            [kaleidoscope.ui.components.navbar :as navbar]
             [kaleidoscope.ui.components.slate.serialization :as serialization]
             [kaleidoscope.ui.components.slate.code-block-helpers :as cb]
-            [kaleidoscope.ui.components.modal :refer [modal-template MODAL-BACKGROUND]]
+            [kaleidoscope.ui.components.modal :as modal :refer [modal-template MODAL-BACKGROUND]]
             [kaleidoscope.ui.core-api.user :as user]
             [kaleidoscope.ui.utils.core :as u]
             [goog.string :as gstr]
@@ -362,14 +363,14 @@
   (let [node (clj->js
               {:children [{:text ""}]
                :type     (getPluginType editor-ref ELEMENT_IMAGE)
-               :url      "https://andrewslai.com/media/2023-04-26-conj-swag.png"})]
+               :url      url})]
     ;;(js/console.log insertNodes node)
     (insertNodes editor-ref node (clj->js {:nextBlock true}))))
 
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn editing-toolbar
-  [{:keys [show-modal]}]
+  [{:keys [show-modal show-image-selector-modal]}]
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
@@ -415,7 +416,10 @@
       {:icon        (reagent/create-element ImageAdd)
        :tooltip     {:content "Find image"}
        :onMouseDown (fn []
-                      (add-image! editor-ref "https://andrewslai.com/media/2023-04-26-conj-swag.png"))}]
+                      #_(println "Show image selector modal"
+                                 show-image-selector-modal
+                                 @show-image-selector-modal)
+                      (swap! show-image-selector-modal not))}]
      [:> LinkToolbarButton
       {:icon (reagent/create-element Link)}]
      [:> BlockToolbarButton
@@ -499,41 +503,78 @@
                      :on-close #(reset! open? false)
                      :level    level}]]])
 
+(defn select-image-modal
+  [{:keys [open? on-close images on-select]
+    :or   {on-select (fn [editor-ref image]
+                       (js/console.log "Selected image!" image))}}]
+  (let [editor-id  (useEventPlateId)
+        editor-ref (usePlateEditorRef editor-id)]
+    (modal/basic-modal
+     {:title    (gstr/format "Select which photo you'd like to use" )
+      :body     [:div
+                 [:br]
+                 [:div
+                  [:br]
+                  [ib/image-browser {:images        images
+                                     :mode          "select"
+                                     :photo-manager {:select-photo (partial on-select editor-ref)}}]
+                  ]]
+      :footer   [:button {:type     "button"
+                          :title    "Ok"
+                          :class    "btn btn-default"
+                          :on-click on-close}
+                 "Ok"]
+      :open?    open?
+      :on-close on-close})))
+
+
 (defn editor
-  [{:keys [user save-fn initial-branch]
+  [{:keys [user save-fn initial-branch images]
     :as   args}]
   ;;(js/console.log "UI" PLATE-UI)
   ;;(js/console.log "PLUGINS" PLUGINS)
   (let [{:keys [content article-title branch-id branch-name]} initial-branch
 
-        plate-html (reagent/atom (plate-deserialize (or content "Start typing...")))
-        show-modal (reagent/atom false)]
+        plate-html                (reagent/atom (plate-deserialize (or content "Start typing...")))
+        show-modal                (reagent/atom false)
+        show-image-selector-modal (reagent/atom false)]
     ;;(js/console.log "*****************")
     ;;(js/console.log (plate-deserialize "SOME STUFF!"))
     ;;(js/console.log "*****************")
     (fn []
       ;;(println "PLATE HTML" plate-html "LOADED" loaded "INITIAL VALUE" initial-value)
       [:div {:key (str "editor" content)}
-       [basic-modal {:open?    show-modal
-                     :level    "warn"
-                     :title    "Do you want to leave the editor? Any unsaved changes will be lost."
-                     :body     [:div
-                                [:button {:type     "button" :title "Not yet"
-                                          :class    "btn btn-default"
-                                          :on-click #(reset! show-modal false)}
-                                 "Not yet"]
-                                [:button {:type     "button" :title "Ok, I'm ready"
-                                          :class    "btn btn-default"
-                                          :on-click navbar/navigate-home!}
-                                 "Ok, I'm ready"]]}]
+       [basic-modal {:open? show-modal
+                     :level "warn"
+                     :title "Do you want to leave the editor? Any unsaved changes will be lost."
+                     :body  [:div
+                             [:button {:type     "button" :title "Not yet"
+                                       :class    "btn btn-default"
+                                       :on-click #(reset! show-modal false)}
+                              "Not yet"]
+                             [:button {:type     "button" :title "Ok, I'm ready"
+                                       :class    "btn btn-default"
+                                       :on-click navbar/navigate-home!}
+                              "Ok, I'm ready"]]}]
        [:> PlateProvider {:initialValue @plate-html
                           :plugins      PLUGINS}
+        [:f> select-image-modal {:open?     @show-image-selector-modal
+                                 :on-close  (fn []
+                                              (println "Closing image selector modal")
+                                              (reset! show-image-selector-modal false))
+                                 :images    images
+                                 :on-select (fn [editor-ref image-url]
+                                              (println "Adding image to article: " image-url)
+                                              ;; Useful test url "https://andrewslai.com/media/2023-04-26-conj-swag.png"
+                                              (add-image! editor-ref image-url)
+                                              (reset! show-image-selector-modal false))}]
         [:div.divider.py-1.bg-dark]
         [:> HeadingToolbar {:style {:top "0px"}}
          ;; NOTE: Need to create a functional component. Since the component is
          ;; defined as a Clojurescript function, we need to do this where the CLJS
          ;; function is used, not inside the fn.
-         [:f> editing-toolbar {:show-modal show-modal}]
+         [:f> editing-toolbar {:show-modal                show-modal
+                               :show-image-selector-modal show-image-selector-modal}]
          [:<> [:f> management-toolbar args]]
          ]
 

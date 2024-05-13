@@ -22,7 +22,9 @@
 (defn modal-template
   [{:keys [title body footer on-close level]
     :or   {level "info"}}]
-  [:div.modal-content {:style {:border "none"}}
+  [:div.modal-content {:style {:border "none"
+                               :maxWidth "90vw"
+                               :maxHeight "90vh"}}
    [:div.modal-header {:style {:background-color (get COLORS level)}}
     [:h4.modal-title title]
     [:button.close {:on-click   on-close

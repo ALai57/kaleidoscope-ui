@@ -110,7 +110,7 @@
   (fn [{:keys [db]} [_ {:keys [branch-name article-url] :as article}]]
     (infof "Publishing article: %s" article)
     (let [token (or (.-token (:keycloak db)) "test")]
-      {:http-xhrio (merge (-> (scope-client/save-article-version! article)
+      {:http-xhrio (merge (-> (scope-client/publish-article-branch! article)
                               (scope-client/with-authorization token))
                           {:on-success [:publish-branch.success]
                            :on-failure [:publish-branch.failure]})})))

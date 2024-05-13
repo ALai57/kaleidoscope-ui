@@ -65,19 +65,20 @@ const EditableField = ({label, id, val, disabled, onChange} :
             <br/>
           </React.Fragment>};
 
-const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photoManager={}} :
+const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photoManager={}, mode="edit"} :
                      {images: any,
                       authToken: any,
                       albums: any,
                       startingImage: number,
-                      photoManager: any}) => {
+                      photoManager: any
+                      mode: any}) => {
 
   //console.log("ARGUMENTS", images, albums);
   // console.log("PHOTO MANAGER", photoManager);
 
   const defaultImage = {src: 'https://andrewslai.com/static/images/nav-bar/favicon.svg'}
 
-  const { addPhoto = logger, editPhoto = logger } = photoManager;
+  const { addPhoto = logger, editPhoto = logger, selectPhoto = logger } = photoManager;
   const [selectedImageIndex, setSelectedImageIndex] = React.useState(startingImage);
 
   const currentImageVersions = images && images[selectedImageIndex]?.versions
@@ -128,8 +129,8 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
             <EditableField key={theSelectedImage.name + "ef-1"} label='Name'        id='name'        disabled={true}  val={theSelectedImage.name} />
             <EditableField key={theSelectedImage.name + "ef-2"} label='Created At'  id='created_at'  disabled={true}  val={displayDate} />
             <EditableField key={theSelectedImage.name + "ef-3"} label='Creator'     id='creator'     disabled={true}  val={theSelectedImage.creator}/>
-            <EditableField key={theSelectedImage.name + "ef-4"} label='Title'       id='title'       disabled={false} val={title}       onChange={(x) => setTitle(x.target.value)}/>
-            <EditableField key={theSelectedImage.name + "ef-5"} label='Description' id='description' disabled={false} val={description} onChange={(x) => setDescription(x.target.value)}/>
+            <EditableField key={theSelectedImage.name + "ef-4"} label='Title'       id='title'       disabled={mode === 'edit' ? false :true} val={title}       onChange={(x) => setTitle(x.target.value)}/>
+            <EditableField key={theSelectedImage.name + "ef-5"} label='Description' id='description' disabled={mode === 'edit' ? false :true} val={description} onChange={(x) => setDescription(x.target.value)}/>
 
             <InputTags options={albums} width='100%' vals={[]} onAdd={() => console.log('Added!')} onRemove={() => console.log('Removed!')}/>
 
@@ -150,6 +151,8 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
           </form>
           <br/>
           <br/>
+          {mode === 'edit' ?
+           <>
           <Button variant='contained' startIcon={<Save style={{height: '20px'}}/>} component='label' onClick={(x) => editPhoto({photo_title: title,
                                                                                                                                 description,
                                                                                                                                 "photo-id": images[selectedImageIndex]?.name})}>
@@ -161,6 +164,12 @@ const ImageBrowser = ({images, authToken=null, albums=[], startingImage=0, photo
             <input accept='image/*' type="file" hidden onChange={addPhoto} multiple>
             </input>
           </Button>
+            </>
+            :
+          <Button variant='contained' component='label' onClick={(x) => selectPhoto(selectedVersion.src)}>
+            Add image version to article
+          </Button>
+          }
         </Box>
 
         <Box sx={styleFocus}>
