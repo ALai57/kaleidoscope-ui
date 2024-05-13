@@ -69,6 +69,7 @@
 
               createImagePlugin
               createMediaEmbedPlugin
+              insertNodes
 
               Plate
 
@@ -80,6 +81,7 @@
               ELEMENT_BLOCKQUOTE
               ELEMENT_CODE_BLOCK
               ELEMENT_PARAGRAPH
+              ELEMENT_IMAGE
               ELEMENT_OL
               ELEMENT_UL
               ELEMENT_H1
@@ -354,6 +356,16 @@
   [fname]
   (str nav-images-path fname))
 
+(defn add-image!
+  [editor-ref url]
+  (println (gstr/format "Adding a new image %s" url))
+  (let [node (clj->js
+              {:children [{:text ""}]
+               :type     (getPluginType editor-ref ELEMENT_IMAGE)
+               :url      "https://andrewslai.com/media/2023-04-26-conj-swag.png"})]
+    ;;(js/console.log insertNodes node)
+    (insertNodes editor-ref node (clj->js {:nextBlock true}))))
+
 ;; https://plate.udecode.io/
 ;; https://codesandbox.io/s/sandpack-project-forked-fg0ipl?file=/ToolbarButtons.tsx:1457-1623
 (defn editing-toolbar
@@ -362,9 +374,9 @@
         editor-ref (usePlateEditorRef editor-id)]
     ;;(js/console.log "PLATE ID" editor-id "PLATE EDITOR REF" editor-ref)
     [:<>
-     [:> navbar/zoom-icon {:style {:float            "left"
-                                   :height           "48px"
-                                   :margin-right     "20px"}}
+     [:> navbar/zoom-icon {:style {:float        "left"
+                                   :height       "48px"
+                                   :margin-right "20px"}}
       [:img.navbutton {:src      (img-path "static/favicon.svg")
                        :style    {:height "48px"}
                        :on-click (fn [event]
@@ -398,6 +410,12 @@
        :tooltip      {:content "Highlight color"}}]
      [:> ImageToolbarButton
       {:icon (reagent/create-element ImageAdd)}]
+     ;;;;;;;;;;;;;;;;;;;;;;;;
+     [:> ToolbarButton
+      {:icon        (reagent/create-element ImageAdd)
+       :tooltip     {:content "Find image"}
+       :onMouseDown (fn []
+                      (add-image! editor-ref "https://andrewslai.com/media/2023-04-26-conj-swag.png"))}]
      [:> LinkToolbarButton
       {:icon (reagent/create-element Link)}]
      [:> BlockToolbarButton
