@@ -49,6 +49,11 @@
               :src       "static/images/nav-bar/favicon.svg"
               :sx        {:max-width "90px"
                           :float     "right"
+                          :width     {:xs "60px"
+                                      :sm "60px"
+                                      :md "80px"
+                                      :lg "80px"
+                                      :xl "100px"}
                           :height    {:xs "60px"
                                       :sm "60px"
                                       :md "80px"
@@ -57,7 +62,7 @@
               :on-click  navigate-home!}]]
        ;; Spacing - before this goes left and after goes right
        [box {:sx {:flex-grow 1}}]
-       [box #_{:sx {:display {:xs "none" :sm "block"}}}
+       [box {:sx {:max-height "100%"}}
         icons]]]]))
 
 (defn avatar-icon
@@ -65,8 +70,12 @@
   (let [palette (:palette (u/clojurize (useTheme)))]
     [:> zoom-icon {:href href}
      (into [avatar (cond-> {:alt       (if user (:firstName user) "Not logged in")
-                            :sx        {:width  "inherit"
-                                        :padding "8px"
+                            :sx        {:padding "8px"
+                                        :width    {:xs "60px"
+                                                   :sm "60px"
+                                                   :md "80px"
+                                                   :lg "80px"
+                                                   :xl "100px"}
                                         :height    {:xs "60px"
                                                     :sm "60px"
                                                     :md "80px"
