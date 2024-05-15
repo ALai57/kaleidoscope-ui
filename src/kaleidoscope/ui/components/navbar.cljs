@@ -7,6 +7,12 @@
             [re-frame.core :refer [dispatch]]
             [reagent-mui.components :refer [app-bar avatar box container toolbar]]))
 
+(def IMAGE-SIZE
+  {:xs "56px"
+   :sm "60px"
+   :md "80px"
+   :lg "80px"
+   :xl "100px"})
 
 (defn navigate-home!
   []
@@ -23,18 +29,17 @@
 (def zoom-icon
   ((styled "a")
    (fn [{:keys [theme]}]
-     (clj->js {:transition   "transform 0.3s"
-               :maxWidth     "100%"
-               :float        "right"
-               :position     "relative"
-               :marginTop   "10px"
-               "&:hover"     #js {:z-index   1000
-                                  :transform "scale(1.12)"}}))))
+     (clj->js {:transition "transform 0.3s"
+               :maxWidth   "100%"
+               :float      "right"
+               :position   "relative"
+               "&:hover"   #js {:z-index   1000
+                                :transform "scale(1.12)"}}))))
 
 (defn -nav-bar [{:keys [icons]}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [app-bar {:position "static"
-              :sx       {:height     {:xs "80px"
+              :sx       {:height     {:xs "60px"
                                       :sm "80px"
                                       :md "100px"
                                       :lg "100px"
@@ -47,18 +52,12 @@
        [:> zoom-icon {:href "#/home"}
         [box {:component "img"
               :src       "static/images/nav-bar/favicon.svg"
-              :sx        {:max-width "90px"
-                          :float     "right"
-                          :width     {:xs "60px"
-                                      :sm "60px"
-                                      :md "80px"
-                                      :lg "80px"
-                                      :xl "100px"}
-                          :height    {:xs "60px"
-                                      :sm "60px"
-                                      :md "80px"
-                                      :lg "80px"
-                                      :xl "100px"}}
+              :sx        {:max-width  "90px"
+                          :float      "right"
+                          :margin-top {:xs "2px"
+                                       :sm "10px"}
+                          :width      IMAGE-SIZE
+                          :height     IMAGE-SIZE}
               :on-click  navigate-home!}]]
        ;; Spacing - before this goes left and after goes right
        [box {:sx {:flex-grow 1}}]
@@ -70,17 +69,18 @@
   (let [palette (:palette (u/clojurize (useTheme)))]
     [:> zoom-icon {:href href}
      (into [avatar (cond-> {:alt       (if user (:firstName user) "Not logged in")
-                            :sx        {:padding "8px"
-                                        :width    {:xs "60px"
-                                                   :sm "60px"
-                                                   :md "80px"
-                                                   :lg "80px"
-                                                   :xl "100px"}
-                                        :height    {:xs "60px"
-                                                    :sm "60px"
-                                                    :md "80px"
-                                                    :lg "80px"
-                                                    :xl "100px"}
+                            :sx        {:padding     {:xs "6px"
+                                                      :sm "8px"
+                                                      :md "8px"
+                                                      :lg "8px"
+                                                      :xl "8px"}
+                                        :marginTop   {:xs "2px"
+                                                      :sm "8px"
+                                                      :md "8px"
+                                                      :lg "8px"
+                                                      :xl "8px"}
+                                        :width       IMAGE-SIZE
+                                        :height      IMAGE-SIZE
                                         :marginLeft  {:xs "4px"
                                                       :sm "5px"
                                                       :md "6px"
