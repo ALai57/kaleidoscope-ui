@@ -97,18 +97,25 @@
                      src (assoc :src src))]
            children)]))
 
+(def ADMIN-ROLE
+  (str js/window.location.hostname ":admin"))
+
 (defn nav-bar [{:keys [user]}]
-  [:f> -nav-bar {:icons (cond-> [:<> ]
-                          true (conj [:f> avatar-icon {:user user :href "#/about-this-site"}
-                                      [info {:color "white"
-                                             :sx    {:color  "white"
-                                                     :width  "100%"
-                                                     :height "100%"}}]])
-                          true (conj [:f> avatar-icon {:user user :href "#/admin" :src "static/images/nav-bar/user.svg" }])
-                          user (conj [:f> avatar-icon {:user user :href "#/manager"}
-                                      [edit {:color "white"
-                                             :sx    {:color  "white"
-                                                     :width  "100%"
-                                                     :height "100%"}}]])
-                          true (conj [:f> avatar-icon {:user user :href "#/archive" :src "static/images/nav-bar/articles.svg"}])
-                          )}])
+  (let [roles      (set (get-in user [:realm_access :roles]))
+        site-admin (contains? roles ADMIN-ROLE)]
+    ;;(println "User" (:given_name user) roles)
+    ;;(println "Admin? " (contains? roles ADMIN-ROLE))
+    [:f> -nav-bar {:icons (cond-> [:<> ]
+                            true       (conj [:f> avatar-icon {:user user :href "#/about-this-site"}
+                                              [info {:color "white"
+                                                     :sx    {:color  "white"
+                                                             :width  "100%"
+                                                             :height "100%"}}]])
+                            true       (conj [:f> avatar-icon {:user user :href "#/admin" :src "static/images/nav-bar/user.svg" }])
+                            site-admin (conj [:f> avatar-icon {:user user :href "#/manager"}
+                                              [edit {:color "white"
+                                                     :sx    {:color  "white"
+                                                             :width  "100%"
+                                                             :height "100%"}}]])
+                            true       (conj [:f> avatar-icon {:user user :href "#/archive" :src "static/images/nav-bar/articles.svg"}])
+                            )}]))

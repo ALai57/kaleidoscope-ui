@@ -29,7 +29,8 @@
                                                 (js/console.log "Init error" e)))
     :load-profile       (keycloak/load-profile! keycloak-adapter
                                                 (fn [user]
-                                                  (dispatch [:update-user-profile! (u/clojurize user)]))
+                                                  ;;(js/console.log keycloak-adapter)
+                                                  (dispatch [:update-user-profile! (u/clojurize (.-tokenParsed keycloak-adapter))]))
                                                 (fn [_]
                                                   (warnf "Could not load user")))
     :login              (keycloak/login! keycloak-adapter)
