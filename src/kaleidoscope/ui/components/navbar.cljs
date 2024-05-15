@@ -8,7 +8,7 @@
             [reagent-mui.components :refer [app-bar avatar box container toolbar]]))
 
 (def IMAGE-SIZE
-  {:xs "56px"
+  {:xs "46px"
    :sm "60px"
    :md "80px"
    :lg "80px"
@@ -39,7 +39,7 @@
 (defn -nav-bar [{:keys [icons]}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [app-bar {:position "static"
-              :sx       {:height     {:xs "60px"
+              :sx       {:height     {:xs "52px"
                                       :sm "80px"
                                       :md "100px"
                                       :lg "100px"
@@ -74,7 +74,7 @@
                                                       :md "8px"
                                                       :lg "8px"
                                                       :xl "8px"}
-                                        :marginTop   {:xs "2px"
+                                        :marginTop   {:xs "0px"
                                                       :sm "8px"
                                                       :md "8px"
                                                       :lg "8px"

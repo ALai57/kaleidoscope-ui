@@ -1,16 +1,15 @@
 #!/bin/bash
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
 pushd "$SCRIPT_DIR/../../"
 
-echo "Deploying frontend to kaleidoscope bucket..."
+echo "Incrementing package version..."
+npm version patch
 
+echo "Deploying frontend to kaleidoscope bucket..."
 aws s3 sync resources/static s3://kaleidoscope.pub/static \
     --exclude "*/cljs-runtime/*" \
     --exclude "*/shareable_stories/*" # --dryrun
-
-echo "Incrementing package version..."
-npm version patch
 
 popd
