@@ -32,5 +32,8 @@
                          {:title "something two"}]
                 }}))
 
-(def ^:export Image-Browser
+(def ^:export Image-Editor
   (clj->js {}))
+
+(def ^:export Image-Selector
+  (clj->js {:args {:mode "select"}}))

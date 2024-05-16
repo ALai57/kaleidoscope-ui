@@ -8,6 +8,7 @@ import {
   FormControl,
   Select,
   Modal,
+  Grid,
 } from "@mui/material";
 import { ImageAdd } from "@styled-icons/boxicons-regular/ImageAdd";
 import { Save } from "@styled-icons/boxicons-regular/Save";
@@ -95,6 +96,7 @@ const VersionSelector = ({
   imageVersions,
 }) => (
   <Select
+    fullWidth
     id="version-select"
     onChange={onVersionChange}
     value={selectedVersion}
@@ -115,6 +117,7 @@ const EditorPanel = ({
   onVersionChange,
   onEditPhoto,
   albums,
+  showVersionSelector = true,
 }) => {
   const [title, setTitle] = React.useState(selectedImage.title);
   const [description, setDescription] = React.useState(
@@ -139,6 +142,7 @@ const EditorPanel = ({
       variant="contained"
       startIcon={<Save style={{ height: "20px" }} />}
       component="label"
+      sx={{ margin: "5px" }}
       onClick={(x) =>
         onEditPhoto({
           photo_title: title,
@@ -195,6 +199,7 @@ const EditorPanel = ({
 
         <InputTags
           options={albums}
+          disabled={mode === "edit" ? false : true}
           width="100%"
           vals={[]}
           onAdd={() => console.log("Added!")}
@@ -202,14 +207,16 @@ const EditorPanel = ({
         />
 
         <br />
-        <FormControl fullWidth>
-          <InputLabel id="version-select">Version</InputLabel>
-          <VersionSelector
-            onVersionChange={onVersionChange}
-            selectedVersion={selectedVersion}
-            imageVersions={imageVersions}
-          />
-        </FormControl>
+        {showVersionSelector && (
+          <FormControl fullWidth>
+            <InputLabel id="version-select">Version</InputLabel>
+            <VersionSelector
+              onVersionChange={onVersionChange}
+              selectedVersion={selectedVersion}
+              imageVersions={imageVersions}
+            />
+          </FormControl>
+        )}
       </form>
       <br />
       {mode === "edit" && <SaveButton />}
@@ -327,26 +334,46 @@ const ImageBrowser = ({
   //       Allow the user to jump to the thumbnail somehow (from the image modal viewer)?
   //
   //
-  // Extract me to become a Modal?
-  // Add new button at the top for adding new images
+  // TODO: Add Modal Editor
+  // TODO: Dynamically detect viewport size
   return (
     <div>
       {mode === "edit" ? (
         <NewPhotoButton />
       ) : (
-        <Box>
-          <VersionSelector
-            imageVersions={imageVersions}
-            selectedVersion={selectedVersion}
-            onVersionChange={onVersionChange}
-          />
-          <SelectButton />
-        </Box>
+        <Grid container xs={12}>
+          <Grid item xs={3}>
+            <VersionSelector
+              imageVersions={imageVersions}
+              selectedVersion={selectedVersion}
+              onVersionChange={onVersionChange}
+            />
+          </Grid>
+          <Grid item xs={8}>
+            <SelectButton />
+          </Grid>
+        </Grid>
       )}
       {size === "small" ? (
         <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
-          <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
-            <Box />
+          <Modal
+            open={modalOpen}
+            onClose={() => setModalOpen(false)}
+            BackdropProps={{
+              style: { backgroundColor: "rgba(0, 0, 40, 0.8)" },
+            }}
+          >
+            <Box sx={{ backgroundColor: "white", opacity: 0.9 }}>
+              <EditorPanel
+                mode={mode}
+                selectedImage={theSelectedImage}
+                onVersionChange={onVersionChange}
+                onEditPhoto={editPhoto}
+                selectedVersion={selectedVersion}
+                albums={albums}
+                showVersionSelector={size === "small" ? false : true}
+              />
+            </Box>
           </Modal>
           <Box sx={styleFocus}>
             <FullImageCard
