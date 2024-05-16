@@ -44,19 +44,25 @@
    {:keys [delete-article! edit-article! publish-article!
            toggle-public-visibility! toggle-audience-manager] :as article-actions}]
   [list-item {:sx {:padding {:xs "2px"
-                             :sm "10px"}}}
+                             :sm "10px"}
+                   :align-content "center"}}
    [tooltip {:id "edit-tooltip" :title "Edit article"}
     [list-item-button {:on-click (fn [event]
                                    (edit-article! article-branch))}
      [grid {:container true}
       [grid {:item true}
-       [list-item-text {:sx {:width "70px"
-                             :flex  "none"}} article-created-date]]
-      [grid {:item true}
-       [list-item-icon {:sx {:margin-left "10px"
-                             :min-width   "26px"}}
-        [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]
-      [list-item-text {:sx {:margin-left "10px"}} article-title]]
+       [list-item-text {:sx {:width         "70px"
+                             :align-content "center"
+                             :flex          "none"}} article-created-date]]
+      [grid {:item true
+             :sx {:align-content "center"}}
+       [list-item-icon {:sx {:margin-left   "10px"
+                             :min-width     "26px"
+                             :align-content "center"}}
+        [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")
+                                     :align-content "center"}}]]]
+      [list-item-text {:sx {:margin-left   "10px"
+                            :align-content "center"}} article-title]]
      [grid {:container true} ;;box
       #_[tooltip {:id    "publish-tooltip"
                   :title (if published-at (str "Published on " published-at) "Publish article")}
