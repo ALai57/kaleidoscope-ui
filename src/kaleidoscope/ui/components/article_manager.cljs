@@ -81,6 +81,7 @@
                                :exclusive true
                                :onChange  (fn [event]
                                             ;;(println "Changed value" (events/event-value event))
+                                            (.stopPropagation event)
                                             (toggle-public-visibility! article-branch (events/event-value event)))}
           [toggle-button {:value true} "Public"]
           [toggle-button {:value false} "Non-public"]]]]
@@ -89,7 +90,9 @@
         [tooltip {:id    "audiences-tooltip"
                   :title "Audience: Who can see the article. Only applies when the article visibility is 'Non-Public'"}
          [icon-button {:edge     "end"
-                       :on-click (partial toggle-audience-manager article-branch)
+                       :on-click (fn [event]
+                                   (.stopPropagation event)
+                                   (toggle-audience-manager article-branch event))
 
                        ;; If the article is public, it makes no sense to set an audience for it
                        :disabled public-visibility}
@@ -98,7 +101,9 @@
                        :display "inline-block"}}]
         [tooltip {:id "delete-tooltip" :title "Delete article (WIP)"}
          [icon-button {:edge     "end"
-                       :on-click delete-article!}
+                       :on-click (fn [event]
+                                   (.stopPropagation event)
+                                   (delete-article! event))}
           [delete]]]]]
       ]
      ]]])
