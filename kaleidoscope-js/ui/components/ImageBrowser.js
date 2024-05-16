@@ -141,25 +141,35 @@ var ImageBrowser = function (_a) {
                 break;
         }
     };
+    var EditorButtons = function () { return (react_1.default.createElement(react_1.default.Fragment, null,
+        react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(Save_1.Save, { style: { height: "20px" } }), component: "label", onClick: function (x) {
+                var _a;
+                return editPhoto({
+                    photo_title: title,
+                    description: description,
+                    "photo-id": (_a = images[selectedImageIndex]) === null || _a === void 0 ? void 0 : _a.name,
+                });
+            } }, "Save"),
+        " ",
+        react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(ImageAdd_1.ImageAdd, { style: { height: "20px" } }), component: "label" },
+            "Add new photo",
+            react_1.default.createElement("input", { accept: "image/*", type: "file", hidden: true, onChange: addPhoto, multiple: true })))); };
+    var SelectButtons = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")); };
+    var Buttons = function () {
+        if (mode === "edit") {
+            return react_1.default.createElement(EditorButtons, null);
+        }
+        else {
+            return react_1.default.createElement(SelectButtons, null);
+        }
+    };
     return (react_1.default.createElement("div", null,
         react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
             react_1.default.createElement(material_1.Box, { sx: __assign(__assign({}, editorStyle), { overflow: "hidden" }) },
                 react_1.default.createElement("br", null),
                 react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, albums: albums }),
                 react_1.default.createElement("br", null),
-                mode === "edit" ? (react_1.default.createElement(react_1.default.Fragment, null,
-                    react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(Save_1.Save, { style: { height: "20px" } }), component: "label", onClick: function (x) {
-                            var _a;
-                            return editPhoto({
-                                photo_title: title,
-                                description: description,
-                                "photo-id": (_a = images[selectedImageIndex]) === null || _a === void 0 ? void 0 : _a.name,
-                            });
-                        } }, "Save"),
-                    " ",
-                    react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(ImageAdd_1.ImageAdd, { style: { height: "20px" } }), component: "label" },
-                        "Add new photo",
-                        react_1.default.createElement("input", { accept: "image/*", type: "file", hidden: true, onChange: addPhoto, multiple: true })))) : (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article"))),
+                mode === "edit" ? (react_1.default.createElement(EditorButtons, null)) : (react_1.default.createElement(SelectButtons, null))),
             react_1.default.createElement(material_1.Box, { sx: styleFocus },
                 react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken }))),
         react_1.default.createElement("div", null,

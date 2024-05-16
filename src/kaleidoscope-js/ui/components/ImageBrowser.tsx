@@ -260,6 +260,57 @@ const ImageBrowser = ({
     }
   };
 
+  const EditorButtons = () => (
+    <>
+      <Button
+        variant="contained"
+        startIcon={<Save style={{ height: "20px" }} />}
+        component="label"
+        onClick={(x) =>
+          editPhoto({
+            photo_title: title,
+            description,
+            "photo-id": images[selectedImageIndex]?.name,
+          })
+        }
+      >
+        Save
+      </Button>{" "}
+      <Button
+        variant="contained"
+        startIcon={<ImageAdd style={{ height: "20px" }} />}
+        component="label"
+      >
+        Add new photo
+        <input
+          accept="image/*"
+          type="file"
+          hidden
+          onChange={addPhoto}
+          multiple
+        ></input>
+      </Button>
+    </>
+  );
+
+  const SelectButtons = () => (
+    <Button
+      variant="contained"
+      component="label"
+      onClick={(x) => selectPhoto(selectedVersion.src)}
+    >
+      Add image version to article
+    </Button>
+  );
+
+  const Buttons = () => {
+    if (mode === "edit") {
+      return <EditorButtons />
+    } else {
+      return <SelectButtons />
+    }
+  }
+
   //console.log("CurrentImageVersions: ", currentImageVersions);
   //console.log("Selected Image:", theSelectedImage)
 
@@ -281,46 +332,7 @@ const ImageBrowser = ({
             albums={albums}
           />
           <br />
-          {mode === "edit" ? (
-            <>
-              <Button
-                variant="contained"
-                startIcon={<Save style={{ height: "20px" }} />}
-                component="label"
-                onClick={(x) =>
-                  editPhoto({
-                    photo_title: title,
-                    description,
-                    "photo-id": images[selectedImageIndex]?.name,
-                  })
-                }
-              >
-                Save
-              </Button>{" "}
-              <Button
-                variant="contained"
-                startIcon={<ImageAdd style={{ height: "20px" }} />}
-                component="label"
-              >
-                Add new photo
-                <input
-                  accept="image/*"
-                  type="file"
-                  hidden
-                  onChange={addPhoto}
-                  multiple
-                ></input>
-              </Button>
-            </>
-          ) : (
-            <Button
-              variant="contained"
-              component="label"
-              onClick={(x) => selectPhoto(selectedVersion.src)}
-            >
-              Add image version to article
-            </Button>
-          )}
+          {mode === "edit" ? (<EditorButtons />) : (<SelectButtons />)}
         </Box>
 
         <Box sx={styleFocus}>
@@ -346,7 +358,7 @@ const ImageBrowser = ({
         </Box>
       </div>
     </div>
-  );
+  )
 };
 
 export { ImageBrowser };
