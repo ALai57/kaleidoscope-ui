@@ -11,6 +11,7 @@
             [reagent-mui.components :refer [box
                                             divider
                                             collapse
+                                            grid
                                             icon-button
                                             list
                                             list-item
@@ -42,52 +43,59 @@
   [{:keys [article-created-date article-title published-at public-visibility] :as article-branch}
    {:keys [delete-article! edit-article! publish-article!
            toggle-public-visibility! toggle-audience-manager] :as article-actions}]
-  [list-item
-   {:sx              {:padding-right "150px"}
-    :secondaryAction (reagent/as-element
-                      [box
-                       [tooltip {:id    "publish-tooltip"
-                                 :title (if published-at (str "Published on " published-at) "Publish article")}
-                        [:span
-                         [icon-button {:edge     "end"
-                                       :disabled (if published-at true false)
-                                       :on-click publish-article!
-                                       :sx       {:margin-right "3px"}}
-                          [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]
-
-                       [tooltip {:id    "settings-tooltip-visibility"
-                                 :title "Determine who can see your article. If the setting is 'Non-public', then only the audience you specify can view the article"}
-                        [toggle-button-group {:value     public-visibility
-                                              :exclusive true
-                                              :onChange  (fn [event]
-                                                           ;;(println "Changed value" (events/event-value event))
-                                                           (toggle-public-visibility! article-branch (events/event-value event)))}
-                         [toggle-button {:value true} "Public"]
-                         [toggle-button {:value false} "Non-public"]]]
-
-                       [tooltip {:id    "audiences-tooltip"
-                                 :title "Audience: Who can see the article. Only applies when the article visibility is 'Non-Public'"}
-                        [icon-button {:edge     "end"
-                                      :on-click (partial toggle-audience-manager article-branch)
-
-                                      ;; If the article is public, it makes no sense to set an audience for it
-                                      :disabled public-visibility}
-                         [group]]]
-                       [:div {:style {:width   "20px"
-                                      :display "inline-block"}}]
-                       [tooltip {:id "delete-tooltip" :title "Delete article (WIP)"}
-                        [icon-button {:edge     "end"
-                                      :on-click delete-article!}
-                         [delete]]]
-                       ])}
+  [list-item {:sx {:padding {:xs "2px"
+                             :sm "10px"}}}
    [tooltip {:id "edit-tooltip" :title "Edit article"}
     [list-item-button {:on-click (fn [event]
                                    (edit-article! article-branch))}
-     [list-item-text {:sx {:width "70px"
-                           :flex  "none"}} article-created-date]
-     [list-item-icon {:sx {:margin-left "10px"
-                           :min-width   "26px"}} [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")}}]]
-     [list-item-text {:sx {:margin-left "10px"}} article-title]]]])
+     [grid {:container true}
+      [grid {:item true}
+       [list-item-text {:sx {:width "70px"
+                             :flex  "none"}} article-created-date]]
+      [grid {:item true}
+       [list-item-icon {:sx {:margin-left "10px"
+                             :min-width   "26px"}}
+        [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]
+      [list-item-text {:sx {:margin-left "10px"}} article-title]]
+     [grid {:container true} ;;box
+      #_[tooltip {:id    "publish-tooltip"
+                  :title (if published-at (str "Published on " published-at) "Publish article")}
+         [:span
+          [icon-button {:edge     "end"
+                        :disabled (if published-at true false)
+                        :on-click publish-article!
+                        :sx       {:margin-right "3px"}}
+           [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]
+
+      [grid {:container true}
+       [grid {:item true}
+        [tooltip {:id    "settings-tooltip-visibility"
+                  :title "Determine who can see your article. If the setting is 'Non-public', then only the audience you specify can view the article"}
+         [toggle-button-group {:value     public-visibility
+                               :exclusive true
+                               :onChange  (fn [event]
+                                            ;;(println "Changed value" (events/event-value event))
+                                            (toggle-public-visibility! article-branch (events/event-value event)))}
+          [toggle-button {:value true} "Public"]
+          [toggle-button {:value false} "Non-public"]]]]
+
+       [grid {:item true}
+        [tooltip {:id    "audiences-tooltip"
+                  :title "Audience: Who can see the article. Only applies when the article visibility is 'Non-Public'"}
+         [icon-button {:edge     "end"
+                       :on-click (partial toggle-audience-manager article-branch)
+
+                       ;; If the article is public, it makes no sense to set an audience for it
+                       :disabled public-visibility}
+          [group]]]
+        [:div {:style {:width   "20px"
+                       :display "inline-block"}}]
+        [tooltip {:id "delete-tooltip" :title "Delete article (WIP)"}
+         [icon-button {:edge     "end"
+                       :on-click delete-article!}
+          [delete]]]]]
+      ]
+     ]]])
 
 (defn article-group-accordion
   [{:keys [idx open? on-click
@@ -99,32 +107,64 @@
    [collapse {:in            open?
               :timeout       "auto"
               :unmountOnExit true}
-    [list-item {:style {:display "block"}}
+    [list-item {:style {:display "block"}
+                :sx    {:padding "2px"}}
      (for [{:keys [article-created-at article-title branch-name public-visibility] :as article} articles]
        ^{:key (str article-title article-created-at branch-name public-visibility)}
        [article-row article article-actions])]]])
 
+(def BREAKPOINTS
+  {:p    2 ;; padding
+   :xs   12
+   :sm   12
+   :md   8
+   :lg   8
+   :xl   8})
+
 (defn add-article-form
   [{:keys [add-article!]}]
   (let [new-article-title (reagent/atom "")
-        on-change        (fn [e]
-                           (reset! new-article-title (events/event-value e)))]
+        on-change         (fn [e]
+                            (reset! new-article-title (events/event-value e)))]
     (fn []
       [box {:style {:display       "flex"
                     :align-items   "flex-end"
                     :margin-bottom "20px"}}
-       [post-add {:sx {:color "action.active"
-                       :mr    1
-                       :my    0.5}}]
-       [text-field {:id        "new-article-title-input"
-                    :label     "Article Name"
-                    ;;:label-for "new-article-title"
-                    :variant   "standard"
-                    :sx        {:margin-right "20px"
-                                :min-width    "350px"}
-                    :on-change on-change}]
-       [button/button {:text     "Add a new article"
-                       :on-click (partial add-article! {:article-title @new-article-title})}]
+       [grid {:container      true
+              :display        "flex"
+              :justifyContent "center"
+              :alignItems     "center"
+              :align          "center"
+              :xs             12
+              :sm             12
+              :md             8
+              :lg             8
+              :xl             8}
+        [grid {:p    2 ;; padding
+               :xs   12
+               :sm   8
+               :md   6
+               :lg   6
+               :xl   6
+               :item true}
+         [post-add {:sx {:color "action.active"
+                         :mr    1
+                         :my    0.5}}]
+         [text-field {:id        "new-article-title-input"
+                      :label     "Article Name"
+                      ;;:label-for "new-article-title"
+                      :variant   "standard"
+                      :sx        {:margin-right "20px"}
+                      :on-change on-change}]]
+        [grid {:p    2 ;; padding
+               :xs   12
+               :sm   4
+               :md   2
+               :lg   2
+               :xl   2
+               :item true}
+         [button/button {:text     "Add a new article"
+                         :on-click (partial add-article! {:article-title @new-article-title})}]]]
        ])))
 
 (defn -article-manager
