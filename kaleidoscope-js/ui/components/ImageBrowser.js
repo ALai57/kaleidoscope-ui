@@ -66,11 +66,19 @@ var EditableField = function (_a) {
 var defaultImage = {
     src: "https://andrewslai.com/static/images/nav-bar/favicon.svg",
 };
-var EditorPanel = function (_a) {
+var VersionSelector = function (_a) {
     var _b;
-    var selectedImage = _a.selectedImage, selectedVersion = _a.selectedVersion, mode = _a.mode, onVersionChange = _a.onVersionChange, albums = _a.albums;
-    var _c = react_1.default.useState(selectedImage.title), title = _c[0], setTitle = _c[1];
-    var _d = react_1.default.useState(selectedImage.description), description = _d[0], setDescription = _d[1];
+    var onVersionChange = _a.onVersionChange, selectedVersion = _a.selectedVersion, imageVersions = _a.imageVersions;
+    return (react_1.default.createElement(material_1.Select, { id: "version-select", onChange: onVersionChange, value: selectedVersion }, imageVersions &&
+        ((_b = Object.entries(imageVersions)) === null || _b === void 0 ? void 0 : _b.map(function (_a) {
+            var name = _a[0], version = _a[1];
+            return (react_1.default.createElement(material_1.MenuItem, { key: name, value: version }, name));
+        }))));
+};
+var EditorPanel = function (_a) {
+    var selectedImage = _a.selectedImage, selectedVersion = _a.selectedVersion, mode = _a.mode, onVersionChange = _a.onVersionChange, onEditPhoto = _a.onEditPhoto, albums = _a.albums;
+    var _b = react_1.default.useState(selectedImage.title), title = _b[0], setTitle = _b[1];
+    var _c = react_1.default.useState(selectedImage.description), description = _c[0], setDescription = _c[1];
     var date = Date.parse(selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.created_at);
     var dateFormat = {
         year: "numeric",
@@ -83,22 +91,28 @@ var EditorPanel = function (_a) {
     };
     var displayDate = new Date(date).toLocaleString("en-US", dateFormat);
     var imageVersions = selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.versions;
-    return (react_1.default.createElement("form", null,
+    var SaveButton = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(Save_1.Save, { style: { height: "20px" } }), component: "label", onClick: function (x) {
+            return onEditPhoto({
+                photo_title: title,
+                description: description,
+                "photo-id": selectedImage.name,
+            });
+        } }, "Save")); };
+    return (react_1.default.createElement(material_1.Box, null,
+        react_1.default.createElement("form", null,
+            react_1.default.createElement("br", null),
+            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-1", label: "Name", id: "name", disabled: true, val: selectedImage.name }),
+            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-2", label: "Created At", id: "created_at", disabled: true, val: displayDate }),
+            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-3", label: "Creator", id: "creator", disabled: true, val: selectedImage.creator }),
+            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-4", label: "Title", id: "title", disabled: mode === "edit" ? false : true, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
+            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-5", label: "Description", id: "description", disabled: mode === "edit" ? false : true, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
+            react_1.default.createElement(InputTags_1.InputTags, { options: albums, width: "100%", vals: [], onAdd: function () { return console.log("Added!"); }, onRemove: function () { return console.log("Removed!"); } }),
+            react_1.default.createElement("br", null),
+            react_1.default.createElement(material_1.FormControl, { fullWidth: true },
+                react_1.default.createElement(material_1.InputLabel, { id: "version-select" }, "Version"),
+                react_1.default.createElement(VersionSelector, { onVersionChange: onVersionChange, selectedVersion: selectedVersion, imageVersions: imageVersions }))),
         react_1.default.createElement("br", null),
-        react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-1", label: "Name", id: "name", disabled: true, val: selectedImage.name }),
-        react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-2", label: "Created At", id: "created_at", disabled: true, val: displayDate }),
-        react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-3", label: "Creator", id: "creator", disabled: true, val: selectedImage.creator }),
-        react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-4", label: "Title", id: "title", disabled: mode === "edit" ? false : true, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
-        react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-5", label: "Description", id: "description", disabled: mode === "edit" ? false : true, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
-        react_1.default.createElement(InputTags_1.InputTags, { options: albums, width: "100%", vals: [], onAdd: function () { return console.log("Added!"); }, onRemove: function () { return console.log("Removed!"); } }),
-        react_1.default.createElement("br", null),
-        react_1.default.createElement(material_1.FormControl, { fullWidth: true },
-            react_1.default.createElement(material_1.InputLabel, { id: "version-select" }, "Version"),
-            react_1.default.createElement(material_1.Select, { id: "version-select", onChange: onVersionChange, value: selectedVersion }, imageVersions &&
-                ((_b = Object.entries(imageVersions)) === null || _b === void 0 ? void 0 : _b.map(function (_a) {
-                    var name = _a[0], version = _a[1];
-                    return (react_1.default.createElement(material_1.MenuItem, { key: name, value: version }, name));
-                }))))));
+        mode === "edit" && react_1.default.createElement(SaveButton, null)));
 };
 var ImageBrowser = function (_a) {
     var _b;
@@ -108,16 +122,14 @@ var ImageBrowser = function (_a) {
     var currentImageVersions = images && ((_b = images[selectedImageIndex]) === null || _b === void 0 ? void 0 : _b.versions);
     var _m = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _m[0], setSelectedVersion = _m[1];
     var theSelectedImage = images ? images[selectedImageIndex] : {};
-    var _o = react_1.default.useState(theSelectedImage.title), title = _o[0], setTitle = _o[1];
-    var _p = react_1.default.useState(theSelectedImage.description), description = _p[0], setDescription = _p[1];
+    var imageVersions = theSelectedImage === null || theSelectedImage === void 0 ? void 0 : theSelectedImage.versions;
     var jumpTo = function (newIndex) {
         var _a;
         setSelectedImageIndex(newIndex);
         var newImage = images[newIndex];
         setSelectedVersion(((_a = newImage.versions) === null || _a === void 0 ? void 0 : _a.raw) || defaultImage);
-        setTitle(newImage.title);
-        setDescription(newImage.description);
     };
+    var _o = react_1.default.useState(false), modalOpen = _o[0], setModalOpen = _o[1];
     var onVersionChange = function (ev) {
         setSelectedVersion(ev.target.value);
     };
@@ -141,37 +153,26 @@ var ImageBrowser = function (_a) {
                 break;
         }
     };
-    var EditorButtons = function () { return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(Save_1.Save, { style: { height: "20px" } }), component: "label", onClick: function (x) {
-                var _a;
-                return editPhoto({
-                    photo_title: title,
-                    description: description,
-                    "photo-id": (_a = images[selectedImageIndex]) === null || _a === void 0 ? void 0 : _a.name,
-                });
-            } }, "Save"),
-        " ",
+    var NewPhotoButton = function () { return (react_1.default.createElement(react_1.default.Fragment, null,
         react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(ImageAdd_1.ImageAdd, { style: { height: "20px" } }), component: "label" },
             "Add new photo",
             react_1.default.createElement("input", { accept: "image/*", type: "file", hidden: true, onChange: addPhoto, multiple: true })))); };
-    var SelectButtons = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")); };
-    var Buttons = function () {
-        if (mode === "edit") {
-            return react_1.default.createElement(EditorButtons, null);
-        }
-        else {
-            return react_1.default.createElement(SelectButtons, null);
-        }
-    };
+    var SelectButton = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")); };
+    var size = "small";
     return (react_1.default.createElement("div", null,
-        react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
+        mode === "edit" ? (react_1.default.createElement(NewPhotoButton, null)) : (react_1.default.createElement(material_1.Box, null,
+            react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange }),
+            react_1.default.createElement(SelectButton, null))),
+        size === "small" ? (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
+            react_1.default.createElement(material_1.Modal, { open: modalOpen, onClose: function () { return setModalOpen(false); } },
+                react_1.default.createElement(material_1.Box, null)),
+            react_1.default.createElement(material_1.Box, { sx: styleFocus },
+                react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken, onClick: function () { return setModalOpen(true); } })))) : (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
             react_1.default.createElement(material_1.Box, { sx: __assign(__assign({}, editorStyle), { overflow: "hidden" }) },
                 react_1.default.createElement("br", null),
-                react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, albums: albums }),
-                react_1.default.createElement("br", null),
-                mode === "edit" ? (react_1.default.createElement(EditorButtons, null)) : (react_1.default.createElement(SelectButtons, null))),
+                react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums })),
             react_1.default.createElement(material_1.Box, { sx: styleFocus },
-                react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken }))),
+                react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken })))),
         react_1.default.createElement("div", null,
             react_1.default.createElement(material_1.Box, null,
                 react_1.default.createElement(material_1.Box, { sx: styleThumbnails }, images &&

@@ -7,6 +7,7 @@ import {
   MenuItem,
   FormControl,
   Select,
+  Modal,
 } from "@mui/material";
 import { ImageAdd } from "@styled-icons/boxicons-regular/ImageAdd";
 import { Save } from "@styled-icons/boxicons-regular/Save";
@@ -88,11 +89,31 @@ const defaultImage = {
   src: "https://andrewslai.com/static/images/nav-bar/favicon.svg",
 };
 
+const VersionSelector = ({
+  onVersionChange,
+  selectedVersion,
+  imageVersions,
+}) => (
+  <Select
+    id="version-select"
+    onChange={onVersionChange}
+    value={selectedVersion}
+  >
+    {imageVersions &&
+      Object.entries(imageVersions)?.map(([name, version]: [string, any]) => (
+        <MenuItem key={name} value={version}>
+          {name}
+        </MenuItem>
+      ))}
+  </Select>
+);
+
 const EditorPanel = ({
   selectedImage,
   selectedVersion,
   mode,
   onVersionChange,
+  onEditPhoto,
   albums,
 }) => {
   const [title, setTitle] = React.useState(selectedImage.title);
@@ -113,74 +134,86 @@ const EditorPanel = ({
   const displayDate = new Date(date).toLocaleString("en-US", dateFormat);
   const imageVersions = selectedImage?.versions;
 
+  const SaveButton = () => (
+    <Button
+      variant="contained"
+      startIcon={<Save style={{ height: "20px" }} />}
+      component="label"
+      onClick={(x) =>
+        onEditPhoto({
+          photo_title: title,
+          description,
+          "photo-id": selectedImage.name,
+        })
+      }
+    >
+      Save
+    </Button>
+  );
+
   return (
-    <form>
-      <br />
-      <EditableField
-        key={selectedImage.name + "ef-1"}
-        label="Name"
-        id="name"
-        disabled={true}
-        val={selectedImage.name}
-      />
-      <EditableField
-        key={selectedImage.name + "ef-2"}
-        label="Created At"
-        id="created_at"
-        disabled={true}
-        val={displayDate}
-      />
-      <EditableField
-        key={selectedImage.name + "ef-3"}
-        label="Creator"
-        id="creator"
-        disabled={true}
-        val={selectedImage.creator}
-      />
-      <EditableField
-        key={selectedImage.name + "ef-4"}
-        label="Title"
-        id="title"
-        disabled={mode === "edit" ? false : true}
-        val={title}
-        onChange={(x) => setTitle(x.target.value)}
-      />
-      <EditableField
-        key={selectedImage.name + "ef-5"}
-        label="Description"
-        id="description"
-        disabled={mode === "edit" ? false : true}
-        val={description}
-        onChange={(x) => setDescription(x.target.value)}
-      />
+    <Box>
+      <form>
+        <br />
+        <EditableField
+          key={selectedImage.name + "ef-1"}
+          label="Name"
+          id="name"
+          disabled={true}
+          val={selectedImage.name}
+        />
+        <EditableField
+          key={selectedImage.name + "ef-2"}
+          label="Created At"
+          id="created_at"
+          disabled={true}
+          val={displayDate}
+        />
+        <EditableField
+          key={selectedImage.name + "ef-3"}
+          label="Creator"
+          id="creator"
+          disabled={true}
+          val={selectedImage.creator}
+        />
+        <EditableField
+          key={selectedImage.name + "ef-4"}
+          label="Title"
+          id="title"
+          disabled={mode === "edit" ? false : true}
+          val={title}
+          onChange={(x) => setTitle(x.target.value)}
+        />
+        <EditableField
+          key={selectedImage.name + "ef-5"}
+          label="Description"
+          id="description"
+          disabled={mode === "edit" ? false : true}
+          val={description}
+          onChange={(x) => setDescription(x.target.value)}
+        />
 
-      <InputTags
-        options={albums}
-        width="100%"
-        vals={[]}
-        onAdd={() => console.log("Added!")}
-        onRemove={() => console.log("Removed!")}
-      />
+        <InputTags
+          options={albums}
+          width="100%"
+          vals={[]}
+          onAdd={() => console.log("Added!")}
+          onRemove={() => console.log("Removed!")}
+        />
 
+        <br />
+        <FormControl fullWidth>
+          <InputLabel id="version-select">Version</InputLabel>
+          <VersionSelector
+            onVersionChange={onVersionChange}
+            selectedVersion={selectedVersion}
+            imageVersions={imageVersions}
+          />
+        </FormControl>
+      </form>
       <br />
-      <FormControl fullWidth>
-        <InputLabel id="version-select">Version</InputLabel>
-        <Select
-          id="version-select"
-          onChange={onVersionChange}
-          value={selectedVersion}
-        >
-          {imageVersions &&
-            Object.entries(imageVersions)?.map(
-              ([name, version]: [string, any]) => (
-                <MenuItem key={name} value={version}>
-                  {name}
-                </MenuItem>
-              )
-            )}
-        </Select>
-      </FormControl>
-    </form>
+      {mode === "edit" && <SaveButton />}
+    </Box>
   );
 };
 
@@ -216,20 +249,16 @@ const ImageBrowser = ({
   );
 
   const theSelectedImage = images ? images[selectedImageIndex] : {};
-
-  const [title, setTitle] = React.useState(theSelectedImage.title);
-  const [description, setDescription] = React.useState(
-    theSelectedImage.description
-  );
+  const imageVersions = theSelectedImage?.versions;
 
   const jumpTo = (newIndex) => {
     setSelectedImageIndex(newIndex);
     const newImage = images[newIndex];
 
     setSelectedVersion(newImage.versions?.raw || defaultImage);
-    setTitle(newImage.title);
-    setDescription(newImage.description);
   };
+
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const onVersionChange = (ev) => {
     //console.log("Event", ev)
@@ -260,22 +289,8 @@ const ImageBrowser = ({
     }
   };
 
-  const EditorButtons = () => (
+  const NewPhotoButton = () => (
     <>
-      <Button
-        variant="contained"
-        startIcon={<Save style={{ height: "20px" }} />}
-        component="label"
-        onClick={(x) =>
-          editPhoto({
-            photo_title: title,
-            description,
-            "photo-id": images[selectedImageIndex]?.name,
-          })
-        }
-      >
-        Save
-      </Button>{" "}
       <Button
         variant="contained"
         startIcon={<ImageAdd style={{ height: "20px" }} />}
@@ -293,7 +308,7 @@ const ImageBrowser = ({
     </>
   );
 
-  const SelectButtons = () => (
+  const SelectButton = () => (
     <Button
       variant="contained"
       component="label"
@@ -303,13 +318,7 @@ const ImageBrowser = ({
     </Button>
   );
 
-  const Buttons = () => {
-    if (mode === "edit") {
-      return <EditorButtons />
-    } else {
-      return <SelectButtons />
-    }
-  }
+  const size = "small";
 
   //console.log("CurrentImageVersions: ", currentImageVersions);
   //console.log("Selected Image:", theSelectedImage)
@@ -322,26 +331,53 @@ const ImageBrowser = ({
   // Add new button at the top for adding new images
   return (
     <div>
-      <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
-        <Box sx={{ ...editorStyle, overflow: "hidden" }}>
-          <br />
-          <EditorPanel
-            mode={mode}
-            selectedImage={theSelectedImage}
+      {mode === "edit" ? (
+        <NewPhotoButton />
+      ) : (
+        <Box>
+          <VersionSelector
+            imageVersions={imageVersions}
+            selectedVersion={selectedVersion}
             onVersionChange={onVersionChange}
-            albums={albums}
           />
-          <br />
-          {mode === "edit" ? (<EditorButtons />) : (<SelectButtons />)}
+          <SelectButton />
         </Box>
+      )}
+      {size === "small" ? (
+        <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
+          <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+            <Box />
+          </Modal>
+          <Box sx={styleFocus}>
+            <FullImageCard
+              image={selectedVersion || defaultImage}
+              authToken={authToken}
+              onClick={() => setModalOpen(true)}
+            />
+          </Box>
+        </Box>
+      ) : (
+        <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
+          <Box sx={{ ...editorStyle, overflow: "hidden" }}>
+            <br />
+            <EditorPanel
+              mode={mode}
+              selectedImage={theSelectedImage}
+              onVersionChange={onVersionChange}
+              onEditPhoto={editPhoto}
+              selectedVersion={selectedVersion}
+              albums={albums}
+            />
+          </Box>
 
-        <Box sx={styleFocus}>
-          <FullImageCard
-            image={selectedVersion || defaultImage}
-            authToken={authToken}
-          />
+          <Box sx={styleFocus}>
+            <FullImageCard
+              image={selectedVersion || defaultImage}
+              authToken={authToken}
+            />
+          </Box>
         </Box>
-      </Box>
+      )}
       <div>
         <Box>
           <Box sx={styleThumbnails}>
@@ -358,7 +394,7 @@ const ImageBrowser = ({
         </Box>
       </div>
     </div>
-  )
+  );
 };
 
 export { ImageBrowser };

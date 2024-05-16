@@ -70,14 +70,15 @@ function displayProtectedImage(imageId, imageUrl, authToken) {
         });
     });
 }
+var logger = function () { return console.log("Clicked photo"); };
 var FullImageCard = function (_a) {
-    var image = _a.image, _b = _a.authToken, authToken = _b === void 0 ? null : _b, _c = _a.forceRerender, forceRerender = _c === void 0 ? false : _c;
+    var image = _a.image, _b = _a.authToken, authToken = _b === void 0 ? null : _b, _c = _a.forceRerender, forceRerender = _c === void 0 ? false : _c, _d = _a.onClick, onClick = _d === void 0 ? logger : _d;
     react_1.default.useEffect(function () {
         console.log("Loading ".concat(image.src));
         displayProtectedImage(image.src, image.src, authToken);
     }, [image]);
     return (react_1.default.createElement(material_1.Card, { sx: { float: "left", margin: "5px", display: 'inherit', height: '100%', maxHeight: '100%', width: '100%' } },
-        react_1.default.createElement(material_1.CardActionArea, { sx: { height: '100%' } },
+        react_1.default.createElement(material_1.CardActionArea, { sx: { height: '100%' }, onClick: onClick },
             react_1.default.createElement(material_1.CardMedia, { id: 'full-' + image.src, component: "img", height: image.height, alt: image.alt, className: 'lazyload', sx: { height: '100%' } }))));
 };
 exports.FullImageCard = FullImageCard;

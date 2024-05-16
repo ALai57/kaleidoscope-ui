@@ -23,14 +23,17 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
   imageElement.onload = () => URL.revokeObjectURL(objectUrl);
 }
 
-const FullImageCard = ({image, authToken=null, forceRerender=false}) => {
+const logger = () => console.log("Clicked photo");
+
+const FullImageCard = ({image, authToken=null, forceRerender=false, onClick=logger}) => {
   React.useEffect(() => {console.log(`Loading ${image.src}`);
                          displayProtectedImage(image.src, image.src, authToken);},
                   [image]);
 
   return (
     <Card sx={{ float: "left", margin: "5px", display: 'inherit', height: '100%', maxHeight: '100%', width: '100%'}}>
-      <CardActionArea sx={{height: '100%'}}>
+      <CardActionArea sx={{height: '100%'}}
+        onClick={onClick}>
         <CardMedia
           id           ={'full-' + image.src}
           component    ="img"
