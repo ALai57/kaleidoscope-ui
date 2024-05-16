@@ -171,12 +171,12 @@ var ImageBrowser = function (_a) {
     var SelectButton = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")); };
     var size = "small";
     return (react_1.default.createElement("div", null,
-        mode === "edit" ? (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
-            react_1.default.createElement(material_1.Grid, { item: true, xs: 3, marginRight: "5px" },
+        mode === "edit" ? (react_1.default.createElement(material_1.Grid, { container: true, xs: 12, align: "center" },
+            react_1.default.createElement(material_1.Grid, { item: true, xs: 3, marginRight: "5px", justifyContent: "flex-end" },
                 react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange })),
             react_1.default.createElement(material_1.Grid, { item: true, xs: 8 },
-                react_1.default.createElement(NewPhotoButton, null)))) : (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
-            react_1.default.createElement(material_1.Grid, { item: true, xs: 3 },
+                react_1.default.createElement(NewPhotoButton, null)))) : (react_1.default.createElement(material_1.Grid, { container: true, xs: 12, align: "center" },
+            react_1.default.createElement(material_1.Grid, { item: true, xs: 3, marginRight: "5px", justifyContent: "flex-end" },
                 react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange })),
             react_1.default.createElement(material_1.Grid, { item: true, xs: 8 },
                 react_1.default.createElement(SelectButton, null)))),

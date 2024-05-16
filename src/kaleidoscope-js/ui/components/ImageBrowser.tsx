@@ -352,8 +352,8 @@ const ImageBrowser = ({
   return (
     <div>
       {mode === "edit" ? (
-        <Grid container xs={12}>
-          <Grid item xs={3} marginRight="5px">
+        <Grid container xs={12} align="center">
+          <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
             <VersionSelector
               imageVersions={imageVersions}
               selectedVersion={selectedVersion}
@@ -365,8 +365,8 @@ const ImageBrowser = ({
           </Grid>
         </Grid>
       ) : (
-        <Grid container xs={12}>
-          <Grid item xs={3}>
+        <Grid container xs={12} align="center">
+          <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
             <VersionSelector
               imageVersions={imageVersions}
               selectedVersion={selectedVersion}

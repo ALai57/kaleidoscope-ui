@@ -8,7 +8,7 @@
             [reagent-mui.components :refer [app-bar avatar box container toolbar]]))
 
 (def IMAGE-SIZE
-  {:xs "46px"
+  {:xs "25px"
    :sm "60px"
    :md "80px"
    :lg "80px"
@@ -39,7 +39,7 @@
 (defn -nav-bar [{:keys [icons]}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [app-bar {:position "static"
-              :sx       {:height     {:xs "52px"
+              :sx       {:height     {:xs "50px"
                                       :sm "80px"
                                       :md "100px"
                                       :lg "100px"
@@ -69,16 +69,12 @@
   (let [palette (:palette (u/clojurize (useTheme)))]
     [:> zoom-icon {:href href}
      (into [avatar (cond-> {:alt       (if user (:firstName user) "Not logged in")
-                            :sx        {:padding     {:xs "6px"
+                            :sx        {:padding     {:xs "4px"
                                                       :sm "8px"
                                                       :md "8px"
                                                       :lg "8px"
                                                       :xl "8px"}
-                                        :marginTop   {:xs "0px"
-                                                      :sm "8px"
-                                                      :md "8px"
-                                                      :lg "8px"
-                                                      :xl "8px"}
+                                        :marginTop   "0px"
                                         :width       IMAGE-SIZE
                                         :height      IMAGE-SIZE
                                         :marginLeft  {:xs "4px"
