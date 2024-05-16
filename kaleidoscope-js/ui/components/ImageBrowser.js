@@ -32,11 +32,22 @@ var styleFocus = {
     p: 4,
     display: "inline-block",
 };
+var styleFocusSmall = {
+    width: "auto",
+    maxHeight: "95%",
+    maxWidth: "95%",
+    bgcolor: "background.paper",
+    height: "95%",
+    boxShadow: 24,
+    p: 4,
+    padding: "6px",
+    display: "inline-block",
+};
 var editorStyle = {
     top: "0%",
     left: "0%",
     width: "20vw",
-    height: "70vh",
+    height: "65vh",
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 4,
@@ -69,7 +80,7 @@ var defaultImage = {
 var VersionSelector = function (_a) {
     var _b;
     var onVersionChange = _a.onVersionChange, selectedVersion = _a.selectedVersion, imageVersions = _a.imageVersions;
-    return (react_1.default.createElement(material_1.Select, { fullWidth: true, id: "version-select", onChange: onVersionChange, value: selectedVersion }, imageVersions &&
+    return (react_1.default.createElement(material_1.Select, { fullWidth: true, id: "version-select", onChange: onVersionChange, value: selectedVersion, size: "small" }, imageVersions &&
         ((_b = Object.entries(imageVersions)) === null || _b === void 0 ? void 0 : _b.map(function (_a) {
             var name = _a[0], version = _a[1];
             return (react_1.default.createElement(material_1.MenuItem, { key: name, value: version }, name));
@@ -160,23 +171,27 @@ var ImageBrowser = function (_a) {
     var SelectButton = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")); };
     var size = "small";
     return (react_1.default.createElement("div", null,
-        mode === "edit" ? (react_1.default.createElement(NewPhotoButton, null)) : (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
+        mode === "edit" ? (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
+            react_1.default.createElement(material_1.Grid, { item: true, xs: 3, marginRight: "5px" },
+                react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange })),
+            react_1.default.createElement(material_1.Grid, { item: true, xs: 8 },
+                react_1.default.createElement(NewPhotoButton, null)))) : (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
             react_1.default.createElement(material_1.Grid, { item: true, xs: 3 },
                 react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange })),
             react_1.default.createElement(material_1.Grid, { item: true, xs: 8 },
                 react_1.default.createElement(SelectButton, null)))),
-        size === "small" ? (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
+        size === "small" ? (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "65vh", textAlign: "center" } },
             react_1.default.createElement(material_1.Modal, { open: modalOpen, onClose: function () { return setModalOpen(false); }, BackdropProps: {
                     style: { backgroundColor: "rgba(0, 0, 40, 0.8)" },
                 } },
                 react_1.default.createElement(material_1.Box, { sx: { backgroundColor: "white", opacity: 0.9 } },
                     react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums, showVersionSelector: size === "small" ? false : true }))),
-            react_1.default.createElement(material_1.Box, { sx: styleFocus },
+            react_1.default.createElement(material_1.Box, { sx: size === "small" ? styleFocusSmall : styleFocus },
                 react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken, onClick: function () { return setModalOpen(true); } })))) : (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
             react_1.default.createElement(material_1.Box, { sx: __assign(__assign({}, editorStyle), { overflow: "hidden" }) },
                 react_1.default.createElement("br", null),
                 react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums })),
-            react_1.default.createElement(material_1.Box, { sx: styleFocus },
+            react_1.default.createElement(material_1.Box, { sx: size === "small" ? styleFocusSmall : styleFocus },
                 react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken })))),
         react_1.default.createElement("div", null,
             react_1.default.createElement(material_1.Box, null,

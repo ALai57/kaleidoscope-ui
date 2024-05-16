@@ -27,12 +27,24 @@ const styleFocus = {
   display: "inline-block",
 };
 
+const styleFocusSmall = {
+  width: "auto",
+  maxHeight: "95%",
+  maxWidth: "95%",
+  bgcolor: "background.paper",
+  height: "95%",
+  boxShadow: 24,
+  p: 4,
+  padding: "6px",
+  display: "inline-block",
+};
+
 const editorStyle = {
   top: "0%",
   left: "0%",
   //transform: 'translate(-50%, -50%)',
   width: "20vw",
-  height: "70vh",
+  height: "65vh",
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
@@ -100,6 +112,7 @@ const VersionSelector = ({
     id="version-select"
     onChange={onVersionChange}
     value={selectedVersion}
+    size="small"
   >
     {imageVersions &&
       Object.entries(imageVersions)?.map(([name, version]: [string, any]) => (
@@ -334,12 +347,23 @@ const ImageBrowser = ({
   //       Allow the user to jump to the thumbnail somehow (from the image modal viewer)?
   //
   //
-  // TODO: Add Modal Editor
   // TODO: Dynamically detect viewport size
+  // TODO: Edit border size when in small mode
   return (
     <div>
       {mode === "edit" ? (
-        <NewPhotoButton />
+        <Grid container xs={12}>
+          <Grid item xs={3} marginRight="5px">
+            <VersionSelector
+              imageVersions={imageVersions}
+              selectedVersion={selectedVersion}
+              onVersionChange={onVersionChange}
+            />
+          </Grid>
+          <Grid item xs={8}>
+            <NewPhotoButton />
+          </Grid>
+        </Grid>
       ) : (
         <Grid container xs={12}>
           <Grid item xs={3}>
@@ -355,7 +379,7 @@ const ImageBrowser = ({
         </Grid>
       )}
       {size === "small" ? (
-        <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
+        <Box sx={{ width: "100vw", height: "65vh", textAlign: "center" }}>
           <Modal
             open={modalOpen}
             onClose={() => setModalOpen(false)}
@@ -375,7 +399,7 @@ const ImageBrowser = ({
               />
             </Box>
           </Modal>
-          <Box sx={styleFocus}>
+          <Box sx={size === "small" ? styleFocusSmall : styleFocus}>
             <FullImageCard
               image={selectedVersion || defaultImage}
               authToken={authToken}
@@ -397,7 +421,7 @@ const ImageBrowser = ({
             />
           </Box>
 
-          <Box sx={styleFocus}>
+          <Box sx={size === "small" ? styleFocusSmall : styleFocus}>
             <FullImageCard
               image={selectedVersion || defaultImage}
               authToken={authToken}
