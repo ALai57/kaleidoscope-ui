@@ -56,56 +56,48 @@
                              :flex          "none"}} article-created-date]]
       [grid {:item true
              :sx {:align-content "center"}}
-       [list-item-icon {:sx {:margin-left   "10px"
-                             :min-width     "26px"
-                             :align-content "center"}}
-        [icons.article/article {:sx {:color (if published-at SUCCESS-GREEN "")
-                                     :align-content "center"}}]]]
+       [tooltip {:id    "publish-tooltip"
+                 :title (if published-at (str "Published on " published-at) "Publish article")}
+        [:span
+         [icon-button {:edge     "end"
+                       :disabled (if published-at true false)
+                       :on-click publish-article!
+                       :sx       {:margin-right "3px"}}
+          [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]]
       [list-item-text {:sx {:margin-left   "10px"
                             :align-content "center"}} article-title]]
-     [grid {:container true} ;;box
-      #_[tooltip {:id    "publish-tooltip"
-                  :title (if published-at (str "Published on " published-at) "Publish article")}
-         [:span
-          [icon-button {:edge     "end"
-                        :disabled (if published-at true false)
-                        :on-click publish-article!
-                        :sx       {:margin-right "3px"}}
-           [rocket-launch {:sx {:color (if published-at SUCCESS-GREEN "")}}]]]]
+     [grid {:container true}
+      [grid {:item true}
+       [tooltip {:id    "settings-tooltip-visibility"
+                 :title "Determine who can see your article. If the setting is 'Non-public', then only the audience you specify can view the article"}
+        [toggle-button-group {:value     public-visibility
+                              :exclusive true
+                              :onChange  (fn [event]
+                                           ;;(println "Changed value" (events/event-value event))
+                                           (.stopPropagation event)
+                                           (toggle-public-visibility! article-branch (events/event-value event)))}
+         [toggle-button {:value true} "Public"]
+         [toggle-button {:value false} "Non-public"]]]]
 
-      [grid {:container true}
-       [grid {:item true}
-        [tooltip {:id    "settings-tooltip-visibility"
-                  :title "Determine who can see your article. If the setting is 'Non-public', then only the audience you specify can view the article"}
-         [toggle-button-group {:value     public-visibility
-                               :exclusive true
-                               :onChange  (fn [event]
-                                            ;;(println "Changed value" (events/event-value event))
-                                            (.stopPropagation event)
-                                            (toggle-public-visibility! article-branch (events/event-value event)))}
-          [toggle-button {:value true} "Public"]
-          [toggle-button {:value false} "Non-public"]]]]
+      [grid {:item true}
+       [tooltip {:id    "audiences-tooltip"
+                 :title "Audience: Who can see the article. Only applies when the article visibility is 'Non-Public'"}
+        [icon-button {:edge     "end"
+                      :on-click (fn [event]
+                                  (.stopPropagation event)
+                                  (toggle-audience-manager article-branch event))
 
-       [grid {:item true}
-        [tooltip {:id    "audiences-tooltip"
-                  :title "Audience: Who can see the article. Only applies when the article visibility is 'Non-Public'"}
-         [icon-button {:edge     "end"
-                       :on-click (fn [event]
-                                   (.stopPropagation event)
-                                   (toggle-audience-manager article-branch event))
-
-                       ;; If the article is public, it makes no sense to set an audience for it
-                       :disabled public-visibility}
-          [group]]]
-        [:div {:style {:width   "20px"
-                       :display "inline-block"}}]
-        [tooltip {:id "delete-tooltip" :title "Delete article (WIP)"}
-         [icon-button {:edge     "end"
-                       :on-click (fn [event]
-                                   (.stopPropagation event)
-                                   (delete-article! event))}
-          [delete]]]]]
-      ]
+                      ;; If the article is public, it makes no sense to set an audience for it
+                      :disabled public-visibility}
+         [group]]]
+       [:div {:style {:width   "20px"
+                      :display "inline-block"}}]
+       [tooltip {:id "delete-tooltip" :title "Delete article (WIP)"}
+        [icon-button {:edge     "end"
+                      :on-click (fn [event]
+                                  (.stopPropagation event)
+                                  (delete-article! event))}
+         [delete]]]]]
      ]]])
 
 (defn article-group-accordion
