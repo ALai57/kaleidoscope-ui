@@ -9,6 +9,8 @@ import {
   Select,
   Modal,
   Grid,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { ImageAdd } from "@styled-icons/boxicons-regular/ImageAdd";
 import { Save } from "@styled-icons/boxicons-regular/Save";
@@ -279,6 +281,8 @@ const ImageBrowser = ({
   };
 
   const [modalOpen, setModalOpen] = React.useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const onVersionChange = (ev) => {
     //console.log("Event", ev)
@@ -338,8 +342,6 @@ const ImageBrowser = ({
     </Button>
   );
 
-  const size = "small";
-
   //console.log("CurrentImageVersions: ", currentImageVersions);
   //console.log("Selected Image:", theSelectedImage)
 
@@ -352,7 +354,7 @@ const ImageBrowser = ({
   return (
     <div>
       {mode === "edit" ? (
-        <Grid container xs={12} align="center">
+        <Grid container xs={12}>
           <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
             <VersionSelector
               imageVersions={imageVersions}
@@ -365,7 +367,7 @@ const ImageBrowser = ({
           </Grid>
         </Grid>
       ) : (
-        <Grid container xs={12} align="center">
+        <Grid container xs={12}>
           <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
             <VersionSelector
               imageVersions={imageVersions}
@@ -378,7 +380,7 @@ const ImageBrowser = ({
           </Grid>
         </Grid>
       )}
-      {size === "small" ? (
+      {isMobile ? (
         <Box sx={{ width: "100vw", height: "65vh", textAlign: "center" }}>
           <Modal
             open={modalOpen}
@@ -395,11 +397,11 @@ const ImageBrowser = ({
                 onEditPhoto={editPhoto}
                 selectedVersion={selectedVersion}
                 albums={albums}
-                showVersionSelector={size === "small" ? false : true}
+                showVersionSelector={isMobile ? false : true}
               />
             </Box>
           </Modal>
-          <Box sx={size === "small" ? styleFocusSmall : styleFocus}>
+          <Box sx={isMobile ? styleFocusSmall : styleFocus}>
             <FullImageCard
               image={selectedVersion || defaultImage}
               authToken={authToken}
@@ -409,8 +411,7 @@ const ImageBrowser = ({
         </Box>
       ) : (
         <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
-          <Box sx={{ ...editorStyle, overflow: "hidden" }}>
-            <br />
+          <Box sx={{ ...editorStyle, overflow: "scroll" }}>
             <EditorPanel
               mode={mode}
               selectedImage={theSelectedImage}
@@ -421,7 +422,7 @@ const ImageBrowser = ({
             />
           </Box>
 
-          <Box sx={size === "small" ? styleFocusSmall : styleFocus}>
+          <Box sx={isMobile ? styleFocusSmall : styleFocus}>
             <FullImageCard
               image={selectedVersion || defaultImage}
               authToken={authToken}

@@ -137,12 +137,7 @@
               :display        "flex"
               :justifyContent "center"
               :alignItems     "center"
-              :align          "center"
-              :xs             12
-              :sm             12
-              :md             8
-              :lg             8
-              :xl             8}
+              :align          "center"}
         [grid {:xs    8
                :sm    4
                :md    6
