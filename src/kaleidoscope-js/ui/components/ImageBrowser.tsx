@@ -355,11 +355,13 @@ const ImageBrowser = ({
       {mode === "edit" ? (
         <Grid container xs={12}>
           <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
-            <VersionSelector
-              imageVersions={imageVersions}
-              selectedVersion={selectedVersion}
-              onVersionChange={onVersionChange}
-            />
+            {isMobile && (
+              <VersionSelector
+                imageVersions={imageVersions}
+                selectedVersion={selectedVersion}
+                onVersionChange={onVersionChange}
+              />
+            )}
           </Grid>
           <Grid item xs={8}>
             <NewPhotoButton />
@@ -368,11 +370,13 @@ const ImageBrowser = ({
       ) : (
         <Grid container xs={12}>
           <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
-            <VersionSelector
-              imageVersions={imageVersions}
-              selectedVersion={selectedVersion}
-              onVersionChange={onVersionChange}
-            />
+            {isMobile && (
+              <VersionSelector
+                imageVersions={imageVersions}
+                selectedVersion={selectedVersion}
+                onVersionChange={onVersionChange}
+              />
+            )}
           </Grid>
           <Grid item xs={8}>
             <SelectButton />
