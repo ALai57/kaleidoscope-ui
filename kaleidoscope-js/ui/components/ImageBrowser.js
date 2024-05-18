@@ -70,8 +70,7 @@ var logger = function (event) { return console.log("Clicked!", event.target.file
 var EditableField = function (_a) {
     var label = _a.label, id = _a.id, val = _a.val, disabled = _a.disabled, onChange = _a.onChange;
     return (react_1.default.createElement(react_1.default.Fragment, null,
-        react_1.default.createElement(material_1.TextField, { label: label, id: id, type: "text", defaultValue: val, disabled: disabled, sx: { width: "100%" }, onChange: onChange, size: "small" }),
-        react_1.default.createElement("br", null),
+        react_1.default.createElement(material_1.TextField, { label: label, id: id, type: "text", defaultValue: val, disabled: disabled, sx: { width: "100%", paddingTop: "7px", paddingBottom: "7px" }, onChange: onChange, size: "small" }),
         react_1.default.createElement("br", null)));
 };
 var defaultImage = {
@@ -186,11 +185,11 @@ var ImageBrowser = function (_a) {
                     style: { backgroundColor: "rgba(0, 0, 40, 0.8)" },
                 } },
                 react_1.default.createElement(material_1.Box, { sx: { backgroundColor: "white", opacity: 0.9 } },
-                    react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums, showVersionSelector: isMobile ? false : true }))),
+                    react_1.default.createElement(EditorPanel, { key: (theSelectedImage === null || theSelectedImage === void 0 ? void 0 : theSelectedImage.name) || "none-yet", mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums, showVersionSelector: isMobile ? false : true }))),
             react_1.default.createElement(material_1.Box, { sx: isMobile ? styleFocusSmall : styleFocus },
                 react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken, onClick: function () { return setModalOpen(true); } })))) : (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "75vh", textAlign: "center" } },
             react_1.default.createElement(material_1.Box, { sx: __assign(__assign({}, editorStyle), { overflow: "scroll" }) },
-                react_1.default.createElement(EditorPanel, { mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums })),
+                react_1.default.createElement(EditorPanel, { key: (theSelectedImage === null || theSelectedImage === void 0 ? void 0 : theSelectedImage.name) || "none-yet", mode: mode, selectedImage: theSelectedImage, onVersionChange: onVersionChange, onEditPhoto: editPhoto, selectedVersion: selectedVersion, albums: albums })),
             react_1.default.createElement(material_1.Box, { sx: isMobile ? styleFocusSmall : styleFocus },
                 react_1.default.createElement(FullImageCard_1.FullImageCard, { image: selectedVersion || defaultImage, authToken: authToken })))),
         react_1.default.createElement("div", null,

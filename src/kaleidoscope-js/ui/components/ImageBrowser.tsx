@@ -90,11 +90,10 @@ const EditableField = ({
         type="text"
         defaultValue={val}
         disabled={disabled}
-        sx={{ width: "100%" }}
+        sx={{ width: "100%", paddingTop: "7px", paddingBottom: "7px" }}
         onChange={onChange}
         size="small"
       />
-      <br />
       <br />
     </React.Fragment>
   );
@@ -391,6 +390,7 @@ const ImageBrowser = ({
           >
             <Box sx={{ backgroundColor: "white", opacity: 0.9 }}>
               <EditorPanel
+                key={theSelectedImage?.name || "none-yet"}
                 mode={mode}
                 selectedImage={theSelectedImage}
                 onVersionChange={onVersionChange}
@@ -413,6 +413,7 @@ const ImageBrowser = ({
         <Box sx={{ width: "100vw", height: "75vh", textAlign: "center" }}>
           <Box sx={{ ...editorStyle, overflow: "scroll" }}>
             <EditorPanel
+              key={theSelectedImage?.name || "none-yet"}
               mode={mode}
               selectedImage={theSelectedImage}
               onVersionChange={onVersionChange}
