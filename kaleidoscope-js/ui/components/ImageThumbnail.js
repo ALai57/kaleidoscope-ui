@@ -47,9 +47,8 @@ require("lazysizes");
 function fetchWithAuthentication(url, authToken) {
     var headers = new Headers();
     if (authToken) {
-        headers.set('Authorization', "Bearer ".concat(authToken));
+        headers.set("Authorization", "Bearer ".concat(authToken));
     }
-    ;
     return fetch(url, { headers: headers });
 }
 function displayProtectedImage(imageId, imageUrl, authToken) {
@@ -64,26 +63,38 @@ function displayProtectedImage(imageId, imageUrl, authToken) {
                 case 2:
                     blob = _a.sent();
                     objectUrl = URL.createObjectURL(blob);
-                    imageElement = document.getElementById('thumbnail-' + imageId);
+                    imageElement = document.getElementById("thumbnail-" + imageId);
                     imageElement.src = objectUrl;
                     return [2];
             }
         });
     });
 }
+var viewableStyle = {
+    height: "fit-content",
+    width: "fit-content",
+    float: "left",
+};
+var placeholderStyle = { height: "100px", width: "100px", float: "left" };
+var imageSizes = { xs: "70px", sm: "100px" };
 var ImageThumbnail = function (_a) {
     var _b = _a.image, image = _b === void 0 ? {} : _b, _c = _a.authToken, authToken = _c === void 0 ? null : _c, onClick = _a.onClick;
-    var _d = (0, react_cool_inview_1.useInView)({ unobserveOnEnter: true,
+    var _d = (0, react_cool_inview_1.useInView)({
+        unobserveOnEnter: true,
         rootMargin: "5px",
         onEnter: function (_a) {
             var unobserve = _a.unobserve;
             console.log("Loading Thumbnail ".concat(image.src, "!"));
             displayProtectedImage(image.src, image.src, authToken);
-        } }), observe = _d.observe, inView = _d.inView;
-    return (react_1.default.createElement("div", { className: "placeholder", style: inView
-            ? { height: "fit-content", width: "fit-content", float: "left" }
-            : { height: "100px", width: "100px", float: "left" }, ref: observe }, inView && react_1.default.createElement(material_1.Card, { sx: { float: "left", margin: "5px", height: "100px", width: "100px" } },
+        },
+    }), observe = _d.observe, inView = _d.inView;
+    return (react_1.default.createElement(material_1.Box, { className: "placeholder", sx: inView ? viewableStyle : placeholderStyle, ref: observe }, inView && (react_1.default.createElement(material_1.Card, { sx: {
+            float: "left",
+            margin: "5px",
+            height: imageSizes,
+            width: imageSizes,
+        } },
         react_1.default.createElement(material_1.CardActionArea, null,
-            react_1.default.createElement(material_1.CardMedia, { id: 'thumbnail-' + image.src, component: "img", height: "100px", alt: image.alt, onClick: onClick, sx: { overflow: 'hidden' }, className: 'lazyload' })))));
+            react_1.default.createElement(material_1.CardMedia, { id: "thumbnail-" + image.src, component: "img", height: "100px", alt: image.alt, onClick: onClick, sx: { overflow: "hidden" }, className: "lazyload" }))))));
 };
 exports.ImageThumbnail = ImageThumbnail;

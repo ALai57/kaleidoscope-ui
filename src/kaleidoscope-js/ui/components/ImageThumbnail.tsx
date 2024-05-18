@@ -1,18 +1,20 @@
-import React            from 'react';
-import { Card, CardMedia, CardActionArea } from '@mui/material';
-import { useInView }     from 'react-cool-inview';
-import 'lazysizes';
+import React from "react";
+import { Box, Card, CardMedia, CardActionArea } from "@mui/material";
+import { useInView } from "react-cool-inview";
+import "lazysizes";
 
 function fetchWithAuthentication(url, authToken) {
   const headers = new Headers();
-  if (authToken) { headers.set('Authorization', `Bearer ${authToken}`)};
+  if (authToken) {
+    headers.set("Authorization", `Bearer ${authToken}`);
+  }
   return fetch(url, { headers });
 }
 
 type Image = {
-    src?: string,
-    alt?: string
-}
+  src?: string;
+  alt?: string;
+};
 
 // https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
 async function displayProtectedImage(imageId, imageUrl, authToken) {
@@ -24,37 +26,71 @@ async function displayProtectedImage(imageId, imageUrl, authToken) {
   const objectUrl = URL.createObjectURL(blob);
 
   // Update the source of the image.
-  const imageElement = document.getElementById('thumbnail-' + imageId) as HTMLImageElement;
+  const imageElement = document.getElementById(
+    "thumbnail-" + imageId
+  ) as HTMLImageElement;
   imageElement.src = objectUrl;
   //imageElement.onload = () => URL.revokeObjectUrl(objectUrl);
 }
 
-const ImageThumbnail = ({image={}, authToken=null, onClick} :
-                        {image: Image, authToken: any, onClick: any}) => {
-  const { observe, inView } = useInView({unobserveOnEnter: true,
-                                         rootMargin:      "5px",
-                                         onEnter: ({unobserve}) => { console.log(`Loading Thumbnail ${image.src}!`);
-                                                                     displayProtectedImage(image.src, image.src, authToken); }});
+const viewableStyle = {
+  height: "fit-content",
+  width: "fit-content",
+  float: "left",
+};
+
+const placeholderStyle = { height: "100px", width: "100px", float: "left" };
+
+const imageSizes = { xs: "70px", sm: "100px" };
+
+const ImageThumbnail = ({
+  image = {},
+  authToken = null,
+  onClick,
+}: {
+  image: Image;
+  authToken: any;
+  onClick: any;
+}) => {
+  const { observe, inView } = useInView({
+    unobserveOnEnter: true,
+    rootMargin: "5px",
+    onEnter: ({ unobserve }) => {
+      console.log(`Loading Thumbnail ${image.src}!`);
+      displayProtectedImage(image.src, image.src, authToken);
+    },
+  });
 
   return (
-    <div className="placeholder" style={inView
-                                        ? {height: "fit-content", width: "fit-content", float: "left"}
-                                        : {height: "100px", width: "100px", float: "left"}}
-         ref={observe}>
-        {inView && <Card sx={{float: "left", margin: "5px", height: "100px", width: "100px"}}>
-                       <CardActionArea >
-                           <CardMedia id        ={'thumbnail-'+ image.src}
-                                      component ="img"
-                                      height    ="100px"
-                                      alt       ={image.alt}
-                                      onClick   ={onClick}
-                                      sx        ={{overflow: 'hidden'}}
-                                      className ='lazyload' />
-                       </CardActionArea>
-                   </Card>
-      }
-    </div>
+    <Box
+      className="placeholder"
+      sx={inView ? viewableStyle : placeholderStyle}
+      ref={observe}
+    >
+      {inView && (
+        <Card
+          sx={{
+            float: "left",
+            margin: "5px",
+            height: imageSizes,
+            width: imageSizes,
+          }}
+        >
+          <CardActionArea>
+            <CardMedia
+              id={"thumbnail-" + image.src}
+              component="img"
+              height="100px"
+              alt={image.alt}
+              onClick={onClick}
+              sx={{ overflow: "hidden" }}
+              className="lazyload"
+            />
+          </CardActionArea>
+        </Card>
+      )}
+    </Box>
   );
-}
+};
 
 export { ImageThumbnail };
