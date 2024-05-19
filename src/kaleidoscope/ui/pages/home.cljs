@@ -1,5 +1,6 @@
 (ns kaleidoscope.ui.pages.home
   (:require [kaleidoscope.ui.components.navbar :as nav]
+            [kaleidoscope.ui.components.image-row-box :as irb]
             [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link divider]]
             ))
 
@@ -132,30 +133,7 @@
      [paper {:elevation 8
              :sx        {:margin {:xs "5px"
                                   :sm "5px"}}}
-      [stack {:direction "column"
-              :width     "100%"}
-       [typography {:variant "h4"}
-        "Languages I use"]
-
-       [:br]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Go" :src "/static/images/golang.svg"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
-        [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
-        [icon {:tooltip-text "Reframe" :src "/static/images/re-frame.png"}]]
-
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
-        [icon {:tooltip-text "Typescript" :src "/static/images/typescript.svg"}]
-        [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
-        [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
-        [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]]
-
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]]]]]
+      [irb/image-row-box irb/languages-i-use]]]
 
     [grid {:item true
            :xs   11
@@ -166,25 +144,7 @@
      [paper {:elevation 8
              :sx        {:margin {:xs "5px"
                                   :sm "5px"}}}
-      [stack {:direction "column"
-              :width     "100%"}
-       [typography {:variant "h4"}
-        "Tools I use"]
-
-       [:br]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
-        [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
-
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]
-        [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
-        [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
-        [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]]]
+      [irb/image-row-box irb/tools-i-use]]]]
 
    ;; Me
    [grid GRID-CONTAINER
