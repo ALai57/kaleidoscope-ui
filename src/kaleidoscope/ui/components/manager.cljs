@@ -19,18 +19,18 @@
     :src         "/static/images/writing.svg"
     :alt         "Manage articles"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/article-manager"]))}
-   {:name        "Images (WIP)"
+   {:name        "Images"
     :description "Create and manage Images. Not implemented yet!"
     :alt         "Manage images"
     :src         "/static/images/images.svg"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/image-manager"]))}
-   {:name        "Audiences (WIP)"
+   {:name        "Audiences"
     :description "Control who has access to your content by defining an Audience"
     :src         "/static/images/audiences.svg"
     :alt         "Manage audiences"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/groups"]))
     }
-   {:name        "UI Customization (WIP)"
+   {:name        "UI Customization"
     :description "Customize the look and feel of the site"
     :src         "/static/images/audiences.svg"
     :alt         "Manage UI Customization"
