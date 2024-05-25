@@ -1,34 +1,34 @@
 (ns kaleidoscope.ui.core
   (:require-macros [secretary.core :refer [defroute]])
-  (:require [goog.events :as events]
-            [goog.dom :as gdom]
-            [kaleidoscope.ui.clients.bugsnag :as bugsnag]
-            [kaleidoscope.ui.components.loading-screen :as loading]
-            [kaleidoscope.ui.events.article-reader]
-            [kaleidoscope.ui.events.article-editor]
-            [kaleidoscope.ui.events.core]
-            [kaleidoscope.ui.events.image-editor]
-            [kaleidoscope.ui.events.group-management]
-            [kaleidoscope.ui.events.audience-management]
-            [kaleidoscope.ui.events.keycloak]
-            [kaleidoscope.ui.events.projects-portfolio]
-            [kaleidoscope.ui.events.user-management]
-            [kaleidoscope.ui.events.ui-customization]
-            [kaleidoscope.ui.subs]
-            [kaleidoscope.ui.utils.core :as u]
+  (:require
+   ;; Just to get React 18
+   ["react-dom/client" :as react-dom]
+   [goog.dom :as gdom]
+   [goog.events :as events]
 
-            [kaleidoscope.ui.pages.home            :as page.home]
-            [reitit.frontend :as rf]
-            [reitit.frontend.easy :as rfe]
-            [reitit.coercion.spec :as rss]
+   [kaleidoscope.ui.clients.bugsnag :as bugsnag]
+   [kaleidoscope.ui.components.loading-screen :as loading]
+   [kaleidoscope.ui.events.article-editor]
+   [kaleidoscope.ui.events.article-reader]
+   [kaleidoscope.ui.events.audience-management]
+   [kaleidoscope.ui.events.core]
+   [kaleidoscope.ui.events.group-management]
+   [kaleidoscope.ui.events.image-editor]
+   [kaleidoscope.ui.events.keycloak]
+   [kaleidoscope.ui.events.projects-portfolio]
+   [kaleidoscope.ui.events.ui-customization]
+   [kaleidoscope.ui.events.user-management]
+   [kaleidoscope.ui.pages.home            :as page.home]
+   [kaleidoscope.ui.subs]
+   [kaleidoscope.ui.utils.core :as u]
 
-            [re-frame.core :refer [dispatch dispatch-sync]]
-            [secretary.core :as secretary]
-            [shadow.lazy :as lazy]
-
-            ;; Just to get React 18
-            ["react-dom/client" :as react-dom]
-            [reagent.core :as r])
+   [re-frame.core :refer [dispatch dispatch-sync]]
+   [reagent.core :as r]
+   [reitit.coercion.spec :as rss]
+   [reitit.frontend :as rf]
+   [reitit.frontend.easy :as rfe]
+   [secretary.core :as secretary]
+   [shadow.lazy :as lazy])
   (:import [goog History]
            [goog.history EventType]))
 
@@ -69,6 +69,7 @@
 ;;    }
 ;; So this is the entry function that kicks off the app once HTML is loaded
 
+#_:clj-kondo/ignore
 (defn app
   []
   (u/lazy-component (lazy/loadable kaleidoscope.ui.views/app)))

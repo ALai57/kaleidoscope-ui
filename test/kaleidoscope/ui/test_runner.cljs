@@ -1,10 +1,10 @@
 (ns kaleidoscope.ui.test-runner
-  (:require [kaleidoscope.ui.core-test]
+  (:require [cljs-test-display.core]
+            [figwheel.main.testing :refer-macros [run-tests]]
+            [kaleidoscope.ui.core-test]
             [kaleidoscope.ui.events.articles-test]
             [kaleidoscope.ui.events.core-test]
-            [kaleidoscope.ui.events.projects-portfolio-test]
-            [cljs-test-display.core]
-            [figwheel.main.testing :refer-macros [run-tests]]))
+            [kaleidoscope.ui.events.projects-portfolio-test]))
 
 (enable-console-print!)
 

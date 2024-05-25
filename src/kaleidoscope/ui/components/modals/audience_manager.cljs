@@ -1,13 +1,10 @@
 (ns kaleidoscope.ui.components.modals.audience-manager
-  (:require [kaleidoscope.ui.components.modal :as modal]
+  (:require [goog.string :as gstr]
             [kaleidoscope.ui.components.input-tags :as input-tags]
+            [kaleidoscope.ui.components.modal :as modal]
             [kaleidoscope.ui.utils.core :as u]
-            [kaleidoscope.ui.utils.events :as events]
-            [reagent.core :as r]
-            [reagent-mui.components :refer [toggle-button-group toggle-button]]
-            [re-frame.core :refer [dispatch subscribe]]
-            [taoensso.timbre :refer-macros [infof]]
-            [goog.string :as gstr]))
+            [re-frame.core :refer [dispatch]]
+            [taoensso.timbre :refer-macros [infof]]))
 
 (defn add-audience!
   [article group]

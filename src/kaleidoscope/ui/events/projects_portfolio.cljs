@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.events.projects-portfolio
-  (:require [ajax.core :as ajax]
-            [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
+  (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
+            [re-frame.core :refer [reg-event-db reg-event-fx]]
             [taoensso.timbre :refer-macros [infof info debugf]]))
 
 (defn json-string->clj [s]

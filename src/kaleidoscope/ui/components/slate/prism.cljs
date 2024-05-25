@@ -1,9 +1,9 @@
 (ns kaleidoscope.ui.components.slate.prism
-  (:require [kaleidoscope.ui.utils.core :as u]
-            [goog.object :as g]
-            ["./prism" :as prism]
+  (:require ["./prism" :as prism]
             ["prism-react-renderer" :as Highlight]
-            ["prism-react-renderer/themes/dracula" :as theme])
+            ["prism-react-renderer/themes/dracula" :as theme]
+            [goog.object :as g]
+            [kaleidoscope.ui.utils.core :as u])
   )
 
 

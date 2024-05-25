@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.components.input-box-stories
   (:require [kaleidoscope.ui.components.input-box :as input-box]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

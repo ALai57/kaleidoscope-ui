@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.stories.recent-content-stories
   (:require [kaleidoscope.ui.components.article-cards :as article-cards]
-            [kaleidoscope.ui.stories.helper :as helper]
             [kaleidoscope.ui.stories.card-stories :as card-stories]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (defn get-inputs
   "Extracts inputs from existing card-stories so we can compose story pieces"

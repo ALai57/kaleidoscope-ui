@@ -1,18 +1,5 @@
 (ns kaleidoscope.ui.components.table
-  (:require [reagent.core :as reagent]
-            [reagent-mui.components :refer [box
-                                            button
-                                            divider
-                                            collapse
-                                            icon-button
-                                            list
-                                            list-item
-                                            list-item-button
-                                            list-item-icon
-                                            list-item-text
-
-                                            text-field
-                                            ]]
+  (:require [reagent-mui.components :refer [box]]
             [reagent-mui.x.data-grid :refer [data-grid]]))
 
 

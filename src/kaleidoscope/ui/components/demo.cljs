@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.components.demo
-  (:require ["@react-three/fiber" :as fiber]
-            ["@react-three/drei" :as drei]
+  (:require ["@react-three/drei" :as drei]
+            ["@react-three/fiber" :as fiber]
             ["react" :as react]
-            [reagent.core :as reagent]
             [kaleidoscope.ui.utils.core :as u]
             ))
 

@@ -2,10 +2,9 @@
   (:require [kaleidoscope.ui.components.article-manager :as am]
             [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.core :as u]
-            [goog.string :as gstr]
-            [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
-            [taoensso.timbre :refer-macros [infof info]]
+            [reagent.core :as reagent]
+            [taoensso.timbre :refer-macros [infof]]
             ))
 
 (defn add-human-readable-dates
@@ -30,6 +29,7 @@
        (sort-by :group-value)
        ))
 
+#_:clj-kondo/ignore
 (def branches
   [{:article-created-at "2022-03-01T00:00:00Z"
     :article-id         1,
@@ -88,14 +88,6 @@
                          :edit-article!   edit-article!
                          :delete-article! delete-article!}]]])
 
-(defn title->url
-  [title]
-  (-> title
-      str
-      clojure.string/lower-case
-      (clojure.string/replace  #"[!|.|(|)|]" "")
-      (clojure.string/replace  " " "-")))
-
 (defn add-article!
   [{:keys [content article-title article-url article-tags branch-name]
     :or   {article-tags "thoughts"
@@ -103,14 +95,6 @@
            content      "Your new article!"}
     :as   save-data}]
   (dispatch [:save-article! save-data]))
-
-(defn save-version!
-  [{:keys [content article-tags branch-name]
-    :or   {article-tags "thoughts"
-           branch-name  "main"
-           content      "Your new article!"}
-    :as   save-data}]
-  (dispatch [:save-article! (update save-data :content gstr/unescapeEntities)]))
 
 (defn edit-article!
   [{:keys [article-id branch-id] :as article-branch}]

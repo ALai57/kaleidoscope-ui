@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.stories.admin.user-profile-stories
-  (:require [kaleidoscope.ui.pages.admin :as admin]
-            [kaleidoscope.ui.stories.helper :as helper]
-            ["@storybook/addon-actions" :refer [action]]))
+  (:require ["@storybook/addon-actions" :refer [action]]
+            [kaleidoscope.ui.pages.admin :as admin]
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def example-user-data
   {:given_name  "Andrew"

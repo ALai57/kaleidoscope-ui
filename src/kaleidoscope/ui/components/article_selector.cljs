@@ -1,11 +1,6 @@
 (ns kaleidoscope.ui.components.article-selector
   (:require [kaleidoscope.ui.components.article-cards :as article-cards]
-            [reagent-mui.components :refer [drawer list list-item
-                                            list-item-icon list-item-text
-                                            button]]
-            [reagent-mui.icons.settings :refer [settings]]
-            [taoensso.timbre :refer-macros [info]]
-            [re-frame.core :refer [dispatch]]
+            [reagent-mui.components :refer [drawer]]
             [reagent.core :as reagent]))
 
 (defn keydown?

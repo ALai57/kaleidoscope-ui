@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.stories.pages.image-manager-page-stories
   (:require [kaleidoscope.ui.pages.image-manager :as pages.image-manager]
-            [kaleidoscope.ui.stories.helper :as helper]
             [kaleidoscope.ui.stories.admin.user-profile-stories :as user-profile]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story {:title     "Kaleidoscope/Full Pages/Image Manager Page"

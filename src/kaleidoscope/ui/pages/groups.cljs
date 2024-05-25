@@ -1,9 +1,9 @@
 (ns kaleidoscope.ui.pages.groups
   (:require [kaleidoscope.ui.components.groups.group-manager :as gm]
             [kaleidoscope.ui.components.navbar :as nav]
-            [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
-            [taoensso.timbre :refer-macros [infof info]]
+            [reagent.core :as reagent]
+            [taoensso.timbre :refer-macros [infof]]
             ))
 
 (defn -add-group!

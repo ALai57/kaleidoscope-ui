@@ -21,3 +21,5 @@ resources/static/js/test/
 *#*#*
 
 src/kaleidoscope/ui/components/js/*
+resources/media/*
+.clj-kondo/.cache/*

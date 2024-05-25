@@ -1,9 +1,8 @@
 (ns kaleidoscope.ui.events.keycloak
-  (:require [kaleidoscope.ui.clients.keycloak :as keycloak]
+  (:require [day8.re-frame.async-flow-fx :as async-flow-fx]
+            [kaleidoscope.ui.clients.keycloak :as keycloak]
             [kaleidoscope.ui.utils.core :as u]
-            [ajax.core :as ajax]
-            [day8.re-frame.async-flow-fx :as async-flow-fx]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
+            [re-frame.core :refer [dispatch reg-event-fx reg-fx]]
             [taoensso.timbre :refer-macros [debugf infof warnf]]))
 
 (reg-event-fx :keycloak-action

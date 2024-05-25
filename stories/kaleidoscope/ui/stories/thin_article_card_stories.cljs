@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.thin-article-card-stories
   (:require [kaleidoscope.ui.components.article-cards :as article-cards]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def example-data
   {:article-title "An example with the default image"

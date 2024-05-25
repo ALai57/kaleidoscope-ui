@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.stories.components.input-tags-stories
-  (:require [kaleidoscope.ui.components.input-tags :as input-tags]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+  (:require ["@storybook/addon-actions" :refer [action]]
+            [kaleidoscope.ui.components.input-tags :as input-tags]
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def top-100-films
   [{:year 1994 :title "The Shawshank Redemption"}

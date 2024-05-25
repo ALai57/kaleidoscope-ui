@@ -1,12 +1,10 @@
 (ns kaleidoscope.ui.components.colors.color-picker
-  (:require [kaleidoscope.ui.utils.events :as e]
-            [reagent.core :as reagent]
-            [reagent.impl.template :as tmpl]
-            [reagent-mui.components :refer [outlined-input text-field input-adornment]]
+  (:require ["@mui/material/Paper" :as paper]
             ["@mui/material/styles" :refer [styled]]
-            ["@mui/material/Paper" :as paper]
             ["react-colorful" :as rc]
-            ))
+            [kaleidoscope.ui.utils.events :as e]
+            [reagent-mui.components :refer [outlined-input]]
+            [reagent.core :as reagent]))
 
 (defn upcase
   [^js s]

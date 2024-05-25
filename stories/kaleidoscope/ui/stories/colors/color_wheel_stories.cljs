@@ -1,8 +1,6 @@
 (ns kaleidoscope.ui.stories.colors.color-wheel-stories
   (:require [kaleidoscope.ui.components.colors.color-wheel :as color-wheel]
             [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]
             ))
 
 (def ^:export default

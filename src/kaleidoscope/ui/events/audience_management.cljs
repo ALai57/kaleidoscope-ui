@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.events.audience-management
   (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [day8.re-frame.async-flow-fx :as async-flow-fx]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
+            [re-frame.core :refer [reg-event-db reg-event-fx]]
             [taoensso.timbre :refer-macros [infof errorf]]))
 
 (reg-event-db :add-audience.success

@@ -1,12 +1,12 @@
 (ns kaleidoscope.ui.pages.ui-manager
-  (:require ["@mui/material/styles" :refer [styled useTheme]]
+  (:require ["@mui/material/styles" :refer [useTheme]]
             [kaleidoscope.ui.components.button :as button]
-            [kaleidoscope.ui.components.colors.color-family :refer [color-theme]]
+            ;;[kaleidoscope.ui.components.colors.color-family :refer [color-theme]]
             [kaleidoscope.ui.components.colors.color-wheel :as cw]
             [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.core :as u]
-            [reagent-mui.components :refer [box grid typography]]
             [re-frame.core :refer [dispatch]]
+            [reagent-mui.components :refer [box]]
             ))
 
 (defn -save-theme!

@@ -1,8 +1,8 @@
 (ns kaleidoscope.ui.components.notification-card
   (:require ["@styled-icons/remix-fill/ErrorWarning" :refer [ErrorWarning]]
-            [reagent.core :as reagent]
             [reagent-mui.components :refer [card card-content
-                                            typography]]))
+                                            typography]]
+            [reagent.core :as reagent]))
 
 (def Error (reagent/create-element ErrorWarning #js {:color "red"}))
 (def Warn  (reagent/create-element ErrorWarning #js {:color "orange"}))

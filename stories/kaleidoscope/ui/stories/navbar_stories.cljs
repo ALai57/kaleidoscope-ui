@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.navbar-stories
   (:require [kaleidoscope.ui.components.navbar :as navbar]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def example-user-data
   {})

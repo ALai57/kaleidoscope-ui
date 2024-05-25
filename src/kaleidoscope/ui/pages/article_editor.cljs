@@ -1,8 +1,6 @@
 (ns kaleidoscope.ui.pages.article-editor
-  (:require [kaleidoscope.ui.components.slate-editor :as se]
-            [kaleidoscope.ui.components.navbar :as nav]
-            [goog.string :as gstr]
-            [reagent-mui.components :refer [text-field]]
+  (:require [goog.string :as gstr]
+            [kaleidoscope.ui.components.slate-editor :as se]
             [re-frame.core :refer [subscribe dispatch]]
             [taoensso.timbre :refer-macros [infof]]
             ))
@@ -43,6 +41,7 @@
                      :user           {:firstName "Andrew"
                                       :lastName  "Lai"})]])
 
+#_:clj-kondo/ignore
 (defn editor-ui
   [{:keys [user save-fn load-fn initial-editor-data branches] :as args}]
   [-editor-ui {;; User data

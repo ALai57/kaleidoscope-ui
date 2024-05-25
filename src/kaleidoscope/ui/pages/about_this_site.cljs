@@ -12,13 +12,13 @@
                          :lg "10px"
                          :xl "10px"}}})
 
-(def BREAKPOINTS
-  {:p    2 ;; padding
-   :xs   12
-   :sm   12
-   :md   11
-   :lg   10
-   :xl   8})
+#_(def BREAKPOINTS
+    {:p    2 ;; padding
+     :xs   12
+     :sm   12
+     :md   11
+     :lg   10
+     :xl   8})
 
 (def GRID-CONTAINER
   {:container      true

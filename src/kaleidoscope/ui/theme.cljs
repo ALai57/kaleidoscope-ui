@@ -1,6 +1,5 @@
 (ns kaleidoscope.ui.theme
-  (:require ["@mui/material/styles" :refer [createTheme]]
-            ["@mui/material/colors" :refer [red purple blue green]]
+  (:require ["@mui/material/colors" :refer [red green]]
             [kaleidoscope.ui.components.colors.color-wheel :as cw]))
 
 #_(def DEFAULT

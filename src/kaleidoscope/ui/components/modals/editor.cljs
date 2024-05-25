@@ -21,8 +21,8 @@
                                       article_tags article_url] :as article}]
   (let [url (str "/#/content/" article_url)
         close-fn (fn []
-                   (do (infof "Failed to close")
-                       (set! (.-href (.-location js/document)) url)))]
+                   (infof "Failed to close")
+                   (set! (.-href (.-location js/document)) url))]
     {:title "Successful article creation!"
      :body [:div
             [:br]

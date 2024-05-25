@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.components.slate-editor-stories
-  (:require [kaleidoscope.ui.stories.helper :as helper]
-            [kaleidoscope.ui.components.slate-editor :as slate-editor]
-            [reagent.core :as reagent]
+  (:require [kaleidoscope.ui.components.slate-editor :as slate-editor]
+            [kaleidoscope.ui.stories.helper :as helper]
             [shadow.resource :as rc]
             ))
 

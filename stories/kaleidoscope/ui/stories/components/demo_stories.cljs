@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.components.demo-stories
   (:require [kaleidoscope.ui.components.demo :as demo]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

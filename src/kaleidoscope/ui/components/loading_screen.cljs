@@ -1,6 +1,5 @@
 (ns kaleidoscope.ui.components.loading-screen
   (:require [reagent-mui.components :refer [box
-                                            circular-progress
                                             linear-progress
                                             typography]]))
 

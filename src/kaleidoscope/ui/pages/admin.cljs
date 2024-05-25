@@ -1,10 +1,10 @@
 (ns kaleidoscope.ui.pages.admin
-  (:require [kaleidoscope.ui.components.navbar :as nav]
+  (:require [goog.string :as gstr]
             [kaleidoscope.ui.components.button :as button]
+            [kaleidoscope.ui.components.modal :refer [basic-modal]]
+            [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.components.side-menu :as side-menu]
             [kaleidoscope.ui.components.snackbar :as snackbar]
-            [kaleidoscope.ui.components.modal :refer [basic-modal]]
-            [goog.string :as gstr]
             [reagent-mui.components :refer [stack paper typography]]
             [reagent.core :as reagent]
             [taoensso.timbre :refer-macros [info]]

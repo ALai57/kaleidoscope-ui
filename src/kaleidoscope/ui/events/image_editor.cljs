@@ -1,7 +1,5 @@
 (ns kaleidoscope.ui.events.image-editor
-  (:require [ajax.core :as ajax]
-            [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [goog.string :as gstr]
+  (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
             [re-frame.core :refer [reg-event-db
                                    reg-event-fx
                                    dispatch]]

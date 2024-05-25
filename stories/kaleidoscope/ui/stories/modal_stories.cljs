@@ -1,9 +1,8 @@
 (ns  kaleidoscope.ui.stories.modal-stories
-  (:require [kaleidoscope.ui.components.modal :as modal]
-            [kaleidoscope.ui.components.button :as button]
+  (:require [kaleidoscope.ui.components.button :as button]
+            [kaleidoscope.ui.components.modal :as modal]
             [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+            [reagent.core :as reagent]))
 
 (def ^:export default
   (helper/->default-story

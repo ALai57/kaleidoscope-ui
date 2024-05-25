@@ -1,15 +1,10 @@
 (ns kaleidoscope.ui.utils.core
   (:require [clojure.string :as str]
-            [kaleidoscope.ui.components.notification-card :as n-card]
-            [goog.string :as gstr]
             [goog.date.DateTime :as gdatetime]
-            [goog.i18n.DateTimeFormat :as gdatetimefmt]
+            [goog.string :as gstr]
+            [kaleidoscope.ui.components.notification-card :as n-card]
             [reagent.core :as r]
             [shadow.lazy :as lazy]))
-
-(defn image->blob [the-bytes]
-  (let [data-blob (js/Blob. #js [the-bytes] #js {:type "image/png"})]
-    (.createObjectURL js/URL data-blob)))
 
 ;; https://github.com/fricze/code-splitting-clojurescript/blob/master/src/main/demo/util.cljs
 (defn lazy-component

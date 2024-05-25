@@ -1,11 +1,12 @@
 (ns kaleidoscope.ui.components.article
-  (:require [kaleidoscope.ui.utils.core :as u]
+  (:require [clojure.string :as str]
+            [clojure.walk :as walk]
             [goog.string :as gstr]
-            [hickory.core :as h]
             [hickory.convert :refer [hickory-to-hiccup]]
+            [hickory.core :as h]
             [hickory.select :as hs]
+            [kaleidoscope.ui.utils.core :as u]
             [reagent-mui.components :refer [box]]
-            [clojure.string :as str]
             [taoensso.timbre :refer-macros [infof]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +40,7 @@
 (defn hiccup->sablono
   "Transforms a style inline attribute into a style map for React"
   [coll]
-  (clojure.walk/postwalk
+  (walk/postwalk
    (fn [x]
      (if (map? x)
        (update-in x [:style] style->map)
@@ -49,9 +50,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Formatting title, JS and content
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn format-title [title]
-  [:h2.article-title title])
-
 (defn format-js [js-script]
   (.appendChild (.getElementById js/document "primary-content")
                 (doto (.createElement js/document "script")
@@ -114,7 +112,7 @@
       ]]))
 
 (comment
-  (require '[re-frame.db :refer [app-db]])
+  ;;(require '[re-frame.db :refer [app-db]])
   ;;(map h/as-hiccup (h/parse-fragment (:content (get-content (:active-content @app-db)))))
   (format-js "test-paragraph.js")
   ;;(get-js (:active-content @app-db))

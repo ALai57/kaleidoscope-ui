@@ -1,15 +1,9 @@
 (ns kaleidoscope.ui.components.groups.group-manager
-  (:require [kaleidoscope.ui.components.table :as table]
+  (:require [clojure.set :as set]
             [kaleidoscope.ui.components.button :as button]
-            [kaleidoscope.ui.components.input-box :as input-box]
-            [kaleidoscope.ui.utils.events :as events]
+            [kaleidoscope.ui.components.table :as table]
             [kaleidoscope.ui.utils.core :as u]
-            [reagent.core :as reagent]
-            [reagent-mui.icons.account-circle :refer [account-circle]]
-            [reagent-mui.icons.group-add :refer [group-add]]
-            [reagent-mui.icons.person-add :refer [person-add]]
-            [reagent-mui.icons.group :as icons.group]
-            [reagent-mui.icons.delete :refer [delete]]
+            [kaleidoscope.ui.utils.events :as events]
             [reagent-mui.components :refer [box
                                             divider
                                             collapse
@@ -22,9 +16,12 @@
 
                                             text-field
                                             ]]
-            [re-frame.core :refer [dispatch subscribe]]
-            [taoensso.timbre :refer-macros [infof debugf warnf]]
-            [clojure.set :as set]))
+            [reagent-mui.icons.delete :refer [delete]]
+            [reagent-mui.icons.group :as icons.group]
+            [reagent-mui.icons.group-add :refer [group-add]]
+            [reagent-mui.icons.person-add :refer [person-add]]
+            [reagent.core :as reagent]
+            [taoensso.timbre :refer-macros [infof]]))
 
 (defn delete-member-cell
   [props]
@@ -42,15 +39,6 @@
    {:field :membership-created-at :headerName "Added" :width 180}
    {:field :delete                :headerName ""      :renderCell delete-member-cell}
    ])
-
-(defn add-group-item
-  [{:keys [icon text on-click]
-    :or   {on-click (fn [x]
-                      (println "Clicked " text))}}]
-  [list-item
-   [list-item-button {:on-click on-click}
-    [list-item-icon [icon]]
-    [list-item-text text]]])
 
 (defn list-entry
   [{:keys [icon text on-click delete-group!]

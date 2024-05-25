@@ -1,18 +1,12 @@
 (ns kaleidoscope.ui.db
-  (:require [cljs.spec.alpha :as s]
-            [kaleidoscope.ui.theme :as theme]
-            [kaleidoscope.ui.clients.keycloak :as keycloak]))
+  (:require [kaleidoscope.ui.clients.keycloak :as keycloak]
+            [kaleidoscope.ui.theme :as theme]))
 
 
 ;; -- Spec --------------------------------------------------------------------
 ;; The value in app-db should always match this spec.
 
-(s/def ::active-panel keyword?)
-(s/def ::loading boolean?)
-(s/def ::db
-  (s/keys :req-un [::active-panel
-                   ::active-content
-                   ::loading?]))
+;;(s/def ::active-panel keyword?)
 
 ;; -- Default app-db Value  ---------------------------------------------------
 

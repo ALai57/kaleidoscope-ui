@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.pages.home
   (:require [kaleidoscope.ui.components.navbar :as nav]
             [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link divider]]
-            [reagent.core :as reagent]
             ))
 
 (def ROW-CONFIG

@@ -1,9 +1,6 @@
 (ns  kaleidoscope.ui.stories.pages.group-management-page-stories
   (:require [kaleidoscope.ui.pages.groups :as groups]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [kaleidoscope.ui.stories.admin.user-profile-stories :as user-profile]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

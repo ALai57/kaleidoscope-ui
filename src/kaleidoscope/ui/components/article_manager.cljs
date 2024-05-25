@@ -2,12 +2,7 @@
   (:require [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.components.modals.audience-manager :as am]
             [kaleidoscope.ui.utils.events :as events]
-            [reagent.core :as reagent]
-            [reagent-mui.icons.post-add :refer [post-add]]
-            [reagent-mui.icons.rocket-launch :refer [rocket-launch]]
-            [reagent-mui.icons.group :refer [group]]
-            [reagent-mui.icons.article :as icons.article]
-            [reagent-mui.icons.delete :refer [delete]]
+            [re-frame.core :refer [dispatch subscribe]]
             [reagent-mui.components :refer [box
                                             divider
                                             collapse
@@ -16,7 +11,6 @@
                                             list
                                             list-item
                                             list-item-button
-                                            list-item-icon
                                             list-item-text
 
                                             tooltip
@@ -24,7 +18,11 @@
                                             toggle-button-group
                                             text-field
                                             ]]
-            [re-frame.core :refer [dispatch subscribe]]
+            [reagent-mui.icons.delete :refer [delete]]
+            [reagent-mui.icons.group :refer [group]]
+            [reagent-mui.icons.post-add :refer [post-add]]
+            [reagent-mui.icons.rocket-launch :refer [rocket-launch]]
+            [reagent.core :as reagent]
             [taoensso.timbre :refer-macros [infof]]))
 
 (def SUCCESS-GREEN "#08b383")
@@ -116,13 +114,13 @@
        ^{:key (str article-title article-created-at branch-name public-visibility)}
        [article-row article article-actions])]]])
 
-(def BREAKPOINTS
-  {:p    2 ;; padding
-   :xs   12
-   :sm   12
-   :md   8
-   :lg   8
-   :xl   8})
+#_(def BREAKPOINTS
+    {:p    2 ;; padding
+     :xs   12
+     :sm   12
+     :md   8
+     :lg   8
+     :xl   8})
 
 (defn add-article-form
   [{:keys [add-article!]}]

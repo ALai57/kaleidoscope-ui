@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.events.articles-test
-  (:require [kaleidoscope.ui.events.article-reader :as a]
-            [cljs.test :refer-macros [deftest is testing]]
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [kaleidoscope.ui.events.article-reader :as a]
             [matcher-combinators.standalone :as sa]))
 
 (def example-article

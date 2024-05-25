@@ -1,10 +1,6 @@
 (ns kaleidoscope.ui.pages.manager
   (:require [kaleidoscope.ui.components.manager :as m]
-            [kaleidoscope.ui.components.navbar :as nav]
-            [reagent.core :as reagent]
-            [re-frame.core :refer [subscribe dispatch]]
-            [taoensso.timbre :refer-macros [infof info]]
-            ))
+            [kaleidoscope.ui.components.navbar :as nav]))
 
 (defn -manager-page [{:keys [user groups notification-type]}]
   [:div

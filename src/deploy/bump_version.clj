@@ -1,6 +1,6 @@
 (ns deploy.bump-version
-  (:require [clojure.java.io :as io]
-            [clojure.edn :as edn]
+  (:require [clojure.edn :as edn]
+            [clojure.java.io :as io]
             [clojure.string :as string]))
 
 (def VERSION-PATH
@@ -45,6 +45,7 @@
     (spit "shadow-cljs.edn" new-shadow)
     (spit "package.json" new-pkg)))
 
+#_:clj-kondo/ignore
 (comment
   (def shadow-raw
     (-> "/home/andrew/dev/kaleidoscope-ui/shadow-cljs.edn"

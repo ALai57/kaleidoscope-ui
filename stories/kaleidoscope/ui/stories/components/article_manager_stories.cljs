@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.stories.components.article-manager-stories
   (:require [kaleidoscope.ui.components.article-manager :as article-manager]
             [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+            [reagent.core :as reagent]))
 
 (def article-groups
   [{:group-name   "January 2023"
@@ -36,6 +35,7 @@
                     :public-visibility    true
                     :article-created-date "Feb 03"}]}])
 
+#_:clj-kondo/ignore
 (def branches
   "Example data from 2023-04-10"
   [{:branch-id           4,

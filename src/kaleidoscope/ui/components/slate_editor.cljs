@@ -1,15 +1,5 @@
 (ns kaleidoscope.ui.components.slate-editor
-  (:require [kaleidoscope.ui.components.image-browser :as ib]
-            [kaleidoscope.ui.components.navbar :as navbar]
-            [kaleidoscope.ui.components.slate.serialization :as serialization]
-            [kaleidoscope.ui.components.slate.code-block-helpers :as cb]
-            [kaleidoscope.ui.components.modal :as modal :refer [modal-template MODAL-BACKGROUND]]
-            [kaleidoscope.ui.core-api.user :as user]
-            [kaleidoscope.ui.utils.core :as u]
-            [goog.string :as gstr]
-            [reagent.core :as reagent]
-            [reagent-mui.components :refer [modal box]]
-            ["@styled-icons/boxicons-regular/CodeAlt"      :refer [CodeAlt]]
+  (:require ["@styled-icons/boxicons-regular/CodeAlt"      :refer [CodeAlt]]
             ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
             ["@styled-icons/boxicons-regular/ImageAdd"     :refer [ImageAdd]]
             ["@styled-icons/boxicons-regular/Rocket"       :refer [Rocket]]
@@ -125,7 +115,17 @@
               usePlateEditorRef
 
               PlateFloatingLink
-              ]]))
+              ]]
+            [goog.string :as gstr]
+            [kaleidoscope.ui.components.image-browser :as ib]
+            [kaleidoscope.ui.components.modal :as modal :refer [modal-template MODAL-BACKGROUND]]
+            [kaleidoscope.ui.components.navbar :as navbar]
+            [kaleidoscope.ui.components.slate.code-block-helpers :as cb]
+            [kaleidoscope.ui.components.slate.serialization :as serialization]
+            [kaleidoscope.ui.core-api.user :as user]
+            [kaleidoscope.ui.utils.core :as u]
+            [reagent-mui.components :refer [modal box]]
+            [reagent.core :as reagent]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Log suppresion for known spammy logs
@@ -147,20 +147,20 @@
       (re-matches #"Warning: useLayoutEffect does nothing on the server.*" message) nil
       :else                                                                         (logger message))))
 
-(do
-  (let [new-console (update (u/clojurize js/console)
-                            :error
-                            wrap-suppress-errors)]
-    ;;(println new-console)
-    ;;((:error new-console) "HI HI")
-    ;;((:error new-console) "Warning: useLayoutEffect does nothing on the server.*")
-    (set! js/console (clj->js new-console))))
+(let [new-console (update (u/clojurize js/console)
+                          :error
+                          wrap-suppress-errors)]
+  ;;(println new-console)
+  ;;((:error new-console) "HI HI")
+  ;;((:error new-console) "Warning: useLayoutEffect does nothing on the server.*")
+  (set! js/console (clj->js new-console)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Core code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (comment
   ;; https://plate.udecode.io/
+  #_:clj-kondo/ignore
   (def INITIAL-VALUE
     "This is what a serialized version of HTML looks like"
     [{:type "p" :children [{:text "This is editable plain text"}]}

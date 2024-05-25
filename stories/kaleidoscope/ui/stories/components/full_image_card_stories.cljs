@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.components.full-image-card-stories
   (:require [kaleidoscope.ui.components.full-image-card :as full-image-card]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

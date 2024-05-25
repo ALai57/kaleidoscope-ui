@@ -2,7 +2,7 @@
   (:require [day8.re-frame.http-fx]
             [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
             [re-frame.core :refer [reg-event-db reg-event-fx]]
-            [taoensso.timbre :as timbre :refer-macros [info infof debugf errorf]]))
+            [taoensso.timbre :as timbre :refer-macros [info infof debugf]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading single article
@@ -12,7 +12,7 @@
     (info "Loading article:" (dissoc response :content))
     (assoc db :active-content response)))
 
-(reg-event-db :load-article-failure
+(reg-event-db :load-article.failure
   (fn load-article-failure [db [_ response]]
     (info "Failed loading article:" response)
     (assoc db :active-content response)))

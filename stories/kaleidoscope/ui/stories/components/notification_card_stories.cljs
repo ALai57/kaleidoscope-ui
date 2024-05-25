@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.components.notification-card-stories
   (:require [kaleidoscope.ui.components.notification-card :as notification-card]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

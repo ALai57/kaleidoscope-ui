@@ -1,13 +1,12 @@
 (ns kaleidoscope.ui.components.colors.color-family
-  (:require [kaleidoscope.ui.components.colors.color-picker :as cp]
-            [kaleidoscope.ui.utils.core :as u]
+  (:require ["@mui/material/Paper" :as paper]
+            ["@mui/material/styles" :refer [styled]]
             [kaleidoscope.ui.clients.leonardo :as leo]
+            [kaleidoscope.ui.components.colors.color-picker :as cp]
             [kaleidoscope.ui.components.slider :as slider]
-            ["@mui/material/styles" :refer [styled useTheme]]
-            ["@mui/material/Paper" :as paper]
-            [reagent.core :as reagent]
+            [kaleidoscope.ui.utils.core :as u]
             [reagent-mui.components :refer [box stack]]
-            [taoensso.timbre :refer-macros [infof info]]))
+            [reagent.core :as reagent]))
 
 (def Item
   ((styled paper/default)

@@ -1,11 +1,7 @@
 (ns kaleidoscope.ui.components.side-menu
-  (:require [reagent-mui.components :refer [drawer list list-item
-                                            list-item-icon list-item-text
-                                            button]]
-            [kaleidoscope.ui.components.radio-group :refer [basic-radio-group]]
-            [reagent-mui.icons.settings :refer [settings]]
-            [taoensso.timbre :refer-macros [info]]
+  (:require [kaleidoscope.ui.components.radio-group :refer [basic-radio-group]]
             [re-frame.core :refer [dispatch]]
+            [reagent-mui.components :refer [drawer list list-item]]
             [reagent.core :as reagent]))
 
 (defn keydown?

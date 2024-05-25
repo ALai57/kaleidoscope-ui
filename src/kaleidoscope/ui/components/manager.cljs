@@ -1,17 +1,15 @@
 (ns kaleidoscope.ui.components.manager
-  (:require [goog.string :as gstr]
-            ["@mui/material/styles" :refer [useTheme]]
+  (:require ["@mui/material/styles" :refer [useTheme]]
+            [goog.string :as gstr]
             [kaleidoscope.ui.utils.core :as u]
-            [re-frame.core :refer [dispatch subscribe]]
-            [reagent-mui.components :refer [box paper
+            [re-frame.core :refer [dispatch]]
+            [reagent-mui.components :refer [box
                                             card
                                             card-action-area
                                             card-media
                                             card-content
                                             container
-                                            typography]]
-            [reagent-mui.icons.group-add :refer [group-add]]
-            [reagent.core :as reagent]))
+                                            typography]]))
 
 (def CAPABILITIES
   [{:name        "Articles"

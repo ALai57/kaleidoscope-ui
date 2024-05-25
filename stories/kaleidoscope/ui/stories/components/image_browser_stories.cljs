@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.stories.components.image-browser-stories
   (:require [kaleidoscope.ui.components.image-browser :as image-browser]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

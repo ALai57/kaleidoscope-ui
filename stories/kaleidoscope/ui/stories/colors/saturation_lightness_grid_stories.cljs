@@ -1,8 +1,8 @@
 (ns kaleidoscope.ui.stories.colors.saturation-lightness-grid-stories
-  (:require [kaleidoscope.ui.components.colors.saturation-lightness-grid :as saturation-lightness-grid]
+  (:require ["@storybook/addon-actions" :refer [action]]
+            [kaleidoscope.ui.components.colors.saturation-lightness-grid :as saturation-lightness-grid]
             [kaleidoscope.ui.stories.helper :as helper]
             [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]
             ))
 
 (def ^:export default

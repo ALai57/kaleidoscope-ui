@@ -4,7 +4,7 @@
                                             radio-group
                                             form-control-label
                                             radio]]
-            [taoensso.timbre :refer-macros [info]]
+
             [reagent.core :as reagent]))
 
 (defn handle-change

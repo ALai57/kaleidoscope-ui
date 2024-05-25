@@ -1,6 +1,5 @@
 (ns kaleidoscope.ui.stories.helper
-  (:require [kaleidoscope.ui.utils.core :as u]
-            [reagent.core :as reagent]))
+  (:require [reagent.core :as reagent]))
 
 (defn ->default-story
   [{:keys [component] :as story-metadata}]

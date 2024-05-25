@@ -1,8 +1,7 @@
 (ns kaleidoscope.ui.stories.components.button-stories
-  (:require [kaleidoscope.ui.components.button :as button]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+  (:require ["@storybook/addon-actions" :refer [action]]
+            [kaleidoscope.ui.components.button :as button]
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story {:title     "Basic Components/Button"

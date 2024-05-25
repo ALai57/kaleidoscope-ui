@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.events.user-management
-  (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [day8.re-frame.async-flow-fx :as async-flow-fx]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
+  (:require [day8.re-frame.async-flow-fx :as async-flow-fx]
+            [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
+            [re-frame.core :refer [reg-event-db reg-event-fx]]
             [taoensso.timbre :refer-macros [infof]]))
 
 (reg-event-fx :update-user-profile!

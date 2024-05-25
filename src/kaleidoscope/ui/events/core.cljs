@@ -1,10 +1,8 @@
 (ns kaleidoscope.ui.events.core
-  (:require [kaleidoscope.ui.db :refer [default-db]]
-            [kaleidoscope.ui.clients.keycloak :as keycloak]
+  (:require [day8.re-frame.async-flow-fx :as async-flow-fx]
             [goog.string :as gstr]
-            [goog.object :as gobj]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
-            [day8.re-frame.async-flow-fx :as async-flow-fx]
+            [kaleidoscope.ui.db :refer [default-db]]
+            [re-frame.core :refer [reg-event-db reg-event-fx reg-fx]]
             [taoensso.timbre :refer-macros [infof]]))
 
 (reg-event-fx :boot

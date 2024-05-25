@@ -1,8 +1,8 @@
 (ns kaleidoscope.ui.events.group-management
-  (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [day8.re-frame.http-fx]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx]]
-            [taoensso.timbre :as timbre :refer-macros [info infof debugf errorf]]))
+  (:require [day8.re-frame.http-fx]
+            [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
+            [re-frame.core :refer [reg-event-db reg-event-fx]]
+            [taoensso.timbre :as timbre :refer-macros [infof debugf errorf]]))
 
 
 (reg-event-db :load-all-groups.success

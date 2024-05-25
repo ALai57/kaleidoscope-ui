@@ -1,6 +1,5 @@
 (ns kaleidoscope.ui.components.snackbar
   (:require [reagent-mui.components :refer [snackbar alert]]
-            [taoensso.timbre :refer-macros [info]]
             [reagent.core :as reagent]))
 
 (defn clickaway?

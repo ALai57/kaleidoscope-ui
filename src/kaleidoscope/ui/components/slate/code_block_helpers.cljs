@@ -1,18 +1,16 @@
 (ns kaleidoscope.ui.components.slate.code-block-helpers
-  (:require [kaleidoscope.ui.utils.core :as u]
-            [kaleidoscope.ui.utils.events :as events]
-            [kaleidoscope.ui.components.slate.prism :as prism]
-            [clojure.string :as string]
-            [goog.string :as gstr]
-            [reagent.core :as reagent]
-            ;;["react-dom/server" :as rd]
-            ["@udecode/plate" :as plate :refer [ELEMENT_CODE_LINE
+  (:require ["@udecode/plate" :as plate :refer [ELEMENT_CODE_LINE
                                                 ELEMENT_CODE_BLOCK
 
                                                 getRootProps
-                                                useEditorRef
                                                 setNodes
                                                 findNodePath]]
+            [clojure.string :as string]
+            [goog.string :as gstr]
+            [kaleidoscope.ui.components.slate.prism :as prism]
+            [kaleidoscope.ui.utils.core :as u]
+            [kaleidoscope.ui.utils.events :as events]
+            [reagent.core :as reagent]
             ))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HTML element helpers

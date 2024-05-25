@@ -1,13 +1,7 @@
 (ns kaleidoscope.ui.stories.components.side-menu-stories
-  (:require [kaleidoscope.ui.components.side-menu :as side-menu]
-            [kaleidoscope.ui.components.button :as button]
-            [kaleidoscope.ui.stories.helper :as helper]
-            [reagent-mui.components :refer [button]]
-            [reagent.core :as reagent]))
-
-(defn expand-button
-  [props]
-  [button props "Toggle side window"])
+  (:require [kaleidoscope.ui.components.button :as button]
+            [kaleidoscope.ui.components.side-menu :as side-menu]
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

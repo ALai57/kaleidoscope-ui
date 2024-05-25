@@ -2,12 +2,7 @@
   (:require [kaleidoscope.ui.components.article-selector :as article-selector]
             [kaleidoscope.ui.components.button :as button]
             [kaleidoscope.ui.stories.helper :as helper]
-            [reagent-mui.components :refer [button]]
-            [reagent.core :as reagent]))
-
-(defn expand-button
-  [props]
-  [button props "Click me"])
+            ))
 
 (def ^:export default
   (helper/->default-story

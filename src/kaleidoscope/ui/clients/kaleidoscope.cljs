@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.clients.kaleidoscope
   (:require [ajax.core :as ajax]
-            [goog.string :as gstr]
-            [taoensso.timbre :as timbre :refer-macros [info infof debugf errorf]]))
+            [clojure.string :as str]
+            [goog.string :as gstr]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Auth
@@ -52,9 +52,9 @@
   [title]
   (-> title
       str
-      clojure.string/lower-case
-      (clojure.string/replace  #"[!|.|(|)|]" "")
-      (clojure.string/replace  " " "-")))
+      str/lower-case
+      (str/replace  #"[!|.|(|)|]" "")
+      (str/replace  " " "-")))
 
 (defn save-article-version!
   [{:keys [article-title branch-name article-url] :as article}]
@@ -151,16 +151,6 @@
    :params          {:article-id article-id}
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})
-
-;; Admin
-(defn get-admin-route
-  []
-  {:method          :get
-   :uri             "/admin"
-   ;; The response isn't in JSON when the user is not
-   ;; authenticated - they just get a 401
-   :response-format (ajax/json-response-format {:keywords? true})})
-
 
 ;; Image management
 #_(defn get-image-metadata

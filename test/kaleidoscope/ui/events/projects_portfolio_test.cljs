@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.events.projects-portfolio-test
-  (:require [kaleidoscope.ui.events.projects-portfolio :as pp]
-            [cljs.test :refer-macros [deftest is testing]]))
+  (:require [cljs.test :refer-macros [deftest is testing]]
+            [kaleidoscope.ui.events.projects-portfolio :as pp]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Parsing json-string to cljs

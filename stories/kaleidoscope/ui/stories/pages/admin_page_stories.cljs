@@ -1,9 +1,8 @@
 (ns  kaleidoscope.ui.stories.pages.admin-page-stories
-  (:require [kaleidoscope.ui.pages.admin :as admin]
-            [kaleidoscope.ui.stories.helper :as helper]
+  (:require ["@storybook/addon-actions" :refer [action]]
+            [kaleidoscope.ui.pages.admin :as admin]
             [kaleidoscope.ui.stories.admin.user-profile-stories :as user-profile]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+            [kaleidoscope.ui.stories.helper :as helper]))
 
 (def ^:export default
   (helper/->default-story

@@ -1,9 +1,8 @@
 (ns kaleidoscope.ui.events.article-editor
-  (:require [ajax.core :as ajax]
+  (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
             [kaleidoscope.ui.components.modals.editor :refer [create-article-failure-modal
                                                               create-article-success-modal]]
-            [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [goog.string :as gstr]
+
             [re-frame.core :refer [reg-event-db
                                    reg-event-fx
                                    dispatch]]

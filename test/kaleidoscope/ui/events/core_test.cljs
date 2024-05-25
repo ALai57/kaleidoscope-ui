@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.events.core-test
-  (:require [kaleidoscope.ui.events.core :as c]
-            [cljs.test :refer-macros [deftest is]]
+  (:require [cljs.test :refer-macros [deftest is]]
+            [kaleidoscope.ui.events.core :as c]
             [matcher-combinators.standalone :as sa]))
 
 (deftest set-active-panel

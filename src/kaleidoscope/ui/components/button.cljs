@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.components.button
-  (:require [reagent-mui.components :as mui]
-            ["@mui/material/styles" :refer [useTheme]]
+  (:require ["@mui/material/styles" :refer [useTheme]]
             [kaleidoscope.ui.utils.core :as u]
+            [reagent-mui.components :as mui]
             ))
 
 (defn -button

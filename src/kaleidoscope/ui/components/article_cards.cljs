@@ -1,13 +1,12 @@
 (ns kaleidoscope.ui.components.article-cards
-  (:require ["react" :as react]
-            ["@mui/material/styles" :refer [useTheme]]
+  (:require ["@mui/material/styles" :refer [useTheme]]
             ["@styled-icons/remix-fill/GitBranch" :refer [GitBranch]]
+            [goog.string :as gstr]
             [kaleidoscope.ui.utils.core :as u]
-            [reagent.core :as reagent]
             [reagent-mui.components :refer [card card-action-area
                                             accordion accordion-details accordion-summary
                                             button]]
-            [goog.string :as gstr]))
+            [reagent.core :as reagent]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Card formatting

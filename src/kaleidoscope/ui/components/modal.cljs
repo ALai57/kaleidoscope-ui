@@ -1,9 +1,7 @@
 (ns kaleidoscope.ui.components.modal
-  (:require [re-frame.core :refer [dispatch subscribe]]
-            [reagent.core :as reagent]
-            [reagent-mui.components :refer [modal box]]
+  (:require [reagent-mui.components :refer [modal box]]
             [reagent-mui.icons.close :refer [close]]
-            [taoensso.timbre :refer-macros [info]]))
+            ))
 
 ;;https://github.com/cljsjs/packages/tree/master/bootstrap-notify
 ;;https://github.com/Frozenlock/siren

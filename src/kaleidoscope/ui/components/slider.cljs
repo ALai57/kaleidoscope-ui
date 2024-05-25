@@ -1,7 +1,7 @@
 (ns kaleidoscope.ui.components.slider
   (:require [kaleidoscope.ui.utils.events :as events]
-            [reagent.core :as reagent]
-            [reagent-mui.components :refer [box grid typography slider input]]))
+            [reagent-mui.components :refer [box grid typography slider input]]
+            [reagent.core :as reagent]))
 
 (defn value-slider
   [{:keys [on-change title initial-value min max]}]

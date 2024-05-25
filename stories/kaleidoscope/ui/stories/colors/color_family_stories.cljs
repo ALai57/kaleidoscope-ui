@@ -1,9 +1,7 @@
 (ns kaleidoscope.ui.stories.colors.color-family-stories
-  (:require [kaleidoscope.ui.components.colors.color-family :as color-family]
+  (:require ["@mui/material/colors" :refer [red purple blue green]]
+            [kaleidoscope.ui.components.colors.color-family :as color-family]
             [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]
-            ["@mui/material/colors" :refer [red purple blue green]]
             ))
 
 (def ^:export default

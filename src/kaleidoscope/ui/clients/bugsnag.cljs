@@ -1,8 +1,8 @@
 (ns kaleidoscope.ui.clients.bugsnag
-  (:require [kaleidoscope.ui.version :as v]
+  (:require ["@bugsnag/js" :as bg-js]
+            ["@bugsnag/plugin-react" :as bg-react]
             ["react" :as react]
-            ["@bugsnag/js" :as bg-js]
-            ["@bugsnag/plugin-react" :as bg-react]))
+            [kaleidoscope.ui.version :as v]))
 
 
 (goog-define BUGSNAG_KEY "defined-at-compile-time")

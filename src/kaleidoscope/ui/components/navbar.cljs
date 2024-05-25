@@ -1,11 +1,11 @@
 (ns kaleidoscope.ui.components.navbar
   (:require ["@mui/material/styles" :refer [styled useTheme]]
-            [reagent-mui.icons.edit :refer [edit]]
-            [reagent-mui.icons.info :refer [info]]
             [goog.string :as gstr]
             [kaleidoscope.ui.utils.core :as u]
             [re-frame.core :refer [dispatch]]
-            [reagent-mui.components :refer [app-bar avatar box container toolbar]]))
+            [reagent-mui.components :refer [app-bar avatar box container toolbar]]
+            [reagent-mui.icons.edit :refer [edit]]
+            [reagent-mui.icons.info :refer [info]]))
 
 (def IMAGE-SIZE
   {:xs "25px"
@@ -17,14 +17,6 @@
 (defn navigate-home!
   []
   (dispatch [:set-active-panel :home]))
-
-(defn navigate-manager!
-  []
-  (dispatch [:set-active-panel :manager]))
-
-(defn navigate-archive!
-  []
-  (dispatch [:set-active-panel :archive]))
 
 (def zoom-icon
   ((styled "a")

@@ -1,11 +1,11 @@
 (ns kaleidoscope.ui.components.colors.color-wheel
-  (:require [goog.string :as gstr]
-            ["@mui/material/styles" :refer [styled useTheme]]
-            ["@mui/material/Slider" :as slider]
-            [kaleidoscope.ui.utils.events :as events]
+  (:require ["@mui/material/Slider" :as slider]
+            ["@mui/material/styles" :refer [styled]]
+            [goog.string :as gstr]
             [kaleidoscope.ui.components.colors.saturation-lightness-grid :as slg]
-            [reagent.core :as reagent]
-            [reagent-mui.components :refer [stack input slider typography box grid]]))
+            [kaleidoscope.ui.utils.events :as events]
+            [reagent-mui.components :refer [stack input slider typography box grid]]
+            [reagent.core :as reagent]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pre-styled components

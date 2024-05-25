@@ -1,10 +1,9 @@
 (ns  kaleidoscope.ui.stories.components.modals.audience-manager-stories
-  (:require [kaleidoscope.ui.components.modals.audience-manager :as modal]
-            [kaleidoscope.ui.components.button :as button]
+  (:require [kaleidoscope.ui.components.button :as button]
+            [kaleidoscope.ui.components.modals.audience-manager :as modal]
             [kaleidoscope.ui.stories.components.groups.group-manager-stories :as gm-stories]
             [kaleidoscope.ui.stories.helper :as helper]
-            [reagent.core :as reagent]
-            ["@storybook/addon-actions" :refer [action]]))
+            [reagent.core :as reagent]))
 
 (def groups
   (map (fn [{:keys [display-name] :as group}]
