@@ -20,7 +20,7 @@
     :alt         "Manage articles"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/article-manager"]))}
    {:name        "Images"
-    :description "Create and manage Images. Not implemented yet!"
+    :description "Create and manage Images"
     :alt         "Manage images"
     :src         "/static/images/images.svg"
     :on-click    (fn [] (dispatch [:set-hash-fragment "/image-manager"]))}
