@@ -43,8 +43,12 @@
 
 (defroute "/" []
   (dispatch [:set-active-panel :home]))
+
+#_:clj-kondo/ignore
 (defroute "/:path" [path]
   (dispatch [:set-active-panel (keyword path)]))
+
+#_:clj-kondo/ignore
 (defroute "/content/:content-name" [content-name]
   (dispatch [:set-active-panel :content])
   (dispatch [:load-article content-name]))

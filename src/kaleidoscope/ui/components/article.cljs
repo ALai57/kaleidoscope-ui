@@ -5,6 +5,7 @@
             [hickory.convert :refer [hickory-to-hiccup]]
             [hickory.select :as hs]
             [reagent-mui.components :refer [box]]
+            [clojure.string :as str]
             [taoensso.timbre :refer-macros [infof]]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -15,9 +16,9 @@
   [style]
   {:pre [(string? style)]
    :post [(even? (count %))]}
-  (->> (clojure.string/split style #";")
-       (mapcat #(clojure.string/split % #":"))
-       (map clojure.string/trim)))
+  (->> (str/split style #";")
+       (mapcat #(str/split % #":"))
+       (map str/trim)))
 
 (defn tokens->map
   "Takes a seq of tokens with the properties (even) and their values (odd)
@@ -25,8 +26,8 @@
   [tokens]
   {:pre [(even? (count tokens))]
    :post [(map? %)]}
-  (zipmap (keep-indexed #(if (even? %1) %2) tokens)
-          (keep-indexed #(if (odd? %1) %2) tokens)))
+  (zipmap (keep-indexed #(when (even? %1) %2) tokens)
+          (keep-indexed #(when (odd? %1) %2) tokens)))
 
 (defn style->map
   "Takes an inline style attribute string and converts it to a React Style map"
@@ -114,9 +115,9 @@
 
 (comment
   (require '[re-frame.db :refer [app-db]])
-  (map h/as-hiccup (h/parse-fragment (:content (get-content (:active-content @app-db)))))
+  ;;(map h/as-hiccup (h/parse-fragment (:content (get-content (:active-content @app-db)))))
   (format-js "test-paragraph.js")
-  (get-js (:active-content @app-db))
+  ;;(get-js (:active-content @app-db))
   )
 
 (comment

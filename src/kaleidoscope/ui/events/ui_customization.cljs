@@ -1,6 +1,6 @@
 (ns kaleidoscope.ui.events.ui-customization
   (:require [kaleidoscope.ui.clients.kaleidoscope :as scope-client]
-            [re-frame.core :refer [dispatch reg-event-db reg-event-fx reg-fx]]
+            [re-frame.core :refer [reg-event-db reg-event-fx]]
             [taoensso.timbre :refer-macros [infof errorf]]))
 
 (reg-event-db :get-themes.success

@@ -1,7 +1,6 @@
 (ns kaleidoscope.ui.pages.about-this-site
   (:require [kaleidoscope.ui.components.navbar :as nav]
             [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link]]
-            [reagent.core :as reagent]
             ))
 
 

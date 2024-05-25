@@ -1,4 +1,4 @@
-(ns kaleidoscope.ui.utils.core.slate-helper
+(ns kaleidoscope.ui.utils.slate-helper
   (:require [kaleidoscope.ui.utils.core :as u]
             [clojure.string :as string]
             [goog.string :as gstr]

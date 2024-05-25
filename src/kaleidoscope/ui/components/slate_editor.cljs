@@ -597,6 +597,7 @@
 
 
 (comment
+  #_:clj-kondo/ignore
   (plate/deserializeHtml (plate/Plate {:plugins PLUGINS}) #js {:element         content
                                                                :stripWhitespace false})
 

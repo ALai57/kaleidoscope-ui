@@ -1,15 +1,18 @@
 (ns kaleidoscope.ui.pages.about
-  (:require [kaleidoscope.ui.components.navbar :as nav]))
+  (:require [kaleidoscope.ui.components.navbar :as nav]
+            [re-frame.core :refer [dispatch]]
+            ))
 
 
-(defn reset-portfolio-cards [x]
+(defn reset-portfolio-cards
+  [^js x]
   (let [clicked-element (.-target x)
         clicked-class (.-className clicked-element)]
-    (when-not (or (includes? clicked-class "resume-info-image")
-                  (includes? clicked-class "resume-info-icon")
-                  (includes? clicked-class "card-description")
-                  (includes? clicked-class "card-title")
-                  (includes? clicked-class "card-text"))
+    (when-not (or (.includes clicked-class "resume-info-image")
+                  (.includes clicked-class "resume-info-icon")
+                  (.includes clicked-class "card-description")
+                  (.includes clicked-class "card-title")
+                  (.includes clicked-class "card-text"))
       (dispatch [:reset-portfolio-cards]))))
 
 (defn about [{:keys [user notification-type]}]

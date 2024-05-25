@@ -3,10 +3,7 @@
             [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.core :as u]
             [kaleidoscope.ui.utils.events :as e]
-            [goog.string :as gstr]
-            [reagent.core :as reagent]
             [re-frame.core :refer [subscribe dispatch]]
-            [taoensso.timbre :refer-macros [infof info]]
             ))
 
 (defn -add-photo!
