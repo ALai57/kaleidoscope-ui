@@ -5,7 +5,7 @@
             [kaleidoscope.ui.clients.stripe :as stripe]
             [kaleidoscope.ui.components.navbar :as nav]
             [re-frame.core :refer [dispatch]]
-            [reagent-mui.components :refer [grid circular-progress]]
+            [reagent-mui.components :refer [grid circular-progress typography paper]]
             ))
 
 (def stripe-promise
@@ -21,7 +21,12 @@
   [grid {:container      true
          :alignItems     "center"
          :justifyContent "center"}
-
+   [grid {:item true
+          :xs   12
+          :sx   {:paddingBottom "25px"}}
+    [typography {:textAlign "center"
+                 :variant   "h2"}
+     "Sign up"]]
    (if payment-secret
      [:> Elements {:stripe  stripe-promise
                    :options {:clientSecret (:client-secret payment-secret)
@@ -32,14 +37,16 @@
              :md   8
              :lg   6
              :xl   4}
-       [:form {:onSubmit (fn [event]
-                           (.preventDefault event)
-                           ;; Do stuff
-                           ;; https://docs.stripe.com/stripe-js/react#useelements-hook
-                           (js/console.log "Submitted payment!")
-                           )}
-        [:> PaymentElement]
-        [:button "Submit"]]]]
+       [paper {:elevation 10}
+        [:form {:style    {:padding "10px"}
+                :onSubmit (fn [event]
+                            (.preventDefault event)
+                            ;; Do stuff
+                            ;; https://docs.stripe.com/stripe-js/react#useelements-hook
+                            (js/console.log "Submitted payment!")
+                            )}
+         [:> PaymentElement]
+         [:button "Submit"]]]]]
      [grid {:item true
             :xs   12
             :sm   10
@@ -60,6 +67,5 @@
    [nav/nav-bar {:user              user
                  :notification-type notification-type}]
 
-   [:h1 "Payments"]
    [:f> -sign-up {:payment-secret payment-secret}]
    ])
