@@ -10,6 +10,7 @@
             [kaleidoscope.ui.pages.home            :as page.home]
             [kaleidoscope.ui.pages.image-manager   :as page.image-manager]
             [kaleidoscope.ui.pages.manager         :as page.manager]
+            [kaleidoscope.ui.pages.sign-up         :as page.sign-up]
             [kaleidoscope.ui.pages.ui-manager      :as page.ui-manager]
             [kaleidoscope.ui.theme :as theme]
             [kaleidoscope.ui.utils.core :as u]
@@ -64,6 +65,7 @@
              :article-manager page.article-manager/article-manager-page
              :image-manager   page.image-manager/image-manager-page
              :ui-manager      page.ui-manager/ui-manager-page
+             :sign-up         page.sign-up/sign-up
              :editor          (u/lazy-component (lazy/loadable kaleidoscope.ui.pages.article-editor/editor-ui))})
 
 #_:clj-kondo/ignore
@@ -81,6 +83,9 @@
 
         ;; User data
         :user @(subscribe [:user-profile])
+
+        ;; Payments
+        :payment-secret @(subscribe [:payment-secret])
 
         ;; User actions
         :user-event-handlers  user-event-handlers

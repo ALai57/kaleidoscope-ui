@@ -15,6 +15,7 @@
    [kaleidoscope.ui.events.group-management]
    [kaleidoscope.ui.events.image-editor]
    [kaleidoscope.ui.events.keycloak]
+   [kaleidoscope.ui.events.payments]
    [kaleidoscope.ui.events.projects-portfolio]
    [kaleidoscope.ui.events.ui-customization]
    [kaleidoscope.ui.events.user-management]

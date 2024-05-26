@@ -193,6 +193,7 @@
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})
 
+;; Theme management
 (defn get-themes
   []
   {:method          :get
@@ -206,5 +207,14 @@
    :uri             (gstr/format "/themes/%s" id)
    :params          theme
    :headers         {:Content-Type "application/json"}
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+
+;; Payment management
+(defn get-payment-secret
+  []
+  {:method          :get
+   :uri             "/v1/payments"
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})

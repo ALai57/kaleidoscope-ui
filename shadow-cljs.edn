@@ -58,10 +58,12 @@
                 ;; Shadow has a pre-built idea that every build has a dev and release configuration
                 :dev     {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL   "http://localhost:8080"
                                             kaleidoscope.ui.clients.keycloak/REALM      "test"
-                                            kaleidoscope.ui.clients.keycloak/CLIENTID   "test-login"}}
+                                            kaleidoscope.ui.clients.keycloak/CLIENTID   "test-login"
+                                            kaleidoscope.ui.clients.stripe/API_KEY      "pk_test_51PJRp2P8QKNuVuXmy2yART8s1QD1JPFmxJsGb3uwY1f4aeqn2i8Jyd0TpllOgdaY7FyqDr9WCzn2e1E5eksD3kHk00USZP16Mc"}}
                 :release {:closure-defines {kaleidoscope.ui.clients.keycloak/AUTH_URL   "https://keycloak.andrewslai.com"
                                             kaleidoscope.ui.clients.keycloak/REALM      "andrewslai"
-                                            kaleidoscope.ui.clients.keycloak/CLIENTID   "andrewslai-frontend"}
+                                            kaleidoscope.ui.clients.keycloak/CLIENTID   "andrewslai-frontend"
+                                            kaleidoscope.ui.clients.stripe/API_KEY      "pk_live_51PJRp2P8QKNuVuXm9XZE5hSBa8jF0nuAI2z0HZw8riKg3FmJNlN4332bmYFnU4LqPdUqS14VZjD6keI7npjYUyJu007PnDUkWj"}
                           :build-hooks     [(shadow.ui.build-report/hook {:output-to "build-reports/release-build-report.html"})]}
                 }
 

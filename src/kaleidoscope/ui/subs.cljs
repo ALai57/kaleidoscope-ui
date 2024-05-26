@@ -117,6 +117,11 @@
    (:theme db)))
 
 (reg-sub
+ :payment-secret
+ (fn [db]
+   (:payment-secret db)))
+
+(reg-sub
  :audience-editor-modal-initial-values
  (fn [db]
    (:audience-editor-modal-initial-values db)))
