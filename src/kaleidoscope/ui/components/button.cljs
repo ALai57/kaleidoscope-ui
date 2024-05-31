@@ -5,12 +5,13 @@
             ))
 
 (defn -button
-  [{:keys [on-click color text sx]
+  [{:keys [on-click color text sx disabled]
     :or   {color "primary"}}]
   (let [palette (:palette (u/clojurize (useTheme)))]
     [mui/button {:color    color
                  :variant  "contained"
                  :on-click on-click
+                 :disabled disabled
                  :sx       (merge {:background-color (get-in palette [:primary :light])}
                                   (or sx {}))}
      text]))
