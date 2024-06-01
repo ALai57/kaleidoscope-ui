@@ -85,7 +85,7 @@
         :user @(subscribe [:user-profile])
 
         ;; Payments
-        :payment-secret @(subscribe [:payment-secret])
+        :payment-details @(subscribe [:payment-details])
 
         ;; User actions
         :user-event-handlers  user-event-handlers

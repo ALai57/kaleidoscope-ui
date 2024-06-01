@@ -212,9 +212,18 @@
 
 
 ;; Payment management
-(defn get-payment-secret
-  []
+(defn get-domain-availability
+  [domain]
   {:method          :get
+   :uri             (gstr/format "/check-domain?domain=%s" domain)
+   :format          (ajax/json-request-format)
+   :response-format (ajax/json-response-format {:keywords? true})})
+
+(defn new-payment-secret!
+  [{:keys [price] :as payment}]
+  {:method          :post
    :uri             "/v1/payments"
+   :params          payment
+   :headers         {:Content-Type "application/json"}
    :format          (ajax/json-request-format)
    :response-format (ajax/json-response-format {:keywords? true})})

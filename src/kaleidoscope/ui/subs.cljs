@@ -116,10 +116,13 @@
  (fn [db]
    (:theme db)))
 
+;; {:intent {}
+;;  :secret {}
+;;  :domain-availability {}}
 (reg-sub
- :payment-secret
+ :payment-details
  (fn [db]
-   (:payment-secret db)))
+   (:payment-details db)))
 
 (reg-sub
  :audience-editor-modal-initial-values
