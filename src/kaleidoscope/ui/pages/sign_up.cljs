@@ -70,7 +70,7 @@
          [typography {:variant "h4"}
           "Select a domain name"]
          [typography {:variant "p"}
-          "For domain name market prices see "
+            "For top level domain name market prices (`.com`, `.net` etc) see "
           [:a {:href "https://d32ze2gidvkk54.cloudfront.net/Amazon_Route_53_Domain_Registration_Pricing_20140731.pdf"}
            "this AWS pricing document."]]]
         [grid {:item true
