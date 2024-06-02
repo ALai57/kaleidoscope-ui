@@ -220,7 +220,7 @@
    :response-format (ajax/json-response-format {:keywords? true})})
 
 (defn new-payment-secret!
-  [{:keys [price] :as payment}]
+  [{:keys [amount currency] :as payment}]
   {:method          :post
    :uri             "/v1/payments"
    :params          payment

@@ -1,77 +1,57 @@
 (ns kaleidoscope.ui.pages.sign-up
-  (:require ["@stripe/react-stripe-js" :refer [Elements PaymentElement useStripe useElements]]
-            ["@stripe/stripe-js" :refer [loadStripe]]
+  (:require ["@stripe/react-stripe-js" :refer [Elements PaymentElement useElements]]
             ["@styled-icons/material/CheckBox" :refer [CheckBox]]
             ["@styled-icons/material/WarningAmber" :refer [WarningAmber]]
             ["react" :as react]
             [goog.string :as gstr]
-            [kaleidoscope.ui.clients.stripe :as stripe]
             [kaleidoscope.ui.components.button :refer [button]]
             [kaleidoscope.ui.components.navbar :as nav]
-            [kaleidoscope.ui.utils.core :as u]
             [kaleidoscope.ui.utils.events :as events]
             [re-frame.core :refer [dispatch subscribe]]
             [reagent-mui.components :refer [box grid circular-progress typography paper text-field tooltip]]
-            [reagent.core :as reagent]
-            ))
+            [reagent.core :as reagent]))
 
-(def stripe-promise
-  (loadStripe stripe/API_KEY))
+(defonce stripe-init
+  (dispatch [:init-global-stripe!]))
 
 (defn stripe-payment
-  [{:keys [secret intent] :as payment-details}]
-  (let [here (.. js/window -location -href)]
+  [{:keys [payment-details stripe] :as args}]
+  (let [here                    (.. js/window -location -href)
+        {:keys [intent secret]} payment-details
+        elems                   (useElements)]
     (fn []
-      (let [stripe (useStripe)
-            elems  (useElements)
-            here   (.. js/window -location -href)]
-        (react/useEffect (fn []
-                           (when stripe
-                             (js/console.log)
-                             (.then (.retrievePaymentIntent stripe {:clientSecret secret})
-                                    (fn [pi]
-                                      (js/console.log "Pay intent" pi)
-                                      ;;(reset! payment-intent (:paymentIntent (u/clojurize pi)))
-                                      )))
-                           js/undefined)
-                         (clj->js [stripe]))
-        [grid {:item true
-               :xs   12
-               :sm   10
-               :md   8
-               :lg   6
-               :xl   4}
-         [paper {:elevation 10}
-          [box {:sx {:padding "20px"}}
-           [typography {:variant "h4"}
-            "Invoice"]
-           [:p (str "Amount $" (/ (:amount intent) 100)
-                    ". Market price for the domain name:")
-            [:a {:href "https://google.com"} "google.com"]]
-
-           ]]
+      (println "Intent" intent)
+      [grid {:item true
+             :xs   12
+             :sm   10
+             :md   8
+             :lg   6
+             :xl   4}
+       [paper {:elevation 10}
+        [box {:sx {:padding "20px"}}
+         [typography {:variant "h4"}
+          "Invoice"]
+         [:p (gstr/format "$%s for %s" (/ (:amount intent) 100)
+                          (get-in payment-details [:domain-availability :domain]))]]]
+       [:br]
+       [paper {:elevation 10}
+        [box {:sx {:padding "20px"}}
+         [typography {:variant "h4"}
+          "Payment"]
+         [:> PaymentElement]
          [:br]
-         [paper {:elevation 10}
-          [box {:sx {:padding "20px"}}
-           [typography {:variant "h4"}
-            "Payment"]
-           [:> PaymentElement]
-           [:br]
-           [button {:text     "Submit"
-                    :disabled (or (not stripe)
-                                  (not elems))
-                    :on-click (fn [event]
-                                (.preventDefault event)
-
-                                ;; https://docs.stripe.com/stripe-js/react#useelements-hook
-                                (js/console.log "Submitted payment!")
-                                ;;(js/console.log elems)
-                                ;;(js/console.log stripe)
-                                (->> {:elements      elems
-                                      :confirmParams {:return_url (str here "?completed")}}
-                                     clj->js
-                                     (.confirmPayment stripe))
-                                )}]]]]))))
+         [button {:text     "Submit"
+                  :disabled (or (not stripe)
+                                (not elems))
+                  :on-click (fn [event]
+                              (.preventDefault event)
+                              ;; https://docs.stripe.com/stripe-js/react#useelements-hook
+                              (js/console.log "Submitted payment!")
+                              (->> {:elements      elems
+                                    :confirmParams {:return_url (str here "?completed")}}
+                                   clj->js
+                                   (.confirmPayment ^js stripe))
+                              )}]]]])))
 
 (defn select-plan
   [{:keys [payment-details]}]
@@ -88,7 +68,11 @@
                :xs             12
                :padding-bottom "10px"}
          [typography {:variant "h4"}
-          "Select a domain name"]]
+          "Select a domain name"]
+         [typography {:variant "p"}
+          "For domain name market prices see "
+          [:a {:href "https://d32ze2gidvkk54.cloudfront.net/Amazon_Route_53_Domain_Registration_Pricing_20140731.pdf"}
+           "this AWS pricing document."]]]
         [grid {:item true
                :xs   6}
          [text-field {:size     "small"
@@ -101,11 +85,9 @@
         [grid {:item           true
                :xs             4
                :padding-bottom "10px"}
-         [button {:on-click (fn search
-                              []
-                              (dispatch [:get-domain-price @domain])
-                              ;;(dispatch [:update-payment-details! @domain])
-                              )
+         [button {:on-click (fn generate-payment! [e]
+                              (.preventDefault e)
+                              (dispatch [:generate-payment-for-domain! @domain]))
                   :text "Check"}]]
         [grid {:item           true
                :xs             2
@@ -122,8 +104,7 @@
          ]]])))
 
 (defn -sign-up
-  [{:keys [payment-details]}]
-  ;; Use `dispatch to dispatch this effect instead of useEffect`
+  [{:keys [payment-details stripe] :as args}]
   (let [{:keys [secret intent domain-availability]} payment-details]
     [grid {:container      true
            :alignItems     "center"
@@ -149,19 +130,19 @@
         ^{:key domain-availability}
         [:f> select-plan {:payment-details payment-details}]]]]
 
-     (if (and secret intent)
-       [:> Elements {:stripe  stripe-promise
-                     :options {:clientSecret secret
-                               :loader       "always"}}
-        [:f> stripe-payment payment-details]]
-       [grid {:item true
-              :xs   12
-              :sm   10
-              :md   8
-              :lg   6
-              :xl   4}
-        [:h2 "Loading payments"]
-        [circular-progress]]
+     (cond
+       (and secret intent)              [:> Elements {:stripe  stripe
+                                                      :options {:clientSecret (:client-secret secret)
+                                                                :loader       "always"}}
+                                         [:f> stripe-payment args]]
+       (:available domain-availability) [grid {:item true
+                                               :xs   12
+                                               :sm   10
+                                               :md   8
+                                               :lg   6
+                                               :xl   4}
+                                         [:h2 "Loading payments"]
+                                         [circular-progress]]
        )])
 
   )
@@ -169,15 +150,11 @@
 ;; Payment details
 ;; {:intent {}
 ;;  :secret {}
-;;  :domain {}}
+;;  :domain-availability {}}
 (defn sign-up
   [{:keys [user notification-type]}]
-  ;;(println "Payment secret" payment-secret)
-  #_(react/useEffect (fn []
-                       (dispatch [:get-payment-secret])
-                       js/undefined)
-                     (clj->js []))
-  (let [payment-details (subscribe [:payment-details])]
+  (let [payment-details (subscribe [:payment-details])
+        stripe          (subscribe [:stripe])]
     (fn []
       [:div {:style {:height   "100%"
                      :width    "100%"
@@ -185,5 +162,5 @@
        [nav/nav-bar {:user              user
                      :notification-type notification-type}]
 
-       [:f> -sign-up {:payment-details @payment-details}]
-       ])))
+       [:f> -sign-up {:payment-details @payment-details
+                      :stripe          @stripe}]])))

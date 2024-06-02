@@ -125,6 +125,11 @@
    (:payment-details db)))
 
 (reg-sub
+ :stripe
+ (fn [db]
+   (:stripe db)))
+
+(reg-sub
  :audience-editor-modal-initial-values
  (fn [db]
    (:audience-editor-modal-initial-values db)))
