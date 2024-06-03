@@ -66,6 +66,7 @@
   "scripts": {
     "watch-js": "npx babel src/kaleidoscope-js --out-dir kaleidoscope-js --watch",
     "watch": "shadow-cljs watch app stories",
+    "watch-pub": "shadow-cljs watch kaleidoscope.pub",
     "build-release": "shadow-cljs release app",
     "deploy": "./scripts/deployment/deploy-to-s3",
     "bump": "shadow-cljs run deploy.bump-version/increment",
