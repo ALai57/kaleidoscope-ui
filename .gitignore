@@ -9,8 +9,8 @@ figwheel_server.log
 log.txt
 node_modules
 build-reports
-*/static/js/compiled/
-*/static/js/test/
+resources/kaleidoscope.pub/static/js/compiled/
+static/js/test/*
 /public/
 
 .idea/
