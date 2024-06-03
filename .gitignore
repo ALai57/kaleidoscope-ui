@@ -10,6 +10,7 @@ log.txt
 node_modules
 build-reports
 resources/kaleidoscope.pub/static/js/compiled/
+resources/kaleidoscope.client/static/js/compiled/
 static/js/test/*
 /public/
 
