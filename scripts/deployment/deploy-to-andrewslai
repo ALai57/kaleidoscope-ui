@@ -6,7 +6,7 @@ pushd "$SCRIPT_DIR/../../"
 
 echo "Deploying frontend to kaleidoscope bucket..."
 
-aws s3 sync resources/static s3://andrewslai/static \
+aws s3 sync resources/andrewslai.com/static s3://andrewslai.com/static \
     --exclude "*/cljs-runtime/*" \
     --exclude "*/shareable_stories/*" # --dryrun
 
