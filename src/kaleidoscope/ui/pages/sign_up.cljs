@@ -8,7 +8,8 @@
             [kaleidoscope.ui.components.navbar :as nav]
             [kaleidoscope.ui.utils.events :as events]
             [re-frame.core :refer [dispatch subscribe]]
-            [reagent-mui.components :refer [box grid circular-progress typography paper text-field tooltip]]
+            [reagent-mui.components :refer [stepper step-label step step-content
+                                            divider box grid circular-progress typography paper text-field tooltip]]
             [reagent.core :as reagent]))
 
 (defonce stripe-init
@@ -67,12 +68,17 @@
         [grid {:item           true
                :xs             12
                :padding-bottom "10px"}
-         [typography {:variant "h4"}
-          "Select a domain name"]
-         [typography {:variant "p"}
+         #_[typography {:variant "h4"}
+            "Select a domain name"]
+         ;;[divider]
+         #_[typography {:variant "p"}
             "For top level domain name market prices (`.com`, `.net` etc) see "
-          [:a {:href "https://d32ze2gidvkk54.cloudfront.net/Amazon_Route_53_Domain_Registration_Pricing_20140731.pdf"}
-           "this AWS pricing document."]]]
+            [:a {:href "https://d32ze2gidvkk54.cloudfront.net/Amazon_Route_53_Domain_Registration_Pricing_20140731.pdf"}
+             "this AWS pricing document."]]]
+        [grid {:item true
+               :xs 12}
+         [typography {:variant "h5"}
+          "Domain availability checker"]]
         [grid {:item true
                :xs   6}
          [text-field {:size     "small"
@@ -103,47 +109,77 @@
                               :height "60px"}]])
          ]]])))
 
+(def steps
+  [{:label   "Select a domain name"
+    :caption [typography {:variant "caption"}
+              "For recent top level domain name market prices (`.com`, `.net` etc) refer to "
+              [:a {:href "https://d32ze2gidvkk54.cloudfront.net/Amazon_Route_53_Domain_Registration_Pricing_20140731.pdf"}
+               "this AWS document."]]
+    :content select-plan}
+   {:label       "View invoice"
+    :description "Verify the purchase price for the domain"}
+   {:label       "Payment"
+    :description "Pay to register the domain and set it up"}])
+
 (defn -sign-up
   [{:keys [payment-details stripe] :as args}]
   (let [{:keys [secret intent domain-availability]} payment-details]
-    [grid {:container      true
-           :alignItems     "center"
-           :justifyContent "center"}
-     [grid {:item true
-            :xs   12
-            :sx   {:paddingBottom "25px"}}
-      [typography {:textAlign "center"
-                   :variant   "h2"}
-       "Sign up"]]
-     [grid {:item true
-            :xs   12
-            :sx   {:margin-bottom "15px"}}
-      [grid {:container      true
+    [grid {:container true
+           :align-items "center"
+           :justify-content "center"}
+     [stepper {:active-step 0
+               :orientation "vertical"}
+      (for [stage steps]
+        [step {:key (:label stage)}
+         [:<>
+          [step-label {:optional (when-let [caption (:caption stage)]
+                                   (reagent/as-element caption))}
+           (:label stage)]
+          [step-content {}
+           [typography (:description stage)]
+
+           ^{:key domain-availability}
+           (when-let [content (:content stage)]
+             [:f> content {:payment-details payment-details}])]]])]]
+
+    #_[grid {:container      true
              :alignItems     "center"
              :justifyContent "center"}
+       #_[grid {:item true
+                :xs   12
+                :sx   {:paddingBottom "25px"}}
+          [typography {:textAlign "center"
+                       :variant   "h4"}
+           "Sign up"]]
        [grid {:item true
               :xs   12
-              :sm   10
-              :md   8
-              :lg   6
-              :xl   4}
-        ^{:key domain-availability}
-        [:f> select-plan {:payment-details payment-details}]]]]
+              :sx   {:margin-bottom "15px"}}
+        [grid {:container      true
+               :alignItems     "center"
+               :justifyContent "center"}
+         [grid {:item true
+                :xs   12
+                :sm   10
+                :md   8
+                :lg   6
+                :xl   4}
+          ^{:key domain-availability}
+          [:f> select-plan {:payment-details payment-details}]]]]
 
-     (cond
-       (and secret intent)              [:> Elements {:stripe  stripe
-                                                      :options {:clientSecret (:client-secret secret)
-                                                                :loader       "always"}}
-                                         [:f> stripe-payment args]]
-       (:available domain-availability) [grid {:item true
-                                               :xs   12
-                                               :sm   10
-                                               :md   8
-                                               :lg   6
-                                               :xl   4}
-                                         [:h2 "Loading payments"]
-                                         [circular-progress]]
-       )])
+       (cond
+         (and secret intent)              [:> Elements {:stripe  stripe
+                                                        :options {:clientSecret (:client-secret secret)
+                                                                  :loader       "always"}}
+                                           [:f> stripe-payment args]]
+         (:available domain-availability) [grid {:item true
+                                                 :xs   12
+                                                 :sm   10
+                                                 :md   8
+                                                 :lg   6
+                                                 :xl   4}
+                                           [:h2 "Loading payments"]
+                                           [circular-progress]]
+         )])
 
   )
 
