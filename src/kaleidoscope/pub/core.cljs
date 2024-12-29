@@ -8,8 +8,14 @@
     [kaleidoscope.ui.clients.bugsnag :as bugsnag]
     [kaleidoscope.ui.events.keycloak]
     [kaleidoscope.ui.events.payments]
+    [kaleidoscope.ui.events.user-management]
+
     [kaleidoscope.ui.subs]
+
     [kaleidoscope.ui.pages.sign-up :as pages.sign-up]
+    [kaleidoscope.ui.pages.admin :as pages.admin]
+
+    [kaleidoscope.ui.core-api.user :as user]
 
     [day8.re-frame.http-fx]
     [re-frame.core :refer [dispatch-sync subscribe]]
@@ -86,16 +92,33 @@
     {:name ::pricing
      :view (fn []
              [:div "Pricing"])}]
+
    ["/register"
     {:name ::register
-     :view (fn []
+     :view (fn [{:keys [user]}]
              (let [payment-details (subscribe [:payment-details])
                    domain-availability (subscribe [:domain-availability])
                    stripe (subscribe [:stripe])]
                (fn []
-                 [:f> pages.sign-up/-sign-up {:payment-details     @payment-details
-                                              :domain-availability @domain-availability
-                                              :stripe              @stripe}])))}]])
+                 (if user
+                   [:f> pages.sign-up/-sign-up {:payment-details     @payment-details
+                                                :domain-availability @domain-availability
+                                                :stripe              @stripe}]
+                   [:h1 "Must be an authenticated user to register a website"]))))}]
+   ["/login"
+    {:name ::login
+     :view (fn [{:keys [user user-event-handlers notification-type]}]
+             [grid {:container       true
+                    :justify-content "center"
+                    ;;:align-items     "center"
+                    :sx              {:height "100vh"}}
+              [grid {:item true
+                     :xs   6}
+               [:f> pages.admin/user-profile {:user                user
+                                              :user-event-handlers user-event-handlers
+                                              :notification-type   notification-type}]]])
+     }]
+   ])
 
 
 (defonce match (r/atom nil))
@@ -120,7 +143,9 @@
 (def pages
   {"About"    "/about"
    "Pricing"  "/pricing"
-   "Register" "/register"})
+   "Register" "/register"
+   "Login"    "/login"
+   })
 
 (defn root-view
   []
@@ -145,7 +170,8 @@
                               :display "block"}}
            page-name]])]]]]
    (if-let [view (get-in @match [:data :view])]
-     [view]
+     [view {:user                @(subscribe [:user-profile])
+            :user-event-handlers user/user-event-handlers}]
      [not-found])])
 
 (defn ^:export main

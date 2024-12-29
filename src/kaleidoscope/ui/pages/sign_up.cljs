@@ -1,5 +1,5 @@
 (ns kaleidoscope.ui.pages.sign-up
-  (:require ["@stripe/react-stripe-js" :refer [Elements PaymentElement useElements]]
+  (:require ["@stripe/react-stripe-js" :refer [Elements PaymentElement AddressElement useElements]]
             ["@styled-icons/material/CheckBox" :refer [CheckBox]]
             ["@styled-icons/material/WarningAmber" :refer [WarningAmber]]
             ["react" :as react]
@@ -28,13 +28,17 @@
     :height "60px"}])
 
 
+;; TODO: 12-28-24
+;; Require an authenticated user
+;; Add Login to this page
+;; Pass in user details
+;; Only display when user is active
 (defn stripe-payment
   [{:keys [domain-availability payment-details stripe] :as args}]
-  (let [here (.. js/window -location -href)
+  (let [here (.. js/window -location -origin)
         {:keys [intent secret]} payment-details
         elems (useElements)]
     (fn []
-      (println "Intent" intent)
       [grid {:item true
              :xs   12}
        [paper {:elevation 10}
@@ -48,6 +52,7 @@
         [box {:sx {:padding "20px"}}
          [typography {:variant "h4"}
           "Payment"]
+         [:> AddressElement {:options {:mode "billing"}}]
          [:> PaymentElement]
          [:br]
          [button {:text     "Submit"
@@ -58,7 +63,7 @@
                               ;; https://docs.stripe.com/stripe-js/react#useelements-hook
                               (js/console.log "Submitted payment!")
                               (->> {:elements      elems
-                                    :confirmParams {:return_url (str here "?completed")}}
+                                    :confirmParams {:return_url (str here "/completed")}}
                                    clj->js
                                    (.confirmPayment ^js stripe))
                               )}]]]])))
