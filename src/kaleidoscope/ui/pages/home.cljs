@@ -1,6 +1,8 @@
 (ns kaleidoscope.ui.pages.home
   (:require [kaleidoscope.ui.components.navbar :as nav]
-            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link divider]]
+            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link divider toggle-button-group toggle-button]]
+            [kaleidoscope.ui.utils.events :as events]
+            [reagent.core :as r]
             ))
 
 (def ROW-CONFIG
@@ -12,12 +14,12 @@
                          :xl "10px"}}})
 
 (def BREAKPOINTS
-  {:p    2 ;; padding
-   :xs   12
-   :sm   12
-   :md   11
-   :lg   10
-   :xl   8})
+  {:p  2                                                    ;; padding
+   :xs 12
+   :sm 12
+   :md 11
+   :lg 10
+   :xl 8})
 
 (def GRID-CONTAINER
   {:container      true
@@ -38,16 +40,16 @@
                                 :md "8px"
                                 :lg "8px"
                                 :xl "10px"}
-                      :width  {:xs   "50px"
-                               :sm   "60px"
-                               :md   "70px"
-                               :lg   "90px"
-                               :xl   "90px"}
-                      :height {:xs   "50px"
-                               :sm   "60px"
-                               :md   "70px"
-                               :lg   "90px"
-                               :xl   "90px"}}}
+                      :width   {:xs "50px"
+                                :sm "60px"
+                                :md "70px"
+                                :lg "90px"
+                                :xl "90px"}
+                      :height  {:xs "50px"
+                                :sm "60px"
+                                :md "70px"
+                                :lg "90px"
+                                :xl "90px"}}}
     [box {:component      "img"
           :display        "flex"
           :justifyContent "center"
@@ -73,8 +75,7 @@
                                  :lg "url(/static/images/andrew-lai.jpeg)"
                                  :xl "url(/static/images/me-tree.png)"}}}]])
 
-(defn me-description
-  []
+(defn me-personal []
   [:<>
    [typography {:variant "body1"}
     (str "Welcome to my website! On this site, I write about ")
@@ -85,117 +86,135 @@
 
    [:br]
    [:br]
-
-   [typography {:variant "body1"
-                :align   "left"}
-    "As a professional, I'm driven by the love of solving technical problems, working with focused and empathetic teams, building and learning."]
-
-   [:br]
-   [:br]
-
    [typography {:variant "body1"}
-    "I'm currently a Software Engineering team lead at "
-    [link {:href    "https://freshpaint.io"
-           :variant "body1"}
-     "Freshpaint.io"]
-    ", where I'm working on a platform that enables healthcare marketers/advertisers while protecting patient privacy. "]
+    " When I'm not working or thinking about software, you can find me learning new recipes, practicing Spanish, playing board games, or spending time outdoors. "
+    " I'll also occasionally dance Tango socially, but it's been a while!"]])
 
-   [:br]
-   [:br]])
-
-(defn home [{:keys [user notification-type]}]
-  [:div {:style {:min-height "100vh"}}
-   [nav/nav-bar {:user              user
-                 :notification-type notification-type}]
-   [:br]
-
-   ;; About me
-   [grid GRID-CONTAINER
-    [grid (merge BREAKPOINTS {:item true})
-     [typography {:variant "h2"}
-      "Andrew Lai | Software Engineering Lead"]]
-
-    [grid (merge BREAKPOINTS
-                 {:item true
-                  :sx   {:text-align "left"}})
-     [me-image]
-     [me-description]]]
-
-   ;; Tech stack
-   [grid GRID-CONTAINER
-    [grid {:item true
-           :xs   11
-           :sm   11
-           :md   5
-           :lg   5
-           :xl   4}
-     [paper {:elevation 8
-             :sx        {:margin {:xs "5px"
-                                  :sm "5px"}}}
-      [stack {:direction "column"
-              :width     "100%"}
-       [typography {:variant "h4"}
-        "Languages I use"]
-
-       [:br]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Go" :src "/static/images/golang.svg"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
-        [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
-        [icon {:tooltip-text "Reframe" :src "/static/images/re-frame.png"}]]
-
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
-        [icon {:tooltip-text "Typescript" :src "/static/images/typescript.svg"}]
-        [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
-        [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
-        [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]]
-
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]]]]]
-
-    [grid {:item true
-           :xs   11
-           :sm   11
-           :md   5
-           :lg   5
-           :xl   4}
-     [paper {:elevation 8
-             :sx        {:margin {:xs "5px"
-                                  :sm "5px"}}}
-      [stack {:direction "column"
-              :width     "100%"}
-       [typography {:variant "h4"}
-        "Tools I use"]
-
-       [:br]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
-        [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
-
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]
-        [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
-        [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
-        [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
-       [stack ROW-CONFIG
-        [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]]]
-
-   ;; Me
-   [grid GRID-CONTAINER
+(defn me-professional
+  []
+  [grid GRID-CONTAINER
+   [grid (merge BREAKPOINTS
+                {:item true})
+    [divider {:flexItem true}]
     [grid (merge BREAKPOINTS
                  {:item true})
-     [divider {:flexItem true}]
-     [grid (merge BREAKPOINTS
-                  {:item true})
-      [typography {:variant "h4"}
-       "About me"]
+     [typography {:variant "h4"}
+      "Software Engineering Leader"]
+     [:<>
       [typography {:variant "body1"}
-       " When I'm not working or thinking about software, you can find me learning new recipes, practicing Spanish, playing board games, or spending time outdoors. "
-       " I'll also occasionally dance Tango socially, but it's been a while!"]]]]
+       "As a professional, I'm driven by the love of solving technical problems, working with excellent teams, building and learning."]
+
+      [:br]
+      [:br]
+
+      [typography {:variant "body1"}
+       "I'm currently a Software Engineering team lead at "
+       [link {:href    "https://freshpaint.io"
+              :variant "body1"}
+        "Freshpaint.io"]
+       ", where I'm working on a platform that enables healthcare marketers to advertise in a privacy-first, HIPAA-compliant way. "]
+      [:br]
+      [:br]]
+
+     ]]]
+  )
+
+(defn skills []
+  [:<>
+   [grid {:item true
+          :xs   11
+          :sm   11
+          :md   5
+          :lg   5
+          :xl   4}
+    [paper {:elevation 8
+            :sx        {:margin {:xs "5px"
+                                 :sm "5px"}}}
+     [stack {:direction "column"
+             :width     "100%"}
+      [typography {:variant "h4"}
+       "Languages I use"]
+
+      [:br]
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Go" :src "/static/images/golang.svg"}]]
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Clojure" :src "/static/images/clojure-logo-2.svg"}]]
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Clojurescript" :src "/static/images/cljs.svg"}]
+       [icon {:tooltip-text "Shadow CLJS" :src "/static/images/shadow-cljs.png"}]
+       [icon {:tooltip-text "Reframe" :src "/static/images/re-frame.png"}]]
+
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Javascript" :src "/static/images/javascript.svg"}]
+       [icon {:tooltip-text "Typescript" :src "/static/images/typescript.svg"}]
+       [icon {:tooltip-text "React" :src "/static/images/react.svg"}]
+       [icon {:tooltip-text "Material UI" :src "/static/images/material-ui-logo.svg"}]
+       [icon {:tooltip-text "Storybook" :src "/static/images/storybook-icon.svg"}]]
+
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Terraform" :src "/static/images/terraform.png"}]]]]]
+   [grid {:item true
+          :xs   11
+          :sm   11
+          :md   5
+          :lg   5
+          :xl   4}
+    [paper {:elevation 8
+            :sx        {:margin {:xs "5px"
+                                 :sm "5px"}}}
+     [stack {:direction "column"
+             :width     "100%"}
+      [typography {:variant "h4"}
+       "Tools I use"]
+
+      [:br]
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Swagger/Open API" :src "/static/images/swagger.png"}]
+       [icon {:tooltip-text "Open Telemetry" :src "/static/images/otel.svg"}]]
+
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "AWS" :src "/static/images/aws.svg"}]
+       [icon {:tooltip-text "Sumologic" :src "/static/images/sumo.svg"}]
+       [icon {:tooltip-text "Grafana Loki" :src "/static/images/grafana.svg"}]
+       [icon {:tooltip-text "Bugsnag" :src "/static/images/bugsnag.svg"}]]
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Keycloak" :src "/static/images/keycloak-logo.png"}]]
+      [stack ROW-CONFIG
+       [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]]
    ])
+
+(defn home [{:keys [user notification-type]}]
+  (let [toggle-state (r/atom "personal")]
+    (fn []
+      [:div {:style {:min-height "100vh"}}
+       [nav/nav-bar {:user              user
+                     :notification-type notification-type}]
+       [:br]
+
+       ;; About me
+       [grid GRID-CONTAINER
+        [grid (merge BREAKPOINTS {:item true})
+         [typography {:variant "h2"}
+          "Andrew Lai"]
+         [toggle-button-group {:color     "primary"
+                               :value     @toggle-state
+                               :exclusive true
+                               :on-change (fn [ev]
+                                            ;;(js/console.log (events/event-value ev))
+                                            (reset! toggle-state (events/event-value ev)))}
+          [toggle-button {:value "personal"} "Personal"]
+          [toggle-button {:value "professional"} "Professional"]
+          ]]
+
+        (case @toggle-state
+          "personal" [grid (merge BREAKPOINTS
+                                  {:item true
+                                   :sx   {:text-align "left"}})
+                      [me-image]
+                      [me-personal]]
+          "professional" [grid GRID-CONTAINER
+                          [me-professional]
+                          [skills]]
+          )]
+       ])))
