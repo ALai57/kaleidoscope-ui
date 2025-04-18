@@ -8,7 +8,8 @@
     "noLib": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "../../kaleidoscope-js/ui/components"
+    "outDir": "../../kaleidoscope-js/ui/components",
+    "jsx": "react"
   },
   "include": [
     "**/ui/components"

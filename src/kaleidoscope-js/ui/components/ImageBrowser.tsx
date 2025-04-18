@@ -133,9 +133,9 @@ const EditorPanel = ({
   albums,
   showVersionSelector = true,
 }) => {
-  const [title, setTitle] = React.useState(selectedImage.title);
-  const [description, setDescription] = React.useState(
-    selectedImage.description
+  const [title, setTitle] = React.useState<string>(selectedImage?.title || "");
+  const [description, setDescription] = React.useState<string>(
+    selectedImage?.description || ""
   );
 
   const date = Date.parse(selectedImage?.created_at);
@@ -161,7 +161,7 @@ const EditorPanel = ({
         onEditPhoto({
           photo_title: title,
           description,
-          "photo-id": selectedImage.name,
+          "photo-id": selectedImage?.name,
         })
       }
     >
@@ -174,28 +174,28 @@ const EditorPanel = ({
       <form>
         <br />
         <EditableField
-          key={selectedImage.name + "ef-1"}
+          key={selectedImage?.name + "ef-1"}
           label="Name"
           id="name"
           disabled={true}
-          val={selectedImage.name}
+          val={selectedImage?.name}
         />
         <EditableField
-          key={selectedImage.name + "ef-2"}
+          key={selectedImage?.name + "ef-2"}
           label="Created At"
           id="created_at"
           disabled={true}
           val={displayDate}
         />
         <EditableField
-          key={selectedImage.name + "ef-3"}
+          key={selectedImage?.name + "ef-3"}
           label="Creator"
           id="creator"
           disabled={true}
-          val={selectedImage.creator}
+          val={selectedImage?.creator}
         />
         <EditableField
-          key={selectedImage.name + "ef-4"}
+          key={selectedImage?.name + "ef-4"}
           label="Title"
           id="title"
           disabled={mode === "edit" ? false : true}
@@ -203,7 +203,7 @@ const EditorPanel = ({
           onChange={(x) => setTitle(x.target.value)}
         />
         <EditableField
-          key={selectedImage.name + "ef-5"}
+          key={selectedImage?.name + "ef-5"}
           label="Description"
           id="description"
           disabled={mode === "edit" ? false : true}

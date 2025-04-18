@@ -1,17 +1,14 @@
 #!/bin/bash
 
-# Deploy CSS
-aws s3 cp --recursive ./resources/sahiltalkingcents.com/css s3://sahiltalkingcents.com/static/css
 
-# Deploy images
-aws s3 cp --recursive ./resources/sahiltalkingcents.com/images/nav-bar s3://sahiltalkingcents.com/static/images/nav-bar
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
-aws s3 cp ./resources/sahiltalkingcents.com/images/images.svg     s3://sahiltalkingcents.com/static/images/images.svg
-aws s3 cp ./resources/sahiltalkingcents.com/images/writing.svg    s3://sahiltalkingcents.com/static/images/writing.svg
-aws s3 cp ./resources/sahiltalkingcents.com/images/audiences.svg  s3://sahiltalkingcents.com/static/images/audiences.svg
+pushd "$SCRIPT_DIR/../../"
 
-#aws s3 cp --recursive ./resources/public/corporis-fabrica   s3://sahiltalkingcents/static/corporis-fabrica/
-aws s3 cp ./resources/sahiltalkingcents.com/index.html            s3://sahiltalkingcents.com/static/index.html
+echo "Deploying frontend to sahiltalkingcents bucket..."
 
-# Background #0e766d
-# Light      #aeadff00
+aws s3 sync resources/sahiltalkingcents.com/static s3://sahiltalkingcents.com/static \
+    --exclude "*/cljs-runtime/*" \
+    --exclude "*/shareable_stories/*" # --dryrun
+
+popd

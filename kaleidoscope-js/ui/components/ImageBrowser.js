@@ -87,8 +87,8 @@ var VersionSelector = function (_a) {
 };
 var EditorPanel = function (_a) {
     var selectedImage = _a.selectedImage, selectedVersion = _a.selectedVersion, mode = _a.mode, onVersionChange = _a.onVersionChange, onEditPhoto = _a.onEditPhoto, albums = _a.albums, _b = _a.showVersionSelector, showVersionSelector = _b === void 0 ? true : _b;
-    var _c = react_1.default.useState(selectedImage.title), title = _c[0], setTitle = _c[1];
-    var _d = react_1.default.useState(selectedImage.description), description = _d[0], setDescription = _d[1];
+    var _c = react_1.default.useState((selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.title) || ""), title = _c[0], setTitle = _c[1];
+    var _d = react_1.default.useState((selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.description) || ""), description = _d[0], setDescription = _d[1];
     var date = Date.parse(selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.created_at);
     var dateFormat = {
         year: "numeric",
@@ -105,17 +105,17 @@ var EditorPanel = function (_a) {
             return onEditPhoto({
                 photo_title: title,
                 description: description,
-                "photo-id": selectedImage.name,
+                "photo-id": selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name,
             });
         } }, "Save")); };
     return (react_1.default.createElement(material_1.Box, null,
         react_1.default.createElement("form", null,
             react_1.default.createElement("br", null),
-            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-1", label: "Name", id: "name", disabled: true, val: selectedImage.name }),
-            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-2", label: "Created At", id: "created_at", disabled: true, val: displayDate }),
-            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-3", label: "Creator", id: "creator", disabled: true, val: selectedImage.creator }),
-            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-4", label: "Title", id: "title", disabled: mode === "edit" ? false : true, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
-            react_1.default.createElement(EditableField, { key: selectedImage.name + "ef-5", label: "Description", id: "description", disabled: mode === "edit" ? false : true, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
+            react_1.default.createElement(EditableField, { key: (selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name) + "ef-1", label: "Name", id: "name", disabled: true, val: selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name }),
+            react_1.default.createElement(EditableField, { key: (selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name) + "ef-2", label: "Created At", id: "created_at", disabled: true, val: displayDate }),
+            react_1.default.createElement(EditableField, { key: (selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name) + "ef-3", label: "Creator", id: "creator", disabled: true, val: selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.creator }),
+            react_1.default.createElement(EditableField, { key: (selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name) + "ef-4", label: "Title", id: "title", disabled: mode === "edit" ? false : true, val: title, onChange: function (x) { return setTitle(x.target.value); } }),
+            react_1.default.createElement(EditableField, { key: (selectedImage === null || selectedImage === void 0 ? void 0 : selectedImage.name) + "ef-5", label: "Description", id: "description", disabled: mode === "edit" ? false : true, val: description, onChange: function (x) { return setDescription(x.target.value); } }),
             react_1.default.createElement(InputTags_1.InputTags, { options: albums, disabled: mode === "edit" ? false : true, width: "100%", vals: [], onAdd: function () { return console.log("Added!"); }, onRemove: function () { return console.log("Removed!"); } }),
             react_1.default.createElement("br", null),
             showVersionSelector && (react_1.default.createElement(material_1.FormControl, { fullWidth: true },
