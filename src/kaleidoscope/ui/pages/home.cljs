@@ -1,7 +1,17 @@
 (ns kaleidoscope.ui.pages.home
   (:require [kaleidoscope.ui.components.navbar :as nav]
-            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link divider toggle-button-group toggle-button]]
+            [reagent-mui.components :refer [box grid paper stack typography icon-button tooltip link divider
+                                            toggle-button-group toggle-button
+                                            stepper step-label step-content step]]
+            [reagent-mui.lab.timeline :refer [timeline]]
+            [reagent-mui.lab.timeline-connector :refer [timeline-connector]]
+            [reagent-mui.lab.timeline-item :refer [timeline-item]]
+            [reagent-mui.lab.timeline-dot :refer [timeline-dot]]
+            [reagent-mui.lab.timeline-separator :refer [timeline-separator]]
+            [reagent-mui.lab.timeline-content :refer [timeline-content]]
+            [reagent-mui.lab.timeline-opposite-content :refer [timeline-opposite-content]]
             [kaleidoscope.ui.utils.events :as events]
+            ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
             [reagent.core :as r]
             ))
 
@@ -184,6 +194,84 @@
        [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]]
    ])
 
+(def events
+  [{:year  2024
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Software Engineering Manager"]
+              [typography "Freshpaint"]]}
+   {:year  2022
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Senior Software Engineer"]
+              [typography "Splash"]]}
+   {:year  2018
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Business Operations Associate"]
+              [typography "Opportunity Financial"]]}
+   {:year  2016
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Fellowship"]
+              [typography "Northwestern University Center for Leadership"]]}
+   {:year  2013
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "PhD in Biomedical Engineering"]
+              [typography "Northwestern University"]]}
+   {:year  2011
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "MS in Biomedical Engineering"]
+              [typography "Northwestern University"]]}
+   {:year  2010
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Chemical Engineering Internship"]
+              [typography "Air Liquide"]]}
+   {:year  2007
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "BS in Chemical Engineering"]
+              [typography "Lafayette College"]]}
+   {:year  2006
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Dunkin Donuts"]
+              [typography "High school Job"]]}
+   {:year  2005
+    :content [:<>
+              [typography {:variant "h5" :component "span"} "Acton Children's Discovery Museum"]
+              [typography "High school Job"]]}
+   ])
+
+(defn add-deltas [events ]
+  (let [deltas (map (fn [{last-year :year}  {this-year :year}]
+                      (- this-year last-year))
+                    (drop 1 events)
+                    events)]
+    (map (fn [event delta]
+           (assoc event :dt delta))
+         events
+         (concat deltas [0]))))
+
+(defn connector [element dt spacing-per-year]
+  [timeline-separator
+   [timeline-connector {:sx {:height "20px"}}]
+   [timeline-dot element]
+   [timeline-connector {:sx {:height (str (* dt spacing-per-year) "px")}}]]
+  )
+
+
+(defn resume-2 []
+  (let [w-deltas (add-deltas events)]
+    (println "w deltas" w-deltas)
+    [grid GRID-CONTAINER
+     [grid (merge BREAKPOINTS
+                  {:item true})
+      [timeline {:position "alternate"}
+       (for [{:keys [year content dt] :as event} w-deltas]
+         [timeline-item {:key year}
+          [timeline-opposite-content {:variant "h2"} year]
+          [connector (r/create-element CodeBlock) dt 100]
+          [timeline-content content]
+          ]
+         )
+       ]]])
+  )
+
 (defn home [{:keys [user notification-type]}]
   (let [toggle-state (r/atom "personal")]
     (fn []
@@ -205,6 +293,7 @@
                                             (reset! toggle-state (events/event-value ev)))}
           [toggle-button {:value "personal"} "Personal"]
           [toggle-button {:value "professional"} "Professional"]
+          [toggle-button {:value "cv"} "CV"]
           ]]
 
         (case @toggle-state
@@ -216,5 +305,7 @@
           "professional" [grid GRID-CONTAINER
                           [me-professional]
                           [skills]]
+          "cv" [grid GRID-CONTAINER
+                [resume-2]]
           )]
        ])))
