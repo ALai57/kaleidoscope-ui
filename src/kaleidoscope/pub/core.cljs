@@ -66,7 +66,29 @@
                    :image     "/static/images/ice-lollies.jpg"}]]]]])
 
 (def routes
-  [["/about"
+  [["/"
+    {:name ::home
+     :view (fn []
+             [grid {:container true
+                    :sx        {:height "100vh"}}
+              [grid {:item true
+                     :xs   6
+                     :sx   {:height "100%"}}
+               [paper {:sx {:height              "100%"
+                            :background-image    "url(./static/images/ice-lollies.jpg)"
+                            :background-size     "cover"
+                            :background-position "center"}}
+                [typography {:variant "h3"}
+                 "Welcome!"]]]
+              [grid {:item true
+                     :xs   6}
+               [grid {:container       true
+                      :justify-content "center"
+                      :align-items     "center"}
+                [grid {:item true
+                       :xs   8}
+                 [example-card]]]]])}]
+   ["/about"
     {:name ::about
      :view (fn []
              [grid {:container true
@@ -105,6 +127,19 @@
                                                 :domain-availability @domain-availability
                                                 :stripe              @stripe}]
                    [:h1 "Must be an authenticated user to register a website"]))))}]
+   ["/completed-purchase"
+    {:name ::completed-purchase
+     :view (fn [{:keys [user user-event-handlers notification-type]}]
+             [grid {:container       true
+                    :justify-content "center"
+                    ;;:align-items     "center"
+                    :sx              {:height "100vh"}}
+              [grid {:item true
+                     :xs   6}
+               [:f> pages.admin/completed-purchase {:user                user
+                                              :user-event-handlers user-event-handlers
+                                              :notification-type   notification-type}]]])
+     }]
    ["/login"
     {:name ::login
      :view (fn [{:keys [user user-event-handlers notification-type]}]
@@ -141,7 +176,9 @@
    "Route does not exist"])
 
 (def pages
-  {"About"    "/about"
+  {
+   "Home"     "/"
+   "About"    "/about"
    "Pricing"  "/pricing"
    "Register" "/register"
    "Login"    "/login"
