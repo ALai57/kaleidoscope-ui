@@ -10,8 +10,10 @@
             [reagent-mui.lab.timeline-separator :refer [timeline-separator]]
             [reagent-mui.lab.timeline-content :refer [timeline-content]]
             [reagent-mui.lab.timeline-opposite-content :refer [timeline-opposite-content]]
+            ["@mui/lab/TimelineOppositeContent" :as MuiTimelineOppositeContent]
             [kaleidoscope.ui.utils.events :as events]
             ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
+            ["@styled-icons/boxicons-regular/Rocket"       :refer [Rocket]]
             [reagent.core :as r]
             ))
 
@@ -194,47 +196,90 @@
        [icon {:tooltip-text "Docker" :src "/static/images/docker.png"}]]]]]
    ])
 
+(def freshpaint [:img {:src "/static/images/freshpaint.svg" :height "40px"}])
+(def oppfi [:img {:src "/static/images/opploans-logo.svg" :height "40px"}])
+(def splash [:img {:src "/static/images/splash-logo.svg" :height "40px"}])
+(def nu [:img {:src "/static/images/n-logo.svg" :height "40px"}])
+(def lafayette [:img {:src "/static/images/lafayette-logo.svg" :height "40px"}])
+(def dunkin [:img {:src "/static/images/dunkin.jpg" :height "40px"}])
+(def air [:img {:src "/static/images/air-liquide.ico" :height "40px"}])
+(def me [:img {:src "/static/images/my-silhouette.svg" :height "40px"}])
+
 (def events
-  [{:year  2024
+  [{:year    2024
+    :icon    freshpaint
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Software Engineering Manager"]
-              [typography "Freshpaint"]]}
-   {:year  2022
+              [typography {:variant "h5" :component "span"}
+               "Software Engineering Manager @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
+              [typography
+               (str "I manage a team of Engineers building out the next generation of Freshpaint Products. So far, we've "
+                    "developed a HIPAA-Compliant Web Analytics platform similar to Google Analytics 4, and we're working on an Offline Attributions algorithm "
+                    "to improve Ad Performance.")]]}
+   {:year    2023
+    :icon    freshpaint
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Senior Software Engineer"]
-              [typography "Splash"]]}
+              [typography {:variant "h5" :component "span"}
+               "Senior Software Engineer @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
+              [typography (str "I built out the first version of the HIPAA compliant Map product, developed the Event Verification tool "
+                               "and worked on several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom).")]
+              ]}
+   {:year    2022
+    :icon    splash
+    :content [:<>
+              [typography {:variant "h5" :component "span"}
+               "Engineering Team Lead @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]]}
+   {:year    2021
+    :icon    splash
+    :content [:<>
+              [typography {:variant "h5" :component "span"}
+               "Senior Software Engineer @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]]}
+   {:year  2019
+    :icon    oppfi
+    :content [:<>
+              [typography {:variant "h5" :component "span"}
+               "Software Engineer @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]]}
    {:year  2018
+    :icon    oppfi
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Business Operations Associate"]
-              [typography "Opportunity Financial"]]}
+              [typography {:variant "h5" :component "span"}
+               "Business Operations Associate @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]]}
    {:year  2016
+    :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Fellowship"]
-              [typography "Northwestern University Center for Leadership"]]}
+              [typography {:variant "h5" :component "span"}
+               "Fellowship @ " [:a {:href "https://lead.northwestern.edu/our-approach/"} "Northwestern University Center for Leadership"]]]}
    {:year  2013
+    :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span"} "PhD in Biomedical Engineering"]
-              [typography "Northwestern University"]]}
+              [typography {:variant "h5" :component "span"}
+               "PhD in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
+              [typography
+               [:a {:href "https://search.library.northwestern.edu/permalink/01NWU_INST/p285fv/cdi_proquest_journals_1984962358"}
+                "Neural and Biomechanical Mechanisms of Movement Impairment in Stroke Survivors"]]]}
    {:year  2011
+    :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span"} "MS in Biomedical Engineering"]
-              [typography "Northwestern University"]]}
+              [typography {:variant "h5" :component "span"}
+               "MS in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]]}
    {:year  2010
+    :icon    air
     :content [:<>
               [typography {:variant "h5" :component "span"} "Chemical Engineering Internship"]
               [typography "Air Liquide"]]}
    {:year  2007
+    :icon    lafayette
     :content [:<>
               [typography {:variant "h5" :component "span"} "BS in Chemical Engineering"]
               [typography "Lafayette College"]]}
    {:year  2006
+    :icon    dunkin
     :content [:<>
               [typography {:variant "h5" :component "span"} "Dunkin Donuts"]
-              [typography "High school Job"]]}
+              [typography "High school job"]]}
    {:year  2005
     :content [:<>
               [typography {:variant "h5" :component "span"} "Acton Children's Discovery Museum"]
-              [typography "High school Job"]]}
+              [typography "High school job"]]}
    ])
 
 (defn add-deltas [events ]
@@ -247,25 +292,32 @@
          events
          (concat deltas [0]))))
 
-(defn connector [element dt spacing-per-year]
+(def timeline-class
+  MuiTimelineOppositeContent/timelineOppositeContentClasses.root)
+
+;;(r/create-element Rocket #js {:color "#3e3eb1" :height "100px"})
+(defn connector [icon dt spacing-per-year]
   [timeline-separator
    [timeline-connector {:sx {:height "20px"}}]
-   [timeline-dot element]
+   [timeline-dot {:color "primary" :variant "outlined"}
+    (or icon me)]
    [timeline-connector {:sx {:height (str (* dt spacing-per-year) "px")}}]]
   )
 
 
 (defn resume-2 []
   (let [w-deltas (add-deltas events)]
-    (println "w deltas" w-deltas)
     [grid GRID-CONTAINER
      [grid (merge BREAKPOINTS
                   {:item true})
-      [timeline {:position "alternate"}
-       (for [{:keys [year content dt] :as event} w-deltas]
+      [timeline {:position "right"
+                 ;; Align timeline left or right
+                 ;;:sx {(str "& ." timeline-class) {:flex 0.2}}
+                 }
+       (for [{:keys [year icon content dt] :as event} w-deltas]
          [timeline-item {:key year}
           [timeline-opposite-content {:variant "h2"} year]
-          [connector (r/create-element CodeBlock) dt 100]
+          [connector icon dt 180]
           [timeline-content content]
           ]
          )
@@ -273,7 +325,7 @@
   )
 
 (defn home [{:keys [user notification-type]}]
-  (let [toggle-state (r/atom "personal")]
+  (let [toggle-state (r/atom "cv")]
     (fn []
       [:div {:style {:min-height "100vh"}}
        [nav/nav-bar {:user              user
