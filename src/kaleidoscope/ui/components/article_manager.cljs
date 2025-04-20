@@ -60,7 +60,8 @@
       [list-item-button {:sx       {:background-color "aliceblue" ;;(get-in palette [:primary :light])
                                     }
                          :on-click (fn [event] (edit-article! article-branch))}
-       [grid {:container true}
+       [grid {:container true
+              :sx        {:justify-content "center"}}
         [grid (merge {:item true}
                      ARTICLE-ROW-BREAKPOINTS)
          [grid {:container true}
@@ -83,7 +84,8 @@
           [list-item-text {:sx {:margin-left   "10px"
                                 :align-content "center"}} article-title]]]
         [grid {:item true
-               :sx   {:align-content "center"}}
+               :sx   {:align-content   "center"
+                      :justify-content "center"}}
          [grid {:container true}
           [grid {:item true}
            [tooltip {:id    "settings-tooltip-visibility"
