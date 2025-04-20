@@ -1,5 +1,7 @@
 module.exports = {
-  stories: ["../resources/static/js/compiled/shareable_stories/*_stories.js"],
+  stories: [
+    "../resources/kaleidoscope.client/static/js/compiled/shareable_stories/*_stories.js",
+  ],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-actions",
