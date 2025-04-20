@@ -150,45 +150,35 @@
         on-change         (fn [e]
                             (reset! new-article-title (events/event-value e)))]
     (fn []
-      [box {:style {:display       "flex"
-                    :align-items   "flex-end"
-                    :margin-bottom "20px"}}
-       [grid {:container      true
-              :display        "flex"
-              :justifyContent "center"
-              :alignItems     "center"
-              :align          "center"}
-        [grid {:xs    8
-               :sm    4
-               :md    6
+      [box {:style {:margin-bottom "20px"}}
+       [grid {:container       true
+              :justify-content "center"
+              :align-content   "center"
+              :align-items     "center"
+              }
+        [grid {:xs    12
+               :sm    10
+               :md    8
                :lg    6
                :xl    6
                :item  true
                :align "center"}
-         [grid {:container true
-                :direction "row"
-                :justify-content   "flex-end"}
-          [grid {:item true}
-           [post-add {:sx {:color  "action.active"
-                           :mr     1
-                           :my     0.5
-                           :height "100%"}}]]
-          [grid {:item true}
-           [text-field {:id        "new-article-title-input"
-                        :label     "Article Name"
-                        ;;:label-for "new-article-title"
-                        :variant   "standard"
-                        :sx        {:margin-right "20px"}
-                        :on-change on-change}]]]]
-        [grid {:xs   4
-               :sm   4
-               :md   4
-               :lg   2
-               :xl   2
-               :item true}
-         [button/button {:text     "Add a new article"
-                         :on-click (partial add-article! {:article-title @new-article-title})}]]]
-       ])))
+         [box {:style {:display       "flex"
+                       :align-items   "flex-end"
+                       :width         "fit-content"
+                       :margin-bottom "20px"}}
+          [post-add {:sx {:color  "action.active"
+                          :mr     1
+                          :my     0.5
+                          :height "100%"}}]
+          [text-field {:id        "new-article-title-input"
+                       :label     "Article Name"
+                       ;;:label-for "new-article-title"
+                       :variant   "standard"
+                       :sx        {:margin-right "20px"}
+                       :on-change on-change}]
+          [button/button {:text     "Add a new article"
+                          :on-click (partial add-article! {:article-title @new-article-title})}]]]]])))
 
 (defn -article-manager
   [{:keys [open groups initial-values article-groups
