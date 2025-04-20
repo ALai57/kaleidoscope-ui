@@ -62,7 +62,8 @@
                          :on-click (fn [event] (edit-article! article-branch))}
        [grid {:container true
               :sx        {:justify-content "center"}}
-        [grid (merge {:item true}
+        [grid (merge {:item true
+                      :sx   {:padding "8px"}}
                      ARTICLE-ROW-BREAKPOINTS)
          [grid {:container true}
           [grid {:item true}
@@ -85,7 +86,8 @@
                                 :align-content "center"}} article-title]]]
         [grid {:item true
                :sx   {:align-content   "center"
-                      :justify-content "center"}}
+                      :justify-content "center"
+                      :padding         "8px"}}
          [grid {:container true}
           [grid {:item true}
            [tooltip {:id    "settings-tooltip-visibility"
@@ -131,7 +133,7 @@
               :timeout       "auto"
               :unmountOnExit true}
     [list-item {:style {:display "block"}
-                :sx    {:padding "2px"}}
+                :sx    {:padding "3px"}}
      (for [{:keys [article-created-at article-title branch-name public-visibility] :as article} articles]
        ^{:key (str article-title article-created-at branch-name public-visibility)}
        [:f> article-row article article-actions])]]])
