@@ -169,15 +169,12 @@ var ImageBrowser = function (_a) {
         react_1.default.createElement(material_1.Button, { variant: "contained", startIcon: react_1.default.createElement(ImageAdd_1.ImageAdd, { style: { height: "20px" } }), component: "label" },
             "Add new photo",
             react_1.default.createElement("input", { accept: "image/*", type: "file", hidden: true, onChange: addPhoto, multiple: true })))); };
-    var SelectButton = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); } }, "Add image version to article")); };
+    var SelectButton = function () { return (react_1.default.createElement(material_1.Button, { variant: "contained", component: "label", onClick: function (x) { return selectPhoto(selectedVersion.src); }, className: "image-select-button", sx: { position: "absolute", top: "35px" } }, "Insert image")); };
     return (react_1.default.createElement("div", null,
         mode === "edit" ? (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
             react_1.default.createElement(material_1.Grid, { item: true, xs: 3, marginRight: "5px", justifyContent: "flex-end" }, isMobile && (react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange }))),
             react_1.default.createElement(material_1.Grid, { item: true, xs: 8 },
-                react_1.default.createElement(NewPhotoButton, null)))) : (react_1.default.createElement(material_1.Grid, { container: true, xs: 12 },
-            react_1.default.createElement(material_1.Grid, { item: true, xs: 3, marginRight: "5px", justifyContent: "flex-end" }, isMobile && (react_1.default.createElement(VersionSelector, { imageVersions: imageVersions, selectedVersion: selectedVersion, onVersionChange: onVersionChange }))),
-            react_1.default.createElement(material_1.Grid, { item: true, xs: 8 },
-                react_1.default.createElement(SelectButton, null)))),
+                react_1.default.createElement(NewPhotoButton, null)))) : (react_1.default.createElement(SelectButton, null)),
         isMobile ? (react_1.default.createElement(material_1.Box, { sx: { width: "100vw", height: "65vh", textAlign: "center" } },
             react_1.default.createElement(material_1.Modal, { open: modalOpen, onClose: function () { return setModalOpen(false); }, BackdropProps: {
                     style: { backgroundColor: "rgba(0, 0, 40, 0.8)" },

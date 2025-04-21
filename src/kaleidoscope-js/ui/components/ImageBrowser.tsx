@@ -336,8 +336,10 @@ const ImageBrowser = ({
       variant="contained"
       component="label"
       onClick={(x) => selectPhoto(selectedVersion.src)}
+      className="image-select-button"
+      sx={{ position: "absolute", top: "35px" }}
     >
-      Add image version to article
+      Insert image
     </Button>
   );
 
@@ -368,20 +370,7 @@ const ImageBrowser = ({
           </Grid>
         </Grid>
       ) : (
-        <Grid container xs={12}>
-          <Grid item xs={3} marginRight="5px" justifyContent="flex-end">
-            {isMobile && (
-              <VersionSelector
-                imageVersions={imageVersions}
-                selectedVersion={selectedVersion}
-                onVersionChange={onVersionChange}
-              />
-            )}
-          </Grid>
-          <Grid item xs={8}>
-            <SelectButton />
-          </Grid>
-        </Grid>
+        <SelectButton />
       )}
       {isMobile ? (
         <Box sx={{ width: "100vw", height: "65vh", textAlign: "center" }}>
