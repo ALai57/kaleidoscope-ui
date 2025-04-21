@@ -4,7 +4,7 @@
 (defn image-browser
   [{:keys [images auth-token albums photo-manager mode] :as args}]
   (let [{:keys [add-photo edit-photo select-photo]} photo-manager]
-    [:f> ImageBrowser (clj->js {:images       (sort-by :created_at images)
+    [:f> ImageBrowser (clj->js {:images       (reverse (sort-by :created_at images))
                                 :authToken    auth-token
                                 :albums       (or albums [])
                                 :mode         (or mode "edit")
