@@ -133,7 +133,7 @@ var ImageBrowser = function (_a) {
         return new Date(b["created-at"]).valueOf() - new Date(a["created-at"]).valueOf();
     });
     var currentImageVersions = images && ((_b = images[selectedImageIndex]) === null || _b === void 0 ? void 0 : _b.versions);
-    currentImageVersions.sort(function (a, b) {
+    currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.sort(function (a, b) {
         return new Date(b["created-at"]).valueOf() - new Date(a["created-at"]).valueOf();
     });
     var _m = react_1.default.useState((currentImageVersions === null || currentImageVersions === void 0 ? void 0 : currentImageVersions.raw) || defaultImage), selectedVersion = _m[0], setSelectedVersion = _m[1];

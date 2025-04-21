@@ -270,7 +270,7 @@ const ImageBrowser = ({
   );
 
   const currentImageVersions = images && images[selectedImageIndex]?.versions;
-  currentImageVersions.sort(
+  currentImageVersions?.sort(
     (a, b) =>
       new Date(b["created-at"]).valueOf() - new Date(a["created-at"]).valueOf()
   );
