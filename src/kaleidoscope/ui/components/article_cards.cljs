@@ -122,7 +122,7 @@
     [:div {:style {:max-width "500px"}}
      (for [{:keys [branches article-id] :as content} grouped-branches]
        ^{:key (gstr/format "%s-%s" branches article-id)}
-       [thin-article-card content {:on-click on-click}])]))
+       [:f> thin-article-card content {:on-click on-click}])]))
 
 (defn recent-content-cards
   [{:keys [recent-content]}]

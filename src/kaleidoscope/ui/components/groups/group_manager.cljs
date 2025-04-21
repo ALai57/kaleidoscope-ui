@@ -8,6 +8,7 @@
                                             divider
                                             collapse
                                             icon-button
+                                            grid
                                             list
                                             list-item
                                             list-item-button
@@ -118,19 +119,37 @@
       [box {:style {:display       "flex"
                     :align-items   "flex-end"
                     :margin-bottom "20px"}}
-       [group-add {:sx {:color "action.active"
-                        :mr    1
-                        :my    0.5}}]
-       [text-field {:id        "new-group-name-input"
-                    :label     "Group Name"
-                    ;;:label-for "new-group-name"
-                    :variant   "standard"
-                    :sx        {:margin-right "20px"
-                                :min-width    "350px"}
-                    :on-change on-change}]
-       [button/button {:text     "Add a new group"
-                                       :on-click (partial add-group! @new-group-name)}]
-       ])))
+       [grid {:container       true
+              :justify-content "center"
+              :align-content   "center"
+              :align-items     "center"
+              }
+        [grid {:xs    12
+               :sm    10
+               :md    8
+               :lg    6
+               :xl    6
+               :item  true
+               :align "center"}
+         [box {:style {:display       "flex"
+                       :align-items   "flex-end"
+                       :width         "fit-content"
+                       :margin-bottom "20px"}}
+          [group-add {:sx {:color "action.active"
+                           :mr    1
+                           :my    0.5}}]
+          [text-field {:id        "new-group-name-input"
+                       :label     "Group Name"
+                       ;;:label-for "new-group-name"
+                       :variant   "standard"
+                       :sx        {:margin-right "20px"
+                                   ;;:min-width    "350px"
+                                   }
+                       :on-change on-change}]
+          [button/button {:text     "Add a new group"
+                          :on-click (partial add-group! @new-group-name)}]
+
+          ]]]])))
 
 (defn group-manager
   [{:keys [groups open
