@@ -337,7 +337,7 @@ const ImageBrowser = ({
       component="label"
       onClick={(x) => selectPhoto(selectedVersion.src)}
       className="image-select-button"
-      sx={{ position: "absolute", top: "35px" }}
+      sx={{ position: "absolute", top: "35px", right: "10px" }}
     >
       Insert image
     </Button>
