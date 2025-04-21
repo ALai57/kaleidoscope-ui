@@ -25,3 +25,5 @@ src/kaleidoscope/ui/components/js/*
 resources/media/*
 .clj-kondo/.cache/*
 resources/*/media
+.DS_Store
+.mise.toml

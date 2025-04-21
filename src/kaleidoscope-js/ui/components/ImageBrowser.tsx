@@ -265,6 +265,10 @@ const ImageBrowser = ({
     React.useState(startingImage);
 
   const currentImageVersions = images && images[selectedImageIndex]?.versions;
+  currentImageVersions.sort(
+    (a, b) =>
+      new Date(b["created-at"]).valueOf() - new Date(a["created-at"]).valueOf()
+  );
   const [selectedVersion, setSelectedVersion] = React.useState(
     currentImageVersions?.raw || defaultImage
   );
