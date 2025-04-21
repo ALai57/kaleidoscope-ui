@@ -129,6 +129,9 @@ var ImageBrowser = function (_a) {
     var images = _a.images, _c = _a.authToken, authToken = _c === void 0 ? null : _c, _d = _a.albums, albums = _d === void 0 ? [] : _d, _e = _a.startingImage, startingImage = _e === void 0 ? 0 : _e, _f = _a.photoManager, photoManager = _f === void 0 ? {} : _f, _g = _a.mode, mode = _g === void 0 ? "edit" : _g;
     var _h = photoManager.addPhoto, addPhoto = _h === void 0 ? logger : _h, _j = photoManager.editPhoto, editPhoto = _j === void 0 ? logger : _j, _k = photoManager.selectPhoto, selectPhoto = _k === void 0 ? logger : _k;
     var _l = react_1.default.useState(startingImage), selectedImageIndex = _l[0], setSelectedImageIndex = _l[1];
+    images === null || images === void 0 ? void 0 : images.sort(function (a, b) {
+        return new Date(b["created-at"]).valueOf() - new Date(a["created-at"]).valueOf();
+    });
     var currentImageVersions = images && ((_b = images[selectedImageIndex]) === null || _b === void 0 ? void 0 : _b.versions);
     currentImageVersions.sort(function (a, b) {
         return new Date(b["created-at"]).valueOf() - new Date(a["created-at"]).valueOf();
