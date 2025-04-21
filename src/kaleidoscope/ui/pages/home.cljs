@@ -209,76 +209,79 @@
   [{:year    2024
     :icon    freshpaint
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Software Engineering Manager @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
-              [typography
+              [typography {:sx {:padding "5px"}}
                (str "I manage a team of Engineers building out the next generation of Freshpaint Products. So far, we've "
                     "developed a HIPAA-Compliant Web Analytics platform similar to Google Analytics 4, and we're working on an Offline Attributions algorithm "
                     "to improve Ad Performance.")]]}
    {:year    2023
     :icon    freshpaint
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Senior Software Engineer @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
-              [typography (str "I built out the first version of the HIPAA compliant Map product, developed the Event Verification tool "
-                               "and worked on several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom).")]
+              [typography {:sx {:padding "5px"}}
+               (str "I built out the first version of the HIPAA compliant Map product, developed the Event Verification tool "
+                    "and worked on several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom).")]
               ]}
    {:year    2022
     :icon    splash
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Engineering Team Lead @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]]}
    {:year    2021
     :icon    splash
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Senior Software Engineer @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]]}
    {:year  2019
     :icon    oppfi
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Software Engineer @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]]}
    {:year  2018
     :icon    oppfi
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Business Operations Associate @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]]}
    {:year  2016
     :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "Fellowship @ " [:a {:href "https://lead.northwestern.edu/our-approach/"} "Northwestern University Center for Leadership"]]]}
    {:year  2013
     :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "PhD in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
-              [typography
+              [typography {:sx {:padding "5px"}}
                [:a {:href "https://search.library.northwestern.edu/permalink/01NWU_INST/p285fv/cdi_proquest_journals_1984962358"}
                 "Neural and Biomechanical Mechanisms of Movement Impairment in Stroke Survivors"]]]}
    {:year  2011
     :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span"}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
                "MS in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]]}
    {:year  2010
     :icon    air
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Chemical Engineering Internship"]
-              [typography "Air Liquide"]]}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "Chemical Engineering Internship"]
+              [typography {:sx {:padding "5px"}}
+               "Air Liquide"]]}
    {:year  2007
     :icon    lafayette
     :content [:<>
-              [typography {:variant "h5" :component "span"} "BS in Chemical Engineering"]
-              [typography "Lafayette College"]]}
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "BS in Chemical Engineering"]
+              [typography {:sx {:padding "5px"}}
+               "Lafayette College"]]}
    {:year  2006
     :icon    dunkin
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Dunkin Donuts"]
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "Dunkin Donuts"]
               [typography "High school job"]]}
    {:year  2005
     :content [:<>
-              [typography {:variant "h5" :component "span"} "Acton Children's Discovery Museum"]
+              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "Acton Children's Discovery Museum"]
               [typography "High school job"]]}
    ])
 
@@ -309,16 +312,24 @@
   (let [w-deltas (add-deltas events)]
     [grid GRID-CONTAINER
      [grid (merge BREAKPOINTS
-                  {:item true})
+                  {:item true
+                   :sx   {:padding "0px"}})
       [timeline {:position "right"
                  ;; Align timeline left or right
-                 ;;:sx {(str "& ." timeline-class) {:flex 0.2}}
+                 :sx       {:padding "0px"
+                            ;;(str "& ." timeline-class) {:flex 0.2}
+                            }
                  }
        (for [{:keys [year icon content dt] :as event} w-deltas]
-         [timeline-item {:key year}
-          [timeline-opposite-content {:variant "h2"} year]
+         [timeline-item {:key year
+                         :sx  {:left "-6%"}}
+          [timeline-opposite-content {:variant "h2"
+                                      :flex    0.3}
+           year]
           [connector icon dt 180]
-          [timeline-content content]
+          [timeline-content {:sx {:padding "5px"
+                                  :flex    1}}
+           content]
           ]
          )
        ]]])
