@@ -352,7 +352,7 @@
                  #js {:components PLATE-UI}))
 
 
-(def nav-images-path "images/nav-bar/")
+(def nav-images-path "static/images/nav-bar/")
 (defn img-path
   [fname]
   (str nav-images-path fname))
@@ -378,7 +378,7 @@
      [:> navbar/zoom-icon {:style {:float        "left"
                                    :height       "48px"
                                    :margin-right "20px"}}
-      [:img.navbutton {:src      (img-path "static/favicon.svg")
+      [:img.navbutton {:src      (img-path "favicon.svg")
                        :style    {:height "48px"}
                        :on-click (fn [event]
                                    (reset! show-modal true))}]]
