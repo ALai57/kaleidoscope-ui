@@ -302,10 +302,9 @@
 (defn connector [icon dt spacing-per-year]
   [timeline-separator
    [timeline-connector {:sx {:height "20px"}}]
-   [timeline-dot {:color "primary" :variant "outlined"}
+   [timeline-dot {:color "primary" :variant "outlined" :sx {:background-color "black"}}
     (or icon me)]
-   [timeline-connector {:sx {:height (str (* dt spacing-per-year) "px")}}]]
-  )
+   [timeline-connector {:sx {:height (str (* dt spacing-per-year) "px")}}]])
 
 
 (defn resume-2 []
