@@ -124,7 +124,7 @@
       [:br]
 
       [typography {:variant "body1"}
-       "I'm currently a Software Engineering team lead at "
+       "I'm currently a Software Engineering Manager at "
        [link {:href    "https://freshpaint.io"
               :variant "body1"}
         "Freshpaint.io"]
@@ -245,8 +245,12 @@
               [section-content "I manage a team of Engineers building out the next generation of Freshpaint Products. We specialize in bringing new Product ideas from 0 to 1."]
               [:br]
               [section-content
-               (str "So far, we've developed a HIPAA-Compliant Web Analytics alternative to Google Analytics 4, and we're working on a HIPAA-compliant platform "
-                    "to help Healthcare Marketers improve their advertising performance.")]]}
+               (str "We're working on a HIPAA-compliant platform "
+                    "that connects multiple data sources (EHR, Marketing/Advertising, etc) so that Marketers and Advertisers can drive more conversions "
+                    "for every dollar they spend. ")]
+              [section-content
+               "We've also developed a HIPAA-Compliant Analytics alternative to Google Analytics 4."]
+              ]}
    {:year    2024
     :until   "Oct, 2024"
     :since   "Sept, 2023"
@@ -261,6 +265,8 @@
               [section-content "Developed an Observability tool (Event Verification) tool"]
               [section-content "Built several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom)."]
               [section-content "Designed and prototyped integrations with EMRs (HL7 & FHIR)"]
+              [section-content
+               "Conducted Product/Market Research for a new Freshpaint Product line, and came up with technical solution. "]
               ]}
    {:year    2023
     :until   "Sept, 2023"
@@ -282,6 +288,10 @@
     :content [:<>
               [section-header "Senior Software Engineer @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]
               [divider]
+              [section-content
+               (str "Migrated Splash's Rate and Eligibility calculations from PHP/Laravel Monolith to Clojure Microservices. "
+                    "Built CSV ingest system and data processing pipelines to support Credit Union Lenders that "
+                    "had custom, in-house operational processes before loan disbursement. ")]
               ]}
    {:year    2021
     :until   "June, 2021"
@@ -328,7 +338,7 @@
                     )]
               [:br]
               [section-content
-               (str "While studying muscle's mechanical properties,"
+               (str "While studying muscle's mechanical properties, "
                     "I performed a sensitivity analysis and measured how sensitive my measurements were to changes in experimental setup. "
                     "I found that muscle activity played the largest role in repeatability; "
                     "this played a large role in how I designed subsequent studies, as it was clear we needed to minimize all sources of stimulation (even bright lights or the need to use the restroom) "
