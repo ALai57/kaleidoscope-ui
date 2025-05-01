@@ -45,6 +45,9 @@
    :lg             12
    :xl             12})
 
+(def DISTANCE-PER-YEAR
+  300)
+
 (defn icon [{:keys [tooltip-text src]}]
   [tooltip {:title tooltip-text}
    [icon-button {:sx {:padding {:xs "2px"
@@ -205,84 +208,182 @@
 (def air [:img {:src "/static/images/air-liquide.ico" :height "40px"}])
 (def me [:img {:src "/static/images/my-silhouette.svg" :height "40px"}])
 
+(defn section-header
+  [& children]
+  [typography {:variant "h5" :component "span" :sx {:padding     "5px"
+                                                    :font-weight "bold"}}
+   children])
+
+(defn section-content
+  [& children]
+  [typography {:sx {:padding "5px"
+                    :color   "#888888"}}
+   children])
+
 (def events
   [{:year    2024
     :icon    freshpaint
-    :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Software Engineering Manager @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
-              [typography {:sx {:padding "5px"}}
-               (str "I manage a team of Engineers building out the next generation of Freshpaint Products. So far, we've "
-                    "developed a HIPAA-Compliant Web Analytics platform similar to Google Analytics 4, and we're working on an Offline Attributions algorithm "
-                    "to improve Ad Performance.")]]}
+    :content [:div
+              [section-header "Software Engineering Manager @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
+              [divider]
+              [section-content "I manage a team of Engineers building out the next generation of Freshpaint Products. We specialize in bringing new Product ideas from 0 to 1."]
+              [:br]
+              [section-content
+               (str "So far, we've developed a HIPAA-Compliant Web Analytics alternative to Google Analytics 4, and we're working on a HIPAA-compliant platform "
+                    "to help Healthcare Marketers improve their advertising performance.")]]}
    {:year    2023
     :icon    freshpaint
-    :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Senior Software Engineer @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
-              [typography {:sx {:padding "5px"}}
-               (str "I built out the first version of the HIPAA compliant Map product, developed the Event Verification tool "
-                    "and worked on several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom).")]
+    :content [:div
+              [section-header "Senior Software Engineer @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
+              [divider]
+              [section-content "Freshpaint used a Project-based engagement model. I worked on several Projects to develop new Product ideas and improve our platform."]
+              [:br]
+              ;; Add bullet points
+              [section-content "Built out the first version of the HIPAA compliant Map product"]
+              [section-content "Developed an Observability tool (Event Verification) tool"]
+              [section-content "Built several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom)."]
+              [section-content "Designed and prototyped integrations with EMRs (HL7 & FHIR)"]
               ]}
    {:year    2022
     :icon    splash
-    :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Engineering Team Lead @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]]}
+    :content [:div
+              [section-header "Engineering Team Lead @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]
+              [divider]
+              [section-content "I managed the Lender Onboarding Team (4 Engineers) as we built software that shortened customer time-to-value. "]
+              [:div]
+              [section-content
+               (str "Splash planned to increase revenue by bringing more Lenders onto their platform, but the Lending platform didn't support quickly onboarding new Lenders. "
+                    "We replaced the old Monolithic, hard-coded configuration (Lending Rules & Documents) with microservices that allowed internal users to quickly get Lenders "
+                    "on the platform.")]]}
    {:year    2021
     :icon    splash
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Senior Software Engineer @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]]}
+              [section-header "Senior Software Engineer @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]
+              [divider]
+              ]}
    {:year  2019
     :icon    oppfi
-    :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Software Engineer @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]]}
+    :content [:div
+              [section-header "Software Engineer @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]
+              [divider]
+              [section-content
+               (str "At OppFi, the Clojure team used a strong pairing and shared ownership model. I worked on a suite of microservices that included "
+                    "Lending Rules, Credit Decisioning, integrations with consumer report providers (IBV and Credit Reports), Observability/Auditing and more. "
+                    )]
+              [:br]
+              [section-content
+               (str
+                "Our microservice portfolio included Clojure, Python and Scala, built primarily on ECS and Lambda. Through our work, we enhanced the company's ability to "
+                "detect fraud, apply custom machine-learning credit decisioning, and introspect/audit our loan processing.")]
+              ]}
    {:year  2018
     :icon    oppfi
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Business Operations Associate @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]]}
+              [section-header "Business Operations Associate @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]
+              [divider]
+              [section-content
+               (str "My primary focus was on the health of our Loan Processing pipeline (between loan application and loan origination). "
+                    "While in this role, I wore several different hats, including Analyst, Product Owner, and Engineer. ")]
+              [:br]
+              [section-content
+               (str "I analyzed our loan processing data and logs, identified processes to improve areas of high attrition, and executed "
+                    "projects to improve the pipeline. ")]
+              ]}
    {:year  2016
     :icon    nu
-    :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "Fellowship @ " [:a {:href "https://lead.northwestern.edu/our-approach/"} "Northwestern University Center for Leadership"]]]}
+    :content [:div
+              [section-header "Fellowship @ " [:a {:href "https://lead.northwestern.edu/our-approach/"} "Northwestern University Center for Leadership"]]
+              [divider]
+              [section-content
+               (str "In the Leadership Fellows, I studied several theories and models of Leadership with ~10 other Fellows "
+                    "and spent ~100 hours coaching Undergraduate student leaders.")]
+              ]}
    {:year  2013
     :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "PhD in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
-              [typography {:sx {:padding "5px"}}
+              [section-header "PhD in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
+              [divider]
+              [section-content
+               (str "For my Doctoral Thesis, I studied stroke survivors and two possible mechanisms relating to their movement impairments. "
+                    "I used Shear Wave Elastography to study changes in muscle elasticity, and EMG to study changes in muscle's electrical properties post-stroke. "
+                    )]
+              [:br]
+              [section-content
+               (str "While studying muscle's mechanical properties,"
+                    "I performed a sensitivity analysis and measured how sensitive my measurements were to changes in experimental setup. "
+                    "I found that muscle activity played the largest role in repeatability; "
+                    "this played a large role in how I designed subsequent studies, as it was clear we needed to minimize all sources of stimulation (even bright lights or the need to use the restroom) "
+                    "is known to cause stroke survivors' muscle's to activate."
+                    )]
+              [section-content
+               (str "Using a Hierarchical Linear Mixed Model, I found evidence of significant differences in the elasticity of stroke survivors' muscles post-stroke. "
+                    )]
+              [:br]
+
+              [:br]
+              [section-content
+               (str "The second part of my thesis was based on the electrical properties of muscle. "
+                    "Muscles are controlled by a pool of Motor Units (Neuron + Muscle fibers), and these Motor Units normally activate in an orderly and predictable fashion to generate force. "
+                    "I decomposed muscle's electrical signals (sEMG decomposition) to analyze how the Motor Unit pool became disorganized after stroke. "
+                    "I found evidence of a disorganized Motor Unit pool in several muscles post-stroke. "
+                    )]
+              [section-content
                [:a {:href "https://search.library.northwestern.edu/permalink/01NWU_INST/p285fv/cdi_proquest_journals_1984962358"}
                 "Neural and Biomechanical Mechanisms of Movement Impairment in Stroke Survivors"]]]}
    {:year  2011
     :icon    nu
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}}
-               "MS in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]]}
+              [section-header "MS in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
+              [divider]
+              [section-content
+               "For my Master's Thesis, I studied how the nervous system coordinates complex motion and force production. "
+               "I simulated muscle activity and muscle tuning curves using Optimal Control theory and compared the results to experimental data gathered in the lab. "
+               "I found that the Optimal Control optimization strategy predicted inter-muscular coordination patterns well (using NMF/dimensionality reduction), "
+               "and a sensitivity "
+               "analysis showed that the results were largely insensitive to small perturbations in simluation setup. "
+               ]
+              ]}
    {:year  2010
     :icon    air
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "Chemical Engineering Internship"]
-              [typography {:sx {:padding "5px"}}
-               "Air Liquide"]]}
+              [section-header "Chemical Engineering Internship @ " [:a {:href "https://airliquide.com"} "Air Liquide"]]
+              [divider]
+              [section-content
+               (str "Won a scholarship/award and selected Air Liquide as a summer internship. "
+                    "At Air Liquide, I worked on a calculator that computed the amount of refrigerant necessary for a truck to transport goods "
+                    "at a given temperature. "
+                    "I also studied solubility properties of a gas in oil.")
+               ]
+              ]}
    {:year  2007
     :icon    lafayette
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "BS in Chemical Engineering"]
-              [typography {:sx {:padding "5px"}}
-               "Lafayette College"]]}
+              [section-header "BS in Chemical Engineering @ " [:a {:href "https://lafayette.edu"} "Lafayette College"]]
+              [divider]
+              [section-content
+               (str "I chose a major that I thought would be an academic challenge. I liked Chemistry and building "
+                    "and decided to major in Chemical Engineering. I played Ultimate Frisbee, got my worst grade in Experiencing Opera (which I still listen to) "
+                    "and found out that counting (Combinatorics) can get extremely complicated. "
+                    )]
+              [section-content
+               (str "I was pretty interested in Engineering pedagogy and thought I might want to become a Professor. "
+                    "I did an independent study in Engineering Pedagogy, which included Maslow's hierachy of needs, models of mastery, etc.")]
+              ]}
    {:year  2006
     :icon    dunkin
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "Dunkin Donuts"]
-              [typography "High school job"]]}
+              [section-header "Dunkin Donuts"]
+              [divider]
+              [typography "High school job"]
+              [section-content "I was having fun and thought 'why not include my whole work history?'"]
+              ]}
    {:year  2005
     :content [:<>
-              [typography {:variant "h5" :component "span" :sx {:padding "5px"}} "Acton Children's Discovery Museum"]
-              [typography "High school job"]]}
+              [section-header "Acton Children's Discovery Museum"]
+              [divider]
+              [typography "High school job"]
+              [section-content "I was having fun and thought 'why not include my whole work history?'"]
+              ]}
    ])
 
 (defn add-deltas [events ]
@@ -307,7 +408,7 @@
    [timeline-connector {:sx {:height (str (* dt spacing-per-year) "px")}}]])
 
 
-(defn resume-2 []
+(defn resume []
   (let [w-deltas (add-deltas events)]
     [grid GRID-CONTAINER
      [grid (merge BREAKPOINTS
@@ -325,7 +426,7 @@
           [timeline-opposite-content {:variant "h2"
                                       :flex    0.3}
            year]
-          [connector icon dt 180]
+          [connector icon dt DISTANCE-PER-YEAR]
           [timeline-content {:sx {:padding "5px"
                                   :flex    1}}
            content]
@@ -368,6 +469,6 @@
                           [me-professional]
                           [skills]]
           "cv" [grid GRID-CONTAINER
-                [resume-2]]
+                [resume]]
           )]
        ])))
