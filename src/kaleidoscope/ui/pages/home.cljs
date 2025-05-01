@@ -12,6 +12,7 @@
             [reagent-mui.lab.timeline-opposite-content :refer [timeline-opposite-content]]
             ["@mui/lab/TimelineOppositeContent" :as MuiTimelineOppositeContent]
             [kaleidoscope.ui.utils.events :as events]
+            [goog.date.DateTime :as gdatetime]
             ["@styled-icons/boxicons-regular/CodeBlock"    :refer [CodeBlock]]
             ["@styled-icons/boxicons-regular/Rocket"       :refer [Rocket]]
             [reagent.core :as r]
@@ -220,8 +221,23 @@
                     :color   "#888888"}}
    children])
 
+
+(def MONTH-YEAR
+  "ex. February 2023"
+  "MMMM, yyyy")
+
+(defn format-date
+  [date-fmt s]
+  (try
+    (let [formatter (new goog.i18n.DateTimeFormat date-fmt)]
+      (.format formatter (gdatetime/fromIsoString s)))
+    (catch js/Object _e
+      "Couldn't format date")))
+
 (def events
-  [{:year    2024
+  [{:year    (format-date MONTH-YEAR (.toISOString (new js/Date)))
+    :until   (format-date MONTH-YEAR (.toISOString (new js/Date)))
+    :since   "Oct, 2024"
     :icon    freshpaint
     :content [:div
               [section-header "Software Engineering Manager @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
@@ -231,7 +247,9 @@
               [section-content
                (str "So far, we've developed a HIPAA-Compliant Web Analytics alternative to Google Analytics 4, and we're working on a HIPAA-compliant platform "
                     "to help Healthcare Marketers improve their advertising performance.")]]}
-   {:year    2023
+   {:year    2024
+    :until   "Oct, 2024"
+    :since   "Sept, 2023"
     :icon    freshpaint
     :content [:div
               [section-header "Senior Software Engineer @ " [:a {:href "https://www.freshpaint.io"} "Freshpaint"]]
@@ -244,7 +262,9 @@
               [section-content "Built several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom)."]
               [section-content "Designed and prototyped integrations with EMRs (HL7 & FHIR)"]
               ]}
-   {:year    2022
+   {:year    2023
+    :until   "Sept, 2023"
+    :since   "Dec, 2022"
     :icon    splash
     :content [:div
               [section-header "Engineering Team Lead @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]
@@ -255,13 +275,17 @@
                (str "Splash planned to increase revenue by bringing more Lenders onto their platform, but the Lending platform didn't support quickly onboarding new Lenders. "
                     "We replaced the old Monolithic, hard-coded configuration (Lending Rules & Documents) with microservices that allowed internal users to quickly get Lenders "
                     "on the platform.")]]}
-   {:year    2021
+   {:year    2022
+    :until   "Dec, 2022"
+    :since   "June, 2021"
     :icon    splash
     :content [:<>
               [section-header "Senior Software Engineer @ " [:a {:href "https://www.splashfinancial.com"} "Splash Financial"]]
               [divider]
               ]}
-   {:year  2019
+   {:year    2021
+    :until   "June, 2021"
+    :since   "Jan, 2019"
     :icon    oppfi
     :content [:div
               [section-header "Software Engineer @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]
@@ -276,7 +300,9 @@
                 "Our microservice portfolio included Clojure, Python and Scala, built primarily on ECS and Lambda. Through our work, we enhanced the company's ability to "
                 "detect fraud, apply custom machine-learning credit decisioning, and introspect/audit our loan processing.")]
               ]}
-   {:year  2018
+   {:year    2019
+    :until   "Jan, 2019"
+    :since   "March 2018"
     :icon    oppfi
     :content [:<>
               [section-header "Business Operations Associate @ " [:a {:href "https://www.oppfi.com"} "Opportunity Financial"]]
@@ -289,16 +315,9 @@
                (str "I analyzed our loan processing data and logs, identified processes to improve areas of high attrition, and executed "
                     "projects to improve the pipeline. ")]
               ]}
-   {:year  2016
-    :icon    nu
-    :content [:div
-              [section-header "Fellowship @ " [:a {:href "https://lead.northwestern.edu/our-approach/"} "Northwestern University Center for Leadership"]]
-              [divider]
-              [section-content
-               (str "In the Leadership Fellows, I studied several theories and models of Leadership with ~10 other Fellows "
-                    "and spent ~100 hours coaching Undergraduate student leaders.")]
-              ]}
-   {:year  2013
+   {:year    2018
+    :until   "Jan 2018"
+    :since   "Aug 2013"
     :icon    nu
     :content [:<>
               [section-header "PhD in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
@@ -330,7 +349,18 @@
               [section-content
                [:a {:href "https://search.library.northwestern.edu/permalink/01NWU_INST/p285fv/cdi_proquest_journals_1984962358"}
                 "Neural and Biomechanical Mechanisms of Movement Impairment in Stroke Survivors"]]]}
-   {:year  2011
+   {:year    2016
+    :icon    nu
+    :content [:div
+              [section-header "Fellowship @ " [:a {:href "https://lead.northwestern.edu/our-approach/"} "Northwestern University Center for Leadership"]]
+              [divider]
+              [section-content
+               (str "In the Leadership Fellowship, I studied several theories and models of Leadership with ~10 other Fellows "
+                    "and spent ~100 hours coaching Undergraduate student leaders.")]
+              ]}
+   {:year    2013
+    :until   "Aug, 2013"
+    :since   "Sept, 2011"
     :icon    nu
     :content [:<>
               [section-header "MS in Biomedical Engineering @ " [:a {:href "https://northwestern.edu"} "Northwestern University"]]
@@ -343,19 +373,9 @@
                "analysis showed that the results were largely insensitive to small perturbations in simluation setup. "
                ]
               ]}
-   {:year  2010
-    :icon    air
-    :content [:<>
-              [section-header "Chemical Engineering Internship @ " [:a {:href "https://airliquide.com"} "Air Liquide"]]
-              [divider]
-              [section-content
-               (str "Won a scholarship/award and selected Air Liquide as a summer internship. "
-                    "At Air Liquide, I worked on a calculator that computed the amount of refrigerant necessary for a truck to transport goods "
-                    "at a given temperature. "
-                    "I also studied solubility properties of a gas in oil.")
-               ]
-              ]}
-   {:year  2007
+   {:year    2011
+    :until   "May, 2011"
+    :since   "Aug, 2007"
     :icon    lafayette
     :content [:<>
               [section-header "BS in Chemical Engineering @ " [:a {:href "https://lafayette.edu"} "Lafayette College"]]
@@ -369,7 +389,19 @@
                (str "I was pretty interested in Engineering pedagogy and thought I might want to become a Professor. "
                     "I did an independent study in Engineering Pedagogy, which included Maslow's hierachy of needs, models of mastery, etc.")]
               ]}
-   {:year  2006
+   {:year    2010
+    :icon    air
+    :content [:<>
+              [section-header "Chemical Engineering Internship @ " [:a {:href "https://airliquide.com"} "Air Liquide"]]
+              [divider]
+              [section-content
+               (str "Won a scholarship/award and selected Air Liquide as a summer internship. "
+                    "At Air Liquide, I worked on a calculator that computed the amount of refrigerant necessary for a truck to transport goods "
+                    "at a given temperature. "
+                    "I also studied solubility properties of a gas in oil.")
+               ]
+              ]}
+   {:year    2006
     :icon    dunkin
     :content [:<>
               [section-header "Dunkin Donuts"]
@@ -377,7 +409,7 @@
               [typography "High school job"]
               [section-content "I was having fun and thought 'why not include my whole work history?'"]
               ]}
-   {:year  2005
+   {:year    2005
     :content [:<>
               [section-header "Acton Children's Discovery Museum"]
               [divider]
@@ -402,7 +434,7 @@
 ;;(r/create-element Rocket #js {:color "#3e3eb1" :height "100px"})
 (defn connector [icon dt spacing-per-year]
   [timeline-separator
-   [timeline-connector {:sx {:height "20px"}}]
+   #_[timeline-connector #_{:sx {:height "20px"}}]
    [timeline-dot {:color "primary" :variant "outlined" :sx {:background-color "black"}}
     (or icon me)]
    [timeline-connector {:sx {:height (str (* dt spacing-per-year) "px")}}]])
@@ -420,16 +452,22 @@
                             ;;(str "& ." timeline-class) {:flex 0.2}
                             }
                  }
-       (for [{:keys [year icon content dt] :as event} w-deltas]
+       (for [{:keys [year since until icon content dt] :as event} w-deltas]
          [timeline-item {:key year
                          :sx  {:left "-6%"}}
           [timeline-opposite-content {:variant "h2"
                                       :flex    0.3}
-           year]
+           (or until year)
+           (when since
+             [typography {:variant "h4"}
+              (str "Since: " since)])]
           [connector icon dt DISTANCE-PER-YEAR]
           [timeline-content {:sx {:padding "5px"
                                   :flex    1}}
-           content]
+           content
+           [:br]
+           [:br]
+           ]
           ]
          )
        ]]])
