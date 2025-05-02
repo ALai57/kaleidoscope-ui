@@ -244,12 +244,15 @@
               [divider]
               [section-content "I manage a team of Engineers building out the next generation of Freshpaint Products. We specialize in bringing new Product ideas from 0 to 1."]
               [:br]
-              [section-content
-               (str "We're working on a HIPAA-compliant platform "
-                    "that connects multiple data sources (EHR, Marketing/Advertising, etc) so that Marketers and Advertisers can drive more conversions "
-                    "for every dollar they spend. ")]
-              [section-content
-               "We've also developed a HIPAA-Compliant Analytics alternative to Google Analytics 4."]
+              [:ul
+               [:li [section-content
+                     (str "Working on a HIPAA-compliant platform "
+                          "that connects multiple data sources (EHR, Marketing/Advertising, etc) so that Marketers and Advertisers can drive more conversions "
+                          "for every dollar they spend. So far we've seen 20% cost reductions using our Offline Attributions algorithms to "
+                          "improve advertisement targeting. ")]]
+               [:li
+                [section-content
+                 "Developed a HIPAA-Compliant Analytics alternative to Google Analytics 4."]]]
               ]}
    {:year    2024
     :until   "Oct, 2024"
@@ -261,12 +264,11 @@
               [section-content "Freshpaint used a Project-based engagement model. I worked on several Projects to develop new Product ideas and improve our platform."]
               [:br]
               ;; Add bullet points
-              [section-content "Built out the first version of the HIPAA compliant Map product"]
-              [section-content "Developed an Observability tool (Event Verification) tool"]
-              [section-content "Built several integrations with Advertising Platforms (e.g. Adobe Analytics, Intercom)."]
-              [section-content "Designed and prototyped integrations with EMRs (HL7 & FHIR)"]
-              [section-content
-               "Conducted Product/Market Research for a new Freshpaint Product line, and came up with technical solution. "]
+              [:ul
+               [:li [section-content "Built out the first version of the HIPAA compliant Map product. For some time, the product drove ~20% of Freshpaint's revenue."]]
+               [:li [section-content "Developed an Observability tool that told the story of how Freshpaint processed events (Event Verification). This helped build trust for our external users and speed up debugging for internal users."]]
+               [:li [section-content "Conducted Product/Market Research for a new Freshpaint Product line, designed and prototyped integrations with EMRs (HL7 & FHIR). This directly led to the Ad Performance product. "]]
+               ]
               ]}
    {:year    2023
     :until   "Sept, 2023"
@@ -280,7 +282,7 @@
               [section-content
                (str "Splash planned to increase revenue by bringing more Lenders onto their platform, but the Lending platform didn't support quickly onboarding new Lenders. "
                     "We replaced the old Monolithic, hard-coded configuration (Lending Rules & Documents) with microservices that allowed internal users to quickly get Lenders "
-                    "on the platform.")]]}
+                    "on the platform. Per Lender, these systems decreased Engineering onboarding time from ~3 weeks to ~3 days.")]]}
    {:year    2022
     :until   "Dec, 2022"
     :since   "June, 2021"
