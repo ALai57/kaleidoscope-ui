@@ -9,11 +9,21 @@
 (def HOST_URL
   (str js/window.location.protocol "//" js/window.location.host))
 
+(def keycloak-js-constructor
+  ;; Required because the two JS apps are built using different standards
+  ;; :app builds using ESModules
+  ;; :pub does not
+  ;; Causing conflicts in how the keycloak-js module is presented to the app.
+  (if (aget keycloak-js "__esModule")
+    keycloak-js/default
+    keycloak-js))
+
 (defn keycloak
   [options]
   (debugf "Starting Keycloak...")
-  (let [kc-instance (keycloak-js/default (clj->js options))]
-    (set! (.-onTokenExpired kc-instance) (fn [] (infof "Access token is expiring! Refreshing tokens...")
+  ;;(js/console.log "Keycloak JS" keycloak-js-constructor)
+  (let [kc-instance (keycloak-js-constructor (clj->js options))]
+    (set! (.-onTokenExpired ^js kc-instance) (fn [] (infof "Access token is expiring! Refreshing tokens...")
                                            (-> kc-instance
                                                (.updateToken)
                                                (.then (fn [refreshed]
@@ -23,9 +33,9 @@
                                                (.catch (fn []
                                                          (warnf "Failed to refresh token or session expired."))))
                                            ))
-    (set! (.-onAuthSuccess kc-instance) (fn [] (infof "Successful authentication!")))
-    (set! (.-onAuthRefreshSuccess kc-instance) (fn [] (infof "Successful token refresh!")))
-    (set! (.-onAuthRefreshError kc-instance) (fn [] (warnf "Token refresh failure!")))
+    (set! (.-onAuthSuccess ^js kc-instance) (fn [] (infof "Successful authentication!")))
+    (set! (.-onAuthRefreshSuccess ^js kc-instance) (fn [] (infof "Successful token refresh!")))
+    (set! (.-onAuthRefreshError ^js kc-instance) (fn [] (warnf "Token refresh failure!")))
     kc-instance))
 
 (defn initialize!

@@ -7,7 +7,7 @@
 
 (reg-event-fx :boot
   (fn [_ _]
-    (infof "Initializing the web app!")
+    (infof "Initializing the kaleidoscope.pub app!")
     {:db         default-db
      :async-flow {:first-dispatch [:keycloak-action :init]
                   :rules          [{:when   :seen?

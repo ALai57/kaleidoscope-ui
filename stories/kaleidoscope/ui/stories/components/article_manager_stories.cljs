@@ -27,7 +27,7 @@
                     :public-visibility    true
                     :article-created-date "Feb 01"}
                    {:article-id           5
-                    :article-title        "I keep writing things!"
+                    :article-title        "I keep writing things! This is a really long title to see how it handles wrapping. And the title keeps going and going and going"
                     :public-visibility    true
                     :article-created-date "Feb 02"}
                    {:article-id           6

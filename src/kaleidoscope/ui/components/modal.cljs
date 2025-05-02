@@ -1,5 +1,6 @@
 (ns kaleidoscope.ui.components.modal
-  (:require [reagent-mui.components :refer [modal box]]
+  (:require [reagent-mui.components :refer [modal box typography]]
+            [kaleidoscope.ui.components.button :refer [button]]
             [reagent-mui.icons.close :refer [close]]
             ))
 
@@ -20,16 +21,17 @@
 (defn modal-template
   [{:keys [title body footer on-close level]
     :or   {level "info"}}]
-  [:div.modal-content {:style {:border "none"
-                               :maxWidth "90vw"
+  [:div.modal-content {:style {:border    "none"
+                               ;;:maxWidth  "90vw"
                                :maxHeight "90vh"}}
    [:div.modal-header {:style {:background-color (get COLORS level)}}
-    [:h4.modal-title title]
-    [:button.close {:on-click   on-close
-                    :type       "reset"
-                    :aria-label "Close"}
-     [close {:class "close-button"
-             :sx    {:padding "5px"}}]]]
+    [typography {:variant "h5" :sx {:display "inline-block"}} title]
+    [button {:on-click on-close
+             :sx       {:display "inline-block"
+                        :float   "inline-end"
+                        :padding "0px"}
+             :text [close {:class "close-button"
+                           :sx    {:padding "0px"}}]}]]
    (when body [:div.modal-body body])
    (when footer [:div.modal-footer footer])])
 

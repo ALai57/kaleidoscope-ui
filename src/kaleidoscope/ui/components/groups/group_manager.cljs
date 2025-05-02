@@ -8,6 +8,7 @@
                                             divider
                                             collapse
                                             icon-button
+                                            grid
                                             list
                                             list-item
                                             list-item-button
@@ -19,6 +20,7 @@
             [reagent-mui.icons.delete :refer [delete]]
             [reagent-mui.icons.group :as icons.group]
             [reagent-mui.icons.group-add :refer [group-add]]
+            [reagent-mui.icons.email :refer [email]]
             [reagent-mui.icons.person-add :refer [person-add]]
             [reagent.core :as reagent]
             [taoensso.timbre :refer-macros [infof]]))
@@ -44,11 +46,15 @@
   [{:keys [icon text on-click delete-group!]
     :or   {on-click (fn [x]
                       (println "Clicked " text))}}]
-  [list-item {:secondaryAction (reagent/as-element [box
+  [list-item {:sx {:padding-left {:xs "0px"
+                                  :sm "5px"
+                                  :md "20px"}}
+              :secondaryAction (reagent/as-element [box
                                                     [icon-button {:edge     "end"
                                                                   :on-click delete-group!}
                                                      [delete]]])}
-   [list-item-button {:on-click on-click}
+   [list-item-button {:on-click on-click
+                      :sx {:background-color "aliceblue"}}
     [list-item-icon [icon]]
     [list-item-text text]]])
 
@@ -61,27 +67,41 @@
         on-change-member-email (fn [e]
                                  (reset! new-member-email (events/event-value e)))]
     (fn []
-      [box {:style {:display       "flex"
-                    :align-items   "flex-end"
-                    :margin-bottom "20px"}}
-       [person-add {:sx {:color "action.active"
-                         :mr    1
-                         :my    0.5}}]
-       [text-field {:id        "new-member-name-input"
-                    :label     "Name"
-                    :variant   "standard"
-                    :sx        {:margin-right "20px"
-                                :min-width    "250px"}
-                    :on-change on-change-member-name}]
-       [text-field {:id        "new-member-email-input"
-                    :label     "Email"
-                    :variant   "standard"
-                    :sx        {:margin-right "20px"
-                                :min-width    "350px"}
-                    :on-change on-change-member-email}]
-       [button/button {:text     "Add a member"
-                                       :on-click (partial add-member! {:alias @new-member-name
-                                                                       :email @new-member-email})}]])))
+      [grid {:container true
+             :sx        {:align-items "center"}}
+       [grid {:item true}
+        [grid {:container true}
+         [grid {:item true}
+          [box {:style {:display       "flex"
+                        :align-items   "flex-end"
+                        :margin-bottom "20px"}}
+           [person-add {:sx {:color "action.active"
+                             :mr    1
+                             :my    0.5}}]
+           [text-field {:id        "new-member-name-input"
+                        :label     "Name"
+                        :variant   "standard"
+                        :sx        {:margin-right "20px"
+                                    :min-width    "250px"}
+                        :on-change on-change-member-name}]]]
+         [grid {:item true}
+          [box {:style {:display       "flex"
+                        :align-items   "flex-end"
+                        :margin-bottom "20px"}}
+           [email {:sx {:color "action.active"
+                        :mr    1
+                        :my    0.5}}]
+           [text-field {:id        "new-member-email-input"
+                        :label     "Email"
+                        :variant   "standard"
+                        :sx        {:margin-right "20px"
+                                    :min-width    "250px"}
+                        :on-change on-change-member-email}]]]]]
+       [grid {:item true}
+        [button/button {:text     "Add a member"
+                        :on-click (partial add-member! {:alias @new-member-name
+                                                        :email @new-member-email})}]]
+       ])))
 
 (defn group-entry
   [{:keys [idx open? on-click
@@ -93,7 +113,9 @@
                 :text          display-name
                 :on-click      on-click
                 :delete-group! delete-group!}]
-   [collapse {:style         {:margin-left "40px"}
+   [collapse {:sx            {:padding-left {:xs "0px"
+                                             :sm "5px"
+                                             :md "20px"}}
               :in            open?
               :timeout       "auto"
               :unmountOnExit true}
@@ -118,19 +140,36 @@
       [box {:style {:display       "flex"
                     :align-items   "flex-end"
                     :margin-bottom "20px"}}
-       [group-add {:sx {:color "action.active"
-                        :mr    1
-                        :my    0.5}}]
-       [text-field {:id        "new-group-name-input"
-                    :label     "Group Name"
-                    ;;:label-for "new-group-name"
-                    :variant   "standard"
-                    :sx        {:margin-right "20px"
-                                :min-width    "350px"}
-                    :on-change on-change}]
-       [button/button {:text     "Add a new group"
-                                       :on-click (partial add-group! @new-group-name)}]
-       ])))
+       [grid {:container       true
+              :justify-content "center"
+              :align-content   "center"
+              :align-items     "center"
+              }
+        [grid {:xs    12
+               :sm    10
+               :md    8
+               :lg    6
+               :xl    6
+               :item  true
+               :align "center"}
+         [box {:style {:display       "flex"
+                       :align-items   "flex-end"
+                       :width         "fit-content"
+                       :margin-bottom "20px"}}
+          [group-add {:sx {:color "action.active"
+                           :mr    1
+                           :my    0.5}}]
+          [text-field {:id        "new-group-name-input"
+                       :label     "Group Name"
+                       ;;:label-for "new-group-name"
+                       :variant   "standard"
+                       :sx        {:margin-right "20px"
+                                   ;;:min-width    "350px"
+                                   }
+                       :on-change on-change}]
+          [button/button {:text     "Add a new group"
+                          :on-click (partial add-group! @new-group-name)}]
+          ]]]])))
 
 (defn group-manager
   [{:keys [groups open

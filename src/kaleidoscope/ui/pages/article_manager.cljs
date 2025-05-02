@@ -5,18 +5,46 @@
             [re-frame.core :refer [subscribe dispatch]]
             [reagent.core :as reagent]
             [taoensso.timbre :refer-macros [infof]]
+            [goog.date.DateTime :as gdatetime]
             ))
+
+(def yyyy-MM
+  "ex. 2022-01-01"
+  "yyyy-MM")
+
+(def MONTH-YEAR
+  "ex. February 2023"
+  "MMMM, yyyy")
+
+(def MONTH-DAY-YEAR
+  "ex. Feb 28, 2022"
+  goog.i18n.DateTimeFormat.Format.MEDIUM_DATE)
+
+(def MONTH-DAY
+  "ex. Feb 28"
+  "MMM dd")
+
+(defn format-date
+  [date-fmt s]
+  (try
+    (let [formatter (new goog.i18n.DateTimeFormat date-fmt)]
+      (.format formatter (gdatetime/fromIsoString s)))
+    (catch js/Object _e
+      "Couldn't format date")))
 
 (defn add-human-readable-dates
   [{:keys [article-created-at] :as branch}]
-  (let [pretty-date  (u/format-date u/MONTH-YEAR article-created-at)
-        numeric-date (u/format-date u/yyyy-MM    article-created-at)
-        short-date   (u/format-date u/MONTH-DAY  article-created-at)]
-    (assoc branch
-           :group-name           pretty-date
-           :display-name         pretty-date
-           :group-value          numeric-date
-           :article-created-date short-date)))
+  (try
+    (let [pretty-date  (format-date MONTH-YEAR article-created-at)
+          numeric-date (format-date yyyy-MM    article-created-at)
+          short-date   (format-date MONTH-DAY  article-created-at)]
+      (assoc branch
+             :group-name           pretty-date
+             :display-name         pretty-date
+             :group-value          numeric-date
+             :article-created-date short-date))
+    (catch js/Error e
+      (js/console.log "Caught error" e))))
 
 (defn group-branches
   [branches]

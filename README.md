@@ -34,6 +34,15 @@ npm run build-release
 npm run deploy
 ```
 
+## IDE Setup
+```sh
+npx shadow-cljs pom
+```
+Cursive File -> New -> Project from existing sources
+
+
+https://shadow-cljs.github.io/docs/UsersGuide.html#_cursive
+
 TODO:
 ;; Add button to go back to article manager from editor
 ;; Check saving and creating articles

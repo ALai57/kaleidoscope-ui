@@ -2,6 +2,7 @@
   (:require ["@mui/material" :as mui]
             ["@mui/material/styles" :refer [createTheme responsiveFontSizes]]
             [kaleidoscope.ui.components.loading-screen :as loading]
+            [kaleidoscope.ui.core-api.user         :as user]
             [kaleidoscope.ui.pages.about-this-site :as page.about-this-site]
             [kaleidoscope.ui.pages.admin           :as page.admin]
             [kaleidoscope.ui.pages.article-manager :as page.article-manager]
@@ -17,36 +18,6 @@
             [re-frame.core :refer [subscribe dispatch]]
             [shadow.lazy :as lazy]
             [taoensso.timbre :refer-macros [infof]]))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; User events
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn login!
-  []
-  (dispatch [:keycloak-action :login]))
-
-(defn check-admin-status!
-  []
-  (dispatch [:request-admin-route]))
-
-(defn print-current-user!
-  []
-  (dispatch [:check-identity]))
-
-(defn logout!
-  []
-  (dispatch [:keycloak-action :logout]))
-
-(defn account-management!
-  []
-  (dispatch [:keycloak-action :account-management]))
-
-(def user-event-handlers
-  {:on-login-click        login!
-   :on-admin-click        check-admin-status!
-   :on-check-auth-click   print-current-user!
-   :on-logout-click       logout!
-   :on-edit-profile-click account-management!})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Editor events
@@ -88,7 +59,7 @@
         :payment-details @(subscribe [:payment-details])
 
         ;; User actions
-        :user-event-handlers  user-event-handlers
+        :user-event-handlers  user/user-event-handlers
         :theme                theme
         :theme-event-handlers {:on-change (fn [new-color-coordinates]
                                             (dispatch [:set-local-theme new-color-coordinates]))}

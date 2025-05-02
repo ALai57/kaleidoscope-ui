@@ -95,3 +95,24 @@
      [:f> user-profile {:user                user
                         :user-event-handlers user-event-handlers
                         :notification-type   notification-type}]]))
+
+
+(defn completed-purchase [{:keys [user user-event-handlers notification-type]}]
+  (let [{:keys [avatar_url username given_name family_name email]}                    user
+        {:keys [on-admin-click on-edit-profile-click on-logout-click on-login-click]} user-event-handlers]
+    [:div#primary-content
+     [:div {:style {:display         "flex"
+                    :justify-content "center"}}
+      [paper {:elevation 3 :sx {:padding   "15px"
+                                :display   "block"
+                                :flex-grow 1
+                                :max-width "500px"}}
+       [stack {:spacing 2}
+        [typography {:variant "h3"}
+         (if user
+           (gstr/format "Welcome %s %s!" given_name family_name)
+           (gstr/format "Welcome!"))]
+        [:br]
+        [typography {:variant "h3"}
+         (gstr/format "Thank you for your purchase! %s" js/window.location.search)]
+        ]]]]))

@@ -117,12 +117,18 @@
    (:theme db)))
 
 ;; {:intent {}
-;;  :secret {}
-;;  :domain-availability {}}
+;;  :secret {} }
 (reg-sub
  :payment-details
  (fn [db]
    (:payment-details db)))
+
+;; {:
+;;  : }
+(reg-sub
+  :domain-availability
+  (fn [db]
+    (:domain-availability db)))
 
 (reg-sub
  :stripe

@@ -1,7 +1,7 @@
 {
   "name": "kaleidoscope-ui",
   "description": "Front end app UI for Kaleidoscope",
-  "version": "1.0.49",
+  "version": "1.0.61",
   "devDependencies": {
     "@babel/cli": "^7.21.5",
     "@babel/core": "^7.21.8",
@@ -28,6 +28,7 @@
     "@bugsnag/plugin-react": "^7.19.0",
     "@emotion/react": "11.7.1",
     "@emotion/styled": "11.6.0",
+    "@mui/lab": "^5.0.0-alpha.169",
     "@mui/material": "^5.11.12",
     "@mui/x-data-grid": "5.17.25",
     "@react-three/drei": "^9.60.0",
@@ -65,13 +66,12 @@
   },
   "scripts": {
     "watch-js": "npx babel src/kaleidoscope-js --out-dir kaleidoscope-js --watch",
-    "watch": "shadow-cljs watch app stories",
-    "watch-pub": "shadow-cljs watch kaleidoscope.pub",
-    "build-release": "shadow-cljs release app",
+    "watch": "shadow-cljs watch app stories kaleidoscope.pub",
+    "build-release": "shadow-cljs release app kaleidoscope.pub",
     "deploy": "./scripts/deployment/deploy-to-s3",
     "bump": "shadow-cljs run deploy.bump-version/increment",
     "pack": "webpack --watch",
-    "storybook": "storybook dev -s ../resources/static -p 6006",
+    "storybook": "storybook dev -s '../resources/kaleidoscope.client/static/js/compiled/shareable_stories' -p 6006",
     "build-storybook": "storybook build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

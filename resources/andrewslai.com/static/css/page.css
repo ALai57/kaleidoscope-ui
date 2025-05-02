@@ -419,6 +419,7 @@ pre {
 .modal-title {
   margin-right: 30px;
   margin-left: 10px;
+  display: inline-block;
 }
 
 .close-button {

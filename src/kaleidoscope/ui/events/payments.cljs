@@ -28,13 +28,18 @@
     (assoc db :stripe stripe)))
 
 (reg-event-fx :init-global-stripe!
-  (fn [{:keys [db]} [_ domain]]
+  (fn [{:keys [db] :as cofx} [_ domain]]
     (infof "Initializing global stripe instance")
     (let [stripe-promise (loadStripe stripe/API_KEY)]
-      (.then stripe-promise
-             (fn [stripe]
-               (js/console.log "Global stripe instance" stripe)
-               (dispatch [:set-global-stripe! stripe]))))))
+      (-> stripe-promise
+          (.then (fn [stripe]
+                   (js/console.log "Global stripe instance" stripe)
+                   (dispatch [:set-global-stripe! stripe])))
+          (.catch (fn [stripe]
+                    (js/console.log "Global stripe instance" stripe)
+                    (dispatch [:set-global-stripe! stripe]))))
+      (assoc-in cofx [:db :stripe-promise] stripe-promise))
+    ))
 
 
 (def example-get-domain-success
@@ -59,19 +64,24 @@
 (reg-event-fx :get-domain-price.success
   (fn [cofx [_ response]]
     (infof "Retrieved domain availability successfully!")
-    {:db (assoc-in (:db cofx) [:payment-details :domain-availability] response)
+    {:db (-> (:db cofx)
+             (assoc-in [:domain-availability] response)
+             (assoc :payment-details {}))
      :fx [[:dispatch [::async-flow-fx/notify :success-get-domain-availability]]]}))
 
 (reg-event-fx :get-domain-price.failure
   (fn [cofx [_ response]]
     (errorf "Failed to retrieve domain availability %s" response)
-    {:db (assoc-in (:db cofx) [:payment-details :domain-availability] nil)
+    {:db (-> (:db cofx)
+             (assoc-in [:domain-availability] nil)
+             (assoc :payment-details {}))
      :fx [[:dispatch [::async-flow-fx/notify :failure-get-domain-availability]]]}))
 
 (reg-event-fx :get-domain-price
   (fn [{:keys [db]} [_ domain]]
     (infof "Requesting domain price")
-    {:http-xhrio (merge (scope-client/get-domain-availability domain)
+    {:db         db
+     :http-xhrio (merge (scope-client/get-domain-availability domain)
                         {:on-success [:get-domain-price.success]
                          :on-failure [:get-domain-price.failure]})}))
 
@@ -95,7 +105,7 @@
 ;; Uses that to request a new payment secret from the backend
 (reg-event-fx :prepare-new-payment!
   (fn [{:keys [db]} [_]]
-    (let [{:keys [price currency] :as payment} (get-in db [:payment-details :domain-availability :prices :registration-price])]
+    (let [{:keys [price currency] :as payment} (get-in db [:domain-availability :prices :registration-price])]
       (when payment
         (infof "Requesting Payment Secret payment $%s.00" price)
 
@@ -104,7 +114,8 @@
         ;; don't end up with outrageous amounts
         (if (> payment 50)
           {}
-          {:http-xhrio (merge (scope-client/new-payment-secret! {:amount   (* 100 price)
+          {:db         db
+           :http-xhrio (merge (scope-client/new-payment-secret! {:amount   (* 100 price)
                                                                  :currency currency})
                               {:on-success [:prepare-new-payment!.success]
                                :on-failure [:prepare-new-payment!.failure]})})))))
@@ -123,13 +134,13 @@
 
 (reg-event-db :set-current-payment-intent!
   (fn [db [_ payment-intent]]
-    (js/console.log "Current payment intent" payment-intent)
     (assoc-in db [:payment-details :intent] payment-intent)))
 
 ;; Assumes that the new domain information and pricing is in the global database
 ;; Uses that to request a new payment secret from the backend
 (reg-event-fx :fetch-payment-intent!
   (fn [{:keys [db]} [_]]
+    (infof "Generating a new payment intent")
     (let [stripe (:stripe db)
           secret (get-in db [:payment-details :secret :client-secret])]
       (when stripe
@@ -137,22 +148,17 @@
             (.retrievePaymentIntent secret)
             (.then (fn [pi]
                      (js/console.log "Current Payment Intent" pi)
-                     (dispatch [:set-current-payment-intent! (:paymentIntent (u/clojurize pi))]))))))))
+                     (dispatch [:set-current-payment-intent! (:paymentIntent (u/clojurize pi))])))))
+      {:db db})))
 
 
 (reg-event-fx :generate-payment-for-domain!
   (fn [{:keys [db]} [_ domain]]
     (infof "Generating a new payment for domain `%s`" domain)
     {:db         (-> db
-                     (update-in [:payment-details :intent] (constantly nil))
-                     (update-in [:payment-details :secret] (constantly nil)))
-     :async-flow {:first-dispatch [:get-domain-price domain]
+                     (assoc-in [:payment-details :intent] nil)
+                     (assoc-in [:payment-details :secret] nil))
+     :async-flow {:first-dispatch [:prepare-new-payment!]
                   :rules          [{:when       :seen?
-                                    :events     [[::async-flow-fx/notify :success-get-domain-availability]]
-                                    :dispatch-n [[:prepare-new-payment!]]}
-                                   {:when       :seen?
                                     :events     [[::async-flow-fx/notify :success-get-new-payment]]
-                                    :dispatch-n [[:fetch-payment-intent!]]}
-                                   {:when   :seen?
-                                    :events [[::async-flow-fx/notify :failure-get-domain-availability]]
-                                    :halt?  true}]}}))
+                                    :dispatch-n [[:fetch-payment-intent!]]}]}}))

@@ -29,7 +29,7 @@
 
 ;;
 ;; Date utilities
-;;
+;; possibly delete these?
 (defn date
   [iso-string]
   (first (str/split iso-string #"T")))

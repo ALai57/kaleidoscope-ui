@@ -1,0 +1,13 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+
+pushd "$SCRIPT_DIR/../../"
+
+echo "Deploying frontend to kaleidoscope.pub bucket..."
+
+aws s3 sync resources/kaleidoscope.pub/static s3://kaleidoscope.pub/static \
+    --exclude "*/cljs-runtime/*" \
+    --exclude "*/shareable_stories/*" # --dryrun
+
+popd

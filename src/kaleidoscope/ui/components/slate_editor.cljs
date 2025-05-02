@@ -352,7 +352,7 @@
                  #js {:components PLATE-UI}))
 
 
-(def nav-images-path "images/nav-bar/")
+(def nav-images-path "static/images/nav-bar/")
 (defn img-path
   [fname]
   (str nav-images-path fname))
@@ -378,7 +378,7 @@
      [:> navbar/zoom-icon {:style {:float        "left"
                                    :height       "48px"
                                    :margin-right "20px"}}
-      [:img.navbutton {:src      (img-path "static/favicon.svg")
+      [:img.navbutton {:src      (img-path "favicon.svg")
                        :style    {:height "48px"}
                        :on-click (fn [event]
                                    (reset! show-modal true))}]]
@@ -495,7 +495,9 @@
     :or   {level "info"}}]
   [modal {:open          @open?
           :on-close      #(reset! open? false)
-          :BackdropProps {:style {:background-color MODAL-BACKGROUND}}}
+          :BackdropProps {:style {:background-color MODAL-BACKGROUND
+                                  :top "-20px"
+                                  }}}
    [box {:class "modal-box"}
     [modal-template {:title    title
                      :body     body
@@ -510,20 +512,11 @@
   (let [editor-id  (useEventPlateId)
         editor-ref (usePlateEditorRef editor-id)]
     (modal/basic-modal
-     {:title    (gstr/format "Select which photo you'd like to use" )
+     {:title    (gstr/format "Select photo" )
       :body     [:div
-                 [:br]
-                 [:div
-                  [:br]
-                  [ib/image-browser {:images        images
-                                     :mode          "select"
-                                     :photo-manager {:select-photo (partial on-select editor-ref)}}]
-                  ]]
-      :footer   [:button {:type     "button"
-                          :title    "Ok"
-                          :class    "btn btn-default"
-                          :on-click on-close}
-                 "Ok"]
+                 [ib/image-browser {:images        images
+                                    :mode          "select"
+                                    :photo-manager {:select-photo (partial on-select editor-ref)}}]]
       :open?    open?
       :on-close on-close})))
 
