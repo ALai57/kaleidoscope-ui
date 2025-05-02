@@ -405,7 +405,7 @@
               [section-header "Chemical Engineering Internship @ " [:a {:href "https://airliquide.com"} "Air Liquide"]]
               [divider]
               [section-content
-               (str "Won a scholarship/award and selected Air Liquide as a summer internship. "
+               (str "Was selected as a Society for Chemical Industry (SCI) scholar, and chose Air Liquide as a summer internship. "
                     "At Air Liquide, I worked on a calculator that computed the amount of refrigerant necessary for a truck to transport goods "
                     "at a given temperature. "
                     "I also studied solubility properties of a gas in oil.")
