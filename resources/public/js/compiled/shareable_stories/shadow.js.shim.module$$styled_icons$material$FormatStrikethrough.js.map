@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$styled_icons$material$FormatStrikethrough.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,kEAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,yEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iDAAf,GAAmEC,OAAA,CAAQ,4CAAR,CAAnE;AACAC,uEAAwEC,CAAAA,OAAxE,GAAkFN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iDAAjG;;",
-"sources":["shadow.js.shim.module$$styled_icons$material$FormatStrikethrough.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$material$FormatStrikethrough\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$material$FormatStrikethrough\");\nshadow.js.shim.module$$styled_icons$material$FormatStrikethrough = require(\"@styled-icons/material/FormatStrikethrough\");\nmodule$shadow_js_shim_module$$styled_icons$material$FormatStrikethrough.default = shadow.js.shim.module$$styled_icons$material$FormatStrikethrough;\n"],
-"names":["goog","provide","shadow","js","shim","module$$styled_icons$material$FormatStrikethrough","require","module$shadow_js_shim_module$$styled_icons$material$FormatStrikethrough","default"]
-}

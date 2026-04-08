@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$kaleidoscope_js$ui$components$ImageBrowser.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,kEAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,yEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iDAAf,GAAmEC,OAAA,CAAQ,4CAAR,CAAnE;AACAC,uEAAwEC,CAAAA,OAAxE,GAAkFN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iDAAjG;;",
-"sources":["shadow.js.shim.module$kaleidoscope_js$ui$components$ImageBrowser.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$kaleidoscope_js$ui$components$ImageBrowser\");\ngoog.provide(\"module$shadow_js_shim_module$kaleidoscope_js$ui$components$ImageBrowser\");\nshadow.js.shim.module$kaleidoscope_js$ui$components$ImageBrowser = require(\"kaleidoscope-js/ui/components/ImageBrowser\");\nmodule$shadow_js_shim_module$kaleidoscope_js$ui$components$ImageBrowser.default = shadow.js.shim.module$kaleidoscope_js$ui$components$ImageBrowser;\n"],
-"names":["goog","provide","shadow","js","shim","module$kaleidoscope_js$ui$components$ImageBrowser","require","module$shadow_js_shim_module$kaleidoscope_js$ui$components$ImageBrowser","default"]
-}

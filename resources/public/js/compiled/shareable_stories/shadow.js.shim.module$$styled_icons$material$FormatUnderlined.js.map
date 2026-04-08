@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$styled_icons$material$FormatUnderlined.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,+DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,sEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAAf,GAAgEC,OAAA,CAAQ,yCAAR,CAAhE;AACAC,oEAAqEC,CAAAA,OAArE,GAA+EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAA9F;;",
-"sources":["shadow.js.shim.module$$styled_icons$material$FormatUnderlined.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$material$FormatUnderlined\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$material$FormatUnderlined\");\nshadow.js.shim.module$$styled_icons$material$FormatUnderlined = require(\"@styled-icons/material/FormatUnderlined\");\nmodule$shadow_js_shim_module$$styled_icons$material$FormatUnderlined.default = shadow.js.shim.module$$styled_icons$material$FormatUnderlined;\n"],
-"names":["goog","provide","shadow","js","shim","module$$styled_icons$material$FormatUnderlined","require","module$shadow_js_shim_module$$styled_icons$material$FormatUnderlined","default"]
-}

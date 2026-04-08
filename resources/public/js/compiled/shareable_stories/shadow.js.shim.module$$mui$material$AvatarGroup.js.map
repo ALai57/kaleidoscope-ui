@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$AvatarGroup.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,iDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,wDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,gCAAf,GAAkDC,OAAA,CAAQ,2BAAR,CAAlD;AACAC,sDAAuDC,CAAAA,OAAvD,GAAiEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,gCAAhF;;",
-"sources":["shadow.js.shim.module$$mui$material$AvatarGroup.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$AvatarGroup\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$AvatarGroup\");\nshadow.js.shim.module$$mui$material$AvatarGroup = require(\"@mui/material/AvatarGroup\");\nmodule$shadow_js_shim_module$$mui$material$AvatarGroup.default = shadow.js.shim.module$$mui$material$AvatarGroup;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$AvatarGroup","require","module$shadow_js_shim_module$$mui$material$AvatarGroup","default"]
-}

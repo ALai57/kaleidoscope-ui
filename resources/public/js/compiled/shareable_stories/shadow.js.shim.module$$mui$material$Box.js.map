@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$Box.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,yCAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,gDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,wBAAf,GAA0CC,OAAA,CAAQ,mBAAR,CAA1C;AACAC,8CAA+CC,CAAAA,OAA/C,GAAyDN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,wBAAxE;;",
-"sources":["shadow.js.shim.module$$mui$material$Box.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Box\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Box\");\nshadow.js.shim.module$$mui$material$Box = require(\"@mui/material/Box\");\nmodule$shadow_js_shim_module$$mui$material$Box.default = shadow.js.shim.module$$mui$material$Box;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$Box","require","module$shadow_js_shim_module$$mui$material$Box","default"]
-}

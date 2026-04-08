@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$Pagination.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,gDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,uDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,+BAAf,GAAiDC,OAAA,CAAQ,0BAAR,CAAjD;AACAC,qDAAsDC,CAAAA,OAAtD,GAAgEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,+BAA/E;;",
-"sources":["shadow.js.shim.module$$mui$material$Pagination.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Pagination\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Pagination\");\nshadow.js.shim.module$$mui$material$Pagination = require(\"@mui/material/Pagination\");\nmodule$shadow_js_shim_module$$mui$material$Pagination.default = shadow.js.shim.module$$mui$material$Pagination;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$Pagination","require","module$shadow_js_shim_module$$mui$material$Pagination","default"]
-}

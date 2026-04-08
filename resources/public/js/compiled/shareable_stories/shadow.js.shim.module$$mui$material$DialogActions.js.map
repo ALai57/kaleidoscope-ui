@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$DialogActions.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,mDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,0DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kCAAf,GAAoDC,OAAA,CAAQ,6BAAR,CAApD;AACAC,wDAAyDC,CAAAA,OAAzD,GAAmEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kCAAlF;;",
-"sources":["shadow.js.shim.module$$mui$material$DialogActions.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$DialogActions\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$DialogActions\");\nshadow.js.shim.module$$mui$material$DialogActions = require(\"@mui/material/DialogActions\");\nmodule$shadow_js_shim_module$$mui$material$DialogActions.default = shadow.js.shim.module$$mui$material$DialogActions;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$DialogActions","require","module$shadow_js_shim_module$$mui$material$DialogActions","default"]
-}

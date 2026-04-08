@@ -1,1 +1,0 @@
-{"version":3,"sources":["kaleidoscope/ui/version.cljs"],"mappings":";AAEA;;;kCAAA,AAAAA,YAAA,kCAAA,hFAAaC","names":["js/goog.define","kaleidoscope.ui.version/VERSION"],"sourcesContent":["(ns kaleidoscope.ui.version)\n\n(goog-define VERSION \"unknown-version\")\n"]}

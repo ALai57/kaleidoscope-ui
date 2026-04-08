@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$ListItemText.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,kDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,yDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iCAAf,GAAmDC,OAAA,CAAQ,4BAAR,CAAnD;AACAC,uDAAwDC,CAAAA,OAAxD,GAAkEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iCAAjF;;",
-"sources":["shadow.js.shim.module$$mui$material$ListItemText.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$ListItemText\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$ListItemText\");\nshadow.js.shim.module$$mui$material$ListItemText = require(\"@mui/material/ListItemText\");\nmodule$shadow_js_shim_module$$mui$material$ListItemText.default = shadow.js.shim.module$$mui$material$ListItemText;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$ListItemText","require","module$shadow_js_shim_module$$mui$material$ListItemText","default"]
-}

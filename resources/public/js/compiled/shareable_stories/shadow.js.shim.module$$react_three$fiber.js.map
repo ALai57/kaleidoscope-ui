@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$react_three$fiber.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,0CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,iDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,yBAAf,GAA2CC,OAAA,CAAQ,oBAAR,CAA3C;AACAC,+CAAgDC,CAAAA,OAAhD,GAA0DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,yBAAzE;;",
-"sources":["shadow.js.shim.module$$react_three$fiber.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$react_three$fiber\");\ngoog.provide(\"module$shadow_js_shim_module$$react_three$fiber\");\nshadow.js.shim.module$$react_three$fiber = require(\"@react-three/fiber\");\nmodule$shadow_js_shim_module$$react_three$fiber.default = shadow.js.shim.module$$react_three$fiber;\n"],
-"names":["goog","provide","shadow","js","shim","module$$react_three$fiber","require","module$shadow_js_shim_module$$react_three$fiber","default"]
-}

@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$CardHeader.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,gDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,uDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,+BAAf,GAAiDC,OAAA,CAAQ,0BAAR,CAAjD;AACAC,qDAAsDC,CAAAA,OAAtD,GAAgEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,+BAA/E;;",
-"sources":["shadow.js.shim.module$$mui$material$CardHeader.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$CardHeader\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$CardHeader\");\nshadow.js.shim.module$$mui$material$CardHeader = require(\"@mui/material/CardHeader\");\nmodule$shadow_js_shim_module$$mui$material$CardHeader.default = shadow.js.shim.module$$mui$material$CardHeader;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$CardHeader","require","module$shadow_js_shim_module$$mui$material$CardHeader","default"]
-}

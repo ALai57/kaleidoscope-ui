@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$Unstable_TrapFocus.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,wDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,+DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,uCAAf,GAAyDC,OAAA,CAAQ,kCAAR,CAAzD;AACAC,6DAA8DC,CAAAA,OAA9D,GAAwEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,uCAAvF;;",
-"sources":["shadow.js.shim.module$$mui$material$Unstable_TrapFocus.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Unstable_TrapFocus\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Unstable_TrapFocus\");\nshadow.js.shim.module$$mui$material$Unstable_TrapFocus = require(\"@mui/material/Unstable_TrapFocus\");\nmodule$shadow_js_shim_module$$mui$material$Unstable_TrapFocus.default = shadow.js.shim.module$$mui$material$Unstable_TrapFocus;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$Unstable_TrapFocus","require","module$shadow_js_shim_module$$mui$material$Unstable_TrapFocus","default"]
-}

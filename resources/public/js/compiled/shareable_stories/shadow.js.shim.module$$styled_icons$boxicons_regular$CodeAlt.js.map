@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$styled_icons$boxicons_regular$CodeAlt.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,8DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,qEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,6CAAf,GAA+DC,OAAA,CAAQ,wCAAR,CAA/D;AACAC,mEAAoEC,CAAAA,OAApE,GAA8EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,6CAA7F;;",
-"sources":["shadow.js.shim.module$$styled_icons$boxicons_regular$CodeAlt.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$boxicons_regular$CodeAlt\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$boxicons_regular$CodeAlt\");\nshadow.js.shim.module$$styled_icons$boxicons_regular$CodeAlt = require(\"@styled-icons/boxicons-regular/CodeAlt\");\nmodule$shadow_js_shim_module$$styled_icons$boxicons_regular$CodeAlt.default = shadow.js.shim.module$$styled_icons$boxicons_regular$CodeAlt;\n"],
-"names":["goog","provide","shadow","js","shim","module$$styled_icons$boxicons_regular$CodeAlt","require","module$shadow_js_shim_module$$styled_icons$boxicons_regular$CodeAlt","default"]
-}

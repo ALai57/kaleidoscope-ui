@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$CssBaseline.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,iDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,wDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,gCAAf,GAAkDC,OAAA,CAAQ,2BAAR,CAAlD;AACAC,sDAAuDC,CAAAA,OAAvD,GAAiEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,gCAAhF;;",
-"sources":["shadow.js.shim.module$$mui$material$CssBaseline.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$CssBaseline\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$CssBaseline\");\nshadow.js.shim.module$$mui$material$CssBaseline = require(\"@mui/material/CssBaseline\");\nmodule$shadow_js_shim_module$$mui$material$CssBaseline.default = shadow.js.shim.module$$mui$material$CssBaseline;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$CssBaseline","require","module$shadow_js_shim_module$$mui$material$CssBaseline","default"]
-}

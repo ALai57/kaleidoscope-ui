@@ -13,6 +13,8 @@ node_modules
 build-reports
 resources/kaleidoscope.pub/static/js/compiled/
 resources/kaleidoscope.client/static/js/compiled/
+resources/public/
+resources/static/
 static/js/test/*
 /public/
 

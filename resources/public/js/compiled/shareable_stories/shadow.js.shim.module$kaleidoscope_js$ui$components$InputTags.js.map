@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$kaleidoscope_js$ui$components$InputTags.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,+DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,sEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAAf,GAAgEC,OAAA,CAAQ,yCAAR,CAAhE;AACAC,oEAAqEC,CAAAA,OAArE,GAA+EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAA9F;;",
-"sources":["shadow.js.shim.module$kaleidoscope_js$ui$components$InputTags.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$kaleidoscope_js$ui$components$InputTags\");\ngoog.provide(\"module$shadow_js_shim_module$kaleidoscope_js$ui$components$InputTags\");\nshadow.js.shim.module$kaleidoscope_js$ui$components$InputTags = require(\"kaleidoscope-js/ui/components/InputTags\");\nmodule$shadow_js_shim_module$kaleidoscope_js$ui$components$InputTags.default = shadow.js.shim.module$kaleidoscope_js$ui$components$InputTags;\n"],
-"names":["goog","provide","shadow","js","shim","module$kaleidoscope_js$ui$components$InputTags","require","module$shadow_js_shim_module$kaleidoscope_js$ui$components$InputTags","default"]
-}

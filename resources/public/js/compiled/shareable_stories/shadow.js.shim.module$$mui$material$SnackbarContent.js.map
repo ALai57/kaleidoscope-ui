@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$SnackbarContent.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,qDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,4DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,oCAAf,GAAsDC,OAAA,CAAQ,+BAAR,CAAtD;AACAC,0DAA2DC,CAAAA,OAA3D,GAAqEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,oCAApF;;",
-"sources":["shadow.js.shim.module$$mui$material$SnackbarContent.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$SnackbarContent\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$SnackbarContent\");\nshadow.js.shim.module$$mui$material$SnackbarContent = require(\"@mui/material/SnackbarContent\");\nmodule$shadow_js_shim_module$$mui$material$SnackbarContent.default = shadow.js.shim.module$$mui$material$SnackbarContent;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$SnackbarContent","require","module$shadow_js_shim_module$$mui$material$SnackbarContent","default"]
-}

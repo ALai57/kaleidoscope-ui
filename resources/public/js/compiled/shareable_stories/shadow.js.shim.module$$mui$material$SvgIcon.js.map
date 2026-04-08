@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$SvgIcon.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,6CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,oDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4BAAf,GAA8CC,OAAA,CAAQ,uBAAR,CAA9C;AACAC,kDAAmDC,CAAAA,OAAnD,GAA6DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4BAA5E;;",
-"sources":["shadow.js.shim.module$$mui$material$SvgIcon.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$SvgIcon\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$SvgIcon\");\nshadow.js.shim.module$$mui$material$SvgIcon = require(\"@mui/material/SvgIcon\");\nmodule$shadow_js_shim_module$$mui$material$SvgIcon.default = shadow.js.shim.module$$mui$material$SvgIcon;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$SvgIcon","require","module$shadow_js_shim_module$$mui$material$SvgIcon","default"]
-}

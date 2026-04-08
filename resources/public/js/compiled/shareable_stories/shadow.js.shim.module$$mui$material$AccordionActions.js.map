@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$AccordionActions.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,sDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,6DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qCAAf,GAAuDC,OAAA,CAAQ,gCAAR,CAAvD;AACAC,2DAA4DC,CAAAA,OAA5D,GAAsEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qCAArF;;",
-"sources":["shadow.js.shim.module$$mui$material$AccordionActions.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$AccordionActions\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$AccordionActions\");\nshadow.js.shim.module$$mui$material$AccordionActions = require(\"@mui/material/AccordionActions\");\nmodule$shadow_js_shim_module$$mui$material$AccordionActions.default = shadow.js.shim.module$$mui$material$AccordionActions;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$AccordionActions","require","module$shadow_js_shim_module$$mui$material$AccordionActions","default"]
-}

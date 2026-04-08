@@ -1,9 +1,0 @@
-{
-"version":3,
-"file":"shadow.js.shim.module$$mui$material$BottomNavigationAction.js",
-"lineCount":5,
-"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,4DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,mEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2CAAf,GAA6DC,OAAA,CAAQ,sCAAR,CAA7D;AACAC,iEAAkEC,CAAAA,OAAlE,GAA4EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2CAA3F;;",
-"sources":["shadow.js.shim.module$$mui$material$BottomNavigationAction.js"],
-"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$BottomNavigationAction\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$BottomNavigationAction\");\nshadow.js.shim.module$$mui$material$BottomNavigationAction = require(\"@mui/material/BottomNavigationAction\");\nmodule$shadow_js_shim_module$$mui$material$BottomNavigationAction.default = shadow.js.shim.module$$mui$material$BottomNavigationAction;\n"],
-"names":["goog","provide","shadow","js","shim","module$$mui$material$BottomNavigationAction","require","module$shadow_js_shim_module$$mui$material$BottomNavigationAction","default"]
-}
