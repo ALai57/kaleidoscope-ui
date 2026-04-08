@@ -14,6 +14,8 @@ export interface RequestOptions {
   token?: string | undefined;
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
+
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', body, token } = options;
 
@@ -33,7 +35,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     fetchInit.body = JSON.stringify(body);
   }
 
-  const response = await fetch(path, fetchInit);
+  const response = await fetch(`${API_BASE}${path}`, fetchInit);
 
   if (!response.ok) {
     const text = await response.text().catch(() => response.statusText);
@@ -54,7 +56,7 @@ export async function uploadFile<T>(path: string, formData: FormData, token?: st
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(path, {
+  const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
     headers,
     body: formData,
