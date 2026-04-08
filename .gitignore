@@ -5,7 +5,8 @@ dist/
 .nrepl-port
 .rebel_readline_history
 figwheel_server.log
-*.env*
+.env*.local
+.env.production
 *.lein-repl-history
 .lein-failures
 log.txt
