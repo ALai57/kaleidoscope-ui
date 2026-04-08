@@ -15,9 +15,15 @@ const AboutThisSitePage = React.lazy(() => import('./pages/AboutThisSitePage'));
 const ManagerPage = React.lazy(() => import('./pages/ManagerPage'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 
+const ArchivePage = React.lazy(() =>
+  import('./pages/ArticlePage').then((m) => ({ default: m.ArchiveView }))
+);
+
 const router = createBrowserRouter([
   { path: '/', element: <HomePage /> },
+  { path: '/home', element: <HomePage /> },
   { path: '/content/:slug', element: <ArticlePage /> },
+  { path: '/archive', element: <ArchivePage /> },
   { path: '/articles', element: <ArticleManagerPage /> },
   { path: '/articles/:slug/edit', element: <ArticleEditorPage /> },
   { path: '/images', element: <ImageManagerPage /> },
