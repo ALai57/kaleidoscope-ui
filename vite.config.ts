@@ -4,12 +4,14 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  publicDir: 'resources/andrewslai.com',
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },
   },
   build: {
     outDir: 'resources/andrewslai.com/static/dist',
     emptyOutDir: true,
+    copyPublicDir: false,
   },
   test: {
     environment: 'jsdom',
