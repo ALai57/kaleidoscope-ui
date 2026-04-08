@@ -3,11 +3,11 @@ import MuiButton, { ButtonProps as MuiButtonProps } from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 
 export interface ButtonProps {
-  onClick?: () => void;
-  color?: MuiButtonProps['color'];
+  onClick?: (() => void) | undefined;
+  color?: MuiButtonProps['color'] | undefined;
   text?: React.ReactNode;
-  sx?: MuiButtonProps['sx'];
-  disabled?: boolean;
+  sx?: MuiButtonProps['sx'] | undefined;
+  disabled?: boolean | undefined;
 }
 
 export const Button: React.FC<ButtonProps> = ({
