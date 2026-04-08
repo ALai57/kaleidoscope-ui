@@ -7,7 +7,10 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },
   },
-  build: { outDir: 'dist' },
+  build: {
+    outDir: 'resources/andrewslai.com/static/dist',
+    emptyOutDir: true,
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['src/test/setup.ts'],

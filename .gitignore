@@ -2,6 +2,7 @@ target/*
 out
 storybook-static/
 dist/
+resources/andrewslai.com/static/dist/
 .nrepl-port
 .rebel_readline_history
 figwheel_server.log

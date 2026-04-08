@@ -714,11 +714,31 @@ Write two Playwright tests:
 
 # Phase 7 — Cutover
 
-### Step 7.1 — Switch index.html to Vite build
-Update `resources/public/index.html` to load the Vite-built `dist/assets/index.js` instead of the Shadow-CLJS compiled output. Keep the CLJS build artifacts in place — switching back is a one-line revert if needed.
+### Step 7.1 — Verify Vite build output and document index.html switch
 
-**Verify:** Open the app in a browser. It loads from the Vite build. All routes navigate correctly. Auth initializes.
-**Commit:** `chore: switch index.html to load vite build`
+`vite.config.ts` now outputs to `resources/andrewslai.com/static/dist/` (with `emptyOutDir: true`).
+The production HTML switch — updating `resources/andrewslai.com/static/index.html` to load
+`dist/assets/index.js` — happens at deploy time once the CLJS app is fully retired.
+The `resources/andrewslai.com/static/dist/` directory is gitignored; it is a CI/deploy artifact.
+
+To switch production HTML after build:
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1" charset="utf-8">
+    <title>Andrew S Lai</title>
+    <link rel="icon" href="static/images/nav-bar/favicon.png" type="image/png">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/dist/assets/index.js"></script>
+  </body>
+</html>
+```
+
+**Verify:** `build` — `resources/andrewslai.com/static/dist/assets/` contains chunk files.
+**Commit:** `chore: verify vite build output and document index.html switch approach`
 
 ---
 
