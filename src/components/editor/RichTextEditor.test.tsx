@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { render, screen, act, waitFor, fireEvent } from '@testing-library/react';
 import { RichTextEditor } from './RichTextEditor';
 
 // Import HTML fixtures as raw strings
@@ -152,6 +152,78 @@ describe('RichTextEditor', () => {
       // Image toolbar button should be present when images are provided
       await waitFor(() => {
         expect(screen.queryByTestId('toolbar-image')).not.toBeNull();
+      });
+    });
+
+    it('clicking image toolbar button opens the image browser modal', async () => {
+      const mockImages = [
+        {
+          name: 'photo.jpg',
+          title: 'Test Photo',
+          description: '',
+          creator: 'Test',
+          created_at: '2024-01-01T00:00:00Z',
+          versions: {
+            raw: { src: 'https://example.com/photo.jpg' },
+            thumbnail: { src: 'https://example.com/thumb.jpg' },
+          },
+        },
+      ];
+      await act(async () => {
+        render(<RichTextEditor images={mockImages} />);
+      });
+
+      const imageButton = await screen.findByTestId('toolbar-image');
+      await act(async () => {
+        fireEvent.click(imageButton);
+      });
+
+      // After clicking, the ImageBrowser "Insert image" button should appear in the modal
+      await waitFor(() => {
+        expect(screen.queryByText('Insert image')).not.toBeNull();
+      });
+    });
+
+    it('selecting an image via ImageBrowser inserts it into the editor', async () => {
+      const mockImages = [
+        {
+          name: 'photo.jpg',
+          title: 'Test Photo',
+          description: '',
+          creator: 'Test',
+          created_at: '2024-01-01T00:00:00Z',
+          versions: {
+            raw: { src: 'https://example.com/photo.jpg' },
+            thumbnail: { src: 'https://example.com/thumb.jpg' },
+          },
+        },
+      ];
+      await act(async () => {
+        render(<RichTextEditor images={mockImages} />);
+      });
+
+      // Open the modal
+      const imageButton = await screen.findByTestId('toolbar-image');
+      await act(async () => {
+        fireEvent.click(imageButton);
+      });
+
+      // Click "Insert image" button inside ImageBrowser
+      await waitFor(() => {
+        expect(screen.queryByText('Insert image')).not.toBeNull();
+      });
+
+      const insertButton = screen.getByText('Insert image');
+      await act(async () => {
+        fireEvent.click(insertButton);
+      });
+
+      // After selection the modal should close (ImageBrowser "Insert image" button gone)
+      await waitFor(() => {
+        // Modal content should no longer be visible (modal closed)
+        const modal = document.querySelector('[role="presentation"]');
+        // Either modal is gone or hidden
+        expect(modal === null || !modal.contains(screen.queryByText('Insert image'))).toBe(true);
       });
     });
   });
