@@ -9,12 +9,16 @@ export interface AuthConfig {
 }
 
 export interface KeycloakContextValue {
-  keycloak: Keycloak | null;
   isAuthenticated: boolean;
   token: string | undefined;
   userProfile: KeycloakProfile | null;
   login: () => void;
   logout: () => void;
+  /**
+   * Returns the current Keycloak instance. Intended for advanced use only
+   * (e.g. checking raw token claims). Do not call during render.
+   */
+  getKeycloakInstance: () => Keycloak | null;
 }
 
 export const KeycloakContext = createContext<KeycloakContextValue | null>(null);
@@ -25,6 +29,7 @@ interface KeycloakProviderProps {
 }
 
 export const KeycloakProvider: React.FC<KeycloakProviderProps> = ({ authConfig, children }) => {
+  // Stable ref — accessed only in callbacks, never during render
   const keycloakRef = useRef<Keycloak | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState<string | undefined>(undefined);
@@ -74,15 +79,17 @@ export const KeycloakProvider: React.FC<KeycloakProviderProps> = ({ authConfig, 
     keycloakRef.current?.logout();
   }, []);
 
+  const getKeycloakInstance = useCallback(() => keycloakRef.current, []);
+
   return (
     <KeycloakContext.Provider
       value={{
-        keycloak: keycloakRef.current,
         isAuthenticated,
         token,
         userProfile,
         login,
         logout,
+        getKeycloakInstance,
       }}
     >
       {children}
