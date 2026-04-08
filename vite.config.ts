@@ -7,7 +7,12 @@ export default defineConfig({
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },
   },
-  build: {
-    outDir: 'dist',
+  build: { outDir: 'dist' },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['src/test/setup.ts'],
+    globals: true,
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['src/kaleidoscope/**', 'src/kaleidoscope-js/**'],
   },
 });
