@@ -71,13 +71,13 @@ describe('RichTextEditor', () => {
 
   describe('HTML fixture round-trip tests', () => {
     it('loads basic-article.html and produces non-empty HTML', async () => {
-      let editorHtml = '';
+      let _editorHtml = '';
       await act(async () => {
         render(
           <RichTextEditor
             initialContent={basicArticle}
             onChange={(html) => {
-              editorHtml = html;
+              _editorHtml = html;
             }}
           />,
         );

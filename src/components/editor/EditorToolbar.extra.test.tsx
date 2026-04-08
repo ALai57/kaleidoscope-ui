@@ -2,28 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { EditorToolbar } from './EditorToolbar';
-import { createMockEditor } from '@/test/mockEditor';
 import type { Editor } from '@tiptap/react';
-
-// Helper to create a chainable proxy for editor.chain()
-function makeChain(runMock: ReturnType<typeof vi.fn>) {
-  const chain: Record<string, unknown> = { run: runMock };
-  return new Proxy(chain, {
-    get(target, prop) {
-      if (prop === 'run') return target.run;
-      return () => proxy;
-    },
-  }) as unknown as ReturnType<Editor['chain']>;
-
-  // We need to assign proxy before returning — use a workaround
-  var proxy = new Proxy(chain, {
-    get(target, prop) {
-      if (prop === 'run') return target.run;
-      return () => proxy;
-    },
-  }) as unknown as ReturnType<Editor['chain']>;
-  return proxy;
-}
 
 function createChainEditor(runMock: ReturnType<typeof vi.fn>): Editor {
   const proxy: Record<string, unknown> = { run: runMock };

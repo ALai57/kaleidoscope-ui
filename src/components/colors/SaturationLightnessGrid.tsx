@@ -7,7 +7,6 @@ export interface SaturationLightnessGridProps {
   onChange: (params: SaturationLightnessGridProps['origin']) => void;
 }
 
-type GridOrigin = SaturationLightnessGridProps['origin'];
 
 function hsl(hue: number, saturation: number, lightness: number): string {
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;

@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Box,
   Button,
-  FormControl,
-  InputLabel,
   Modal,
   useMediaQuery,
   useTheme,
@@ -87,6 +85,34 @@ const defaultImage: ImageVersion = {
 const defaultLogger = (e: React.ChangeEvent<HTMLInputElement>) =>
   console.log('Clicked!', e.target.files);
 
+const NewPhotoButton: React.FC<{ addPhoto: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({
+  addPhoto,
+}) => (
+  <Button
+    variant="contained"
+    startIcon={<ImageAdd style={{ height: '20px' }} />}
+    component="label"
+  >
+    Add new photo
+    <input accept="image/*" type="file" hidden onChange={addPhoto} multiple />
+  </Button>
+);
+
+const SelectButton: React.FC<{ selectPhoto: (src: string) => void; src: string }> = ({
+  selectPhoto,
+  src,
+}) => (
+  <Button
+    variant="contained"
+    component="label"
+    onClick={() => selectPhoto(src)}
+    className="image-select-button"
+    sx={{ position: 'absolute', top: '35px', right: '10px' }}
+  >
+    Insert image
+  </Button>
+);
+
 export const ImageBrowser: React.FC<ImageBrowserProps> = ({
   images,
   authToken = null,
@@ -113,13 +139,16 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
   const theSelectedImage = images[selectedImageIndex];
   const imageVersions = theSelectedImage?.versions as Record<string, ImageVersion> | undefined;
 
-  const jumpTo = (newIndex: number): void => {
-    setSelectedImageIndex(newIndex);
-    const newImage = images[newIndex];
-    if (newImage) {
-      setSelectedVersion(newImage.versions?.raw ?? defaultImage);
-    }
-  };
+  const jumpTo = React.useCallback(
+    (newIndex: number): void => {
+      setSelectedImageIndex(newIndex);
+      const newImage = images[newIndex];
+      if (newImage) {
+        setSelectedVersion(newImage.versions?.raw ?? defaultImage);
+      }
+    },
+    [images],
+  );
 
   const [modalOpen, setModalOpen] = React.useState(false);
   const theme = useTheme();
@@ -129,10 +158,15 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
     setSelectedVersion(ev.target.value as ImageVersion);
   };
 
-  const focusNext = (): void =>
-    jumpTo(selectedImageIndex >= images.length - 1 ? images.length - 1 : selectedImageIndex + 1);
-  const focusBack = (): void =>
-    jumpTo(selectedImageIndex === 0 ? 0 : selectedImageIndex - 1);
+  const focusNext = React.useCallback(
+    (): void =>
+      jumpTo(selectedImageIndex >= images.length - 1 ? images.length - 1 : selectedImageIndex + 1),
+    [jumpTo, selectedImageIndex, images.length],
+  );
+  const focusBack = React.useCallback(
+    (): void => jumpTo(selectedImageIndex === 0 ? 0 : selectedImageIndex - 1),
+    [jumpTo, selectedImageIndex],
+  );
 
   const keypressHandler = React.useCallback(
     (e: KeyboardEvent): void => {
@@ -147,7 +181,7 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
           break;
       }
     },
-    [selectedImageIndex, images.length],
+    [focusBack, focusNext],
   );
 
   React.useEffect(() => {
@@ -156,29 +190,6 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
       window.removeEventListener('keydown', keypressHandler);
     };
   }, [keypressHandler]);
-
-  const NewPhotoButton: React.FC = () => (
-    <Button
-      variant="contained"
-      startIcon={<ImageAdd style={{ height: '20px' }} />}
-      component="label"
-    >
-      Add new photo
-      <input accept="image/*" type="file" hidden onChange={addPhoto} multiple />
-    </Button>
-  );
-
-  const SelectButton: React.FC = () => (
-    <Button
-      variant="contained"
-      component="label"
-      onClick={() => selectPhoto(selectedVersion?.src ?? '')}
-      className="image-select-button"
-      sx={{ position: 'absolute', top: '35px', right: '10px' }}
-    >
-      Insert image
-    </Button>
-  );
 
   return (
     <div>
@@ -194,11 +205,11 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
             )}
           </Grid>
           <Grid item xs={8}>
-            <NewPhotoButton />
+            <NewPhotoButton addPhoto={addPhoto} />
           </Grid>
         </Grid>
       ) : (
-        <SelectButton />
+        <SelectButton selectPhoto={selectPhoto} src={selectedVersion?.src ?? ''} />
       )}
       {isMobile ? (
         <Box sx={{ width: '100vw', height: '65vh', textAlign: 'center' }}>

@@ -51,7 +51,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onGroupDeleted }) =
     },
   });
 
-  const deleteMemberMutation = useMutation({
+  const _deleteMemberMutation = useMutation({
     mutationFn: (memberId: string) => deleteGroupMember(group.group_id, memberId, token),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['groups'] }),
   });

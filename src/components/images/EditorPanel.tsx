@@ -30,6 +30,22 @@ interface EditableFieldProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
+interface SaveButtonProps {
+  onSave: () => void;
+}
+
+const SaveButton: React.FC<SaveButtonProps> = ({ onSave }) => (
+  <Button
+    variant="contained"
+    startIcon={<Save style={{ height: '20px' }} />}
+    component="label"
+    sx={{ margin: '5px' }}
+    onClick={onSave}
+  >
+    Save
+  </Button>
+);
+
 const EditableField: React.FC<EditableFieldProps> = ({
   label,
   id,
@@ -78,24 +94,6 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   };
   const displayDate = isNaN(date) ? '' : new Date(date).toLocaleString('en-US', dateFormat);
   const imageVersions = selectedImage?.versions as Record<string, ImageVersion> | undefined;
-
-  const SaveButton: React.FC = () => (
-    <Button
-      variant="contained"
-      startIcon={<Save style={{ height: '20px' }} />}
-      component="label"
-      sx={{ margin: '5px' }}
-      onClick={() =>
-        onEditPhoto({
-          photo_title: title,
-          description,
-          'photo-id': selectedImage?.name ?? '',
-        })
-      }
-    >
-      Save
-    </Button>
-  );
 
   return (
     <Box>
@@ -161,7 +159,17 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
         )}
       </form>
       <br />
-      {mode === 'edit' && <SaveButton />}
+      {mode === 'edit' && (
+        <SaveButton
+          onSave={() =>
+            onEditPhoto({
+              photo_title: title,
+              description,
+              'photo-id': selectedImage?.name ?? '',
+            })
+          }
+        />
+      )}
     </Box>
   );
 };

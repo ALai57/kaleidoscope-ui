@@ -25,7 +25,6 @@ const mockGroups: Group[] = [
 
 let deleteGroupCalled = false;
 let addMemberCalled = false;
-let deleteMemberCalled = false;
 
 const server = setupServer(
   http.get('/groups', () => HttpResponse.json(mockGroups)),
@@ -41,7 +40,6 @@ const server = setupServer(
     return new HttpResponse(null, { status: 201 });
   }),
   http.delete('/groups/:id/members/:memberId', async () => {
-    deleteMemberCalled = true;
     return new HttpResponse(null, { status: 204 });
   })
 );
@@ -51,7 +49,6 @@ afterEach(() => {
   server.resetHandlers();
   deleteGroupCalled = false;
   addMemberCalled = false;
-  deleteMemberCalled = false;
 });
 afterAll(() => server.close());
 

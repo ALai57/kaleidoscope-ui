@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import MuiSlider, { SliderProps } from '@mui/material/Slider';
+import MuiSlider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';

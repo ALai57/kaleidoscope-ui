@@ -30,12 +30,6 @@ export interface NavBarProps {
 
 const IMAGE_SIZE = { xs: '25px', sm: '60px', md: '80px', lg: '80px', xl: '100px' };
 
-const ZOOM_STYLE: React.CSSProperties = {
-  transition: 'transform 0.3s',
-  maxWidth: '100%',
-  float: 'right',
-  position: 'relative',
-};
 
 const ADMIN_ROLE_SUFFIX = ':admin';
 

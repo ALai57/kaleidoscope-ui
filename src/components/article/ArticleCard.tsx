@@ -1,7 +1,6 @@
 import React from 'react';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
-import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
 const ICON_MAP: Record<string, string> = {

@@ -4,14 +4,6 @@ import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 
-// @adobe/leonardo-contrast-colors types are not published; use minimal inline types
-interface LeonardoColor {
-  contrastColorPairs: Record<string, string>;
-}
-
-interface LeonardoTheme {
-  contrastColorPairs: Record<string, string>;
-}
 
 // Dynamically import leonardo to keep this optional
 async function buildTheme(

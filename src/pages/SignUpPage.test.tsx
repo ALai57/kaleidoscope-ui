@@ -33,10 +33,7 @@ vi.mock('@stripe/react-stripe-js', () => ({
   useElements: () => null,
 }));
 
-const mockDomainAvailability = {
-  domain: 'mycoolsite.com',
-  available: true,
-};
+// const mockDomainAvailability is unused — domain check is done via API mock
 
 const server = setupServer(
   http.get('/check-domain', ({ request }) => {
