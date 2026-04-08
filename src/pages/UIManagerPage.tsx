@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { Button } from '../components/layout/Button';
 import { ColorPicker } from '../components/colors/ColorPicker';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { useThemeStore } from '../store/themeStore';
 import { getThemes, updateTheme } from '../api/themes';
 import type { ThemeRecord } from '../api/themes';
@@ -24,7 +24,7 @@ function hueToHex(hue: number): string {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const UIManagerPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const { mode, setMode } = useColorScheme();
   const { themeParams, setThemeParams } = useThemeStore();
 

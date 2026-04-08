@@ -11,7 +11,7 @@ import type { BioView } from '../components/layout/BioSection';
 import { Timeline } from '../components/layout/Timeline';
 import { SkillsSection } from '../components/layout/SkillsSection';
 import { PortfolioSection } from '../components/layout/PortfolioSection';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { getArticles } from '../api/articles';
 
 const GRID_CENTER = {
@@ -25,7 +25,7 @@ const BREAKPOINTS = { xs: 12, sm: 12, md: 11, lg: 10, xl: 8 };
 
 const HomePage: React.FC = () => {
   const [view, setView] = useState<BioView>('cv');
-  const { isAuthenticated, token, userProfile, login, logout } = useKeycloak();
+  const { isAuthenticated, token, userProfile, login, logout } = useAuth();
 
   const { data: articles = [] } = useQuery({
     queryKey: ['articles'],

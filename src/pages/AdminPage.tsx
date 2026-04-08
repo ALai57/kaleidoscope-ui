@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { Button } from '../components/layout/Button';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 
 // ── Admin panel (authenticated view) ──────────────────────────────────────
 
@@ -50,7 +50,7 @@ const LoginPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => (
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AdminPage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { isAuthenticated, userProfile, login, logout } = useAuth();
 
   const user = userProfile
     ? {

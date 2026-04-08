@@ -15,8 +15,8 @@ const mockKeycloak = {
   logout: vi.fn(),
 };
 
-vi.mock('../auth/useKeycloak', () => ({
-  useKeycloak: () => mockKeycloak,
+vi.mock('../auth/useAuth', () => ({
+  useAuth: () => mockKeycloak,
 }));
 
 const theme = createTheme();

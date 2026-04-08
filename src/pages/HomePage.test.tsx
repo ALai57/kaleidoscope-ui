@@ -11,8 +11,8 @@ import HomePage from './HomePage';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
-vi.mock('../auth/useKeycloak', () => ({
-  useKeycloak: () => ({
+vi.mock('../auth/useAuth', () => ({
+  useAuth: () => ({
     isAuthenticated: false,
     token: undefined,
     userProfile: null,

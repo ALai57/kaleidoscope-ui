@@ -18,7 +18,7 @@ import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RichTextEditor } from '../components/editor/RichTextEditor';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { useEditorStore } from '../store/editorStore';
 import { getBranches, getBranchVersions, saveArticleVersion, publishBranch } from '../api/articles';
 import { getImageMetadata } from '../api/images';
@@ -125,7 +125,7 @@ const AudienceManager: React.FC<AudienceManagerProps> = ({ articleId, token, ope
 
 const ArticleEditorPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const queryClient = useQueryClient();
   const { editorBranchId, setEditorBranchId } = useEditorStore();
   const [audienceModalOpen, setAudienceModalOpen] = useState(false);

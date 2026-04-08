@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { NavBar } from '../components/layout/NavBar';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 
 // ── Icon component ─────────────────────────────────────────────────────────
 
@@ -52,7 +52,7 @@ const GRID_CENTER = {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AboutThisSitePage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { isAuthenticated, userProfile, login, logout } = useAuth();
 
   const user = userProfile
     ? {

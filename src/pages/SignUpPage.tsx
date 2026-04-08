@@ -18,7 +18,7 @@ import Typography from '@mui/material/Typography';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { NavBar } from '../components/layout/NavBar';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { getDomainAvailability, newPaymentSecret } from '../api/payments';
 import type { DomainAvailability, PaymentIntent } from '../api/payments';
 
@@ -183,7 +183,7 @@ const PaymentWidget: React.FC<PaymentWidgetProps> = ({ domainAvailability, payme
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const SignUpPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [domainToCheck, setDomainToCheck] = useState<string | null>(null);
 

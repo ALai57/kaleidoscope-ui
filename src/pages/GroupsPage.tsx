@@ -20,7 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { getGroups, addGroup, deleteGroup, addGroupMember, deleteGroupMember } from '../api/groups';
 import type { Group } from '../types/group';
 
@@ -125,7 +125,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onGroupDeleted }) =
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const GroupsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const queryClient = useQueryClient();
   const [newGroupName, setNewGroupName] = useState('');
 

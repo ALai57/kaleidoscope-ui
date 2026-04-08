@@ -8,7 +8,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 
 // ── Manager capabilities ───────────────────────────────────────────────────
 
@@ -87,7 +87,7 @@ const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => (
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ManagerPage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { isAuthenticated, userProfile, login, logout } = useAuth();
 
   const user = userProfile
     ? {

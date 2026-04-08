@@ -9,7 +9,7 @@ import type { GridColDef } from '@mui/x-data-grid';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { Table } from '../components/layout/Table';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { getBranches, publishBranch, togglePublicVisibility } from '../api/articles';
 import type { ArticleBranch } from '../types/article';
 
@@ -27,7 +27,7 @@ function toBranchRow(branch: ArticleBranch): BranchRow {
 
 const ArticleManagerPage: React.FC = () => {
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const queryClient = useQueryClient();
 
   const user = userProfile

@@ -5,12 +5,12 @@ import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { ImageBrowser } from '../components/images/ImageBrowser';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { getImageMetadata, addPhoto, editPhoto } from '../api/images';
 import type { EditPhotoPayload } from '../components/images/EditorPanel';
 
 const ImageManagerPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const queryClient = useQueryClient();
 
   const user = userProfile

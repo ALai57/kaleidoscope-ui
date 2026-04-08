@@ -11,8 +11,8 @@ import ArticleEditorPage from './ArticleEditorPage';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
-vi.mock('../auth/useKeycloak', () => ({
-  useKeycloak: () => ({
+vi.mock('../auth/useAuth', () => ({
+  useAuth: () => ({
     isAuthenticated: true,
     token: 'test-token',
     userProfile: { firstName: 'Admin' },

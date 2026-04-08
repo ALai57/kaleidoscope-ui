@@ -10,14 +10,14 @@ import Grid from '@mui/material/Grid';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RichTextEditor } from '../components/editor/RichTextEditor';
-import { useKeycloak } from '../auth/useKeycloak';
+import { useAuth } from '../auth/useAuth';
 import { getArticle, getArticles } from '../api/articles';
 import type { Article } from '../types/article';
 
 // ── Single article view ────────────────────────────────────────────────────
 
 const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
 
   const { data: article, isLoading, isError } = useQuery({
     queryKey: ['article', slug],
@@ -62,7 +62,7 @@ const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
 // ── Archive (all articles) view ────────────────────────────────────────────
 
 const ArchiveView: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useKeycloak();
+  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
 
   const { data: articles = [], isLoading } = useQuery({
     queryKey: ['articles'],

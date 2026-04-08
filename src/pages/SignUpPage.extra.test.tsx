@@ -8,8 +8,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import SignUpPage from './SignUpPage';
 
-vi.mock('../auth/useKeycloak', () => ({
-  useKeycloak: () => ({
+vi.mock('../auth/useAuth', () => ({
+  useAuth: () => ({
     isAuthenticated: false,
     token: undefined,
     userProfile: null,

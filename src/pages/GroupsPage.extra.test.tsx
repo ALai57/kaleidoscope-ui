@@ -9,8 +9,8 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import type { Group } from '../types/group';
 import GroupsPage from './GroupsPage';
 
-vi.mock('../auth/useKeycloak', () => ({
-  useKeycloak: () => ({
+vi.mock('../auth/useAuth', () => ({
+  useAuth: () => ({
     isAuthenticated: true,
     token: 'test-token',
     userProfile: { firstName: 'Admin' },

@@ -5,8 +5,8 @@ import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import AboutThisSitePage from './AboutThisSitePage';
 
-vi.mock('../auth/useKeycloak', () => ({
-  useKeycloak: () => ({
+vi.mock('../auth/useAuth', () => ({
+  useAuth: () => ({
     isAuthenticated: false,
     token: undefined,
     userProfile: null,
