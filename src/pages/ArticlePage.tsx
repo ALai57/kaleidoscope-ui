@@ -28,6 +28,7 @@ const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
     ? {
         firstName: userProfile.firstName ?? undefined,
         lastName: userProfile.lastName ?? undefined,
+        realm_access: userProfile.realm_access,
       }
     : undefined;
 
@@ -73,6 +74,7 @@ const ArchiveView: React.FC = () => {
     ? {
         firstName: userProfile.firstName ?? undefined,
         lastName: userProfile.lastName ?? undefined,
+        realm_access: userProfile.realm_access,
       }
     : undefined;
 

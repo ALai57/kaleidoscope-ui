@@ -50,12 +50,13 @@ const LoginPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => (
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AdminPage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useAuth();
+  const { isAuthenticated, isLoading, userProfile, login, logout } = useAuth();
 
   const user = userProfile
     ? {
         firstName: userProfile.firstName ?? undefined,
         lastName: userProfile.lastName ?? undefined,
+        realm_access: userProfile.realm_access,
       }
     : undefined;
 
@@ -63,7 +64,7 @@ const AdminPage: React.FC = () => {
     <Box id="primary-content" sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
 
-      {isAuthenticated ? (
+      {!isLoading && (isAuthenticated ? (
         <AdminPanel
           firstName={user?.firstName}
           lastName={user?.lastName}
@@ -71,7 +72,7 @@ const AdminPage: React.FC = () => {
         />
       ) : (
         <LoginPanel onLogin={login} />
-      )}
+      ))}
     </Box>
   );
 };

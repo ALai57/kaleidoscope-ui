@@ -25,15 +25,13 @@ describe('NavBar', () => {
     expect(screen.getByRole('button', { name: /login/i })).toBeTruthy();
   });
 
-  it('shows logout button when authenticated', () => {
+  it('shows user avatar when authenticated', () => {
     render(
-      <NavBar
-        isAuthenticated
-        user={{ firstName: 'Alice' }}
-      />,
+      <NavBar isAuthenticated user={{ firstName: 'Alice' }} />,
       { wrapper: Wrapper },
     );
-    expect(screen.getByRole('button', { name: /logout/i })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /admin/i })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /login/i })).toBeNull();
   });
 
   it('calls login when login button is clicked', () => {
@@ -43,20 +41,6 @@ describe('NavBar', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
     expect(handleLogin).toHaveBeenCalled();
-  });
-
-  it('calls logout when logout button is clicked', () => {
-    const handleLogout = vi.fn();
-    render(
-      <NavBar
-        isAuthenticated
-        user={{ firstName: 'Alice' }}
-        logout={handleLogout}
-      />,
-      { wrapper: Wrapper },
-    );
-    fireEvent.click(screen.getByRole('button', { name: /logout/i }));
-    expect(handleLogout).toHaveBeenCalled();
   });
 
   it('shows dark mode toggle button', () => {

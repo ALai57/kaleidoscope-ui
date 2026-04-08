@@ -133,6 +133,7 @@ const GroupsPage: React.FC = () => {
     ? {
         firstName: userProfile.firstName ?? undefined,
         lastName: userProfile.lastName ?? undefined,
+        realm_access: userProfile.realm_access,
       }
     : undefined;
 
