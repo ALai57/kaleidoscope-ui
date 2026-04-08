@@ -29,6 +29,7 @@ export interface NavBarProps {
 }
 
 const IMAGE_SIZE = { xs: '25px', sm: '60px', md: '80px', lg: '80px', xl: '100px' };
+const ICON_SIZE = 28;
 
 
 const ADMIN_ROLE_SUFFIX = ':admin';
@@ -97,82 +98,6 @@ export const NavBar: React.FC<NavBarProps> = ({
 
           {/* Icons */}
           <Box sx={{ maxHeight: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Dark mode toggle */}
-            <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
-              <IconButton onClick={handleToggleDarkMode} color="inherit" aria-label="toggle dark mode">
-                {mode === 'dark' ? (
-                  <Brightness7Icon sx={{ color: 'white' }} />
-                ) : (
-                  <Brightness4Icon sx={{ color: 'white' }} />
-                )}
-              </IconButton>
-            </Tooltip>
-
-            {/* About icon */}
-            <Tooltip title="About this site">
-              <IconButton component={Link} to="/about-this-site" color="inherit" aria-label="about">
-                <InfoIcon sx={{ color: 'white' }} />
-              </IconButton>
-            </Tooltip>
-
-            {/* User avatar / login */}
-            {isAuthenticated ? (
-              <>
-                <Tooltip title={`Logged in as ${user?.firstName ?? 'User'}`}>
-                  <IconButton
-                    component={Link}
-                    to="/admin"
-                    color="inherit"
-                    aria-label="admin"
-                  >
-                    <Avatar
-                      alt={user?.firstName ?? 'User'}
-                      src="/static/images/nav-bar/user.svg"
-                      sx={{
-                        width: IMAGE_SIZE,
-                        height: IMAGE_SIZE,
-                      }}
-                    />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Logout">
-                  <IconButton
-                    onClick={logout}
-                    color="inherit"
-                    aria-label="logout"
-                  >
-                    <Avatar alt="Logout" sx={{ width: 30, height: 30, bgcolor: 'secondary.main' }}>
-                      L
-                    </Avatar>
-                  </IconButton>
-                </Tooltip>
-              </>
-            ) : (
-              <Tooltip title="Login">
-                <IconButton
-                  onClick={login}
-                  color="inherit"
-                  aria-label="login"
-                >
-                  <Avatar
-                    alt="Login"
-                    sx={{ width: 30, height: 30, bgcolor: 'primary.main' }}
-                  >
-                    ?
-                  </Avatar>
-                </IconButton>
-              </Tooltip>
-            )}
-
-            {/* Edit icon for site admins */}
-            {isSiteAdmin && (
-              <Tooltip title="Manager">
-                <IconButton component={Link} to="/manager" color="inherit" aria-label="manager">
-                  <EditIcon sx={{ color: 'white' }} />
-                </IconButton>
-              </Tooltip>
-            )}
-
             {/* Articles icon */}
             <Tooltip title="Articles">
               <IconButton component={Link} to="/archive" color="inherit" aria-label="archive">
@@ -180,10 +105,58 @@ export const NavBar: React.FC<NavBarProps> = ({
                   component="img"
                   src="/static/images/nav-bar/articles.svg"
                   alt="Articles"
-                  sx={{ width: IMAGE_SIZE, height: IMAGE_SIZE }}
+                  sx={{ width: ICON_SIZE, height: ICON_SIZE }}
                 />
               </IconButton>
             </Tooltip>
+
+            {/* About icon */}
+            <Tooltip title="About this site">
+              <IconButton component={Link} to="/about-this-site" color="inherit" aria-label="about">
+                <InfoIcon sx={{ color: 'white', fontSize: ICON_SIZE }} />
+              </IconButton>
+            </Tooltip>
+
+            {/* Edit icon for site admins */}
+            {isSiteAdmin && (
+              <Tooltip title="Manager">
+                <IconButton component={Link} to="/manager" color="inherit" aria-label="manager">
+                  <EditIcon sx={{ color: 'white', fontSize: ICON_SIZE }} />
+                </IconButton>
+              </Tooltip>
+            )}
+
+            {/* Dark mode toggle */}
+            <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
+              <IconButton onClick={handleToggleDarkMode} color="inherit" aria-label="toggle dark mode">
+                {mode === 'dark' ? (
+                  <Brightness7Icon sx={{ color: 'white', fontSize: ICON_SIZE }} />
+                ) : (
+                  <Brightness4Icon sx={{ color: 'white', fontSize: ICON_SIZE }} />
+                )}
+              </IconButton>
+            </Tooltip>
+
+            {/* User avatar / login */}
+            {isAuthenticated ? (
+              <Tooltip title={`Logged in as ${user?.firstName ?? 'User'}`}>
+                <IconButton component={Link} to="/admin" color="inherit" aria-label="admin">
+                  <Avatar
+                    alt={user?.firstName ?? 'User'}
+                    src="/static/images/nav-bar/user.svg"
+                    sx={{ width: ICON_SIZE, height: ICON_SIZE }}
+                  />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title="Login">
+                <IconButton onClick={login} color="inherit" aria-label="login">
+                  <Avatar alt="Login" sx={{ width: ICON_SIZE, height: ICON_SIZE, bgcolor: 'primary.main' }}>
+                    ?
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         </Toolbar>
       </Container>
