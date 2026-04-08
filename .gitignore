@@ -3,6 +3,7 @@ out
 storybook-static/
 dist/
 resources/andrewslai.com/static/dist/
+coverage/
 .nrepl-port
 .rebel_readline_history
 figwheel_server.log
