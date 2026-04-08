@@ -15,6 +15,9 @@
     "@storybook/react": "7.0.9",
     "@storybook/react-webpack5": "^7.0.9",
     "@storybook/theming": "7.0.9",
+    "@types/node": "^25.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "babel-loader": "8.2.3",
     "process": "^0.11.10",
     "shadow-cljs": "2.23.3",
@@ -69,7 +72,9 @@
     "pack": "webpack --watch",
     "storybook": "storybook dev -s '../resources/kaleidoscope.client/static/js/compiled/shareable_stories' -p 6006",
     "build-storybook": "storybook build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build",
+    "dev": "vite"
   },
   "repository": {
     "type": "git",
