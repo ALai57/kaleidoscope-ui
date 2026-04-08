@@ -11,7 +11,7 @@ export class ApiError extends Error {
 export interface RequestOptions {
   method?: string;
   body?: unknown;
-  token?: string;
+  token?: string | undefined;
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
