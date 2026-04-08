@@ -18,7 +18,14 @@
     "@types/node": "^25.5.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.58.1",
+    "@typescript-eslint/parser": "^8.58.1",
     "babel-loader": "8.2.3",
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "prettier": "^3.8.1",
     "process": "^0.11.10",
     "shadow-cljs": "2.23.3",
     "storybook": "^7.0.9",
@@ -58,6 +65,7 @@
     "typescript": "^6.0.2",
     "vite": "^8.0.7"
   },
+  "type": "module",
   "main": "index.js",
   "directories": {
     "lib": "lib",
@@ -74,7 +82,11 @@
     "build-storybook": "storybook build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src"
   },
   "repository": {
     "type": "git",
