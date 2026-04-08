@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$prism_react_renderer.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,4CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,mDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAAf,GAA6CC,OAAA,CAAQ,sBAAR,CAA7C;AACAC,iDAAkDC,CAAAA,OAAlD,GAA4DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAA3E;;",
+"sources":["shadow.js.shim.module$prism_react_renderer.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$prism_react_renderer\");\ngoog.provide(\"module$shadow_js_shim_module$prism_react_renderer\");\nshadow.js.shim.module$prism_react_renderer = require(\"prism-react-renderer\");\nmodule$shadow_js_shim_module$prism_react_renderer.default = shadow.js.shim.module$prism_react_renderer;\n"],
+"names":["goog","provide","shadow","js","shim","module$prism_react_renderer","require","module$shadow_js_shim_module$prism_react_renderer","default"]
+}

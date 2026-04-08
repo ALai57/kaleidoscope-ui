@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$styled_icons$material$FormatAlignRight.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,+DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,sEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAAf,GAAgEC,OAAA,CAAQ,yCAAR,CAAhE;AACAC,oEAAqEC,CAAAA,OAArE,GAA+EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAA9F;;",
+"sources":["shadow.js.shim.module$$styled_icons$material$FormatAlignRight.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$material$FormatAlignRight\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$material$FormatAlignRight\");\nshadow.js.shim.module$$styled_icons$material$FormatAlignRight = require(\"@styled-icons/material/FormatAlignRight\");\nmodule$shadow_js_shim_module$$styled_icons$material$FormatAlignRight.default = shadow.js.shim.module$$styled_icons$material$FormatAlignRight;\n"],
+"names":["goog","provide","shadow","js","shim","module$$styled_icons$material$FormatAlignRight","require","module$shadow_js_shim_module$$styled_icons$material$FormatAlignRight","default"]
+}

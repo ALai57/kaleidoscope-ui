@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$styled_icons$material$FormatBold.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,yDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,gEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,wCAAf,GAA0DC,OAAA,CAAQ,mCAAR,CAA1D;AACAC,8DAA+DC,CAAAA,OAA/D,GAAyEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,wCAAxF;;",
+"sources":["shadow.js.shim.module$$styled_icons$material$FormatBold.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$material$FormatBold\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$material$FormatBold\");\nshadow.js.shim.module$$styled_icons$material$FormatBold = require(\"@styled-icons/material/FormatBold\");\nmodule$shadow_js_shim_module$$styled_icons$material$FormatBold.default = shadow.js.shim.module$$styled_icons$material$FormatBold;\n"],
+"names":["goog","provide","shadow","js","shim","module$$styled_icons$material$FormatBold","require","module$shadow_js_shim_module$$styled_icons$material$FormatBold","default"]
+}

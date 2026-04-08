@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$ListItemSecondaryAction.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,6DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,oEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4CAAf,GAA8DC,OAAA,CAAQ,uCAAR,CAA9D;AACAC,kEAAmEC,CAAAA,OAAnE,GAA6EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4CAA5F;;",
+"sources":["shadow.js.shim.module$$mui$material$ListItemSecondaryAction.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$ListItemSecondaryAction\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$ListItemSecondaryAction\");\nshadow.js.shim.module$$mui$material$ListItemSecondaryAction = require(\"@mui/material/ListItemSecondaryAction\");\nmodule$shadow_js_shim_module$$mui$material$ListItemSecondaryAction.default = shadow.js.shim.module$$mui$material$ListItemSecondaryAction;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$ListItemSecondaryAction","require","module$shadow_js_shim_module$$mui$material$ListItemSecondaryAction","default"]
+}

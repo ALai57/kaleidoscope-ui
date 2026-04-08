@@ -1,0 +1,1 @@
+{:module-uris {:skeleton [], :kaleidoscope ["js/compiled/kaleidoscope/kaleidoscope.js"], :editor ["js/compiled/kaleidoscope/editor.js"]}, :module-infos {:skeleton nil, :kaleidoscope #{:skeleton}, :editor #{:kaleidoscope :skeleton}}}

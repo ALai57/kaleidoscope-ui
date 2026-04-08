@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$useScrollTrigger.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,sDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,6DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qCAAf,GAAuDC,OAAA,CAAQ,gCAAR,CAAvD;AACAC,2DAA4DC,CAAAA,OAA5D,GAAsEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qCAArF;;",
+"sources":["shadow.js.shim.module$$mui$material$useScrollTrigger.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$useScrollTrigger\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$useScrollTrigger\");\nshadow.js.shim.module$$mui$material$useScrollTrigger = require(\"@mui/material/useScrollTrigger\");\nmodule$shadow_js_shim_module$$mui$material$useScrollTrigger.default = shadow.js.shim.module$$mui$material$useScrollTrigger;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$useScrollTrigger","require","module$shadow_js_shim_module$$mui$material$useScrollTrigger","default"]
+}

@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$kaleidoscope_js$ui$components$ImageCardGallery.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,sEAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,6EAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qDAAf,GAAuEC,OAAA,CAAQ,gDAAR,CAAvE;AACAC,2EAA4EC,CAAAA,OAA5E,GAAsFN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qDAArG;;",
+"sources":["shadow.js.shim.module$kaleidoscope_js$ui$components$ImageCardGallery.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$kaleidoscope_js$ui$components$ImageCardGallery\");\ngoog.provide(\"module$shadow_js_shim_module$kaleidoscope_js$ui$components$ImageCardGallery\");\nshadow.js.shim.module$kaleidoscope_js$ui$components$ImageCardGallery = require(\"kaleidoscope-js/ui/components/ImageCardGallery\");\nmodule$shadow_js_shim_module$kaleidoscope_js$ui$components$ImageCardGallery.default = shadow.js.shim.module$kaleidoscope_js$ui$components$ImageCardGallery;\n"],
+"names":["goog","provide","shadow","js","shim","module$kaleidoscope_js$ui$components$ImageCardGallery","require","module$shadow_js_shim_module$kaleidoscope_js$ui$components$ImageCardGallery","default"]
+}

@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$ListItemIcon.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,kDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,yDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iCAAf,GAAmDC,OAAA,CAAQ,4BAAR,CAAnD;AACAC,uDAAwDC,CAAAA,OAAxD,GAAkEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iCAAjF;;",
+"sources":["shadow.js.shim.module$$mui$material$ListItemIcon.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$ListItemIcon\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$ListItemIcon\");\nshadow.js.shim.module$$mui$material$ListItemIcon = require(\"@mui/material/ListItemIcon\");\nmodule$shadow_js_shim_module$$mui$material$ListItemIcon.default = shadow.js.shim.module$$mui$material$ListItemIcon;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$ListItemIcon","require","module$shadow_js_shim_module$$mui$material$ListItemIcon","default"]
+}

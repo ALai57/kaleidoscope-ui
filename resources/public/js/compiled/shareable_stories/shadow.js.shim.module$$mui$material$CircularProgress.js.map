@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$CircularProgress.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,sDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,6DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qCAAf,GAAuDC,OAAA,CAAQ,gCAAR,CAAvD;AACAC,2DAA4DC,CAAAA,OAA5D,GAAsEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qCAArF;;",
+"sources":["shadow.js.shim.module$$mui$material$CircularProgress.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$CircularProgress\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$CircularProgress\");\nshadow.js.shim.module$$mui$material$CircularProgress = require(\"@mui/material/CircularProgress\");\nmodule$shadow_js_shim_module$$mui$material$CircularProgress.default = shadow.js.shim.module$$mui$material$CircularProgress;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$CircularProgress","require","module$shadow_js_shim_module$$mui$material$CircularProgress","default"]
+}

@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$GlobalStyles.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,kDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,yDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iCAAf,GAAmDC,OAAA,CAAQ,4BAAR,CAAnD;AACAC,uDAAwDC,CAAAA,OAAxD,GAAkEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,iCAAjF;;",
+"sources":["shadow.js.shim.module$$mui$material$GlobalStyles.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$GlobalStyles\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$GlobalStyles\");\nshadow.js.shim.module$$mui$material$GlobalStyles = require(\"@mui/material/GlobalStyles\");\nmodule$shadow_js_shim_module$$mui$material$GlobalStyles.default = shadow.js.shim.module$$mui$material$GlobalStyles;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$GlobalStyles","require","module$shadow_js_shim_module$$mui$material$GlobalStyles","default"]
+}

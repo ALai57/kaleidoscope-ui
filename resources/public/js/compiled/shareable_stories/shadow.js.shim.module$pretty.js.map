@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$pretty.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,8BAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,qCAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,aAAf,GAA+BC,OAAA,CAAQ,QAAR,CAA/B;AACAC,mCAAoCC,CAAAA,OAApC,GAA8CN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,aAA7D;;",
+"sources":["shadow.js.shim.module$pretty.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$pretty\");\ngoog.provide(\"module$shadow_js_shim_module$pretty\");\nshadow.js.shim.module$pretty = require(\"pretty\");\nmodule$shadow_js_shim_module$pretty.default = shadow.js.shim.module$pretty;\n"],
+"names":["goog","provide","shadow","js","shim","module$pretty","require","module$shadow_js_shim_module$pretty","default"]
+}

@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$react_three$drei.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,yCAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,gDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,wBAAf,GAA0CC,OAAA,CAAQ,mBAAR,CAA1C;AACAC,8CAA+CC,CAAAA,OAA/C,GAAyDN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,wBAAxE;;",
+"sources":["shadow.js.shim.module$$react_three$drei.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$react_three$drei\");\ngoog.provide(\"module$shadow_js_shim_module$$react_three$drei\");\nshadow.js.shim.module$$react_three$drei = require(\"@react-three/drei\");\nmodule$shadow_js_shim_module$$react_three$drei.default = shadow.js.shim.module$$react_three$drei;\n"],
+"names":["goog","provide","shadow","js","shim","module$$react_three$drei","require","module$shadow_js_shim_module$$react_three$drei","default"]
+}

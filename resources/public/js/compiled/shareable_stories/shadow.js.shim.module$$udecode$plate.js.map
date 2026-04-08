@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$udecode$plate.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,sCAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,6CAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qBAAf,GAAuCC,OAAA,CAAQ,gBAAR,CAAvC;AACAC,2CAA4CC,CAAAA,OAA5C,GAAsDN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,qBAArE;;",
+"sources":["shadow.js.shim.module$$udecode$plate.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$udecode$plate\");\ngoog.provide(\"module$shadow_js_shim_module$$udecode$plate\");\nshadow.js.shim.module$$udecode$plate = require(\"@udecode/plate\");\nmodule$shadow_js_shim_module$$udecode$plate.default = shadow.js.shim.module$$udecode$plate;\n"],
+"names":["goog","provide","shadow","js","shim","module$$udecode$plate","require","module$shadow_js_shim_module$$udecode$plate","default"]
+}

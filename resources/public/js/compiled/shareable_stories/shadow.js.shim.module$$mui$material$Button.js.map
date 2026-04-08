@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$Button.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,4CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,mDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAAf,GAA6CC,OAAA,CAAQ,sBAAR,CAA7C;AACAC,iDAAkDC,CAAAA,OAAlD,GAA4DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAA3E;;",
+"sources":["shadow.js.shim.module$$mui$material$Button.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Button\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Button\");\nshadow.js.shim.module$$mui$material$Button = require(\"@mui/material/Button\");\nmodule$shadow_js_shim_module$$mui$material$Button.default = shadow.js.shim.module$$mui$material$Button;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$Button","require","module$shadow_js_shim_module$$mui$material$Button","default"]
+}

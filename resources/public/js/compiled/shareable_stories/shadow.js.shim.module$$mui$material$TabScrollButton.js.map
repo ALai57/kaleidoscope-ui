@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$TabScrollButton.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,qDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,4DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,oCAAf,GAAsDC,OAAA,CAAQ,+BAAR,CAAtD;AACAC,0DAA2DC,CAAAA,OAA3D,GAAqEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,oCAApF;;",
+"sources":["shadow.js.shim.module$$mui$material$TabScrollButton.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$TabScrollButton\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$TabScrollButton\");\nshadow.js.shim.module$$mui$material$TabScrollButton = require(\"@mui/material/TabScrollButton\");\nmodule$shadow_js_shim_module$$mui$material$TabScrollButton.default = shadow.js.shim.module$$mui$material$TabScrollButton;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$TabScrollButton","require","module$shadow_js_shim_module$$mui$material$TabScrollButton","default"]
+}

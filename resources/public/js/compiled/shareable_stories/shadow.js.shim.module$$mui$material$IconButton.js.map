@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$IconButton.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,gDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,uDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,+BAAf,GAAiDC,OAAA,CAAQ,0BAAR,CAAjD;AACAC,qDAAsDC,CAAAA,OAAtD,GAAgEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,+BAA/E;;",
+"sources":["shadow.js.shim.module$$mui$material$IconButton.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$IconButton\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$IconButton\");\nshadow.js.shim.module$$mui$material$IconButton = require(\"@mui/material/IconButton\");\nmodule$shadow_js_shim_module$$mui$material$IconButton.default = shadow.js.shim.module$$mui$material$IconButton;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$IconButton","require","module$shadow_js_shim_module$$mui$material$IconButton","default"]
+}

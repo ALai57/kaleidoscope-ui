@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$Switch.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,4CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,mDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAAf,GAA6CC,OAAA,CAAQ,sBAAR,CAA7C;AACAC,iDAAkDC,CAAAA,OAAlD,GAA4DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAA3E;;",
+"sources":["shadow.js.shim.module$$mui$material$Switch.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Switch\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Switch\");\nshadow.js.shim.module$$mui$material$Switch = require(\"@mui/material/Switch\");\nmodule$shadow_js_shim_module$$mui$material$Switch.default = shadow.js.shim.module$$mui$material$Switch;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$Switch","require","module$shadow_js_shim_module$$mui$material$Switch","default"]
+}

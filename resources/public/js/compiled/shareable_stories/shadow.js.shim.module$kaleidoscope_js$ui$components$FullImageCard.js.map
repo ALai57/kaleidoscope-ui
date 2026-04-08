@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$kaleidoscope_js$ui$components$FullImageCard.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,mEAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,0EAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kDAAf,GAAoEC,OAAA,CAAQ,6CAAR,CAApE;AACAC,wEAAyEC,CAAAA,OAAzE,GAAmFN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kDAAlG;;",
+"sources":["shadow.js.shim.module$kaleidoscope_js$ui$components$FullImageCard.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$kaleidoscope_js$ui$components$FullImageCard\");\ngoog.provide(\"module$shadow_js_shim_module$kaleidoscope_js$ui$components$FullImageCard\");\nshadow.js.shim.module$kaleidoscope_js$ui$components$FullImageCard = require(\"kaleidoscope-js/ui/components/FullImageCard\");\nmodule$shadow_js_shim_module$kaleidoscope_js$ui$components$FullImageCard.default = shadow.js.shim.module$kaleidoscope_js$ui$components$FullImageCard;\n"],
+"names":["goog","provide","shadow","js","shim","module$kaleidoscope_js$ui$components$FullImageCard","require","module$shadow_js_shim_module$kaleidoscope_js$ui$components$FullImageCard","default"]
+}

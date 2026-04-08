@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$styled_icons$remix_fill$ErrorWarning.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,6DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,oEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4CAAf,GAA8DC,OAAA,CAAQ,uCAAR,CAA9D;AACAC,kEAAmEC,CAAAA,OAAnE,GAA6EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4CAA5F;;",
+"sources":["shadow.js.shim.module$$styled_icons$remix_fill$ErrorWarning.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$remix_fill$ErrorWarning\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$remix_fill$ErrorWarning\");\nshadow.js.shim.module$$styled_icons$remix_fill$ErrorWarning = require(\"@styled-icons/remix-fill/ErrorWarning\");\nmodule$shadow_js_shim_module$$styled_icons$remix_fill$ErrorWarning.default = shadow.js.shim.module$$styled_icons$remix_fill$ErrorWarning;\n"],
+"names":["goog","provide","shadow","js","shim","module$$styled_icons$remix_fill$ErrorWarning","require","module$shadow_js_shim_module$$styled_icons$remix_fill$ErrorWarning","default"]
+}

@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$prism_react_renderer$themes$dracula.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,2DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,kEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,0CAAf,GAA4DC,OAAA,CAAQ,qCAAR,CAA5D;AACAC,gEAAiEC,CAAAA,OAAjE,GAA2EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,0CAA1F;;",
+"sources":["shadow.js.shim.module$prism_react_renderer$themes$dracula.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$prism_react_renderer$themes$dracula\");\ngoog.provide(\"module$shadow_js_shim_module$prism_react_renderer$themes$dracula\");\nshadow.js.shim.module$prism_react_renderer$themes$dracula = require(\"prism-react-renderer/themes/dracula\");\nmodule$shadow_js_shim_module$prism_react_renderer$themes$dracula.default = shadow.js.shim.module$prism_react_renderer$themes$dracula;\n"],
+"names":["goog","provide","shadow","js","shim","module$prism_react_renderer$themes$dracula","require","module$shadow_js_shim_module$prism_react_renderer$themes$dracula","default"]
+}

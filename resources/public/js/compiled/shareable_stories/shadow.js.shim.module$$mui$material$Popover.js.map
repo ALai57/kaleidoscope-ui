@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$Popover.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,6CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,oDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4BAAf,GAA8CC,OAAA,CAAQ,uBAAR,CAA9C;AACAC,kDAAmDC,CAAAA,OAAnD,GAA6DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,4BAA5E;;",
+"sources":["shadow.js.shim.module$$mui$material$Popover.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Popover\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Popover\");\nshadow.js.shim.module$$mui$material$Popover = require(\"@mui/material/Popover\");\nmodule$shadow_js_shim_module$$mui$material$Popover.default = shadow.js.shim.module$$mui$material$Popover;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$Popover","require","module$shadow_js_shim_module$$mui$material$Popover","default"]
+}

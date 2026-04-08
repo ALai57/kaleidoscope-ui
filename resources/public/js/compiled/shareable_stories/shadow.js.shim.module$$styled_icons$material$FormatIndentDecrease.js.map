@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$styled_icons$material$FormatIndentDecrease.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,mEAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,0EAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kDAAf,GAAoEC,OAAA,CAAQ,6CAAR,CAApE;AACAC,wEAAyEC,CAAAA,OAAzE,GAAmFN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kDAAlG;;",
+"sources":["shadow.js.shim.module$$styled_icons$material$FormatIndentDecrease.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$material$FormatIndentDecrease\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$material$FormatIndentDecrease\");\nshadow.js.shim.module$$styled_icons$material$FormatIndentDecrease = require(\"@styled-icons/material/FormatIndentDecrease\");\nmodule$shadow_js_shim_module$$styled_icons$material$FormatIndentDecrease.default = shadow.js.shim.module$$styled_icons$material$FormatIndentDecrease;\n"],
+"names":["goog","provide","shadow","js","shim","module$$styled_icons$material$FormatIndentDecrease","require","module$shadow_js_shim_module$$styled_icons$material$FormatIndentDecrease","default"]
+}

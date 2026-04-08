@@ -1,0 +1,39 @@
+goog.provide('kaleidoscope.ui.components.modals.editor');
+kaleidoscope.ui.components.modals.editor.create_article_failure = (function kaleidoscope$ui$components$modals$editor$create_article_failure(payload){
+return new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null,"title","title",636505583),"Article creation failed!",new cljs.core.Keyword(null,"body","body",-2049205669),new cljs.core.PersistentVector(null, 6, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div","div",1057191632),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"style","style",-496642736),new cljs.core.PersistentArrayMap(null, 1, [new cljs.core.Keyword(null,"overflow-wrap","overflow-wrap",-60289494),"break-word"], null)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p","p",151049309),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"b","b",1482224470),"Creation unsuccessful."], null)], null),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"br","br",934104792)], null),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p","p",151049309),cljs.core.str.cljs$core$IFn$_invoke$arity$1(payload)], null),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"br","br",934104792)], null)], null),new cljs.core.Keyword(null,"footer","footer",1606445390),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"button","button",1456579943),new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null,"type","type",1174270348),"button",new cljs.core.Keyword(null,"title","title",636505583),"Ok",new cljs.core.Keyword(null,"class","class",-2030961996),"btn btn-default",new cljs.core.Keyword(null,"on-click","on-click",1632826543),(function (){
+return taoensso.timbre._log_BANG_.cljs$core$IFn$_invoke$arity$11(taoensso.timbre._STAR_config_STAR_,new cljs.core.Keyword(null,"info","info",-317069002),"kaleidoscope.ui.components.modals.editor",null,14,new cljs.core.Keyword(null,"f","f",-1597136552),new cljs.core.Keyword(null,"auto","auto",-566279492),(new cljs.core.Delay((function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Failed to close"], null);
+}),null)),null,73902083,null);
+})], null),"Ok"], null),new cljs.core.Keyword(null,"close-fn","close-fn",-1779772512),(function (){
+return taoensso.timbre._log_BANG_.cljs$core$IFn$_invoke$arity$11(taoensso.timbre._STAR_config_STAR_,new cljs.core.Keyword(null,"info","info",-317069002),"kaleidoscope.ui.components.modals.editor",null,15,new cljs.core.Keyword(null,"f","f",-1597136552),new cljs.core.Keyword(null,"auto","auto",-566279492),(new cljs.core.Delay((function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Failed to close"], null);
+}),null)),null,-1259682032,null);
+})], null);
+});
+kaleidoscope.ui.components.modals.editor.create_article_failure_modal = (function kaleidoscope$ui$components$modals$editor$create_article_failure_modal(payload){
+return kaleidoscope.ui.components.modal.modal_template(kaleidoscope.ui.components.modals.editor.create_article_failure(payload));
+});
+kaleidoscope.ui.components.modals.editor.create_article_success = (function kaleidoscope$ui$components$modals$editor$create_article_success(p__20089){
+var map__20090 = p__20089;
+var map__20090__$1 = cljs.core.__destructure_map(map__20090);
+var article = map__20090__$1;
+var title = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__20090__$1,new cljs.core.Keyword(null,"title","title",636505583));
+var author = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__20090__$1,new cljs.core.Keyword(null,"author","author",2111686192));
+var timestamp = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__20090__$1,new cljs.core.Keyword(null,"timestamp","timestamp",579478971));
+var article_tags = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__20090__$1,new cljs.core.Keyword(null,"article_tags","article_tags",70808559));
+var article_url = cljs.core.get.cljs$core$IFn$_invoke$arity$2(map__20090__$1,new cljs.core.Keyword(null,"article_url","article_url",-1356690929));
+var url = ["/#/content/",cljs.core.str.cljs$core$IFn$_invoke$arity$1(article_url)].join('');
+var close_fn = (function (){
+taoensso.timbre._log_BANG_.cljs$core$IFn$_invoke$arity$11(taoensso.timbre._STAR_config_STAR_,new cljs.core.Keyword(null,"info","info",-317069002),"kaleidoscope.ui.components.modals.editor",null,24,new cljs.core.Keyword(null,"f","f",-1597136552),new cljs.core.Keyword(null,"auto","auto",-566279492),(new cljs.core.Delay((function (){
+return new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, ["Failed to close"], null);
+}),null)),null,-1105820054,null);
+
+return (document.location.href = url);
+});
+return new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null,"title","title",636505583),"Successful article creation!",new cljs.core.Keyword(null,"body","body",-2049205669),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div","div",1057191632),new cljs.core.PersistentVector(null, 1, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"br","br",934104792)], null),new cljs.core.PersistentVector(null, 5, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"div","div",1057191632),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p","p",151049309),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"b","b",1482224470),"Article: "], null),title], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p","p",151049309),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"b","b",1482224470),"Author: "], null),author], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p","p",151049309),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"b","b",1482224470),"Timestamp: "], null),cljs.core.str.cljs$core$IFn$_invoke$arity$1(timestamp)], null),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"p","p",151049309),new cljs.core.PersistentVector(null, 2, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"b","b",1482224470),"URL: "], null),url], null)], null)], null),new cljs.core.Keyword(null,"footer","footer",1606445390),new cljs.core.PersistentVector(null, 3, 5, cljs.core.PersistentVector.EMPTY_NODE, [new cljs.core.Keyword(null,"button","button",1456579943),new cljs.core.PersistentArrayMap(null, 4, [new cljs.core.Keyword(null,"type","type",1174270348),"button",new cljs.core.Keyword(null,"title","title",636505583),"Ok",new cljs.core.Keyword(null,"class","class",-2030961996),"btn btn-default",new cljs.core.Keyword(null,"on-click","on-click",1632826543),close_fn], null),"Ok"], null),new cljs.core.Keyword(null,"close-fn","close-fn",-1779772512),close_fn], null);
+});
+kaleidoscope.ui.components.modals.editor.create_article_success_modal = (function kaleidoscope$ui$components$modals$editor$create_article_success_modal(article){
+return kaleidoscope.ui.components.modal.modal_template(kaleidoscope.ui.components.modals.editor.create_article_success(article));
+});
+
+//# sourceMappingURL=kaleidoscope.ui.components.modals.editor.js.map

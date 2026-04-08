@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$colors.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,4CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,mDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAAf,GAA6CC,OAAA,CAAQ,sBAAR,CAA7C;AACAC,iDAAkDC,CAAAA,OAAlD,GAA4DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAA3E;;",
+"sources":["shadow.js.shim.module$$mui$material$colors.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$colors\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$colors\");\nshadow.js.shim.module$$mui$material$colors = require(\"@mui/material/colors\");\nmodule$shadow_js_shim_module$$mui$material$colors.default = shadow.js.shim.module$$mui$material$colors;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$colors","require","module$shadow_js_shim_module$$mui$material$colors","default"]
+}

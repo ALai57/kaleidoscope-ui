@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$keycloak_js.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,mCAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,0CAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kBAAf,GAAoCC,OAAA,CAAQ,aAAR,CAApC;AACAC,wCAAyCC,CAAAA,OAAzC,GAAmDN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,kBAAlE;;",
+"sources":["shadow.js.shim.module$keycloak_js.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$keycloak_js\");\ngoog.provide(\"module$shadow_js_shim_module$keycloak_js\");\nshadow.js.shim.module$keycloak_js = require(\"keycloak-js\");\nmodule$shadow_js_shim_module$keycloak_js.default = shadow.js.shim.module$keycloak_js;\n"],
+"names":["goog","provide","shadow","js","shim","module$keycloak_js","require","module$shadow_js_shim_module$keycloak_js","default"]
+}

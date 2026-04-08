@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$DialogContentText.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,uDAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,8DAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,sCAAf,GAAwDC,OAAA,CAAQ,iCAAR,CAAxD;AACAC,4DAA6DC,CAAAA,OAA7D,GAAuEN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,sCAAtF;;",
+"sources":["shadow.js.shim.module$$mui$material$DialogContentText.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$DialogContentText\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$DialogContentText\");\nshadow.js.shim.module$$mui$material$DialogContentText = require(\"@mui/material/DialogContentText\");\nmodule$shadow_js_shim_module$$mui$material$DialogContentText.default = shadow.js.shim.module$$mui$material$DialogContentText;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$DialogContentText","require","module$shadow_js_shim_module$$mui$material$DialogContentText","default"]
+}

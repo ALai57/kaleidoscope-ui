@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$mui$material$Portal.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,4CAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,mDAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAAf,GAA6CC,OAAA,CAAQ,sBAAR,CAA7C;AACAC,iDAAkDC,CAAAA,OAAlD,GAA4DN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,2BAA3E;;",
+"sources":["shadow.js.shim.module$$mui$material$Portal.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$mui$material$Portal\");\ngoog.provide(\"module$shadow_js_shim_module$$mui$material$Portal\");\nshadow.js.shim.module$$mui$material$Portal = require(\"@mui/material/Portal\");\nmodule$shadow_js_shim_module$$mui$material$Portal.default = shadow.js.shim.module$$mui$material$Portal;\n"],
+"names":["goog","provide","shadow","js","shim","module$$mui$material$Portal","require","module$shadow_js_shim_module$$mui$material$Portal","default"]
+}

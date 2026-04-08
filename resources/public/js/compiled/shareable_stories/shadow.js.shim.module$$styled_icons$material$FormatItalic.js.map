@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$styled_icons$material$FormatItalic.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,2DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,kEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,0CAAf,GAA4DC,OAAA,CAAQ,qCAAR,CAA5D;AACAC,gEAAiEC,CAAAA,OAAjE,GAA2EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,0CAA1F;;",
+"sources":["shadow.js.shim.module$$styled_icons$material$FormatItalic.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$material$FormatItalic\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$material$FormatItalic\");\nshadow.js.shim.module$$styled_icons$material$FormatItalic = require(\"@styled-icons/material/FormatItalic\");\nmodule$shadow_js_shim_module$$styled_icons$material$FormatItalic.default = shadow.js.shim.module$$styled_icons$material$FormatItalic;\n"],
+"names":["goog","provide","shadow","js","shim","module$$styled_icons$material$FormatItalic","require","module$shadow_js_shim_module$$styled_icons$material$FormatItalic","default"]
+}

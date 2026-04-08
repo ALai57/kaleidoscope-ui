@@ -1,5 +1,7 @@
 target/*
 out
+storybook-static/
+dist/
 .nrepl-port
 .rebel_readline_history
 figwheel_server.log

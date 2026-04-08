@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"shadow.js.shim.module$$styled_icons$boxicons_regular$ImageAdd.js",
+"lineCount":5,
+"mappings":"AAAAA,IAAKC,CAAAA,OAAL,CAAa,+DAAb,CAAA;AACAD,IAAKC,CAAAA,OAAL,CAAa,sEAAb,CAAA;AACAC,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAAf,GAAgEC,OAAA,CAAQ,yCAAR,CAAhE;AACAC,oEAAqEC,CAAAA,OAArE,GAA+EN,MAAOC,CAAAA,EAAGC,CAAAA,IAAKC,CAAAA,8CAA9F;;",
+"sources":["shadow.js.shim.module$$styled_icons$boxicons_regular$ImageAdd.js"],
+"sourcesContent":["goog.provide(\"shadow.js.shim.module$$styled_icons$boxicons_regular$ImageAdd\");\ngoog.provide(\"module$shadow_js_shim_module$$styled_icons$boxicons_regular$ImageAdd\");\nshadow.js.shim.module$$styled_icons$boxicons_regular$ImageAdd = require(\"@styled-icons/boxicons-regular/ImageAdd\");\nmodule$shadow_js_shim_module$$styled_icons$boxicons_regular$ImageAdd.default = shadow.js.shim.module$$styled_icons$boxicons_regular$ImageAdd;\n"],
+"names":["goog","provide","shadow","js","shim","module$$styled_icons$boxicons_regular$ImageAdd","require","module$shadow_js_shim_module$$styled_icons$boxicons_regular$ImageAdd","default"]
+}
