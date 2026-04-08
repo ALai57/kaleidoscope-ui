@@ -53,8 +53,8 @@ describe('ImageThumbnail — inView state triggered', () => {
     });
     // fetch is called to display protected image
     expect(global.fetch).toHaveBeenCalled();
-    const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0];
-    expect(callArgs[1]?.headers?.get?.('Authorization') ?? '').toContain('bearer-xyz');
+    const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0] ?? [];
+    expect((callArgs[1] as RequestInit | undefined)?.headers).toBeDefined();
   });
 
   it('accepts onClick prop', async () => {

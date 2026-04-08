@@ -147,6 +147,7 @@ describe('SaturationLightnessGrid — mouse interactions', () => {
       saturation: 60,
       lightness: 40,
       angle: 30,
+      theta: 45,
     };
     const { container } = render(
       <SaturationLightnessGrid
