@@ -21,7 +21,6 @@ const defaultProps = {
   mode: 'edit' as const,
   onVersionChange: vi.fn(),
   onEditPhoto: vi.fn(),
-  albums: ['Travel', 'Family'],
 };
 
 describe('EditorPanel', () => {

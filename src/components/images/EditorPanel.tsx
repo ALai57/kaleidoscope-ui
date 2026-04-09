@@ -1,10 +1,9 @@
 import React from 'react';
-import { Box, TextField, Button, InputLabel, FormControl } from '@mui/material';
+import { Box, TextField, Button, InputLabel, FormControl, Stack } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { Save } from '@styled-icons/boxicons-regular/Save';
 import { Image, ImageVersion } from '@/types/image';
 import { VersionSelector } from './VersionSelector';
-import { InputTags } from '@/components/inputs/InputTags';
 
 export interface EditPhotoPayload {
   photo_title: string;
@@ -18,54 +17,25 @@ export interface EditorPanelProps {
   mode: 'edit' | 'select';
   onVersionChange: (event: SelectChangeEvent<ImageVersion>) => void;
   onEditPhoto: (payload: EditPhotoPayload) => void;
-  albums: string[];
   showVersionSelector?: boolean;
-}
-
-interface EditableFieldProps {
-  label: string;
-  id: string;
-  val: string;
-  disabled: boolean;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isSaving?: boolean;
 }
 
 interface SaveButtonProps {
   onSave: () => void;
+  isSaving?: boolean;
 }
 
-const SaveButton: React.FC<SaveButtonProps> = ({ onSave }) => (
+const SaveButton: React.FC<SaveButtonProps> = ({ onSave, isSaving = false }) => (
   <Button
     variant="contained"
     startIcon={<Save style={{ height: '20px' }} />}
-    component="label"
-    sx={{ margin: '5px' }}
+    sx={{ mt: 1 }}
     onClick={onSave}
+    disabled={isSaving}
   >
-    Save
+    {isSaving ? 'Saving…' : 'Save'}
   </Button>
-);
-
-const EditableField: React.FC<EditableFieldProps> = ({
-  label,
-  id,
-  val,
-  disabled,
-  onChange,
-}) => (
-  <React.Fragment>
-    <TextField
-      label={label}
-      id={id}
-      type="text"
-      defaultValue={val}
-      disabled={disabled}
-      sx={{ width: '100%', paddingTop: '7px', paddingBottom: '7px' }}
-      onChange={onChange}
-      size="small"
-    />
-    <br />
-  </React.Fragment>
 );
 
 export const EditorPanel: React.FC<EditorPanelProps> = ({
@@ -74,13 +44,11 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
   mode,
   onVersionChange,
   onEditPhoto,
-  albums,
   showVersionSelector = true,
+  isSaving = false,
 }) => {
   const [title, setTitle] = React.useState<string>(selectedImage?.title ?? '');
-  const [description, setDescription] = React.useState<string>(
-    selectedImage?.description ?? '',
-  );
+  const [description, setDescription] = React.useState<string>(selectedImage?.description ?? '');
 
   const date = Date.parse(selectedImage?.created_at ?? '');
   const dateFormat: Intl.DateTimeFormatOptions = {
@@ -97,58 +65,31 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
 
   return (
     <Box>
-      <form>
-        <br />
-        <EditableField
-          key={(selectedImage?.name ?? '') + 'ef-1'}
-          label="Name"
-          id="name"
-          disabled
-          val={selectedImage?.name ?? ''}
-        />
-        <EditableField
-          key={(selectedImage?.name ?? '') + 'ef-2'}
-          label="Created At"
-          id="created_at"
-          disabled
-          val={displayDate}
-        />
-        <EditableField
-          key={(selectedImage?.name ?? '') + 'ef-3'}
-          label="Creator"
-          id="creator"
-          disabled
-          val={selectedImage?.creator ?? ''}
-        />
-        <EditableField
-          key={(selectedImage?.name ?? '') + 'ef-4'}
+      <Stack spacing={1}>
+        <TextField label="Name" size="small" disabled fullWidth value={selectedImage?.name ?? ''} />
+        <TextField label="Created At" size="small" disabled fullWidth value={displayDate} />
+        <TextField label="Creator" size="small" disabled fullWidth value={selectedImage?.creator ?? ''} />
+        <TextField
           label="Title"
-          id="title"
+          size="small"
+          fullWidth
           disabled={mode !== 'edit'}
-          val={title}
+          value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <EditableField
-          key={(selectedImage?.name ?? '') + 'ef-5'}
+        <TextField
           label="Description"
-          id="description"
+          size="small"
+          fullWidth
+          multiline
+          minRows={2}
           disabled={mode !== 'edit'}
-          val={description}
+          value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
-        <InputTags
-          options={albums}
-          disabled={mode !== 'edit'}
-          width="100%"
-          vals={[]}
-          onAdd={() => console.log('Added!')}
-          onRemove={() => console.log('Removed!')}
-        />
-
-        <br />
         {showVersionSelector && imageVersions && (
-          <FormControl fullWidth>
+          <FormControl fullWidth size="small">
             <InputLabel id="version-select">Version</InputLabel>
             <VersionSelector
               onVersionChange={onVersionChange}
@@ -157,10 +98,11 @@ export const EditorPanel: React.FC<EditorPanelProps> = ({
             />
           </FormControl>
         )}
-      </form>
-      <br />
+      </Stack>
+
       {mode === 'edit' && (
         <SaveButton
+          isSaving={isSaving}
           onSave={() =>
             onEditPhoto({
               photo_title: title,

@@ -41,7 +41,6 @@ export const EditMode: Story = {
   args: {
     images: mockImages,
     mode: 'edit',
-    albums: ['Travel', 'Nature'],
   },
 };
 
