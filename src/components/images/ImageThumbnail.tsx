@@ -16,20 +16,6 @@ async function fetchWithAuthentication(url: string, authToken: string | null): P
   return fetch(url, { headers });
 }
 
-async function displayProtectedImage(
-  imageId: string,
-  imageUrl: string,
-  authToken: string | null,
-): Promise<void> {
-  const response = await fetchWithAuthentication(imageUrl, authToken);
-  const blob = await response.blob();
-  const objectUrl = URL.createObjectURL(blob);
-  const imageElement = document.getElementById('thumbnail-' + imageId) as HTMLImageElement | null;
-  if (imageElement) {
-    imageElement.src = objectUrl;
-  }
-}
-
 const viewableStyle = {
   height: 'fit-content',
   width: 'fit-content',
@@ -51,8 +37,10 @@ export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
 }) => {
   const [inView, setInView] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const imgRef = React.useRef<HTMLImageElement>(null);
   const observerRef = React.useRef<IntersectionObserver | null>(null);
 
+  // Intersection observer for lazy loading — only marks the thumbnail as visible
   React.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -62,9 +50,6 @@ export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
         if (entries[0]?.isIntersecting) {
           setInView(true);
           observerRef.current?.disconnect();
-          if (image.src) {
-            displayProtectedImage(image.src, image.src, authToken).catch(console.error);
-          }
         }
       },
       { rootMargin: '5px' },
@@ -74,7 +59,32 @@ export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
     return () => {
       observerRef.current?.disconnect();
     };
-  }, [image.src, authToken]);
+  }, []);
+
+  // Fetch and display the protected image after the element is rendered
+  React.useEffect(() => {
+    if (!inView || !image.src) return;
+    const element = imgRef.current;
+    if (!element) return;
+
+    let cancelled = false;
+
+    fetchWithAuthentication(image.src, authToken)
+      .then((response) => response.blob())
+      .then((blob) => {
+        if (cancelled) return;
+        const objectUrl = URL.createObjectURL(blob);
+        element.src = objectUrl;
+        element.onload = () => URL.revokeObjectURL(objectUrl);
+      })
+      .catch((err) => {
+        if (!cancelled) console.error(err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [inView, image.src, authToken]);
 
   return (
     <Box
@@ -93,10 +103,10 @@ export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
         >
           <CardActionArea>
             <CardMedia
-              id={'thumbnail-' + image.src}
               component="img"
               height="100px"
-              alt={image.src}
+              alt=""
+              ref={imgRef}
               onClick={onClick}
               sx={{ overflow: 'hidden' }}
             />

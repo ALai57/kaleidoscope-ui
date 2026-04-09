@@ -15,6 +15,7 @@ export interface GroupMember {
   member_id: string;
   group_id: string;
   email: string;
+  alias?: string | null;
 }
 
 export interface Audience {

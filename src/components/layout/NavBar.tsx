@@ -2,11 +2,11 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
-import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
@@ -28,8 +28,13 @@ export interface NavBarProps {
 const IMAGE_SIZE = { xs: '25px', sm: '60px', md: '80px', lg: '80px', xl: '100px' };
 const ICON_SIZE = { xs: 24, sm: 32, md: 40, lg: 40, xl: 48 };
 
-
 const ADMIN_ROLE_SUFFIX = ':admin';
+
+const NAV_LINKS = [
+  { label: 'About', to: '/about' },
+  { label: 'Experience', to: '/experience' },
+  { label: 'Writing', to: '/archive' },
+];
 
 export const NavBar: React.FC<NavBarProps> = ({
   user,
@@ -69,7 +74,11 @@ export const NavBar: React.FC<NavBarProps> = ({
           <Box
             component={Link}
             to="/home"
-            sx={{ transition: 'transform 0.3s', display: 'inline-block' }}
+            sx={{
+              transition: 'transform 0.3s',
+              display: 'inline-block',
+              '&:hover': { transform: 'scale(1.08)' },
+            }}
           >
             <Box
               component="img"
@@ -88,28 +97,27 @@ export const NavBar: React.FC<NavBarProps> = ({
           {/* Spacer */}
           <Box sx={{ flexGrow: 1 }} />
 
-          {/* Icons */}
-          <Box sx={{ maxHeight: '100%', display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Articles icon */}
-            <Tooltip title="Articles">
-              <IconButton component={Link} to="/archive" color="inherit" aria-label="archive">
-                <Box
-                  component="img"
-                  src="/static/images/nav-bar/articles.svg"
-                  alt="Articles"
-                  sx={{ width: ICON_SIZE, height: ICON_SIZE }}
-                />
-              </IconButton>
-            </Tooltip>
+          {/* Primary nav links — hidden on xs */}
+          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: { sm: 0.5, md: 1 } }}>
+            {NAV_LINKS.map(({ label, to }) => (
+              <Button
+                key={to}
+                component={Link}
+                to={to}
+                sx={{
+                  color: 'white',
+                  fontSize: { sm: '0.85rem', md: '0.95rem', lg: '1rem' },
+                  textTransform: 'none',
+                  fontWeight: 500,
+                }}
+              >
+                {label}
+              </Button>
+            ))}
+          </Box>
 
-            {/* About icon */}
-            <Tooltip title="About this site">
-              <IconButton component={Link} to="/about-this-site" color="inherit" aria-label="about">
-                <InfoIcon sx={{ color: 'white', fontSize: ICON_SIZE }} />
-              </IconButton>
-            </Tooltip>
-
-            {/* Edit icon for site admins */}
+          {/* Right-side: admin + user */}
+          <Box sx={{ maxHeight: '100%', display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
             {isSiteAdmin && (
               <Tooltip title="Manager">
                 <IconButton component={Link} to="/manager" color="inherit" aria-label="manager">
@@ -118,7 +126,6 @@ export const NavBar: React.FC<NavBarProps> = ({
               </Tooltip>
             )}
 
-            {/* User avatar / login */}
             {isAuthenticated ? (
               <Tooltip title={`Logged in as ${user?.firstName ?? 'User'}`}>
                 <IconButton component={Link} to="/admin" color="inherit" aria-label="admin">

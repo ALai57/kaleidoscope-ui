@@ -38,7 +38,7 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
   const { year, since, until, iconSrc, iconAlt, heading, orgUrl, body, bullets, link } = entry;
 
   return (
-    <MuiTimelineItem sx={{ left: '-6%' }}>
+    <MuiTimelineItem>
       {/* Left column — dates */}
       <TimelineOppositeContent
         variant="h2"

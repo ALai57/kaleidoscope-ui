@@ -5,6 +5,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { Article } from '../../types/article';
@@ -18,6 +19,7 @@ export interface PortfolioCard {
   tags?: string[] | undefined;
   imageSrc?: string | undefined;
   href?: string | undefined;
+  date?: string | undefined;
 }
 
 export interface PortfolioSectionProps {
@@ -25,6 +27,8 @@ export interface PortfolioSectionProps {
   portfolioCards?: PortfolioCard[] | undefined;
   /** Recent articles shown as portfolio cards when portfolioCards is absent. */
   recentArticles?: Article[] | undefined;
+  /** Maximum number of cards to show. Defaults to 6. */
+  limit?: number | undefined;
 }
 
 // ── Helper ─────────────────────────────────────────────────────────────────
@@ -35,6 +39,7 @@ function articleToCard(article: Article): PortfolioCard {
     title: article.article_title,
     tags: article.article_tags ? [article.article_tags] : [],
     href: `/content/${article.article_url}`,
+    date: article.created_at,
   };
 }
 
@@ -57,6 +62,15 @@ const PortfolioCardItem: React.FC<{ card: PortfolioCard }> = ({ card }) => (
       />
     )}
     <CardContent sx={{ flexGrow: 1 }}>
+      {card.date && (
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+          {new Date(card.date).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })}
+        </Typography>
+      )}
       <Typography variant="h6" gutterBottom>
         {card.title}
       </Typography>
@@ -81,9 +95,9 @@ const PortfolioCardItem: React.FC<{ card: PortfolioCard }> = ({ card }) => (
 export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
   portfolioCards,
   recentArticles = [],
+  limit = 6,
 }) => {
-  const cards: PortfolioCard[] =
-    portfolioCards ?? recentArticles.map(articleToCard);
+  const cards = (portfolioCards ?? recentArticles.map(articleToCard)).slice(0, limit);
 
   if (cards.length === 0) {
     return null;
@@ -101,6 +115,11 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
           </Grid>
         ))}
       </Grid>
+      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <Link href="/archive" variant="body2">
+          View all articles →
+        </Link>
+      </Box>
     </Box>
   );
 };

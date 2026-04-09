@@ -58,7 +58,7 @@ export const Timeline: React.FC<TimelineProps> = ({ entries = TIMELINE_ENTRIES }
         sx={{ padding: '0px' }}
       >
         <MuiTimeline
-          position="right"
+          position="alternate"
           sx={{ padding: '0px' }}
         >
           {entriesWithDeltas.map((entry) => (

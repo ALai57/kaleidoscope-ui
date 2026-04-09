@@ -31,7 +31,7 @@ export interface ImageBrowserProps {
 }
 
 const defaultImage: ImageVersion = {
-  src: 'https://andrewslai.com/static/images/nav-bar/favicon.svg',
+  src: '',
 };
 
 const defaultLogger = (e: React.ChangeEvent<HTMLInputElement>) =>

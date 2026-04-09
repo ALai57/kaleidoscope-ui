@@ -14,6 +14,7 @@ const AdminPage = React.lazy(() => import('./pages/AdminPage'));
 const AboutThisSitePage = React.lazy(() => import('./pages/AboutThisSitePage'));
 const ManagerPage = React.lazy(() => import('./pages/ManagerPage'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
+const ExperiencePage = React.lazy(() => import('./pages/ExperiencePage'));
 
 const ArchivePage = React.lazy(() =>
   import('./pages/ArticlePage').then((m) => ({ default: m.ArchiveView }))
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
   { path: '/about-this-site', element: <AboutThisSitePage /> },
   { path: '/manager', element: <ManagerPage /> },
   { path: '/about', element: <AboutPage /> },
+  { path: '/experience', element: <ExperiencePage /> },
 ]);
 
 const HashRedirect: React.FC = () => {

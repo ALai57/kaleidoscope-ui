@@ -70,19 +70,26 @@ describe('GroupsPage — additional branch coverage', () => {
   it('shows group count chip', async () => {
     render(<GroupsPage />, { wrapper: Wrapper });
     await waitFor(() => {
-      expect(screen.getByText('1 groups')).toBeTruthy();
+      expect(screen.getByText('1 group')).toBeTruthy();
     });
   });
 
-  it('delete group button fires delete mutation', async () => {
+  it('delete group button fires delete mutation after confirmation', async () => {
     render(<GroupsPage />, { wrapper: Wrapper });
 
     // Wait for groups to load
     await waitFor(() => screen.getByText('Family'));
 
-    // The delete button is in the Accordion summary
-    const deleteButtons = screen.getAllByRole('button', { name: /delete group/i });
-    fireEvent.click(deleteButtons[0]!);
+    // Expand the accordion to reveal the Delete Group button
+    fireEvent.click(screen.getByText('Family'));
+
+    // Click Delete Group button (now inside AccordionDetails)
+    const deleteButton = await screen.findByRole('button', { name: /delete group/i });
+    fireEvent.click(deleteButton);
+
+    // Confirm in the dialog
+    const confirmButton = await screen.findByRole('button', { name: /^delete$/i });
+    fireEvent.click(confirmButton);
 
     await waitFor(() => {
       expect(deleteGroupCalled).toBe(true);

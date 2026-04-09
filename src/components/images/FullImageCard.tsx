@@ -16,22 +16,6 @@ async function fetchWithAuthentication(url: string, authToken: string | null): P
   return fetch(url, { headers });
 }
 
-// https://alphahydrae.com/2021/02/how-to-display-an-image-protected-by-header-based-authentication/
-async function displayProtectedImage(
-  imageId: string,
-  imageUrl: string,
-  authToken: string | null,
-): Promise<void> {
-  const response = await fetchWithAuthentication(imageUrl, authToken);
-  const blob = await response.blob();
-  const objectUrl = URL.createObjectURL(blob);
-  const imageElement = document.getElementById('full-' + imageId) as HTMLImageElement | null;
-  if (imageElement) {
-    imageElement.src = objectUrl;
-    imageElement.onload = () => URL.revokeObjectURL(objectUrl);
-  }
-}
-
 export const FullImageCard: React.FC<FullImageCardProps> = ({
   image,
   authToken = null,
@@ -40,10 +24,28 @@ export const FullImageCard: React.FC<FullImageCardProps> = ({
   const imgRef = React.useRef<HTMLImageElement>(null);
 
   React.useEffect(() => {
-    if (image.src) {
-      displayProtectedImage(image.src, image.src, authToken).catch(console.error);
-    }
-  }, [image, authToken]);
+    if (!image.src) return;
+    const element = imgRef.current;
+    if (!element) return;
+
+    let cancelled = false;
+
+    fetchWithAuthentication(image.src, authToken)
+      .then((response) => response.blob())
+      .then((blob) => {
+        if (cancelled) return;
+        const objectUrl = URL.createObjectURL(blob);
+        element.src = objectUrl;
+        element.onload = () => URL.revokeObjectURL(objectUrl);
+      })
+      .catch((err) => {
+        if (!cancelled) console.error(err);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [image.src, authToken]);
 
   return (
     <Card
@@ -58,10 +60,9 @@ export const FullImageCard: React.FC<FullImageCardProps> = ({
     >
       <CardActionArea sx={{ height: '100%' }} onClick={onClick}>
         <CardMedia
-          id={'full-' + image.src}
           component="img"
           height={image.height}
-          alt={image.src}
+          alt=""
           ref={imgRef}
           sx={{ height: '100%' }}
         />
