@@ -16,6 +16,7 @@ export interface ArticleBranch {
   article_url: string;
   article_title?: string;
   published_at?: string | null;
+  public_visibility?: boolean;
 }
 
 export interface ArticleVersion {

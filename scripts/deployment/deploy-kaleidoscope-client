@@ -8,8 +8,6 @@ echo "Incrementing package version..."
 npm version patch
 
 echo "Deploying frontend to kaleidoscope bucket..."
-aws s3 sync resources/kaleidoscope.client/static s3://kaleidoscope.client/static \
-    --exclude "*/cljs-runtime/*" \
-    --exclude "*/shareable_stories/*" # --dryrun
+aws s3 sync dist/assets s3://kaleidoscope.client/assets
 
 popd

@@ -1,4 +1,4 @@
-import { request } from './client';
+import { request, ApiError } from './client';
 import type { Article, ArticleBranch, ArticleVersion } from '../types/article';
 import { titleToSlug } from '../utils/url';
 
@@ -8,6 +8,7 @@ export interface SaveVersionPayload {
   article_url?: string;
   content?: string;
   article_tags?: string;
+  author?: string;
 }
 
 export function getArticles(token?: string): Promise<Article[]> {
@@ -26,7 +27,7 @@ export function getBranchVersions(branchId: string, token?: string): Promise<Art
   return request<ArticleVersion[]>(`/branches/${branchId}/versions`, { token });
 }
 
-export function saveArticleVersion(
+export async function saveArticleVersion(
   data: SaveVersionPayload,
   token?: string
 ): Promise<ArticleVersion> {
@@ -35,11 +36,30 @@ export function saveArticleVersion(
   const branchName = data.branch_name ?? 'main';
   const payload = { ...data, article_tags: data.article_tags ?? 'thoughts' };
 
-  return request<ArticleVersion>(`/articles/${articleUrl}/branches/${branchName}/versions`, {
-    method: 'POST',
-    body: payload,
-    token,
-  });
+  try {
+    return await request<ArticleVersion>(`/articles/${articleUrl}/branches/${branchName}/versions`, {
+      method: 'POST',
+      body: payload,
+      token,
+    });
+  } catch (error) {
+    // Backend response-coercion bug: article is saved but the response fails schema
+    // validation (e.g. author: null). The created data is embedded in the error body.
+    if (error instanceof ApiError && error.status === 500) {
+      try {
+        const body = JSON.parse(error.message) as { type?: string; value?: unknown[] };
+        if (body.type === 'reitit.coercion/response-coercion' && Array.isArray(body.value) && body.value.length > 0) {
+          const raw = body.value[0] as Record<string, unknown>;
+          return Object.fromEntries(
+            Object.entries(raw).map(([k, v]) => [k.replace(/-/g, '_'), v])
+          ) as unknown as ArticleVersion;
+        }
+      } catch {
+        // unparseable — fall through to re-throw
+      }
+    }
+    throw error;
+  }
 }
 
 export function publishBranch(

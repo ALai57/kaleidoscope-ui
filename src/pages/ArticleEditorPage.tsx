@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -21,6 +22,7 @@ import { RichTextEditor } from '../components/editor/RichTextEditor';
 import { useAuth } from '../auth/useAuth';
 import { useEditorStore } from '../store/editorStore';
 import { getBranches, getBranchVersions, saveArticleVersion, publishBranch } from '../api/articles';
+import { titleToSlug } from '../utils/url';
 import { getImageMetadata } from '../api/images';
 import { getGroups, getAudiencesForArticle, addAudience, deleteAudience } from '../api/groups';
 import type { ArticleBranch } from '../types/article';
@@ -125,10 +127,12 @@ const AudienceManager: React.FC<AudienceManagerProps> = ({ articleId, token, ope
 
 const ArticleEditorPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const queryClient = useQueryClient();
   const { editorBranchId, setEditorBranchId } = useEditorStore();
   const [audienceModalOpen, setAudienceModalOpen] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
 
   // Capture current editor HTML via ref callback
   const editorHtmlRef = useRef<string>('');
@@ -189,6 +193,7 @@ const ArticleEditorPage: React.FC = () => {
             : {}),
           content: editorHtmlRef.current,
           article_tags: 'thoughts',
+          author,
         },
         token
       ),
@@ -209,6 +214,20 @@ const ArticleEditorPage: React.FC = () => {
     },
   });
 
+  const author = [userProfile?.firstName, userProfile?.lastName].filter(Boolean).join(' ') || undefined;
+
+  const createMutation = useMutation({
+    mutationFn: () =>
+      saveArticleVersion(
+        { article_title: newTitle, content: editorHtmlRef.current, author },
+        token
+      ),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['branches'] });
+      navigate(`/articles/${titleToSlug(newTitle)}/edit`);
+    },
+  });
+
   const handleEditorChange = useCallback((html: string) => {
     editorHtmlRef.current = html;
   }, []);
@@ -225,9 +244,40 @@ const ArticleEditorPage: React.FC = () => {
           Article Editor
         </Typography>
 
-        {isLoading && <LoadingScreen />}
+        {/* ── New article mode ── */}
+        {!slug && (
+          <>
+            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <TextField
+                size="small"
+                label="Article title"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                sx={{ minWidth: 300 }}
+              />
+              <Button
+                variant="contained"
+                onClick={() => createMutation.mutate()}
+                disabled={!newTitle || createMutation.isPending}
+              >
+                {createMutation.isPending ? 'Creating…' : 'Create'}
+              </Button>
+            </Stack>
+            <Divider sx={{ mb: 2 }} />
+            <RichTextEditor
+              key="new"
+              initialContent=""
+              onChange={handleEditorChange}
+              editable
+              images={images}
+              {...(token !== undefined ? { authToken: token } : {})}
+            />
+          </>
+        )}
 
-        {!branchesLoading && (
+        {isLoading && slug && <LoadingScreen />}
+
+        {!branchesLoading && slug && (
           <>
             {/* Branch selector */}
             <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
