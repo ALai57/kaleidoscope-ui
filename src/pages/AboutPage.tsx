@@ -47,6 +47,9 @@ const AboutPage: React.FC = () => {
               alt="Andrew Lai"
               sx={{
                 width: '100%',
+                maxHeight: '60vh',
+                objectFit: 'cover',
+                display: 'block',
                 borderRadius: 2,
                 content: {
                   xs: 'url(/static/images/andrew-lai-small.png)',

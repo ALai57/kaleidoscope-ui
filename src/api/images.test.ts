@@ -4,6 +4,26 @@ import { setupServer } from 'msw/node';
 import { getImageMetadata, addPhoto, editPhoto } from './images';
 import type { Image } from '../types/image';
 
+// Flat API response entries (one per photo version)
+const mockPhotoEntries = [
+  {
+    'photo-id': 'photo1-uuid',
+    'photo-title': 'Photo 1',
+    description: 'A photo',
+    'created-at': '2024-01-01T00:00:00Z',
+    'image-category': 'raw',
+    path: '/v2/photos/photo1-uuid/raw.jpg',
+  },
+  {
+    'photo-id': 'photo1-uuid',
+    'photo-title': 'Photo 1',
+    description: 'A photo',
+    'created-at': '2024-01-01T00:00:00Z',
+    'image-category': 'thumbnail',
+    path: '/v2/photos/photo1-uuid/thumbnail.jpg',
+  },
+];
+
 const mockImage: Image = {
   name: 'photo1',
   title: 'Photo 1',
@@ -16,10 +36,12 @@ const mockImage: Image = {
   },
 };
 
+let lastAuthHeader: string | null = null;
+
 const server = setupServer(
   http.get('/v2/photos', ({ request: req }) => {
-    const auth = req.headers.get('Authorization');
-    return HttpResponse.json([{ ...mockImage, _auth: auth }]);
+    lastAuthHeader = req.headers.get('Authorization');
+    return HttpResponse.json(mockPhotoEntries);
   }),
   http.post('/v2/photos', async ({ request: req }) => {
     const body = await req.formData();
@@ -34,15 +56,18 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('getImageMetadata', () => {
-  it('returns list of images', async () => {
+  it('groups flat API entries into Image objects by photo-id', async () => {
     const images = await getImageMetadata();
     expect(images).toHaveLength(1);
-    expect(images[0]?.name).toBe('photo1');
+    expect(images[0]?.name).toBe('photo1-uuid');
+    expect(images[0]?.versions.raw?.src).toBe('/v2/photos/photo1-uuid/raw.jpg');
+    expect(images[0]?.versions.thumbnail?.src).toBe('/v2/photos/photo1-uuid/thumbnail.jpg');
   });
 
   it('attaches auth header when token provided', async () => {
-    const images = await getImageMetadata('tok123');
-    expect((images[0] as unknown as Record<string, unknown>)['_auth']).toBe('Bearer tok123');
+    lastAuthHeader = null;
+    await getImageMetadata('tok123');
+    expect(lastAuthHeader).toBe('Bearer tok123');
   });
 });
 
