@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -14,6 +14,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { GridToolbarContainer } from '@mui/x-data-grid';
 import type { GridColDef } from '@mui/x-data-grid';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
@@ -141,6 +142,25 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
   );
 };
 
+// ── Table toolbar ──────────────────────────────────────────────────────────
+
+interface ArticleToolbarProps {
+  onNewArticle: () => void;
+  branchCount: number;
+}
+
+const ArticleToolbar: React.FC<ArticleToolbarProps> = ({ onNewArticle, branchCount }) => (
+  <GridToolbarContainer sx={{ px: 2, py: 1, justifyContent: 'space-between' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Typography variant="h6">Article Manager</Typography>
+      <Chip label={`${branchCount} branches`} size="small" />
+    </Box>
+    <Button variant="contained" size="small" onClick={onNewArticle}>
+      New Article
+    </Button>
+  </GridToolbarContainer>
+);
+
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ArticleManagerPage: React.FC = () => {
@@ -162,6 +182,31 @@ const ArticleManagerPage: React.FC = () => {
     queryFn: () => getBranches(token),
   });
 
+  const { data: groups = [] } = useQuery({
+    queryKey: ['groups'],
+    queryFn: () => getGroups(token),
+  });
+
+  const audienceQueries = useQueries({
+    queries: branches.map((b) => ({
+      queryKey: ['audiences', b.article_id],
+      queryFn: () => getAudiencesForArticle(b.article_id, token),
+    })),
+  });
+
+  const audiencesByArticle = useMemo(() => {
+    const map = new Map<string, string[]>();
+    branches.forEach((b, i) => {
+      const audiences = audienceQueries[i]?.data ?? [];
+      const names = audiences.map((a) => {
+        const group = groups.find((g: Group) => g.group_id === a.group_id);
+        return group?.display_name ?? a.group_id;
+      });
+      map.set(b.article_id, names);
+    });
+    return map;
+  }, [audienceQueries, branches, groups]);
+
   const publishMutation = useMutation({
     mutationFn: ({ articleUrl, branchName }: { articleUrl: string; branchName: string }) =>
       publishBranch(articleUrl, branchName, token),
@@ -171,22 +216,61 @@ const ArticleManagerPage: React.FC = () => {
   });
 
   const columns: GridColDef[] = [
-    { field: 'article_title', headerName: 'Title', flex: 1 },
-    { field: 'article_url', headerName: 'URL', width: 180 },
-    { field: 'branch_name', headerName: 'Branch', width: 100 },
+    { field: 'article_title', headerName: 'Title', flex: 1, minWidth: 160 },
+    { field: 'article_url', headerName: 'URL', width: 160 },
+    { field: 'branch_name', headerName: 'Branch', width: 90 },
     {
       field: 'published_at',
       headerName: 'Published',
-      width: 130,
+      width: 120,
       renderCell: (params) => {
         const val = params.value as string | null | undefined;
         return val ? new Date(val).toLocaleDateString() : <em style={{ color: '#999' }}>Unpublished</em>;
       },
     },
     {
+      field: 'public_visibility',
+      headerName: 'Visibility',
+      width: 110,
+      renderCell: (params) => {
+        const row = params.row as BranchRow;
+        const isPublic = params.value as boolean;
+        return (
+          <Chip
+            label={isPublic ? 'Public' : 'Audience'}
+            color={isPublic ? 'success' : 'warning'}
+            size="small"
+            onClick={() => setVisibilityRow(row)}
+            sx={{ cursor: 'pointer' }}
+          />
+        );
+      },
+    },
+    {
+      field: 'groups',
+      headerName: 'Groups',
+      flex: 1,
+      minWidth: 120,
+      sortable: false,
+      renderCell: (params) => {
+        const row = params.row as BranchRow;
+        const groupNames = audiencesByArticle.get(row.article_id) ?? [];
+        if (!groupNames.length) {
+          return <em style={{ color: '#999' }}>—</em>;
+        }
+        return (
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center', height: '100%' }}>
+            {groupNames.map((name) => (
+              <Chip key={name} label={name} size="small" variant="outlined" />
+            ))}
+          </Box>
+        );
+      },
+    },
+    {
       field: 'actions',
       headerName: 'Actions',
-      width: 300,
+      width: 180,
       sortable: false,
       renderCell: (params) => {
         const row = params.row as BranchRow;
@@ -214,14 +298,6 @@ const ArticleManagerPage: React.FC = () => {
                 Publish
               </Button>
             )}
-            <Button
-              size="small"
-              variant="outlined"
-              color="warning"
-              onClick={() => setVisibilityRow(row)}
-            >
-              Visibility
-            </Button>
           </Box>
         );
       },
@@ -232,26 +308,17 @@ const ArticleManagerPage: React.FC = () => {
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Box id="primary-content" sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h4">Article Manager</Typography>
-          <Button variant="contained" onClick={() => navigate('/articles/new')}>
-            New Article
-          </Button>
-        </Box>
-
         {isLoading && <LoadingScreen />}
 
         {!isLoading && (
-          <>
-            <Box sx={{ mb: 1 }}>
-              <Chip label={`${branches.length} branches`} size="small" />
-            </Box>
-            <Table
-              rows={branches.map(toBranchRow)}
-              columns={columns}
-              maxWidth={900}
-            />
-          </>
+          <Table
+            rows={branches.map(toBranchRow)}
+            columns={columns}
+            maxWidth={1200}
+            rowHeight={44}
+            Toolbar={ArticleToolbar as React.ComponentType}
+            toolbarProps={{ onNewArticle: () => navigate('/articles/new'), branchCount: branches.length }}
+          />
         )}
       </Box>
 

@@ -6,11 +6,8 @@ import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
-import { useColorScheme } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 
@@ -42,7 +39,6 @@ export const NavBar: React.FC<NavBarProps> = ({
   logoSrc = '/static/images/nav-bar/favicon.svg',
 }) => {
   const theme = useTheme();
-  const { mode, setMode } = useColorScheme();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
   const adminRole = hostname + ADMIN_ROLE_SUFFIX;
@@ -58,10 +54,6 @@ export const NavBar: React.FC<NavBarProps> = ({
     primaryLight && accentMain
       ? `linear-gradient(4deg, ${primaryLight} 40%, ${accentMain} 100%)`
       : undefined;
-
-  const handleToggleDarkMode = (): void => {
-    setMode(mode === 'dark' ? 'light' : 'dark');
-  };
 
   return (
     <AppBar
@@ -125,17 +117,6 @@ export const NavBar: React.FC<NavBarProps> = ({
                 </IconButton>
               </Tooltip>
             )}
-
-            {/* Dark mode toggle */}
-            <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
-              <IconButton onClick={handleToggleDarkMode} color="inherit" aria-label="toggle dark mode">
-                {mode === 'dark' ? (
-                  <Brightness7Icon sx={{ color: 'white', fontSize: ICON_SIZE }} />
-                ) : (
-                  <Brightness4Icon sx={{ color: 'white', fontSize: ICON_SIZE }} />
-                )}
-              </IconButton>
-            </Tooltip>
 
             {/* User avatar / login */}
             {isAuthenticated ? (

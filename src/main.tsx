@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './auth/AuthProvider';
 import { makeTheme, BASE_THEME } from './theme';
 import { LoadingScreen } from './components/layout/LoadingScreen';
+import { DarkModeToggle } from './components/layout/DarkModeToggle';
 import App from './App';
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById('app')!).render(
       <AuthProvider authConfig={authConfig}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <DarkModeToggle />
           <Suspense fallback={<LoadingScreen />}>
             <App />
           </Suspense>
