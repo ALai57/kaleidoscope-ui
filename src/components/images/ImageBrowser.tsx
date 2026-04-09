@@ -267,9 +267,9 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
           <Box sx={styleThumbnails}>
             {images.map((image, index) => (
               <ImageThumbnail
-                image={image.versions.thumbnail ?? defaultImage}
+                image={image.versions?.thumbnail ?? defaultImage}
                 authToken={authToken}
-                key={'tmb' + (image.versions.thumbnail?.src ?? index)}
+                key={'tmb' + (image.versions?.thumbnail?.src ?? index)}
                 onClick={() => jumpTo(index)}
               />
             ))}

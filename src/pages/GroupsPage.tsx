@@ -22,7 +22,7 @@ import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { useAuth } from '../auth/useAuth';
 import { getGroups, addGroup, deleteGroup, addGroupMember, deleteGroupMember } from '../api/groups';
-import type { Group } from '../types/group';
+import type { Group, Membership } from '../types/group';
 
 // ── Group Item ─────────────────────────────────────────────────────────────
 
@@ -51,7 +51,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onGroupDeleted }) =
     },
   });
 
-  const _deleteMemberMutation = useMutation({
+  const deleteMemberMutation = useMutation({
     mutationFn: (memberId: string) => deleteGroupMember(group.group_id, memberId, token),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['groups'] }),
   });
@@ -85,10 +85,33 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onGroupDeleted }) =
         {/* Member list */}
         <Typography variant="subtitle2">Members</Typography>
         <List dense>
-          {/* No memberships on the Group type — shown if enriched by API */}
-          <ListItem>
-            <ListItemText primary="(no members)" />
-          </ListItem>
+          {(group.memberships ?? []).length === 0 ? (
+            <ListItem>
+              <ListItemText primary="(no members)" />
+            </ListItem>
+          ) : (
+            (group.memberships ?? []).map((m: Membership) => (
+              <ListItem
+                key={m.membership_id}
+                secondaryAction={
+                  <Tooltip title="Remove member">
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => deleteMemberMutation.mutate(m.membership_id)}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                }
+              >
+                <ListItemText
+                  primary={m.alias ?? m.email}
+                  secondary={m.alias ? m.email : undefined}
+                />
+              </ListItem>
+            ))
+          )}
         </List>
 
         <Divider sx={{ my: 1 }} />

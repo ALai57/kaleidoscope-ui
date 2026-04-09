@@ -70,7 +70,7 @@ const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => (
           component="img"
           src={capability.src}
           alt={capability.alt}
-          sx={{ maxWidth: '100%', maxHeight: '142px', bgcolor: 'primary.main', p: 2 }}
+          sx={{ width: '100%', height: '142px', objectFit: 'contain', bgcolor: 'primary.main', p: 2 }}
         />
         <CardContent>
           <Typography variant="h5">{capability.name}</Typography>
