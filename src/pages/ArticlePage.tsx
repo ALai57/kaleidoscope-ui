@@ -102,7 +102,7 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
       to={`/content/${article.article_url}`}
       sx={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         gap: 2,
         py: 1.5,
         px: 2,
@@ -131,46 +131,55 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
         <Typography
           variant="body1"
-          sx={{
-            fontWeight: 500,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
+          sx={{ fontWeight: 500 }}
         >
           {article.article_title}
         </Typography>
+        {article.summary && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{
+              mt: 0.25,
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
+            {article.summary}
+          </Typography>
+        )}
         {article.author && (
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block' }}>
             {article.author}
           </Typography>
         )}
       </Box>
 
-      {/* Tag chip */}
-      {article.article_tags && (
-        <Chip
-          label={article.article_tags}
-          size="small"
-          sx={{
-            background: color,
-            color: '#fff',
-            fontWeight: 600,
-            fontSize: '0.7rem',
-            flexShrink: 0,
-            display: { xs: 'none', sm: 'flex' },
-          }}
-        />
-      )}
-
-      {/* Date */}
-      <Typography
-        variant="caption"
-        color="text.secondary"
-        sx={{ whiteSpace: 'nowrap', flexShrink: 0, minWidth: 90, textAlign: 'right' }}
-      >
-        {date}
-      </Typography>
+      {/* Tag chip + date (right column) */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: 0.5 }}>
+        {article.article_tags && (
+          <Chip
+            label={article.article_tags}
+            size="small"
+            sx={{
+              background: color,
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '0.7rem',
+              display: { xs: 'none', sm: 'flex' },
+            }}
+          />
+        )}
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ whiteSpace: 'nowrap', minWidth: 90, textAlign: 'right' }}
+        >
+          {date}
+        </Typography>
+      </Box>
     </Box>
   );
 };

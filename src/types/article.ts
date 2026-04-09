@@ -7,6 +7,7 @@ export interface Article {
   created_at: string;
   content?: string;
   author?: string;
+  summary?: string;
 }
 
 export interface ArticleBranch {

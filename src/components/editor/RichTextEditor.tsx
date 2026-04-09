@@ -105,6 +105,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               marginLeft: 0,
               color: 'text.secondary',
             },
+            '& img': {
+              maxWidth: '100%',
+              height: 'auto',
+            },
           },
         }}
       >
