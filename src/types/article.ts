@@ -5,6 +5,8 @@ export interface Article {
   article_tags: string;
   public_visibility: boolean;
   created_at: string;
+  content?: string;
+  author?: string;
 }
 
 export interface ArticleBranch {

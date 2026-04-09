@@ -49,8 +49,13 @@ const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
             <Typography variant="h3" gutterBottom>
               {article.article_title}
             </Typography>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              {article.author && `By ${article.author}`}
+              {article.author && article.created_at && ' · '}
+              {article.created_at && new Date(article.created_at).toLocaleDateString()}
+            </Typography>
             <RichTextEditor
-              initialContent={article.article_url}
+              initialContent={article.content}
               editable={false}
             />
           </>

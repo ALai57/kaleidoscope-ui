@@ -1,3 +1,16 @@
+function kebabKeysToSnake(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(kebabKeysToSnake);
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+        k.replace(/-/g, '_'),
+        kebabKeysToSnake(v),
+      ])
+    );
+  }
+  return value;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -47,7 +60,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     return undefined as T;
   }
 
-  return response.json() as Promise<T>;
+  return response.json().then(kebabKeysToSnake) as Promise<T>;
 }
 
 export async function uploadFile<T>(path: string, formData: FormData, token?: string): Promise<T> {
@@ -67,5 +80,5 @@ export async function uploadFile<T>(path: string, formData: FormData, token?: st
     throw new ApiError(response.status, text);
   }
 
-  return response.json() as Promise<T>;
+  return response.json().then(kebabKeysToSnake) as Promise<T>;
 }
