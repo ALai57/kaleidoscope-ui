@@ -64,22 +64,21 @@ const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => (
       <CardActionArea
         component={Link}
         to={capability.to}
-        sx={{ height: '100%' }}
         aria-label={capability.name}
       >
         <CardMedia
           component="img"
           src={capability.src}
           alt={capability.alt}
-          sx={{ maxWidth: '100%', maxHeight: '142px' }}
+          sx={{ maxWidth: '100%', maxHeight: '142px', bgcolor: 'primary.main', p: 2 }}
         />
+        <CardContent>
+          <Typography variant="h5">{capability.name}</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {capability.description}
+          </Typography>
+        </CardContent>
       </CardActionArea>
-      <CardContent>
-        <Typography variant="h5">{capability.name}</Typography>
-        <Typography variant="body2" color="text.secondary">
-          {capability.description}
-        </Typography>
-      </CardContent>
     </Card>
   </Box>
 );
