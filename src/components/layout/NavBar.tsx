@@ -29,7 +29,7 @@ export interface NavBarProps {
 }
 
 const IMAGE_SIZE = { xs: '25px', sm: '60px', md: '80px', lg: '80px', xl: '100px' };
-const ICON_SIZE = 28;
+const ICON_SIZE = { xs: 24, sm: 32, md: 40, lg: 40, xl: 48 };
 
 
 const ADMIN_ROLE_SUFFIX = ':admin';
