@@ -11,6 +11,19 @@ function kebabKeysToSnake(value: unknown): unknown {
   return value;
 }
 
+function snakeKeysToKebab(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(snakeKeysToKebab);
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [
+        k.replace(/_/g, '-'),
+        snakeKeysToKebab(v),
+      ])
+    );
+  }
+  return value;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
@@ -45,7 +58,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     headers,
   };
   if (body !== undefined) {
-    fetchInit.body = JSON.stringify(body);
+    fetchInit.body = JSON.stringify(snakeKeysToKebab(body));
   }
 
   const response = await fetch(`${API_BASE}${path}`, fetchInit);

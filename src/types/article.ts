@@ -14,6 +14,8 @@ export interface ArticleBranch {
   branch_name: string;
   article_id: string;
   article_url: string;
+  article_title?: string;
+  published_at?: string | null;
 }
 
 export interface ArticleVersion {

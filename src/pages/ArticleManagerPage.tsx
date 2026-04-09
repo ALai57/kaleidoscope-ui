@@ -65,8 +65,18 @@ const ArticleManagerPage: React.FC = () => {
   });
 
   const columns: GridColDef[] = [
-    { field: 'article_url', headerName: 'Article URL', flex: 1 },
-    { field: 'branch_name', headerName: 'Branch', width: 120 },
+    { field: 'article_title', headerName: 'Title', flex: 1 },
+    { field: 'article_url', headerName: 'URL', width: 180 },
+    { field: 'branch_name', headerName: 'Branch', width: 100 },
+    {
+      field: 'published_at',
+      headerName: 'Published',
+      width: 130,
+      renderCell: (params) => {
+        const val = params.value as string | null | undefined;
+        return val ? new Date(val).toLocaleDateString() : <em style={{ color: '#999' }}>Unpublished</em>;
+      },
+    },
     {
       field: 'actions',
       headerName: 'Actions',
@@ -83,19 +93,21 @@ const ArticleManagerPage: React.FC = () => {
             >
               Edit
             </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              color="success"
-              onClick={() =>
-                publishMutation.mutate({
-                  articleUrl: row.article_url,
-                  branchName: row.branch_name,
-                })
-              }
-            >
-              Publish
-            </Button>
+            {!row.published_at && (
+              <Button
+                size="small"
+                variant="outlined"
+                color="success"
+                onClick={() =>
+                  publishMutation.mutate({
+                    articleUrl: row.article_url,
+                    branchName: row.branch_name,
+                  })
+                }
+              >
+                Publish
+              </Button>
+            )}
             <Button
               size="small"
               variant="outlined"
@@ -119,9 +131,12 @@ const ArticleManagerPage: React.FC = () => {
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Box id="primary-content" sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Article Manager
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h4">Article Manager</Typography>
+          <Button variant="contained" onClick={() => navigate('/articles/new')}>
+            New Article
+          </Button>
+        </Box>
 
         {isLoading && <LoadingScreen />}
 

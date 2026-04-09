@@ -25,6 +25,7 @@ const router = createBrowserRouter([
   { path: '/content/:slug', element: <ArticlePage /> },
   { path: '/archive', element: <ArchivePage /> },
   { path: '/articles', element: <ArticleManagerPage /> },
+  { path: '/articles/new', element: <ArticleEditorPage /> },
   { path: '/articles/:slug/edit', element: <ArticleEditorPage /> },
   { path: '/images', element: <ImageManagerPage /> },
   { path: '/ui', element: <UIManagerPage /> },

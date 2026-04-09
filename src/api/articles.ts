@@ -60,7 +60,7 @@ export function togglePublicVisibility(
 ): Promise<void> {
   return request<void>(`/articles/${articleUrl}`, {
     method: 'PUT',
-    body: { public_visibility: publicVisibility },
+    body: { public_visibility: String(publicVisibility) },
     token,
   });
 }
