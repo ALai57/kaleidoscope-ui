@@ -7,6 +7,6 @@ pushd "$SCRIPT_DIR/../../"
 echo "Deploying frontend to andrewslai bucket..."
 
 aws s3 sync resources/andrewslai.com/static s3://andrewslai.com/static
-aws s3 cp dist/index.html s3://andrewslai.com/static/index.html
+aws s3 cp resources/kaleidoscope.client/static/dist/index.html s3://andrewslai.com/static/index.html
 
 popd

@@ -8,6 +8,6 @@ echo "Incrementing package version..."
 npm version patch
 
 echo "Deploying frontend to kaleidoscope bucket..."
-aws s3 sync resources/kaleidoscope.client/static/dist/assets s3://kaleidoscope.client/static/assets
+aws s3 sync resources/kaleidoscope.client/static/dist/assets s3://kaleidoscope.client/assets
 
 popd
