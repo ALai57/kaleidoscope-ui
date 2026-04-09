@@ -23,7 +23,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'resources/andrewslai.com/static/dist',
+    outDir: 'resources/kaleidoscope.client/static/dist',
     emptyOutDir: true,
     copyPublicDir: false,
   },
