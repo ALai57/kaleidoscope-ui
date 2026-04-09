@@ -142,25 +142,6 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
   );
 };
 
-// ── Table toolbar ──────────────────────────────────────────────────────────
-
-interface ArticleToolbarProps {
-  onNewArticle: () => void;
-  branchCount: number;
-}
-
-const ArticleToolbar: React.FC<ArticleToolbarProps> = ({ onNewArticle, branchCount }) => (
-  <GridToolbarContainer sx={{ px: 2, py: 1, justifyContent: 'space-between' }}>
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Typography variant="h6">Article Manager</Typography>
-      <Chip label={`${branchCount} branches`} size="small" />
-    </Box>
-    <Button variant="contained" size="small" onClick={onNewArticle}>
-      New Article
-    </Button>
-  </GridToolbarContainer>
-);
-
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ArticleManagerPage: React.FC = () => {
@@ -206,6 +187,21 @@ const ArticleManagerPage: React.FC = () => {
     });
     return map;
   }, [audienceQueries, branches, groups]);
+
+  const ArticleToolbar = useMemo(
+    () => () => (
+      <GridToolbarContainer sx={{ px: 2, py: 1, justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography variant="h6">Article Manager</Typography>
+          <Chip label={`${branches.length} branches`} size="small" />
+        </Box>
+        <Button variant="contained" size="small" onClick={() => navigate('/articles/new')}>
+          New Article
+        </Button>
+      </GridToolbarContainer>
+    ),
+    [branches.length, navigate],
+  );
 
   const publishMutation = useMutation({
     mutationFn: ({ articleUrl, branchName }: { articleUrl: string; branchName: string }) =>
@@ -316,8 +312,7 @@ const ArticleManagerPage: React.FC = () => {
             columns={columns}
             maxWidth={1200}
             rowHeight={44}
-            Toolbar={ArticleToolbar as React.ComponentType}
-            toolbarProps={{ onNewArticle: () => navigate('/articles/new'), branchCount: branches.length }}
+            Toolbar={ArticleToolbar}
           />
         )}
       </Box>

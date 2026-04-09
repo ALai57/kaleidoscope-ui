@@ -8,7 +8,6 @@ export interface TableProps {
   maxWidth?: number | string | undefined;
   rowHeight?: number;
   Toolbar?: ComponentType;
-  toolbarProps?: Record<string, unknown>;
 }
 
 export const Table: React.FC<TableProps> = ({
@@ -17,7 +16,6 @@ export const Table: React.FC<TableProps> = ({
   maxWidth = 650,
   rowHeight = 40,
   Toolbar,
-  toolbarProps,
 }) => (
   <Box sx={{ maxWidth, mx: 'auto' }}>
     <DataGrid
@@ -31,8 +29,7 @@ export const Table: React.FC<TableProps> = ({
       }}
       rowHeight={rowHeight}
       disableRowSelectionOnClick
-      slots={Toolbar ? { toolbar: Toolbar } : undefined}
-      slotProps={toolbarProps ? { toolbar: toolbarProps } : undefined}
+      {...(Toolbar ? { slots: { toolbar: Toolbar } } : {})}
     />
   </Box>
 );
