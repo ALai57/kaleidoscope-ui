@@ -19,10 +19,11 @@ class TriggerableIntersectionObserver {
 }
 vi.stubGlobal('IntersectionObserver', TriggerableIntersectionObserver);
 
-global.fetch = vi.fn().mockResolvedValue({
+const mockFetch = vi.fn().mockResolvedValue({
   blob: () => Promise.resolve(new Blob()),
 } as Response);
-global.URL.createObjectURL = vi.fn().mockReturnValue('blob:thumb-url');
+vi.stubGlobal('fetch', mockFetch);
+vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:thumb-url');
 
 const mockImage = {
   src: 'thumb-src-1',
@@ -47,13 +48,13 @@ describe('ImageThumbnail — inView state triggered', () => {
   });
 
   it('calls fetch with auth token when authToken provided', async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockClear();
+    mockFetch.mockClear();
     await act(async () => {
       render(<ImageThumbnail image={mockImage} authToken="bearer-xyz" />);
     });
     // fetch is called to display protected image
-    expect(global.fetch).toHaveBeenCalled();
-    const callArgs = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0] ?? [];
+    expect(mockFetch).toHaveBeenCalled();
+    const callArgs = mockFetch.mock.calls[0] ?? [];
     expect((callArgs[1] as RequestInit | undefined)?.headers).toBeDefined();
   });
 

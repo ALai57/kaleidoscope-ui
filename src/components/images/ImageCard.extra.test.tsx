@@ -23,12 +23,13 @@ class TriggerableIntersectionObserver {
 vi.stubGlobal('IntersectionObserver', TriggerableIntersectionObserver);
 
 // Mock fetch for displayProtectedImage
-global.fetch = vi.fn().mockResolvedValue({
+const mockFetch = vi.fn().mockResolvedValue({
   blob: () => Promise.resolve(new Blob()),
 } as Response);
+vi.stubGlobal('fetch', mockFetch);
 
 // Mock URL.createObjectURL
-global.URL.createObjectURL = vi.fn().mockReturnValue('blob:mock-url');
+vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
 
 const mockImage = {
   src: 'test-image-1',
@@ -77,6 +78,6 @@ describe('ImageCard — inView state triggered', () => {
     });
 
     // fetch should have been called (for the protected image)
-    expect(global.fetch).toHaveBeenCalled();
+    expect(mockFetch).toHaveBeenCalled();
   });
 });

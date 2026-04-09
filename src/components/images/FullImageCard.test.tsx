@@ -3,12 +3,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
 import { FullImageCard } from './FullImageCard';
 
-global.fetch = vi.fn().mockResolvedValue({
+vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
   blob: () => Promise.resolve(new Blob()),
-});
-
-global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
-global.URL.revokeObjectURL = vi.fn();
+}));
+vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
+vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
 
 const mockImage = {
   src: 'https://example.com/full.jpg',

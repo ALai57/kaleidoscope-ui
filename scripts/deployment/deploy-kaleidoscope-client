@@ -9,5 +9,6 @@ npm version patch
 
 echo "Deploying frontend to kaleidoscope bucket..."
 aws s3 sync resources/kaleidoscope.client/static/dist/assets s3://kaleidoscope.client/assets
+aws s3 cp resources/kaleidoscope.client/static/dist/index.html s3://kaleidoscope.client/index.html
 
 popd

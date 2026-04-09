@@ -14,11 +14,11 @@ class MockIntersectionObserver {
 vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
 
 // Mock fetch for image loading
-global.fetch = vi.fn().mockResolvedValue({
+vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
   blob: () => Promise.resolve(new Blob()),
-});
-global.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
-global.URL.revokeObjectURL = vi.fn();
+}));
+vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
+vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
 
 const mockImages: Image[] = [
   {
