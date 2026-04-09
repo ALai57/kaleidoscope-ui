@@ -88,7 +88,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "./scripts/deployment/deploy-to-s3",
+    "deploy": "./scripts/deployment/deploy-kaleidoscope-client",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest run",
