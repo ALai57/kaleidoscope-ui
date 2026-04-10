@@ -1,7 +1,7 @@
 {
   "name": "kaleidoscope-ui",
   "description": "Front end app UI for Kaleidoscope",
-  "version": "1.0.65",
+  "version": "1.0.66",
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@storybook/addon-essentials": "^8.6.14",
