@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -49,8 +50,8 @@ const PortfolioCardItem: React.FC<{ card: PortfolioCard }> = ({ card }) => (
   <Card
     elevation={3}
     sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-    component={card.href ? 'a' : 'div'}
-    href={card.href}
+    component={card.href ? RouterLink : 'div'}
+    to={card.href}
     style={{ textDecoration: 'none' }}
   >
     {card.imageSrc && (
@@ -116,7 +117,7 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
         ))}
       </Grid>
       <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-        <Link href="/archive" variant="body2">
+        <Link component={RouterLink} to="/archive" variant="body2">
           View all articles →
         </Link>
       </Box>

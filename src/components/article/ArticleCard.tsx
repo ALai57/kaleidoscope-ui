@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import { useTheme } from '@mui/material/styles';
@@ -74,7 +75,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({
           </div>
           <div className="col-sm-9 text-dark card-description">
             <h5 className="card-title">
-              <a href={`#/content/${articleUrl}`}>{articleTitle}</a>
+              <RouterLink to={`/content/${articleUrl}`}>{articleTitle}</RouterLink>
             </h5>
             <p className="card-text">{formatDate(createdAt)}</p>
             {summary && <p className="card-text">{summary}</p>}
