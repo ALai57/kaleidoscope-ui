@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,14 +23,14 @@ import { getArticles } from '../api/articles';
 interface FeatureCardProps {
   title: string;
   description: string;
-  href: string;
+  to: string;
   icon: React.ReactNode;
 }
 
-const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, href, icon }) => (
+const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, to, icon }) => (
   <Card
-    component="a"
-    href={href}
+    component={RouterLink}
+    to={to}
     elevation={2}
     sx={{
       height: '100%',
@@ -97,7 +98,8 @@ const HomePage: React.FC = () => {
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                 <Button
                   variant="contained"
-                  href="/about"
+                  component={RouterLink}
+                  to="/about"
                   sx={{
                     bgcolor: 'white',
                     color: 'primary.dark',
@@ -108,7 +110,8 @@ const HomePage: React.FC = () => {
                 </Button>
                 <Button
                   variant="outlined"
-                  href="/archive"
+                  component={RouterLink}
+                  to="/archive"
                   sx={{
                     color: 'white',
                     borderColor: 'rgba(255,255,255,0.7)',
@@ -147,7 +150,7 @@ const HomePage: React.FC = () => {
             <FeatureCard
               title="About Me"
               description="Personal bio, interests, and what I'm up to outside of work."
-              href="/about"
+              to="/about"
               icon={<PersonIcon />}
             />
           </Grid>
@@ -155,7 +158,7 @@ const HomePage: React.FC = () => {
             <FeatureCard
               title="Experience"
               description="Professional background, skills, and full career history."
-              href="/experience"
+              to="/experience"
               icon={<WorkIcon />}
             />
           </Grid>
@@ -163,7 +166,7 @@ const HomePage: React.FC = () => {
             <FeatureCard
               title="Writing"
               description="Articles on software, engineering leadership, and ideas."
-              href="/archive"
+              to="/archive"
               icon={<ArticleIcon />}
             />
           </Grid>
