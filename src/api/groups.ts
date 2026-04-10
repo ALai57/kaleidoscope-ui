@@ -57,7 +57,7 @@ export function deleteAudience(audienceId: string, token?: string): Promise<void
 }
 
 export function getAudiencesForArticle(articleId: string, token?: string): Promise<Audience[]> {
-  return request<Audience[]>(`/article-audiences?article_id=${encodeURIComponent(articleId)}`, {
+  return request<Audience[]>(`/article-audiences?article-id=${encodeURIComponent(articleId)}`, {
     token,
   });
 }

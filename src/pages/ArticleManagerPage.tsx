@@ -79,8 +79,14 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
     visibilityMutation.mutate(newMode === 'public');
   };
 
-  const audienceGroupIds = new Set(audiences.map((a) => a.group_id));
-  const availableGroups = groups.filter((g: Group) => !audienceGroupIds.has(g.group_id));
+  const seenGroupIds = new Set<string>();
+  const uniqueAudiences = audiences.filter((a) => {
+    if (seenGroupIds.has(a.group_id)) return false;
+    seenGroupIds.add(a.group_id);
+    return true;
+  });
+
+  const availableGroups = groups.filter((g: Group) => !seenGroupIds.has(g.group_id));
 
   return (
     <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
@@ -98,17 +104,18 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
           <>
             <Divider sx={{ my: 2 }} />
             <Typography variant="subtitle2" gutterBottom>Current audiences</Typography>
-            {audiences.length === 0 ? (
+            {uniqueAudiences.length === 0 ? (
               <Typography variant="body2" color="text.secondary">No audiences — article is private.</Typography>
             ) : (
               <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 1 }}>
-                {audiences.map((a) => {
+                {uniqueAudiences.map((a) => {
                   const group = groups.find((g: Group) => g.group_id === a.group_id);
+                  const duplicates = audiences.filter((x) => x.group_id === a.group_id);
                   return (
                     <Chip
                       key={a.id}
                       label={group?.display_name ?? a.group_id}
-                      onDelete={() => removeMutation.mutate(a.id)}
+                      onDelete={() => duplicates.forEach((dup) => removeMutation.mutate(dup.id))}
                       disabled={removeMutation.isPending}
                     />
                   );
@@ -179,9 +186,12 @@ const ArticleManagerPage: React.FC = () => {
     const map = new Map<string, string[]>();
     branches.forEach((b, i) => {
       const audiences = audienceQueries[i]?.data ?? [];
-      const names = audiences.map((a) => {
+      const seen = new Set<string>();
+      const names = audiences.flatMap((a) => {
+        if (seen.has(a.group_id)) return [];
+        seen.add(a.group_id);
         const group = groups.find((g: Group) => g.group_id === a.group_id);
-        return group?.display_name ?? a.group_id;
+        return [group?.display_name ?? a.group_id];
       });
       map.set(b.article_id, names);
     });

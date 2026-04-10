@@ -1,6 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { LoadingScreen } from './components/layout/LoadingScreen';
+import { ErrorPage } from './components/layout/ErrorPage';
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const ArticlePage = React.lazy(() => import('./pages/ArticlePage'));
@@ -21,22 +22,28 @@ const ArchivePage = React.lazy(() =>
 );
 
 const router = createBrowserRouter([
-  { path: '/', element: <HomePage /> },
-  { path: '/home', element: <HomePage /> },
-  { path: '/content/:slug', element: <ArticlePage /> },
-  { path: '/archive', element: <ArchivePage /> },
-  { path: '/articles', element: <ArticleManagerPage /> },
-  { path: '/articles/new', element: <ArticleEditorPage /> },
-  { path: '/articles/:slug/edit', element: <ArticleEditorPage /> },
-  { path: '/images', element: <ImageManagerPage /> },
-  { path: '/ui', element: <UIManagerPage /> },
-  { path: '/groups', element: <GroupsPage /> },
-  { path: '/sign-up', element: <SignUpPage /> },
-  { path: '/admin', element: <AdminPage /> },
-  { path: '/about-this-site', element: <AboutThisSitePage /> },
-  { path: '/manager', element: <ManagerPage /> },
-  { path: '/about', element: <AboutPage /> },
-  { path: '/experience', element: <ExperiencePage /> },
+  {
+    errorElement: <ErrorPage />,
+    element: <Outlet />,
+    children: [
+      { path: '/', element: <HomePage /> },
+      { path: '/home', element: <HomePage /> },
+      { path: '/content/:slug', element: <ArticlePage /> },
+      { path: '/archive', element: <ArchivePage /> },
+      { path: '/articles', element: <ArticleManagerPage /> },
+      { path: '/articles/new', element: <ArticleEditorPage /> },
+      { path: '/articles/:slug/edit', element: <ArticleEditorPage /> },
+      { path: '/images', element: <ImageManagerPage /> },
+      { path: '/ui', element: <UIManagerPage /> },
+      { path: '/groups', element: <GroupsPage /> },
+      { path: '/sign-up', element: <SignUpPage /> },
+      { path: '/admin', element: <AdminPage /> },
+      { path: '/about-this-site', element: <AboutThisSitePage /> },
+      { path: '/manager', element: <ManagerPage /> },
+      { path: '/about', element: <AboutPage /> },
+      { path: '/experience', element: <ExperiencePage /> },
+    ],
+  },
 ]);
 
 const HashRedirect: React.FC = () => {
