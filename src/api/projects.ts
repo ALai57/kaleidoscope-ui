@@ -160,6 +160,21 @@ export async function* streamMessage(
   }
 }
 
+export function getSectionQuestions(
+  projectId: string,
+  body: {
+    dimension_name: string;
+    rationale: string;
+    score_definition_name: string;
+  },
+  token?: string
+): Promise<{ questions: string[] }> {
+  return request<{ questions: string[] }>(
+    `/projects/${projectId}/scores/section-questions`,
+    { method: 'POST', body, token }
+  );
+}
+
 export function generateSkills(projectId: string, token?: string): Promise<ProjectSkill[]> {
   return request<ProjectSkill[]>(`/projects/${projectId}/skills/generate`, {
     method: 'POST',

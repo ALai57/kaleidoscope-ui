@@ -48,6 +48,7 @@ import {
   addVoiceNote,
   triggerScore,
   getScoreHistory,
+  getSectionQuestions,
 } from '../../api/projects';
 import type { ProjectStatus, ScoreRun } from '../../types/project';
 
@@ -67,13 +68,15 @@ function toEditorHtml(text: string): string {
 
 interface ScoreOverlayPanelProps {
   scores: ScoreRun[];
-  onInsertSection: (dimensionName: string) => void;
+  onInsertSection: (dimensionName: string, rationale: string, definitionName: string) => void;
+  loadingDimensions: Set<string>;
   onClose: () => void;
 }
 
 const ScoreOverlayPanel: React.FC<ScoreOverlayPanelProps> = ({
   scores,
   onInsertSection,
+  loadingDimensions,
   onClose,
 }) => (
   <Box
@@ -185,15 +188,24 @@ const ScoreOverlayPanel: React.FC<ScoreOverlayPanelProps> = ({
                     <Typography variant="caption" sx={{ fontWeight: 600 }}>
                       {dim.value.toFixed(1)}
                     </Typography>
-                    <Tooltip title={`Add "${dim.dimension_name}" section to description`}>
-                      <IconButton
-                        size="small"
-                        onClick={() => onInsertSection(dim.dimension_name)}
-                        sx={{ p: 0.25, color: 'primary.main' }}
-                        aria-label={`Insert ${dim.dimension_name} section`}
-                      >
-                        <AddCircleOutlineIcon sx={{ fontSize: 14 }} />
-                      </IconButton>
+                    <Tooltip title={`Add "${dim.dimension_name}" section with guiding questions`}>
+                      <span>
+                        <IconButton
+                          size="small"
+                          onClick={() =>
+                            onInsertSection(dim.dimension_name, dim.rationale, run.definition.name)
+                          }
+                          disabled={loadingDimensions.has(dim.dimension_name)}
+                          sx={{ p: 0.25, color: 'primary.main' }}
+                          aria-label={`Insert ${dim.dimension_name} section`}
+                        >
+                          {loadingDimensions.has(dim.dimension_name) ? (
+                            <CircularProgress size={12} />
+                          ) : (
+                            <AddCircleOutlineIcon sx={{ fontSize: 14 }} />
+                          )}
+                        </IconButton>
+                      </span>
                     </Tooltip>
                   </Box>
                 </Box>
@@ -286,6 +298,7 @@ const ProjectDetailPage: React.FC = () => {
   const [draftTitle, setDraftTitle] = useState('');
   const [scoresOpen, setScoresOpen] = useState(true);
   const [saveState, setSaveState] = useState<'idle' | 'pending' | 'saving' | 'saved'>('idle');
+  const [loadingDimensions, setLoadingDimensions] = useState<Set<string>>(new Set());
 
   const contentInitialized = useRef(false);
   const skipNextUpdate = useRef(false);
@@ -391,17 +404,41 @@ const ProjectDetailPage: React.FC = () => {
   // ── Callbacks ─────────────────────────────────────────────────────────────
 
   const insertSection = useCallback(
-    (dimensionName: string) => {
-      if (!editor) return;
-      editor
-        .chain()
-        .focus('end')
-        .insertContent(
-          `<h2>${dimensionName}</h2><p></p>`
-        )
-        .run();
+    (dimensionName: string, rationale: string, definitionName: string) => {
+      if (!editor || !id) return;
+
+      setLoadingDimensions((prev) => new Set(prev).add(dimensionName));
+
+      getSectionQuestions(
+        id,
+        { dimension_name: dimensionName, rationale, score_definition_name: definitionName },
+        token
+      )
+        .then(({ questions }) => {
+          const listItems = questions.map((q) => `<li>${q}</li>`).join('');
+          editor
+            .chain()
+            .focus('end')
+            .insertContent(`<h2>${dimensionName}</h2><ul>${listItems}</ul><p></p>`)
+            .run();
+        })
+        .catch(() => {
+          // Fallback: insert heading only so the user isn't left with nothing
+          editor
+            .chain()
+            .focus('end')
+            .insertContent(`<h2>${dimensionName}</h2><p></p>`)
+            .run();
+        })
+        .finally(() => {
+          setLoadingDimensions((prev) => {
+            const next = new Set(prev);
+            next.delete(dimensionName);
+            return next;
+          });
+        });
     },
-    [editor]
+    [editor, id, token]
   );
 
   const handleTitleSave = () => {
@@ -601,6 +638,7 @@ const ProjectDetailPage: React.FC = () => {
               <ScoreOverlayPanel
                 scores={scores}
                 onInsertSection={insertSection}
+                loadingDimensions={loadingDimensions}
                 onClose={() => setScoresOpen(false)}
               />
             )}
