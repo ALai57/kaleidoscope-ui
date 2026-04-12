@@ -101,9 +101,9 @@ export const ScoreHistory: React.FC<ScoreHistoryProps> = ({ history }) => {
             </Box>
 
             {run.dimensions.map((dim) => (
-              <Box key={dim.name} sx={{ display: 'flex', gap: 1, ml: 1, mb: 0.25 }}>
+              <Box key={dim.dimension_name} sx={{ display: 'flex', gap: 1, ml: 1, mb: 0.25 }}>
                 <Typography variant="caption" color="text.secondary" sx={{ minWidth: 120 }}>
-                  {dim.name}
+                  {dim.dimension_name}
                 </Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600 }}>
                   {dim.value.toFixed(1)}

@@ -25,7 +25,7 @@ export interface ScoreDefinition {
 }
 
 export interface ScoreDimension {
-  name: string;
+  dimension_name: string;
   value: number;
   rationale: string;
 }

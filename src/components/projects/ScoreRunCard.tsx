@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import LinearProgress from '@mui/material/LinearProgress';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import type { ScoreRun } from '../../types/project';
@@ -31,25 +30,17 @@ const DimensionRow: React.FC<DimensionRowProps> = ({ name, value, rationale }) =
           {value.toFixed(1)}/10
         </Typography>
       </Box>
-      <Tooltip title={rationale} placement="bottom-start">
-        <LinearProgress
-          variant="determinate"
-          value={pct}
-          color={color}
-          sx={{ height: 6, borderRadius: 3 }}
-        />
-      </Tooltip>
+      <LinearProgress
+        variant="determinate"
+        value={pct}
+        color={color}
+        sx={{ height: 6, borderRadius: 3 }}
+      />
       {rationale && (
         <Typography
           variant="caption"
           color="text.secondary"
-          sx={{
-            display: 'block',
-            mt: 0.5,
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            textOverflow: 'ellipsis',
-          }}
+          sx={{ display: 'block', mt: 0.5 }}
         >
           {rationale}
         </Typography>
@@ -120,8 +111,8 @@ export const ScoreRunCard: React.FC<ScoreRunCardProps> = ({ scoreRun, defaultExp
         ) : (
           scoreRun.dimensions.map((dim) => (
             <DimensionRow
-              key={dim.name}
-              name={dim.name}
+              key={dim.dimension_name}
+              name={dim.dimension_name}
               value={dim.value}
               rationale={dim.rationale}
             />

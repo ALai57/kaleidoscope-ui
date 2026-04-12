@@ -119,11 +119,25 @@ export const NavBar: React.FC<NavBarProps> = ({
           {/* Right-side: admin + user */}
           <Box sx={{ maxHeight: '100%', display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
             {isSiteAdmin && (
-              <Tooltip title="Manager">
-                <IconButton component={Link} to="/manager" color="inherit" aria-label="manager">
-                  <EditIcon sx={{ color: 'white', fontSize: ICON_SIZE }} />
-                </IconButton>
-              </Tooltip>
+              <>
+                <Button
+                  component={Link}
+                  to="/projects"
+                  sx={{
+                    color: 'white',
+                    fontSize: { sm: '0.85rem', md: '0.95rem', lg: '1rem' },
+                    textTransform: 'none',
+                    fontWeight: 500,
+                  }}
+                >
+                  Projects
+                </Button>
+                <Tooltip title="Manager">
+                  <IconButton component={Link} to="/manager" color="inherit" aria-label="manager">
+                    <EditIcon sx={{ color: 'white', fontSize: ICON_SIZE }} />
+                  </IconButton>
+                </Tooltip>
+              </>
             )}
 
             {isAuthenticated ? (
