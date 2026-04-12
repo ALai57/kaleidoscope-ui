@@ -4,6 +4,11 @@ import { LoadingScreen } from './components/layout/LoadingScreen';
 import { ErrorPage } from './components/layout/ErrorPage';
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
+const ProjectsPage = React.lazy(() => import('./pages/projects/ProjectsPage'));
+const ProjectDetailPage = React.lazy(() => import('./pages/projects/ProjectDetailPage'));
+const ProjectDevelopPage = React.lazy(() => import('./pages/projects/ProjectDevelopPage'));
+const ProjectSkillsPage = React.lazy(() => import('./pages/projects/ProjectSkillsPage'));
+const ScoreDefinitionsPage = React.lazy(() => import('./pages/projects/ScoreDefinitionsPage'));
 const ArticlePage = React.lazy(() => import('./pages/ArticlePage'));
 const ArticleManagerPage = React.lazy(() => import('./pages/ArticleManagerPage'));
 const ArticleEditorPage = React.lazy(() => import('./pages/ArticleEditorPage'));
@@ -42,6 +47,11 @@ const router = createBrowserRouter([
       { path: '/manager', element: <ManagerPage /> },
       { path: '/about', element: <AboutPage /> },
       { path: '/experience', element: <ExperiencePage /> },
+      { path: '/projects', element: <ProjectsPage /> },
+      { path: '/projects/:id', element: <ProjectDetailPage /> },
+      { path: '/projects/:id/develop', element: <ProjectDevelopPage /> },
+      { path: '/projects/:id/skills', element: <ProjectSkillsPage /> },
+      { path: '/score-definitions', element: <ScoreDefinitionsPage /> },
     ],
   },
 ]);
