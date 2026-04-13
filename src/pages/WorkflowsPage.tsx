@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -11,7 +11,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { NavBar } from '../components/layout/NavBar';
 import WorkflowCard from '../components/workflows/WorkflowCard';
 import { useAuth } from '../auth/useAuth';
-import { getWorkflows, updateWorkflow } from '../api/workflows';
+import { getWorkflows, getWorkflow, updateWorkflow } from '../api/workflows';
 
 const WorkflowsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -31,6 +31,22 @@ const WorkflowsPage: React.FC = () => {
     queryKey: ['workflows'],
     queryFn: () => getWorkflows(token),
   });
+
+  // Fetch full details (including steps) for each workflow in parallel.
+  // Results land in the same ['workflows', id] cache slots the editor uses.
+  const detailQueries = useQueries({
+    queries: workflows.map((w) => ({
+      queryKey: ['workflows', w.id] as const,
+      queryFn: () => getWorkflow(w.id, token),
+      staleTime: 5 * 60 * 1000,
+    })),
+  });
+
+  // Merge list metadata with detail steps so cards show accurate counts.
+  const workflowsWithSteps = workflows.map((w, i) => ({
+    ...w,
+    steps: detailQueries[i]?.data?.steps ?? w.steps ?? [],
+  }));
 
   const archiveMutation = useMutation({
     mutationFn: (id: string) => updateWorkflow(id, { status: 'archived' }, token),
@@ -52,9 +68,9 @@ const WorkflowsPage: React.FC = () => {
     );
   }
 
-  const live = workflows.filter((w) => w.status === 'live');
-  const draft = workflows.filter((w) => w.status === 'draft');
-  const archived = workflows.filter((w) => w.status === 'archived');
+  const live = workflowsWithSteps.filter((w) => w.status === 'live');
+  const draft = workflowsWithSteps.filter((w) => w.status === 'draft');
+  const archived = workflowsWithSteps.filter((w) => w.status === 'archived');
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
