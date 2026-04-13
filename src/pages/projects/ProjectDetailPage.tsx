@@ -32,6 +32,7 @@ import ChatIcon from '@mui/icons-material/Chat';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import HistoryIcon from '@mui/icons-material/History';
 import SchoolIcon from '@mui/icons-material/School';
 import { NavBar } from '../../components/layout/NavBar';
@@ -41,6 +42,7 @@ import { extensions } from '../../components/editor/extensions';
 import { ScoreHistory } from '../../components/projects/ScoreHistory';
 import { VoiceCapture } from '../../components/projects/VoiceCapture';
 import { WorkflowTab } from '../../components/workflows/WorkflowRunPanel';
+import { TasksTab } from '../../components/tasks/TasksTab';
 import { useAuth } from '../../auth/useAuth';
 import {
   getProject,
@@ -53,6 +55,7 @@ import {
   getScoreHistory,
   getSectionQuestions,
 } from '../../api/projects';
+import { getTasks } from '../../api/tasks';
 import type { ProjectStatus, ScoreRun } from '../../types/project';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -340,6 +343,12 @@ const ProjectDetailPage: React.FC = () => {
     queryKey: ['projects', id, 'scores', 'history'],
     queryFn: () => getScoreHistory(id!, token),
     enabled: !!id && tab === 1,
+  });
+
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['projects', id, 'tasks'],
+    queryFn: () => getTasks(id!, token),
+    enabled: !!id,
   });
 
   // ── Mutations ─────────────────────────────────────────────────────────────
@@ -705,6 +714,11 @@ const ProjectDetailPage: React.FC = () => {
           <Tab label={`Notes (${notes.length})`} />
           <Tab label="Score history" icon={<HistoryIcon />} iconPosition="start" />
           <Tab label="Workflow" icon={<AccountTreeIcon />} iconPosition="start" />
+          <Tab
+            label={tasks.length > 0 ? `Tasks (${tasks.length})` : 'Tasks'}
+            icon={<ChecklistIcon />}
+            iconPosition="start"
+          />
         </Tabs>
 
         {/* Notes tab */}
@@ -774,6 +788,11 @@ const ProjectDetailPage: React.FC = () => {
         {/* Workflow tab */}
         <TabPanel value={tab} index={2}>
           <WorkflowTab projectId={id!} token={token} />
+        </TabPanel>
+
+        {/* Tasks tab */}
+        <TabPanel value={tab} index={3}>
+          <TasksTab projectId={id!} token={token} />
         </TabPanel>
       </Box>
 
