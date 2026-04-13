@@ -47,11 +47,15 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
 
   const streamAbortRef = useRef<AbortController | null>(null);
 
-  // Poll the run while it's in-flight so the panel stays fresh
+  const alreadyDone =
+    initialRun.status === 'completed' || initialRun.status === 'failed';
+
+  // Poll the run while it's in-flight so the panel stays fresh.
+  // No polling needed when the run is already finished.
   const { data: run = initialRun } = useQuery({
     queryKey: ['projects', projectId, 'workflow-runs', initialRun.id],
     queryFn: () => getWorkflowRun(projectId, initialRun.id, token),
-    refetchInterval: 3000,
+    refetchInterval: alreadyDone ? false : 3000,
     initialData: initialRun,
   });
 
@@ -304,10 +308,30 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
     (r) => r.status === 'completed' || r.status === 'failed'
   );
 
+  // Completed run: show its steps, then offer to start a new run.
+  if (latestCompleted) {
+    return (
+      <Box>
+        <WorkflowRunPanel projectId={projectId} run={latestCompleted} token={token} />
+        <Box sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => startMutation.mutate(undefined)}
+            disabled={startMutation.isPending}
+            startIcon={startMutation.isPending ? <CircularProgress size={14} /> : undefined}
+          >
+            Start new run
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
+
+  // No runs yet: show recommendation or free-form start.
   return (
     <Box>
-      {/* Recommendation banner (only if no runs yet and not dismissed) */}
-      {!recDismissed && recommendations && recommendations.length > 0 && runs?.length === 0 && (
+      {!recDismissed && recommendations && recommendations.length > 0 && (
         <WorkflowRecommendationBanner
           recommendations={recommendations}
           onAccept={(wfId) => startMutation.mutate(wfId)}
@@ -317,18 +341,6 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
         />
       )}
 
-      {/* Last completed run summary */}
-      {latestCompleted && (
-        <Alert
-          severity={latestCompleted.status === 'completed' ? 'success' : 'error'}
-          sx={{ mb: 2 }}
-        >
-          Last run ({latestCompleted.workflow_name ?? 'free-form'}):{' '}
-          {latestCompleted.status === 'completed' ? 'completed' : 'failed'}.
-        </Alert>
-      )}
-
-      {/* Start a new run */}
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
         <Button
           variant="contained"
