@@ -17,9 +17,11 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import GridViewIcon from '@mui/icons-material/GridView';
 import HubIcon from '@mui/icons-material/Hub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { NavBar } from '../../components/layout/NavBar';
 import { ProjectCard } from '../../components/projects/ProjectCard';
 import { ProjectGraph } from '../../components/projects/ProjectGraph';
@@ -106,6 +108,7 @@ const CARD_SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 };
 
 const ProjectsPage: React.FC = () => {
   const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [newDialogOpen, setNewDialogOpen] = useState(false);
@@ -223,6 +226,14 @@ const ProjectsPage: React.FC = () => {
                   </Tooltip>
                 </ToggleButton>
               </ToggleButtonGroup>
+
+              <Button
+                variant="outlined"
+                startIcon={<AccountTreeIcon />}
+                onClick={() => navigate('/workflows')}
+              >
+                Workflows
+              </Button>
 
               <Button
                 variant="contained"

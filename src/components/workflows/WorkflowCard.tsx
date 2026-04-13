@@ -54,7 +54,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive
         </Typography>
       )}
       <Typography variant="caption" color="text.disabled">
-        {workflow.steps.length} step{workflow.steps.length !== 1 ? 's' : ''}
+        {(workflow.steps ?? []).length} step{(workflow.steps ?? []).length !== 1 ? 's' : ''}
       </Typography>
     </Box>
 

@@ -17,7 +17,7 @@ export interface Workflow {
   description?: string;
   status: WorkflowStatus;
   is_default: boolean;
-  steps: WorkflowStep[];
+  steps: WorkflowStep[]; // may be absent on list responses; treat as [] when missing
 }
 
 export interface StepRun {
