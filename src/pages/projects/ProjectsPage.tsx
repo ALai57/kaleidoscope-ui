@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -29,15 +28,7 @@ import { ProjectGraph } from '../../components/projects/ProjectGraph';
 import { ProjectInlineDetail } from './ProjectInlineDetail';
 import { useAuth } from '../../auth/useAuth';
 import { getProjects, createProject } from '../../api/projects';
-import type { ProjectStatus } from '../../types/project';
-
 type ViewMode = 'list' | 'graph';
-
-const STATUS_COUNTS_LABEL: Record<ProjectStatus, string> = {
-  idea: 'Ideas',
-  developing: 'Developing',
-  executing: 'Executing',
-};
 
 interface NewProjectDialogProps {
   open: boolean;
@@ -142,18 +133,6 @@ const ProjectsPage: React.FC = () => {
     },
   });
 
-  // Maturity summary
-  const statusCounts = projects.reduce<Record<string, number>>((acc, p) => {
-    acc[p.status] = (acc[p.status] ?? 0) + 1;
-    return acc;
-  }, {});
-
-  const avgScore = (() => {
-    const allScores = projects.flatMap((p) => p.scores ?? []);
-    if (allScores.length === 0) return null;
-    return allScores.reduce((sum, s) => sum + s.overall, 0) / allScores.length;
-  })();
-
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   const handleProjectSelect = (id: string) => {
@@ -184,28 +163,6 @@ const ProjectsPage: React.FC = () => {
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
               Projects
             </Typography>
-            {!isSplitView && (
-              <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                {(Object.keys(STATUS_COUNTS_LABEL) as ProjectStatus[]).map((status) => (
-                  <Chip
-                    key={status}
-                    label={`${statusCounts[status] ?? 0} ${STATUS_COUNTS_LABEL[status]}`}
-                    size="small"
-                    variant="outlined"
-                  />
-                ))}
-                {avgScore !== null && (
-                  <Tooltip title="Average maturity score across all projects">
-                    <Chip
-                      label={`Avg score: ${avgScore.toFixed(1)}`}
-                      size="small"
-                      color="primary"
-                      variant="outlined"
-                    />
-                  </Tooltip>
-                )}
-              </Stack>
-            )}
           </Box>
 
           {!isSplitView && (

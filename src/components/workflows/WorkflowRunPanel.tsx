@@ -17,10 +17,12 @@ import {
   getWorkflowRecommendation,
   streamWorkflowRun,
 } from '../../api/workflows';
+import { getAgents } from '../../api/agents';
 import WorkflowStepper from './WorkflowStepper';
 import WorkflowActionBar from './WorkflowActionBar';
 import WorkflowRecommendationBanner from './WorkflowRecommendationBanner';
 import CustomStepDialog from './CustomStepDialog';
+import type { Agent } from '../../types/agent';
 import type { RunMode, WorkflowRun, WorkflowRecommendation } from '../../types/workflow';
 
 interface WorkflowRunPanelProps {
@@ -57,6 +59,11 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     queryFn: () => getWorkflowRun(projectId, initialRun.id, token),
     refetchInterval: alreadyDone ? false : 3000,
     initialData: initialRun,
+  });
+
+  const { data: agents = [] } = useQuery<Agent[]>({
+    queryKey: ['agents'],
+    queryFn: () => getAgents(token),
   });
 
   // ── SSE stream ──────────────────────────────────────────────────────────
@@ -203,6 +210,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         steps={run.steps}
         streamingStepId={streamingStepId}
         streamingOutput={streamingOutput}
+        agents={agents}
       />
 
       {/* Completion summary */}
