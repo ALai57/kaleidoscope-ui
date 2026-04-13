@@ -11,6 +11,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -22,6 +23,14 @@ import { getAgents, createAgent, updateAgent } from '../api/agents';
 import type { Agent, CreateAgentBody, UpdateAgentBody } from '../types/agent';
 
 const DEFAULT_COLORS = ['#0891b2', '#7c3aed', '#0369a1', '#059669', '#d97706', '#9333ea'];
+
+const AVATAR_EMOJIS = [
+  '🐬', '🦊', '🦉', '🦁', '🐯', '🦅', '🦈', '🐺',
+  '🐻', '🦋', '🐙', '🦜', '🐸', '🐝', '🦊', '🐲',
+  '🧠', '💡', '🎯', '🔮', '🛡️', '🚀', '🔬', '🎓',
+  '🏆', '⭐', '💎', '🌟', '⚡', '🌱', '🔑', '🧩',
+  '🤖', '👾', '🧑‍💼', '👩‍💼', '🧑‍💻', '👩‍💻', '🧑‍🔬', '🧑‍🎨',
+];
 
 // ── New agent dialog ───────────────────────────────────────────────────────
 
@@ -49,28 +58,67 @@ const NewAgentDialog: React.FC<NewAgentDialogProps> = ({ open, onClose, onSubmit
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>New Agent</DialogTitle>
-      <DialogContent>
-        <Box sx={{ display: 'flex', gap: 1.5, mt: 1, mb: 2 }}>
-          <TextField
-            label="Avatar emoji"
-            value={avatar}
-            onChange={(e) => setAvatar(e.target.value)}
-            size="small"
-            sx={{ width: 120 }}
-            inputProps={{ maxLength: 4 }}
-            disabled={!!submitting}
-          />
-          <TextField
-            label="Identifier (agent_type)"
-            value={agentType}
-            onChange={(e) => setAgentType(e.target.value.toLowerCase().replace(/\s+/g, '_'))}
-            size="small"
-            fullWidth
-            placeholder="e.g. security_lead"
-            helperText="Lowercase, underscores only"
-            disabled={!!submitting}
-          />
+      <DialogContent dividers>
+        {/* Identifier */}
+        <TextField
+          label="Identifier (agent_type)"
+          value={agentType}
+          onChange={(e) => setAgentType(e.target.value.toLowerCase().replace(/\s+/g, '_'))}
+          size="small"
+          fullWidth
+          placeholder="e.g. security_lead"
+          helperText="Lowercase, underscores only"
+          disabled={!!submitting}
+          sx={{ mb: 2 }}
+        />
+
+        {/* Emoji picker */}
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+          Avatar
+        </Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(8, 1fr)',
+            gap: 0.5,
+            mb: 2.5,
+            p: 1,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1.5,
+            bgcolor: 'grey.50',
+          }}
+        >
+          {AVATAR_EMOJIS.map((emoji, i) => {
+            const isSelected = avatar === emoji;
+            return (
+              <Tooltip key={`${emoji}-${i}`} title={emoji} placement="top">
+                <Box
+                  onClick={() => !submitting && setAvatar(emoji)}
+                  sx={{
+                    width: '100%',
+                    aspectRatio: '1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.35rem',
+                    lineHeight: 1,
+                    borderRadius: 1,
+                    cursor: submitting ? 'default' : 'pointer',
+                    bgcolor: isSelected ? `${color}22` : 'transparent',
+                    outline: isSelected ? `2px solid ${color}` : '2px solid transparent',
+                    transition: 'background-color 0.1s, outline-color 0.1s',
+                    '&:hover': submitting ? {} : { bgcolor: 'action.hover' },
+                  }}
+                >
+                  {emoji}
+                </Box>
+              </Tooltip>
+            );
+          })}
         </Box>
+
+        {/* Name fields */}
         <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
           <TextField
             label="Full name"

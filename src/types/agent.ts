@@ -43,6 +43,12 @@ export function getAgentPersona(
   agents: Agent[] = [],
 ): Pick<Agent, 'avatar' | 'color' | 'short_name' | 'name'> {
   const live = agents.find((a) => a.agent_type === agentType);
-  if (live) return live;
-  return DEFAULT_AGENT_PERSONAS[agentType] ?? DEFAULT_AGENT_PERSONA;
+  const defaults = DEFAULT_AGENT_PERSONAS[agentType] ?? DEFAULT_AGENT_PERSONA;
+  if (!live) return defaults;
+  return {
+    avatar: live.avatar || defaults.avatar,
+    color: live.color || defaults.color,
+    short_name: live.short_name || defaults.short_name,
+    name: live.name || defaults.name,
+  };
 }

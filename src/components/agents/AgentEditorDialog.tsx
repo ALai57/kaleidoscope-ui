@@ -25,6 +25,18 @@ const COLOR_PRESETS = [
   '#6b7280', // grey
 ];
 
+// Curated emoji palette for agent avatars
+const AVATAR_EMOJIS = [
+  // Animals — natural persona shorthand
+  '🐬', '🦊', '🦉', '🦁', '🐯', '🦅', '🦈', '🐺',
+  '🐻', '🦋', '🐙', '🦜', '🐸', '🐝', '🦊', '🐲',
+  // Abstract / conceptual
+  '🧠', '💡', '🎯', '🔮', '🛡️', '🚀', '🔬', '🎓',
+  '🏆', '⭐', '💎', '🌟', '⚡', '🌱', '🔑', '🧩',
+  // People archetypes
+  '🤖', '👾', '🧑‍💼', '👩‍💼', '🧑‍💻', '👩‍💻', '🧑‍🔬', '🧑‍🎨',
+];
+
 interface AgentEditorDialogProps {
   open: boolean;
   agent: Agent | null;
@@ -103,48 +115,81 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
         </Box>
       </DialogTitle>
 
-      <DialogContent>
+      {/* dividers keeps content from sliding under the sticky title when scrolling */}
+      <DialogContent dividers>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-        {/* Avatar + color row */}
-        <Box sx={{ display: 'flex', gap: 2, mb: 2.5, alignItems: 'flex-start' }}>
-          <TextField
-            label="Avatar emoji"
-            value={avatar}
-            onChange={(e) => setAvatar(e.target.value)}
-            size="small"
-            sx={{ width: 120 }}
-            inputProps={{ maxLength: 4 }}
-            disabled={!!saving}
-          />
-
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
-              Color
-            </Typography>
-            <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap' }}>
-              {COLOR_PRESETS.map((c) => (
-                <Tooltip key={c} title={c}>
-                  <Box
-                    onClick={() => setColor(c)}
-                    sx={{
-                      width: 24,
-                      height: 24,
-                      borderRadius: '50%',
-                      bgcolor: c,
-                      cursor: 'pointer',
-                      outline: color === c ? `3px solid ${c}` : '2px solid transparent',
-                      outlineOffset: '2px',
-                      transition: 'outline-color 0.1s',
-                    }}
-                  />
-                </Tooltip>
-              ))}
-            </Box>
-          </Box>
+        {/* ── Emoji picker ── */}
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+          Avatar
+        </Typography>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(8, 1fr)',
+            gap: 0.5,
+            mb: 2.5,
+            p: 1,
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1.5,
+            bgcolor: 'grey.50',
+          }}
+        >
+          {AVATAR_EMOJIS.map((emoji, i) => {
+            const isSelected = avatar === emoji;
+            return (
+              <Tooltip key={`${emoji}-${i}`} title={emoji} placement="top">
+                <Box
+                  onClick={() => !saving && setAvatar(emoji)}
+                  sx={{
+                    width: '100%',
+                    aspectRatio: '1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.35rem',
+                    lineHeight: 1,
+                    borderRadius: 1,
+                    cursor: saving ? 'default' : 'pointer',
+                    bgcolor: isSelected ? `${color}22` : 'transparent',
+                    outline: isSelected ? `2px solid ${color}` : '2px solid transparent',
+                    transition: 'background-color 0.1s, outline-color 0.1s',
+                    '&:hover': saving ? {} : { bgcolor: 'action.hover' },
+                  }}
+                >
+                  {emoji}
+                </Box>
+              </Tooltip>
+            );
+          })}
         </Box>
 
-        {/* Name fields */}
+        {/* ── Color picker ── */}
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+          Color
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 2.5 }}>
+          {COLOR_PRESETS.map((c) => (
+            <Tooltip key={c} title={c}>
+              <Box
+                onClick={() => setColor(c)}
+                sx={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: '50%',
+                  bgcolor: c,
+                  cursor: 'pointer',
+                  outline: color === c ? `3px solid ${c}` : '2px solid transparent',
+                  outlineOffset: '2px',
+                  transition: 'outline-color 0.1s',
+                }}
+              />
+            </Tooltip>
+          ))}
+        </Box>
+
+        {/* ── Name fields ── */}
         <Box sx={{ display: 'flex', gap: 1.5, mb: 2 }}>
           <TextField
             label="Full name"
@@ -165,7 +210,7 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
           />
         </Box>
 
-        {/* System prompt */}
+        {/* ── System prompt ── */}
         <TextField
           label="System prompt"
           value={systemPrompt}
