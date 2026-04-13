@@ -22,6 +22,9 @@ const ManagerPage = React.lazy(() => import('./pages/ManagerPage'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
 const ExperiencePage = React.lazy(() => import('./pages/ExperiencePage'));
 
+const WorkflowsPage = React.lazy(() => import('./pages/WorkflowsPage'));
+const WorkflowEditorPage = React.lazy(() => import('./pages/WorkflowEditorPage'));
+
 const ArchivePage = React.lazy(() =>
   import('./pages/ArticlePage').then((m) => ({ default: m.ArchiveView }))
 );
@@ -52,6 +55,9 @@ const router = createBrowserRouter([
       { path: '/projects/:id/develop', element: <ProjectDevelopPage /> },
       { path: '/projects/:id/skills', element: <ProjectSkillsPage /> },
       { path: '/score-definitions', element: <ScoreDefinitionsPage /> },
+      { path: '/workflows', element: <WorkflowsPage /> },
+      { path: '/workflows/new', element: <WorkflowEditorPage /> },
+      { path: '/workflows/:id', element: <WorkflowEditorPage /> },
     ],
   },
 ]);

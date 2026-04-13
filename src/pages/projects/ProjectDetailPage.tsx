@@ -31,6 +31,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import ChatIcon from '@mui/icons-material/Chat';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import HistoryIcon from '@mui/icons-material/History';
 import SchoolIcon from '@mui/icons-material/School';
 import { NavBar } from '../../components/layout/NavBar';
@@ -39,6 +40,7 @@ import { EditorToolbar } from '../../components/editor/EditorToolbar';
 import { extensions } from '../../components/editor/extensions';
 import { ScoreHistory } from '../../components/projects/ScoreHistory';
 import { VoiceCapture } from '../../components/projects/VoiceCapture';
+import { WorkflowTab } from '../../components/workflows/WorkflowRunPanel';
 import { useAuth } from '../../auth/useAuth';
 import {
   getProject,
@@ -702,6 +704,7 @@ const ProjectDetailPage: React.FC = () => {
         <Tabs value={tab} onChange={(_, v) => setTab(v as number)} sx={{ mb: 1 }}>
           <Tab label={`Notes (${notes.length})`} />
           <Tab label="Score history" icon={<HistoryIcon />} iconPosition="start" />
+          <Tab label="Workflow" icon={<AccountTreeIcon />} iconPosition="start" />
         </Tabs>
 
         {/* Notes tab */}
@@ -766,6 +769,11 @@ const ProjectDetailPage: React.FC = () => {
         {/* History tab */}
         <TabPanel value={tab} index={1}>
           <ScoreHistory history={scoreHistory} />
+        </TabPanel>
+
+        {/* Workflow tab */}
+        <TabPanel value={tab} index={2}>
+          <WorkflowTab projectId={id!} token={token} />
         </TabPanel>
       </Box>
 
