@@ -303,11 +303,26 @@ const ProjectsPage: React.FC = () => {
                 {isSplitView && (
                   <motion.div
                     key={`editor-${selectedProjectId}`}
-                    initial={{ opacity: 0, x: 40 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    transition={{ delay: 0.25, duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    style={{ flex: 1, minWidth: 0 }}
+                    // Variants let enter and exit carry their own transitions,
+                    // so the enter delay doesn't bleed into the exit and cause
+                    // the editor to linger while the flex container collapses.
+                    variants={{
+                      enter: { opacity: 0, x: 40 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        transition: { delay: 0.25, duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] },
+                      },
+                      exit: {
+                        opacity: 0,
+                        x: 0,
+                        transition: { duration: 0.12 },
+                      },
+                    }}
+                    initial="enter"
+                    animate="visible"
+                    exit="exit"
+                    style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}
                   >
                     <ProjectInlineDetail
                       projectId={selectedProjectId!}
