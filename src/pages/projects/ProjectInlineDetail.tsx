@@ -20,6 +20,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { EditorToolbar } from '../../components/editor/EditorToolbar';
 import { extensions } from '../../components/editor/extensions';
+import WorkflowRecommendationBanner from '../../components/workflows/WorkflowRecommendationBanner';
 import { useAuth } from '../../auth/useAuth';
 import {
   getProject,
@@ -27,6 +28,7 @@ import {
   triggerScore,
   getSectionQuestions,
 } from '../../api/projects';
+import { getWorkflowRecommendation, startWorkflowRun } from '../../api/workflows';
 import type { ScoreRun } from '../../types/project';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -235,6 +237,7 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
   const [scoreAnchorEl, setScoreAnchorEl] = useState<HTMLElement | null>(null);
   const [saveState, setSaveState] = useState<'idle' | 'pending' | 'saving' | 'saved'>('idle');
   const [loadingDimensions, setLoadingDimensions] = useState<Set<string>>(new Set());
+  const [recDismissed, setRecDismissed] = useState(false);
 
   const contentInitialized = useRef(false);
   const skipNextUpdate = useRef(false);
@@ -245,6 +248,22 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
     queryKey: ['projects', projectId],
     queryFn: () => getProject(projectId, token),
     enabled: !!projectId,
+  });
+
+  const { data: recommendations = [] } = useQuery({
+    queryKey: ['projects', projectId, 'workflow-recommendation'],
+    queryFn: () => getWorkflowRecommendation(projectId, token),
+    enabled: !!projectId,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const startRunMutation = useMutation({
+    mutationFn: (workflowId: string) =>
+      startWorkflowRun(projectId, { workflow_id: workflowId, mode: 'manual' }, token),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'workflow-runs'] });
+      navigate(`/projects/${projectId}`);
+    },
   });
 
   const updateMutation = useMutation({
@@ -281,9 +300,10 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
     },
   });
 
-  // Reset editor when projectId changes
+  // Reset editor + dismissal state when projectId changes
   useEffect(() => {
     contentInitialized.current = false;
+    setRecDismissed(false);
   }, [projectId]);
 
   // Populate editor when project data arrives
@@ -382,6 +402,23 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
           <Typography variant="h5" sx={{ fontWeight: 700, mb: 2 }}>
             {project.title}
           </Typography>
+        </motion.div>
+      )}
+
+      {/* ── Workflow recommendation ── */}
+      {!recDismissed && recommendations.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.28, duration: 0.3 }}
+        >
+          <WorkflowRecommendationBanner
+            recommendations={recommendations}
+            onAccept={(wfId) => startRunMutation.mutate(wfId)}
+            onDismiss={() => setRecDismissed(true)}
+            accepting={!!startRunMutation.isPending}
+            token={token}
+          />
         </motion.div>
       )}
 

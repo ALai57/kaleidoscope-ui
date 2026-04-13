@@ -189,6 +189,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           onAccept={(wfId) => newRunMutation.mutate(wfId)}
           onDismiss={() => setPostCustomRecs([])}
           accepting={!!newRunMutation.isPending}
+          token={token}
         />
       )}
 
@@ -311,6 +312,7 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
           onAccept={(wfId) => startMutation.mutate(wfId)}
           onDismiss={() => setRecDismissed(true)}
           accepting={!!startMutation.isPending}
+          token={token}
         />
       )}
 
