@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -112,7 +113,8 @@ const ProjectsPage: React.FC = () => {
   // selectedProjectId drives the split-view animation:
   // null  → show the card grid
   // string → slide selected card to sidebar, reveal inline editor
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedProjectId = searchParams.get('project');
 
   const user = userProfile
     ? {
@@ -151,11 +153,11 @@ const ProjectsPage: React.FC = () => {
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   const handleProjectSelect = (id: string) => {
-    setSelectedProjectId(id);
+    setSearchParams({ project: id });
   };
 
   const handleClose = () => {
-    setSelectedProjectId(null);
+    setSearchParams({});
   };
 
   const isSplitView = selectedProjectId !== null && selectedProject !== undefined;
