@@ -67,9 +67,11 @@ const ScoreSparkline: React.FC<ScoreSparklineProps> = ({ scores }) => {
 
 interface ProjectCardProps {
   project: Project;
+  /** When provided, called on click instead of navigating to the project page. */
+  onSelect?: () => void;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
   const navigate = useNavigate();
   const scores = project.scores ?? [];
 
@@ -83,7 +85,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
       }}
     >
       <CardActionArea
-        onClick={() => navigate(`/projects/${project.id}`)}
+        onClick={() => (onSelect ? onSelect() : navigate(`/projects/${project.id}`))}
         sx={{ height: '100%', alignItems: 'flex-start' }}
       >
         <CardContent>

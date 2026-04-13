@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -21,6 +22,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NavBar } from '../../components/layout/NavBar';
 import { ProjectCard } from '../../components/projects/ProjectCard';
 import { ProjectGraph } from '../../components/projects/ProjectGraph';
+import { ProjectInlineDetail } from './ProjectInlineDetail';
 import { useAuth } from '../../auth/useAuth';
 import { getProjects, createProject } from '../../api/projects';
 import type { ProjectStatus } from '../../types/project';
@@ -95,11 +97,22 @@ const NewProjectDialog: React.FC<NewProjectDialogProps> = ({
   );
 };
 
+// ── Spring transition used for the card layout animation ──────────────────
+
+const CARD_SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 };
+
+// ── Page ───────────────────────────────────────────────────────────────────
+
 const ProjectsPage: React.FC = () => {
   const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [newDialogOpen, setNewDialogOpen] = useState(false);
+
+  // selectedProjectId drives the split-view animation:
+  // null  → show the card grid
+  // string → slide selected card to sidebar, reveal inline editor
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   const user = userProfile
     ? {
@@ -135,69 +148,92 @@ const ProjectsPage: React.FC = () => {
     return allScores.reduce((sum, s) => sum + s.overall, 0) / allScores.length;
   })();
 
+  const selectedProject = projects.find((p) => p.id === selectedProjectId);
+
+  const handleProjectSelect = (id: string) => {
+    setSelectedProjectId(id);
+  };
+
+  const handleClose = () => {
+    setSelectedProjectId(null);
+  };
+
+  const isSplitView = selectedProjectId !== null && selectedProject !== undefined;
+
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
 
-      <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
-        {/* Header */}
+      <Box
+        sx={{
+          p: 3,
+          maxWidth: isSplitView ? 1400 : 1200,
+          mx: 'auto',
+          transition: 'max-width 0.4s ease',
+        }}
+      >
+        {/* ── Header ── */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
               Projects
             </Typography>
-            <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-              {(Object.keys(STATUS_COUNTS_LABEL) as ProjectStatus[]).map((status) => (
-                <Chip
-                  key={status}
-                  label={`${statusCounts[status] ?? 0} ${STATUS_COUNTS_LABEL[status]}`}
-                  size="small"
-                  variant="outlined"
-                />
-              ))}
-              {avgScore !== null && (
-                <Tooltip title="Average maturity score across all projects">
+            {!isSplitView && (
+              <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                {(Object.keys(STATUS_COUNTS_LABEL) as ProjectStatus[]).map((status) => (
                   <Chip
-                    label={`Avg score: ${avgScore.toFixed(1)}`}
+                    key={status}
+                    label={`${statusCounts[status] ?? 0} ${STATUS_COUNTS_LABEL[status]}`}
                     size="small"
-                    color="primary"
                     variant="outlined"
                   />
-                </Tooltip>
-              )}
-            </Stack>
+                ))}
+                {avgScore !== null && (
+                  <Tooltip title="Average maturity score across all projects">
+                    <Chip
+                      label={`Avg score: ${avgScore.toFixed(1)}`}
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
+                  </Tooltip>
+                )}
+              </Stack>
+            )}
           </Box>
 
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            <ToggleButtonGroup
-              value={viewMode}
-              exclusive
-              size="small"
-              onChange={(_, v) => { if (v) setViewMode(v as ViewMode); }}
-            >
-              <ToggleButton value="list" aria-label="list view">
-                <Tooltip title="List view">
-                  <GridViewIcon fontSize="small" />
-                </Tooltip>
-              </ToggleButton>
-              <ToggleButton value="graph" aria-label="graph view">
-                <Tooltip title="Graph view">
-                  <HubIcon fontSize="small" />
-                </Tooltip>
-              </ToggleButton>
-            </ToggleButtonGroup>
+          {!isSplitView && (
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <ToggleButtonGroup
+                value={viewMode}
+                exclusive
+                size="small"
+                onChange={(_, v) => { if (v) setViewMode(v as ViewMode); }}
+              >
+                <ToggleButton value="list" aria-label="list view">
+                  <Tooltip title="List view">
+                    <GridViewIcon fontSize="small" />
+                  </Tooltip>
+                </ToggleButton>
+                <ToggleButton value="graph" aria-label="graph view">
+                  <Tooltip title="Graph view">
+                    <HubIcon fontSize="small" />
+                  </Tooltip>
+                </ToggleButton>
+              </ToggleButtonGroup>
 
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => setNewDialogOpen(true)}
-            >
-              New Project
-            </Button>
-          </Box>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setNewDialogOpen(true)}
+              >
+                New Project
+              </Button>
+            </Box>
+          )}
         </Box>
 
-        {/* Content */}
+        {/* ── Loading / empty states ── */}
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 8 }}>
             <CircularProgress />
@@ -219,18 +255,70 @@ const ProjectsPage: React.FC = () => {
           </Box>
         )}
 
-        {!isLoading && projects.length > 0 && viewMode === 'list' && (
-          <Grid container spacing={2}>
-            {projects.map((project) => (
-              <Grid key={project.id} item xs={12} sm={6} md={4}>
-                <ProjectCard project={project} />
-              </Grid>
-            ))}
-          </Grid>
-        )}
+        {/* ── Animated content ── */}
+        {!isLoading && projects.length > 0 && (
+          // LayoutGroup scopes the layoutId animations so cards animate
+          // directly from their grid position to the sidebar in one pass.
+          // AnimatePresence is kept ONLY for the editor panel — wrapping the
+          // card area in AnimatePresence caused exit-opacity to fight layoutId
+          // and produced a double-reposition on cards that aren't in column 1.
+          <LayoutGroup>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: isSplitView ? 3 : 0 }}>
 
-        {!isLoading && projects.length > 0 && viewMode === 'graph' && (
-          <ProjectGraph projects={projects} width={1140} height={600} />
+              {/* ── Card area (no AnimatePresence — let layoutId own the motion) ── */}
+              <Box sx={{ width: isSplitView ? 280 : '100%', flexShrink: 0 }}>
+                {isSplitView ? (
+                  /* Sidebar: the selected card drifts here via layoutId */
+                  <motion.div
+                    layoutId={`project-card-${selectedProjectId}`}
+                    transition={CARD_SPRING}
+                  >
+                    <ProjectCard project={selectedProject!} />
+                  </motion.div>
+                ) : viewMode === 'list' ? (
+                  /* Grid */
+                  <Grid container spacing={2}>
+                    {projects.map((project) => (
+                      <Grid key={project.id} item xs={12} sm={6} md={4}>
+                        <motion.div
+                          layoutId={`project-card-${project.id}`}
+                          transition={CARD_SPRING}
+                        >
+                          <ProjectCard
+                            project={project}
+                            onSelect={() => handleProjectSelect(project.id)}
+                          />
+                        </motion.div>
+                      </Grid>
+                    ))}
+                  </Grid>
+                ) : (
+                  /* Graph */
+                  <ProjectGraph projects={projects} width={1140} height={600} />
+                )}
+              </Box>
+
+              {/* ── Editor panel (AnimatePresence only here) ── */}
+              <AnimatePresence>
+                {isSplitView && (
+                  <motion.div
+                    key={`editor-${selectedProjectId}`}
+                    initial={{ opacity: 0, x: 40 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ delay: 0.25, duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    <ProjectInlineDetail
+                      projectId={selectedProjectId!}
+                      onClose={handleClose}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+            </Box>
+          </LayoutGroup>
         )}
       </Box>
 
