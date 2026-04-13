@@ -12,6 +12,7 @@ import {
   runCustomStep,
   updateRunMode,
   getWorkflowRun,
+  getWorkflowRuns,
   startWorkflowRun,
   getWorkflowRecommendation,
   streamWorkflowRun,
@@ -257,7 +258,7 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
 
   const { data: runs, isLoading: runsLoading } = useQuery({
     queryKey: ['projects', projectId, 'workflow-runs'],
-    queryFn: () => import('../../api/workflows').then((m) => m.getWorkflowRuns(projectId, token)),
+    queryFn: () => getWorkflowRuns(projectId, token),
     enabled: !!projectId,
   });
 
