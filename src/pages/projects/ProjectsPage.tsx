@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import GridViewIcon from '@mui/icons-material/GridView';
+import GroupsIcon from '@mui/icons-material/Groups';
 import HubIcon from '@mui/icons-material/Hub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -233,6 +234,14 @@ const ProjectsPage: React.FC = () => {
                 onClick={() => navigate('/workflows')}
               >
                 Workflows
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<GroupsIcon />}
+                onClick={() => navigate('/agents')}
+              >
+                Agent Team
               </Button>
 
               <Button

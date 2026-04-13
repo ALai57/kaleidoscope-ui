@@ -1,3 +1,4 @@
+export type { Agent, CreateAgentBody, UpdateAgentBody } from './agent';
 export type { Article, ArticleBranch, ArticleVersion } from './article';
 export type { Image, ImageVersion } from './image';
 export type { UserProfile } from './user';

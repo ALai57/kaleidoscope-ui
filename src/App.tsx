@@ -24,6 +24,7 @@ const ExperiencePage = React.lazy(() => import('./pages/ExperiencePage'));
 
 const WorkflowsPage = React.lazy(() => import('./pages/WorkflowsPage'));
 const WorkflowEditorPage = React.lazy(() => import('./pages/WorkflowEditorPage'));
+const AgentTeamPage = React.lazy(() => import('./pages/AgentTeamPage'));
 
 const ArchivePage = React.lazy(() =>
   import('./pages/ArticlePage').then((m) => ({ default: m.ArchiveView }))
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
       { path: '/workflows', element: <WorkflowsPage /> },
       { path: '/workflows/new', element: <WorkflowEditorPage /> },
       { path: '/workflows/:id', element: <WorkflowEditorPage /> },
+      { path: '/agents', element: <AgentTeamPage /> },
     ],
   },
 ]);

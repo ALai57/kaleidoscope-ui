@@ -9,16 +9,22 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { getAgentPersona, DEFAULT_AGENT_PERSONAS } from '../../types/agent';
+import type { Agent } from '../../types/agent';
 import type { WorkflowStepInput } from '../../api/workflows';
 
 interface WorkflowStepListProps {
   steps: WorkflowStepInput[];
   onChange: (steps: WorkflowStepInput[]) => void;
+  agents?: Agent[];
 }
 
-const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) => {
+// The agent types to always show in the selector, in order.
+const AGENT_TYPE_ORDER = ['coach', 'pm', 'engineering_lead'];
+
+const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, agents = [] }) => {
   const addStep = () => {
-    onChange([...steps, { name: '', description: '', position: steps.length }]);
+    onChange([...steps, { name: '', description: '', position: steps.length, agent_type: 'coach' }]);
   };
 
   const removeStep = (index: number) => {
@@ -42,17 +48,22 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) 
     onChange(updated);
   };
 
+  // Build the selectable agent list: prioritise the order above, then add any
+  // custom agents the user has defined.
+  const agentTypeOptions: string[] = [
+    ...AGENT_TYPE_ORDER,
+    ...agents
+      .map((a) => a.agent_type)
+      .filter((t) => !AGENT_TYPE_ORDER.includes(t)),
+  ];
+
   return (
     <Box>
       {/* Step cards */}
       {steps.map((step, index) => (
-        <Box
-          key={index}
-          sx={{ display: 'flex', gap: 0, mb: 0 }}
-        >
+        <Box key={index} sx={{ display: 'flex', gap: 0, mb: 0 }}>
           {/* Timeline track */}
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mr: 2, flexShrink: 0 }}>
-            {/* Number badge */}
             <Box
               sx={{
                 width: 28,
@@ -71,17 +82,8 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) 
             >
               {index + 1}
             </Box>
-            {/* Connector line */}
             {index < steps.length - 1 && (
-              <Box
-                sx={{
-                  width: 2,
-                  flex: 1,
-                  minHeight: 16,
-                  bgcolor: 'divider',
-                  my: 0.5,
-                }}
-              />
+              <Box sx={{ width: 2, flex: 1, minHeight: 16, bgcolor: 'divider', my: 0.5 }} />
             )}
           </Box>
 
@@ -108,27 +110,14 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) 
                 transition: 'border-color 0.15s, box-shadow 0.15s',
               }}
             >
-              {/* Card header row: step name + controls */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  px: 1.5,
-                  pt: 1,
-                  pb: 0.5,
-                  gap: 0.5,
-                }}
-              >
+              {/* Step name row */}
+              <Box sx={{ display: 'flex', alignItems: 'center', px: 1.5, pt: 1, pb: 0.5, gap: 0.5 }}>
                 <InputBase
                   value={step.name}
                   onChange={(e) => updateStep(index, 'name', e.target.value)}
                   placeholder="Step name…"
                   fullWidth
-                  sx={{
-                    fontSize: '0.9rem',
-                    fontWeight: 600,
-                    '& input': { p: 0 },
-                  }}
+                  sx={{ fontSize: '0.9rem', fontWeight: 600, '& input': { p: 0 } }}
                 />
                 <Tooltip title="Move up">
                   <span>
@@ -165,10 +154,8 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) 
                 </Tooltip>
               </Box>
 
-              {/* Divider */}
-              <Box sx={{ mx: 1.5, borderTop: 1, borderColor: 'divider' }} />
-
               {/* Instructions */}
+              <Box sx={{ mx: 1.5, borderTop: 1, borderColor: 'divider' }} />
               <InputBase
                 value={step.description}
                 onChange={(e) => updateStep(index, 'description', e.target.value)}
@@ -185,6 +172,49 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) 
                   '& textarea': { p: 0, lineHeight: 1.55 },
                 }}
               />
+
+              {/* Agent selector */}
+              <Box sx={{ mx: 1.5, borderTop: 1, borderColor: 'divider' }} />
+              <Box sx={{ px: 1.5, py: 0.75, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="caption" color="text.disabled" sx={{ flexShrink: 0 }}>
+                  Agent
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                  {agentTypeOptions.map((agentType) => {
+                    const persona = getAgentPersona(agentType, agents);
+                    const isSelected = (step.agent_type ?? 'coach') === agentType;
+                    return (
+                      <Tooltip key={agentType} title={persona.name}>
+                        <Box
+                          onClick={() => updateStep(index, 'agent_type', agentType)}
+                          sx={{
+                            width: 26,
+                            height: 26,
+                            borderRadius: '50%',
+                            bgcolor: persona.color,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.9rem',
+                            cursor: 'pointer',
+                            outline: isSelected ? `2px solid ${persona.color}` : '2px solid transparent',
+                            outlineOffset: '2px',
+                            opacity: isSelected ? 1 : 0.45,
+                            transition: 'opacity 0.12s, outline-color 0.12s',
+                            '&:hover': { opacity: 1 },
+                          }}
+                        >
+                          {persona.avatar}
+                        </Box>
+                      </Tooltip>
+                    );
+                  })}
+                </Box>
+                {/* Selected agent name */}
+                <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
+                  {getAgentPersona(step.agent_type ?? 'coach', agents).name}
+                </Typography>
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -209,7 +239,6 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange }) 
         </Box>
       )}
 
-      {/* Add step */}
       <Button
         size="small"
         startIcon={<AddIcon />}

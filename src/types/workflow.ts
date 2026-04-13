@@ -9,6 +9,7 @@ export interface WorkflowStep {
   position: number;
   name: string;
   description: string;
+  agent_type?: string;
 }
 
 export interface Workflow {

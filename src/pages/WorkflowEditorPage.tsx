@@ -23,7 +23,9 @@ import {
   updateWorkflow,
   type WorkflowStepInput,
 } from '../api/workflows';
+import { getAgents } from '../api/agents';
 import type { WorkflowStatus } from '../types/workflow';
+import type { Agent } from '../types/agent';
 
 const STATUS_OPTIONS: { value: WorkflowStatus; label: string; color: string }[] = [
   { value: 'draft', label: 'Draft', color: 'default' },
@@ -62,6 +64,11 @@ const WorkflowEditorPage: React.FC = () => {
     enabled: !!id,
   });
 
+  const { data: agents = [] } = useQuery<Agent[]>({
+    queryKey: ['agents'],
+    queryFn: () => getAgents(token),
+  });
+
   useEffect(() => {
     if (workflow) {
       setName(workflow.name);
@@ -72,6 +79,7 @@ const WorkflowEditorPage: React.FC = () => {
           name: s.name,
           description: s.description,
           position: s.position,
+          ...(s.agent_type !== undefined ? { agent_type: s.agent_type } : {}),
         }))
       );
     }
@@ -232,7 +240,7 @@ const WorkflowEditorPage: React.FC = () => {
               Steps
             </Typography>
 
-            <WorkflowStepList steps={steps} onChange={setSteps} />
+            <WorkflowStepList steps={steps} onChange={setSteps} agents={agents} />
           </Box>
 
           <Divider />

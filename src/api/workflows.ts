@@ -24,6 +24,7 @@ export interface WorkflowStepInput {
   name: string;
   description: string;
   position: number;
+  agent_type?: string;
 }
 
 export function createWorkflow(
