@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEditor, EditorContent } from '@tiptap/react';
 import Alert from '@mui/material/Alert';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -17,6 +18,7 @@ import IconButton from '@mui/material/IconButton';
 import InputLabel from '@mui/material/InputLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import MenuItem from '@mui/material/MenuItem';
+import Popover from '@mui/material/Popover';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Tab from '@mui/material/Tab';
@@ -28,7 +30,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import ChatIcon from '@mui/icons-material/Chat';
 import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import HistoryIcon from '@mui/icons-material/History';
 import SchoolIcon from '@mui/icons-material/School';
@@ -64,128 +65,133 @@ function toEditorHtml(text: string): string {
     .join('');
 }
 
-// ── Score overlay panel ────────────────────────────────────────────────────
+// ── Scorer personas ────────────────────────────────────────────────────────
 
-interface ScoreOverlayPanelProps {
-  scores: ScoreRun[];
-  onInsertSection: (dimensionName: string, rationale: string, definitionName: string) => void;
-  loadingDimensions: Set<string>;
-  onClose: () => void;
+interface ScorerPersona {
+  animal: string;
+  shortName: string;
+  label: string;
+  /** CSS color string used for the avatar background */
+  color: string;
 }
 
-const ScoreOverlayPanel: React.FC<ScoreOverlayPanelProps> = ({
-  scores,
+const SCORER_PERSONAS: Record<string, ScorerPersona> = {
+  pm:               { animal: '🦊', shortName: 'Product',   label: 'Product Manager',  color: '#7c3aed' },
+  engineering_lead: { animal: '🦉', shortName: 'Architect', label: 'Engineering Lead', color: '#0369a1' },
+  coach:            { animal: '🐬', shortName: 'Coach',     label: 'Project Coach',    color: '#0891b2' },
+};
+
+const DEFAULT_PERSONA: ScorerPersona = {
+  animal: '🐱', shortName: 'Advisor', label: 'Expert Advisor', color: '#6b7280',
+};
+
+function getPersona(scorerType: string): ScorerPersona {
+  return SCORER_PERSONAS[scorerType] ?? DEFAULT_PERSONA;
+}
+
+function overallChipColor(overall: number): 'success' | 'warning' | 'error' {
+  if (overall >= 7) return 'success';
+  if (overall >= 4) return 'warning';
+  return 'error';
+}
+
+// ── Score popover content ──────────────────────────────────────────────────
+
+interface ScorePopoverContentProps {
+  run: ScoreRun;
+  onInsertSection: (dimensionName: string, rationale: string, definitionName: string) => void;
+  loadingDimensions: Set<string>;
+}
+
+const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
+  run,
   onInsertSection,
   loadingDimensions,
-  onClose,
-}) => (
-  <Box
-    sx={{
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      width: 288,
-      maxHeight: '52vh',
-      overflowY: 'auto',
-      bgcolor: 'background.paper',
-      border: 1,
-      borderColor: 'divider',
-      borderRadius: '0 0 0 8px',
-      boxShadow: 6,
-      zIndex: 10,
-    }}
-  >
-    {/* Panel header */}
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        px: 1.5,
-        py: 1,
-        borderBottom: 1,
-        borderColor: 'divider',
-        position: 'sticky',
-        top: 0,
-        bgcolor: 'background.paper',
-        zIndex: 1,
-      }}
-    >
-      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-        Scores
-      </Typography>
-      <IconButton size="small" onClick={onClose} aria-label="Close scores panel">
-        <CloseIcon fontSize="small" />
-      </IconButton>
-    </Box>
+}) => {
+  const persona = getPersona(run.definition.scorer_type);
 
-    {scores.length === 0 ? (
-      <Box sx={{ p: 2 }}>
-        <Typography variant="body2" color="text.secondary">
-          Not yet scored. Use "Re-score" to evaluate this project.
-        </Typography>
-      </Box>
-    ) : (
-      scores.map((run, runIdx) => (
+  return (
+    <Box sx={{ width: 300 }}>
+      {/* ── Persona header ── */}
+      <Box
+        sx={{
+          px: 2.5,
+          pt: 3,
+          pb: 2.5,
+          textAlign: 'center',
+          background: `linear-gradient(160deg, ${persona.color}22 0%, ${persona.color}08 100%)`,
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
+        {/* Animal illustration */}
         <Box
-          key={run.id}
           sx={{
-            p: 1.5,
-            borderBottom: runIdx < scores.length - 1 ? 1 : 0,
-            borderColor: 'divider',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 72,
+            height: 72,
+            borderRadius: '50%',
+            bgcolor: 'background.paper',
+            boxShadow: `0 0 0 3px ${persona.color}40`,
+            fontSize: '2.5rem',
+            lineHeight: 1,
+            mb: 1.5,
           }}
         >
-          {/* Definition name + overall */}
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', mb: 1 }}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: 0.5,
-                color: 'text.secondary',
-              }}
-            >
-              {run.definition.name}
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: 700,
-                color:
-                  run.overall >= 7
-                    ? 'success.main'
-                    : run.overall >= 4
-                      ? 'warning.main'
-                      : 'error.main',
-              }}
-            >
-              {run.overall.toFixed(1)}&thinsp;/&thinsp;10
-            </Typography>
-          </Box>
+          {persona.animal}
+        </Box>
 
-          {/* Dimensions */}
-          {run.dimensions.map((dim) => {
+        {/* Short name */}
+        <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.1, mb: 0.25 }}>
+          {persona.shortName}
+        </Typography>
+
+        {/* Role label */}
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+          {persona.label}
+        </Typography>
+
+        {/* Overall score chip */}
+        <Chip
+          label={`${run.overall.toFixed(1)} / 10`}
+          color={overallChipColor(run.overall)}
+          size="small"
+          sx={{ fontWeight: 700, fontSize: '0.75rem' }}
+        />
+      </Box>
+
+      {/* ── Dimensions ── */}
+      <Box sx={{ px: 2, py: 1.75 }}>
+        {run.dimensions.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            No dimensions scored.
+          </Typography>
+        ) : (
+          run.dimensions.map((dim) => {
             const pct = (dim.value / 10) * 100;
             const color =
-              dim.value >= 7 ? ('success' as const) : dim.value >= 4 ? ('warning' as const) : ('error' as const);
+              dim.value >= 7
+                ? ('success' as const)
+                : dim.value >= 4
+                  ? ('warning' as const)
+                  : ('error' as const);
             return (
-              <Box key={dim.dimension_name} sx={{ mb: 1.25 }}>
+              <Box key={dim.dimension_name} sx={{ mb: 1.75 }}>
                 <Box
                   sx={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    mb: 0.25,
+                    mb: 0.4,
                   }}
                 >
-                  <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500, flex: 1 }}>
                     {dim.dimension_name}
                   </Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, ml: 0.5 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: `${color}.main` }}>
                       {dim.value.toFixed(1)}
                     </Typography>
                     <Tooltip title={`Add "${dim.dimension_name}" section with guiding questions`}>
@@ -213,25 +219,25 @@ const ScoreOverlayPanel: React.FC<ScoreOverlayPanelProps> = ({
                   variant="determinate"
                   value={pct}
                   color={color}
-                  sx={{ height: 3, borderRadius: 2 }}
+                  sx={{ height: 4, borderRadius: 2 }}
                 />
                 {dim.rationale && (
                   <Typography
                     variant="caption"
                     color="text.secondary"
-                    sx={{ display: 'block', mt: 0.5, fontSize: '0.65rem', lineHeight: 1.4 }}
+                    sx={{ display: 'block', mt: 0.5, lineHeight: 1.45 }}
                   >
                     {dim.rationale}
                   </Typography>
                 )}
               </Box>
             );
-          })}
-        </Box>
-      ))
-    )}
-  </Box>
-);
+          })
+        )}
+      </Box>
+    </Box>
+  );
+};
 
 // ── Tab panel ──────────────────────────────────────────────────────────────
 
@@ -296,7 +302,8 @@ const ProjectDetailPage: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [draftTitle, setDraftTitle] = useState('');
-  const [scoresOpen, setScoresOpen] = useState(true);
+  const [activeScoreId, setActiveScoreId] = useState<string | null>(null);
+  const [scoreAnchorEl, setScoreAnchorEl] = useState<HTMLElement | null>(null);
   const [saveState, setSaveState] = useState<'idle' | 'pending' | 'saving' | 'saved'>('idle');
   const [loadingDimensions, setLoadingDimensions] = useState<Set<string>>(new Set());
 
@@ -585,7 +592,7 @@ const ProjectDetailPage: React.FC = () => {
           </Box>
         </Box>
 
-        {/* ── Editor + score overlay ── */}
+        {/* ── Editor + score avatars ── */}
         <Box
           sx={{
             border: 1,
@@ -598,52 +605,96 @@ const ProjectDetailPage: React.FC = () => {
           {/* Toolbar */}
           <EditorToolbar editor={editor} />
 
-          {/* Sub-toolbar: scores toggle */}
+          {/* Sub-toolbar: per-scorer avatars */}
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',
               alignItems: 'center',
               px: 1.5,
-              py: 0.5,
+              py: 0.75,
               borderBottom: 1,
               borderColor: 'divider',
               bgcolor: 'grey.50',
+              gap: 1,
             }}
           >
-            <Chip
-              icon={<AssessmentIcon sx={{ fontSize: '14px !important' }} />}
-              label={
-                scoresOpen
-                  ? 'Hide scores'
-                  : scores.length > 0
-                    ? `${scores.length} score${scores.length !== 1 ? 's' : ''}`
-                    : 'Show scores'
-              }
-              size="small"
-              clickable
-              color={scoresOpen ? 'primary' : 'default'}
-              variant={scoresOpen ? 'filled' : 'outlined'}
-              onClick={() => setScoresOpen((v) => !v)}
-            />
-          </Box>
-
-          {/* Content area — relative container for the overlay */}
-          <Box sx={{ position: 'relative' }}>
-            <Box sx={EDITOR_CONTENT_SX}>
-              <EditorContent editor={editor} />
-            </Box>
-
-            {scoresOpen && (
-              <ScoreOverlayPanel
-                scores={scores}
-                onInsertSection={insertSection}
-                loadingDimensions={loadingDimensions}
-                onClose={() => setScoresOpen(false)}
-              />
+            {scores.length === 0 ? (
+              <Typography variant="caption" color="text.disabled" sx={{ mr: 0.5 }}>
+                No scores yet
+              </Typography>
+            ) : (
+              scores.map((run) => {
+                const persona = getPersona(run.definition.scorer_type);
+                const isOpen = activeScoreId === run.id;
+                return (
+                  <Tooltip
+                    key={run.id}
+                    title={`${persona.shortName} · ${run.overall.toFixed(1)}/10`}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 34,
+                        height: 34,
+                        fontSize: '1.1rem',
+                        bgcolor: persona.color,
+                        cursor: 'pointer',
+                        outline: isOpen ? '2px solid' : '2px solid transparent',
+                        outlineColor: isOpen ? persona.color : 'transparent',
+                        outlineOffset: '2px',
+                        boxShadow: isOpen ? 3 : 1,
+                        transition: 'box-shadow 0.15s, outline-color 0.15s',
+                        '&:hover': { boxShadow: 4 },
+                      }}
+                      onClick={(e) => {
+                        if (isOpen) {
+                          setActiveScoreId(null);
+                          setScoreAnchorEl(null);
+                        } else {
+                          setActiveScoreId(run.id);
+                          setScoreAnchorEl(e.currentTarget);
+                        }
+                      }}
+                    >
+                      {persona.animal}
+                    </Avatar>
+                  </Tooltip>
+                );
+              })
             )}
           </Box>
+
+          {/* Editor content */}
+          <Box sx={EDITOR_CONTENT_SX}>
+            <EditorContent editor={editor} />
+          </Box>
         </Box>
+
+        {/* Score popover — one per scorer, rendered outside editor box */}
+        {(() => {
+          const activeRun = scores.find((r) => r.id === activeScoreId) ?? null;
+          return (
+            <Popover
+              open={!!activeRun}
+              anchorEl={scoreAnchorEl}
+              onClose={() => {
+                setActiveScoreId(null);
+                setScoreAnchorEl(null);
+              }}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{ paper: { sx: { mt: 0.5, maxHeight: '60vh', overflowY: 'auto' } } }}
+            >
+              {activeRun && (
+                <ScorePopoverContent
+                  run={activeRun}
+                  onInsertSection={insertSection}
+                  loadingDimensions={loadingDimensions}
+                />
+              )}
+            </Popover>
+          );
+        })()}
 
         <Divider sx={{ mb: 2 }} />
 
