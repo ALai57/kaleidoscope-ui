@@ -10,6 +10,10 @@ import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import Popover from '@mui/material/Popover';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
@@ -17,15 +21,18 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import Divider from '@mui/material/Divider';
 import { EditorToolbar } from '../../components/editor/EditorToolbar';
 import { extensions } from '../../components/editor/extensions';
 import { WorkflowTab } from '../../components/workflows/WorkflowRunPanel';
+import { TasksTab } from '../../components/tasks/TasksTab';
 import { useAuth } from '../../auth/useAuth';
 import {
   getProject,
   updateProject,
+  deleteProject,
   triggerScore,
   getSectionQuestions,
 } from '../../api/projects';
@@ -237,6 +244,7 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
   const [scoreAnchorEl, setScoreAnchorEl] = useState<HTMLElement | null>(null);
   const [saveState, setSaveState] = useState<'idle' | 'pending' | 'saving' | 'saved'>('idle');
   const [loadingDimensions, setLoadingDimensions] = useState<Set<string>>(new Set());
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const contentInitialized = useRef(false);
   const skipNextUpdate = useRef(false);
@@ -264,6 +272,14 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
   const scoreMutation = useMutation({
     mutationFn: () => triggerScore(projectId, undefined, token),
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['projects', projectId] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteProject(projectId, token),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['projects'] });
+      onClose();
+    },
   });
 
   const editor = useEditor({
@@ -364,6 +380,15 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
             disabled={scoreMutation.isPending}
           >
             Re-score
+          </Button>
+
+          <Button
+            size="small"
+            color="error"
+            startIcon={<DeleteIcon />}
+            onClick={() => setDeleteDialogOpen(true)}
+          >
+            Delete
           </Button>
 
           <Tooltip title="Open full project view">
@@ -470,6 +495,32 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
       {/* ── Workflow ── */}
       <Divider sx={{ my: 2.5 }} />
       <WorkflowTab projectId={projectId} token={token} />
+
+      {/* ── Tasks ── */}
+      <Divider sx={{ my: 2.5 }} />
+      <TasksTab projectId={projectId} token={token} />
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+        <DialogTitle>Delete "{project?.title}"?</DialogTitle>
+        <DialogContent>
+          <Typography>
+            This will permanently delete the project along with all its notes, scores, and
+            conversations. This cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => deleteMutation.mutate()}
+            disabled={deleteMutation.isPending}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Score popover */}
       {(() => {

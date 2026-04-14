@@ -5,6 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import AddTaskIcon from '@mui/icons-material/AddTask';
@@ -34,6 +35,7 @@ const WorkflowActionBar: React.FC<WorkflowActionBarProps> = ({
   changingMode,
 }) => {
   const isComplete = run.status === 'completed' || run.status === 'failed';
+  const isAwaitingInput = run.status === 'awaiting_input';
   const currentStepRun = run.steps.find((s) => s.position === run.current_step);
   const hasNextStep = run.current_step < run.steps.length;
   const isManual = run.mode === 'manual';
@@ -54,8 +56,8 @@ const WorkflowActionBar: React.FC<WorkflowActionBarProps> = ({
         flexWrap: 'wrap',
       }}
     >
-      {/* Advance — only in manual mode with a pending step */}
-      {isManual && hasNextStep && (
+      {/* Advance — only in manual mode with a pending step, not while awaiting input */}
+      {isManual && hasNextStep && !isAwaitingInput && (
         <Tooltip title="Execute the next workflow step">
           <span>
             <Button
@@ -71,8 +73,15 @@ const WorkflowActionBar: React.FC<WorkflowActionBarProps> = ({
         </Tooltip>
       )}
 
-      {/* Skip */}
-      {currentStepRun && currentStepRun.status === 'pending' && (
+      {/* Awaiting input hint — replaces Advance/Skip */}
+      {isAwaitingInput && (
+        <Typography variant="caption" color="warning.main" sx={{ fontStyle: 'italic' }}>
+          Respond to the step above to continue
+        </Typography>
+      )}
+
+      {/* Skip — only for pending steps, not awaiting_input (skip lives inline in the stepper) */}
+      {!isAwaitingInput && currentStepRun && currentStepRun.status === 'pending' && (
         <Tooltip title="Skip this step">
           <span>
             <Button

@@ -5,10 +5,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
+import Divider from '@mui/material/Divider';
+import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import {
   advanceRun,
   skipStep,
+  respondToStep,
   runCustomStep,
   updateRunMode,
   getWorkflowRun,
@@ -16,14 +19,17 @@ import {
   startWorkflowRun,
   getWorkflowRecommendation,
   streamWorkflowRun,
+  getProjectBriefs,
 } from '../../api/workflows';
 import { getAgents } from '../../api/agents';
 import WorkflowStepper from './WorkflowStepper';
 import WorkflowActionBar from './WorkflowActionBar';
 import WorkflowRecommendationBanner from './WorkflowRecommendationBanner';
 import CustomStepDialog from './CustomStepDialog';
+import { ScrutinySelector } from './ScrutinySelector';
+import { BriefChangeIndicator } from './BriefChangeIndicator';
 import type { Agent } from '../../types/agent';
-import type { RunMode, WorkflowRun, WorkflowRecommendation } from '../../types/workflow';
+import type { RunMode, ScrutinyLevel, WorkflowRun, WorkflowRecommendation, ProjectBrief } from '../../types/workflow';
 
 interface WorkflowRunPanelProps {
   projectId: string;
@@ -46,6 +52,8 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
   const [streamingOutput, setStreamingOutput] = useState('');
   const [customDialogOpen, setCustomDialogOpen] = useState(false);
   const [postCustomRecs, setPostCustomRecs] = useState<WorkflowRecommendation[]>([]);
+  const [respondingStepId, setRespondingStepId] = useState<string | null>(null);
+  const [respondSnackbar, setRespondSnackbar] = useState(false);
 
   const streamAbortRef = useRef<AbortController | null>(null);
 
@@ -53,7 +61,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     initialRun.status === 'completed' || initialRun.status === 'failed';
 
   // Poll the run while it's in-flight so the panel stays fresh.
-  // No polling needed when the run is already finished.
   const { data: run = initialRun } = useQuery({
     queryKey: ['projects', projectId, 'workflow-runs', initialRun.id],
     queryFn: () => getWorkflowRun(projectId, initialRun.id, token),
@@ -66,10 +73,31 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     queryFn: () => getAgents(token),
   });
 
+  // Fetch project briefs when the run has autonomous steps (score/decision output kinds)
+  const hasAutonomousSteps = run.steps.some(
+    (s) => s.output_kind === 'score' || s.output_kind === 'decision'
+  );
+
+  const { data: briefs = [] } = useQuery<ProjectBrief[]>({
+    queryKey: ['projects', projectId, 'briefs'],
+    queryFn: () => getProjectBriefs(projectId, token),
+    enabled: hasAutonomousSteps && !!projectId,
+    refetchInterval: hasAutonomousSteps && !alreadyDone ? 5000 : false,
+  });
+
+  // Build a list of brief changes (versions after initial) to show as callouts
+  const briefChanges: Array<{ before: ProjectBrief; after: ProjectBrief }> = [];
+  for (let i = 1; i < briefs.length; i++) {
+    const before = briefs[i - 1];
+    const after = briefs[i];
+    if (before && after && after.source !== 'initial') {
+      briefChanges.push({ before, after });
+    }
+  }
+
   // ── SSE stream ──────────────────────────────────────────────────────────
 
   const connectStream = useCallback(async () => {
-    // Abort any existing stream
     streamAbortRef.current?.abort();
     const ac = new AbortController();
     streamAbortRef.current = ac;
@@ -89,11 +117,18 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'workflow-runs', run.id],
           });
+          // Re-fetch briefs on step completion so change indicators update
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'briefs'],
+          });
         } else if (event.event === 'done') {
           setStreamingStepId(null);
           setStreamingOutput('');
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'workflow-runs', run.id],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'briefs'],
           });
           break;
         }
@@ -138,12 +173,40 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     },
   });
 
+  const skipStepMutation = useMutation({
+    mutationFn: (stepRunId: string) => skipStep(projectId, run.id, stepRunId, token),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ['projects', projectId, 'workflow-runs', run.id],
+      });
+    },
+  });
+
   const modeMutation = useMutation({
     mutationFn: (mode: RunMode) => updateRunMode(projectId, run.id, { mode }, token),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: ['projects', projectId, 'workflow-runs', run.id],
       });
+    },
+  });
+
+  const respondMutation = useMutation({
+    mutationFn: ({ stepRunId, answers }: { stepRunId: string; answers: string[] }) =>
+      respondToStep(projectId, run.id, stepRunId, answers, token),
+    onMutate: ({ stepRunId }) => {
+      setRespondingStepId(stepRunId);
+    },
+    onSuccess: () => {
+      setRespondingStepId(null);
+      setRespondSnackbar(true);
+      void queryClient.invalidateQueries({
+        queryKey: ['projects', projectId, 'workflow-runs', run.id],
+      });
+      void connectStream();
+    },
+    onError: () => {
+      setRespondingStepId(null);
     },
   });
 
@@ -159,7 +222,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     },
   });
 
-  // Recommendation for new run after custom step
   const newRunMutation = useMutation({
     mutationFn: (workflowId: string) =>
       startWorkflowRun(projectId, { workflow_id: workflowId, mode: 'manual' }, token),
@@ -172,6 +234,9 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
 
   const isStreaming = !!streamingStepId;
   const isComplete = run.status === 'completed' || run.status === 'failed';
+
+  // Identify the task-gen step (output_kind: 'tasks') for TeamLeadCard's taskGenRunning prop
+  const taskGenStep = run.steps.find((s) => s.output_kind === 'tasks');
 
   return (
     <Box>
@@ -192,6 +257,14 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           variant="outlined"
           sx={{ textTransform: 'capitalize' }}
         />
+        {run.config?.scrutiny && (
+          <Chip
+            label={run.config.scrutiny === 'quick' ? 'Quick check' : run.config.scrutiny === 'rigorous' ? 'Rigorous review' : 'Standard review'}
+            size="small"
+            variant="outlined"
+            color="secondary"
+          />
+        )}
       </Box>
 
       {/* Post-custom recommendation */}
@@ -205,12 +278,35 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         />
       )}
 
+      {/* Brief change indicators (shown before the step list so user sees what was edited) */}
+      {briefChanges.length > 0 && (
+        <Box sx={{ mb: 1 }}>
+          {briefChanges.map(({ before, after }) => (
+            <BriefChangeIndicator
+              key={after.id}
+              before={before}
+              after={after}
+              agents={agents}
+            />
+          ))}
+        </Box>
+      )}
+
       {/* Step list */}
       <WorkflowStepper
         steps={run.steps}
         streamingStepId={streamingStepId}
         streamingOutput={streamingOutput}
         agents={agents}
+        onRespond={(stepRunId, answer) =>
+          respondMutation.mutate({ stepRunId, answers: [answer] })
+        }
+        onRespondMulti={(stepRunId, answers) =>
+          respondMutation.mutate({ stepRunId, answers })
+        }
+        onSkip={(stepRunId) => skipStepMutation.mutate(stepRunId)}
+        respondingStepId={respondingStepId}
+        taskGenStepId={taskGenStep?.id ?? null}
       />
 
       {/* Completion summary */}
@@ -233,6 +329,15 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         advancing={!!advanceMutation.isPending}
         skipping={!!skipMutation.isPending}
         changingMode={!!modeMutation.isPending}
+      />
+
+      {/* Respond success feedback */}
+      <Snackbar
+        open={respondSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setRespondSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        message="Answers submitted — the team is reviewing again"
       />
 
       {/* Custom step dialog */}
@@ -281,12 +386,13 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
   });
 
   const [recDismissed, setRecDismissed] = useState(false);
+  const [scrutiny, setScrutiny] = useState<ScrutinyLevel>('standard');
 
   const startMutation = useMutation({
     mutationFn: (workflowId?: string) =>
       startWorkflowRun(
         projectId,
-        { workflow_id: workflowId ?? null, mode: 'manual' },
+        { workflow_id: workflowId ?? null, mode: 'autonomous', scrutiny },
         token
       ),
     onSuccess: () => {
@@ -316,21 +422,23 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
     (r) => r.status === 'completed' || r.status === 'failed'
   );
 
-  // Completed run: show its steps, then offer to start a new run.
   if (latestCompleted) {
     return (
       <Box>
         <WorkflowRunPanel projectId={projectId} run={latestCompleted} token={token} />
         <Box sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={() => startMutation.mutate(undefined)}
-            disabled={startMutation.isPending}
-            startIcon={startMutation.isPending ? <CircularProgress size={14} /> : undefined}
-          >
-            Start new run
-          </Button>
+          <ScrutinySelector value={scrutiny} onChange={setScrutiny} />
+          <Box sx={{ mt: 1.5 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => startMutation.mutate(undefined)}
+              disabled={startMutation.isPending}
+              startIcon={startMutation.isPending ? <CircularProgress size={14} /> : undefined}
+            >
+              Start new run
+            </Button>
+          </Box>
         </Box>
       </Box>
     );
@@ -349,7 +457,11 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
         />
       )}
 
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+      <Divider sx={{ my: 2 }} />
+
+      <ScrutinySelector value={scrutiny} onChange={setScrutiny} />
+
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
         <Button
           variant="contained"
           size="small"
@@ -357,7 +469,7 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
           disabled={startMutation.isPending}
           startIcon={startMutation.isPending ? <CircularProgress size={14} /> : undefined}
         >
-          Start free-form run
+          Start run
         </Button>
       </Box>
     </Box>

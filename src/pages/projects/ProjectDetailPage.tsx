@@ -27,8 +27,6 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import ChatIcon from '@mui/icons-material/Chat';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -51,7 +49,6 @@ import {
   getNotes,
   addTextNote,
   addVoiceNote,
-  triggerScore,
   getScoreHistory,
   getSectionQuestions,
 } from '../../api/projects';
@@ -373,11 +370,6 @@ const ProjectDetailPage: React.FC = () => {
     },
   });
 
-  const scoreMutation = useMutation({
-    mutationFn: () => triggerScore(id!, undefined, token),
-    onSuccess: () => void queryClient.invalidateQueries({ queryKey: ['projects', id] }),
-  });
-
   const addNoteMutation = useMutation({
     mutationFn: (content: string) => addTextNote(id!, content, token),
     onSuccess: () => {
@@ -542,29 +534,10 @@ const ProjectDetailPage: React.FC = () => {
             <Button
               variant="outlined"
               size="small"
-              startIcon={<ChatIcon />}
-              onClick={() => navigate(`/projects/${id}/develop`)}
-            >
-              Develop
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
               startIcon={<SchoolIcon />}
               onClick={() => navigate(`/projects/${id}/skills`)}
             >
               Skills
-            </Button>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={
-                scoreMutation.isPending ? <CircularProgress size={14} /> : <AssessmentIcon />
-              }
-              onClick={() => scoreMutation.mutate()}
-              disabled={scoreMutation.isPending}
-            >
-              Re-score
             </Button>
             <Button
               variant="outlined"

@@ -6,6 +6,8 @@ import type {
   StepRun,
   RunMode,
   WorkflowStatus,
+  ScrutinyLevel,
+  ProjectBrief,
 } from '../types/workflow';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
@@ -72,7 +74,7 @@ export function getWorkflowRuns(projectId: string, token?: string): Promise<Work
 
 export function startWorkflowRun(
   projectId: string,
-  body: { workflow_id?: string | null; mode: RunMode },
+  body: { workflow_id?: string | null; mode: RunMode; scrutiny?: ScrutinyLevel },
   token?: string
 ): Promise<WorkflowRun> {
   return request<WorkflowRun>(`/projects/${projectId}/workflow-runs`, {
@@ -80,6 +82,12 @@ export function startWorkflowRun(
     body,
     token,
   });
+}
+
+// ── Project briefs ─────────────────────────────────────────────────────────
+
+export function getProjectBriefs(projectId: string, token?: string): Promise<ProjectBrief[]> {
+  return request<ProjectBrief[]>(`/projects/${projectId}/briefs`, { token });
 }
 
 export function getWorkflowRun(
@@ -138,6 +146,19 @@ export function runCustomStep(
   return request<{ step_run: StepRun; recommendation: WorkflowRecommendation[] }>(
     `/projects/${projectId}/workflow-runs/${runId}/custom-step`,
     { method: 'POST', body, token }
+  );
+}
+
+export function respondToStep(
+  projectId: string,
+  runId: string,
+  stepRunId: string,
+  answers: string[],
+  token?: string
+): Promise<WorkflowRun> {
+  return request<WorkflowRun>(
+    `/projects/${projectId}/workflow-runs/${runId}/steps/${stepRunId}/respond`,
+    { method: 'POST', body: { answers }, token }
   );
 }
 
