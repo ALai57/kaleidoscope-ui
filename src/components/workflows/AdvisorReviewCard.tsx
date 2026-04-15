@@ -176,9 +176,16 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
           </Box>
         </Tooltip>
 
-        <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>
-          {stepName}
-        </Typography>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            {stepName}
+          </Typography>
+          {!isRunning && scoreOutput?.context_path && (
+            <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+              Reviewed with {scoreOutput.context_path}
+            </Typography>
+          )}
+        </Box>
 
         {isRunning && (
           <Stack direction="row" spacing={0.5} alignItems="center">

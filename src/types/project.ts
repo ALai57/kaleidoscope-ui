@@ -51,6 +51,8 @@ export interface Project {
   created_at: string;
   updated_at: string;
   scores?: ScoreRun[];
+  /** Explicit codebase paths pinned to this project; overrides auto-detection when non-empty */
+  local_paths?: string[];
 }
 
 export interface ProjectNote {

@@ -21,6 +21,7 @@ import {
   streamWorkflowRun,
   getProjectBriefs,
 } from '../../api/workflows';
+import { updateProjectLocalPaths } from '../../api/projects';
 import { getAgents } from '../../api/agents';
 import WorkflowStepper from './WorkflowStepper';
 import WorkflowActionBar from './WorkflowActionBar';
@@ -210,6 +211,10 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     },
   });
 
+  const rememberPathMutation = useMutation({
+    mutationFn: (path: string) => updateProjectLocalPaths(projectId, [path], token),
+  });
+
   const customStepMutation = useMutation({
     mutationFn: (body: { name: string; description: string; agent_type: string }) =>
       runCustomStep(projectId, run.id, body, token),
@@ -307,6 +312,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         onSkip={(stepRunId) => skipStepMutation.mutate(stepRunId)}
         respondingStepId={respondingStepId}
         taskGenStepId={taskGenStep?.id ?? null}
+        onRememberPath={(path) => rememberPathMutation.mutate(path)}
       />
 
       {/* Completion summary */}

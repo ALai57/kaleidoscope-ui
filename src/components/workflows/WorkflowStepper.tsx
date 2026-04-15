@@ -18,9 +18,10 @@ import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
-import type { AdvisorScoreOutput, JudgeDecisionOutput, StepRun, StepRunStatus } from '../../types/workflow';
+import type { AdvisorScoreOutput, JudgeDecisionOutput, PendingInputsCodeContextPath, StepRun, StepRunStatus } from '../../types/workflow';
 import MarkdownRenderer from '../content/MarkdownRenderer';
 import { AdvisorReviewCard } from './AdvisorReviewCard';
+import { CodeContextPathInput } from './CodeContextPathInput';
 import { TeamLeadCard } from './TeamLeadCard';
 
 // ── Content normalisation ─────────────────────────────────────────────────
@@ -186,6 +187,8 @@ interface WorkflowStepperProps {
   respondingStepId?: string | null;
   /** ID of a task-gen step that is currently running (used by TeamLeadCard) */
   taskGenStepId?: string | null;
+  /** Called when the user checks "Remember this path" in the code context path picker */
+  onRememberPath?: ((path: string) => void) | undefined;
 }
 
 const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
@@ -198,6 +201,7 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
   onSkip,
   respondingStepId,
   taskGenStepId,
+  onRememberPath,
 }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
 
@@ -221,6 +225,25 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
 
     // ── Score step ──────────────────────────────────────────────────────
     if (outputKind === 'score') {
+      // When the step is paused asking for a codebase path, show the picker instead.
+      if (
+        step.status === 'awaiting_input' &&
+        step.pending_inputs?.kind === 'code_context_path'
+      ) {
+        return (
+          <CodeContextPathInput
+            key={step.id}
+            stepRun={step}
+            pendingInputs={step.pending_inputs as PendingInputsCodeContextPath}
+            agents={agents}
+            responding={respondingStepId === step.id}
+            onRespond={(stepRunId, answers) => onRespondMulti?.(stepRunId, answers)}
+            onSkip={onSkip ?? (() => undefined)}
+            {...(onRememberPath ? { onRememberPath } : {})}
+          />
+        );
+      }
+
       const scoreOutput = parseScoreOutput(currentOutput);
       return (
         <AdvisorReviewCard

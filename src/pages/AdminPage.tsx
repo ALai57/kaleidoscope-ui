@@ -50,7 +50,7 @@ const LoginPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => (
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AdminPage: React.FC = () => {
-  const { isAuthenticated, isLoading, userProfile, login, logout } = useAuth();
+  const { isAuthenticated, isLoading, token, userProfile, login, logout } = useAuth();
 
   const user = userProfile
     ? {

@@ -49,6 +49,8 @@ export interface AdvisorScoreOutput {
   /** Set when the score step failed or timed out */
   failed?: boolean;
   reason?: string;
+  /** Path of the codebase that was read during this review, if any */
+  context_path?: string;
 }
 
 // ── Decision step output (output_kind: 'decision') ────────────────────────
@@ -94,6 +96,22 @@ export interface WorkflowRunConfig {
   };
 }
 
+// ── Pending inputs (step paused awaiting user response) ───────────────────
+
+export interface CodeContextPathCandidate {
+  path: string;
+  score: number;
+  reason: string;
+}
+
+export interface PendingInputsCodeContextPath {
+  kind: 'code_context_path';
+  question: string;
+  candidates: CodeContextPathCandidate[];
+}
+
+export type PendingInputs = PendingInputsCodeContextPath;
+
 // ── Step run ──────────────────────────────────────────────────────────────
 
 export interface StepRun {
@@ -110,6 +128,8 @@ export interface StepRun {
   round_id?: string;
   started_at?: string;
   completed_at?: string;
+  /** Present when status = 'awaiting_input'; describes what the step is waiting for */
+  pending_inputs?: PendingInputs;
 }
 
 // ── Workflow run ──────────────────────────────────────────────────────────

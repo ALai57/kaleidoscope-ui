@@ -32,6 +32,18 @@ export function updateProject(
   return request<Project>(`/projects/${id}`, { method: 'PUT', body, token });
 }
 
+export function updateProjectLocalPaths(
+  id: string,
+  localPaths: string[],
+  token?: string
+): Promise<Project> {
+  return request<Project>(`/projects/${id}/local-paths`, {
+    method: 'PUT',
+    body: { local_paths: localPaths },
+    token,
+  });
+}
+
 export function deleteProject(id: string, token?: string): Promise<void> {
   return request<void>(`/projects/${id}`, { method: 'DELETE', token });
 }

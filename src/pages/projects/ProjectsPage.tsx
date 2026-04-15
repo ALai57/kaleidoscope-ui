@@ -17,6 +17,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import GridViewIcon from '@mui/icons-material/GridView';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HubIcon from '@mui/icons-material/Hub';
@@ -199,6 +200,14 @@ const ProjectsPage: React.FC = () => {
                 onClick={() => navigate('/agents')}
               >
                 Agent Team
+              </Button>
+
+              <Button
+                variant="outlined"
+                startIcon={<FolderOpenIcon />}
+                onClick={() => navigate('/workspace-roots')}
+              >
+                Workspace Roots
               </Button>
 
               <Button
