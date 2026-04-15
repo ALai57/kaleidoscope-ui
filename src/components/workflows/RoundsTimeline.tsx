@@ -139,7 +139,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
       {olderRounds.length > 0 && (
         <Box sx={{ mb: 1 }}>
           {olderRounds.map((round) => (
-            <RoundCard key={round.round_number} round={round} thresholds={run.config?.thresholds} />
+            <RoundCard key={round.round_number} round={round} thresholds={run.config?.thresholds} agents={agents} />
           ))}
           {latestRound && (
             <Divider sx={{ my: 1 }}>
@@ -157,7 +157,12 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
       {/* Latest round */}
       {latestRound && (
         <Box>
-          <RoundCard round={latestRound} thresholds={run.config?.thresholds} />
+          <RoundCard
+            round={latestRound}
+            thresholds={run.config?.thresholds}
+            agents={agents}
+            awaitingInput={run.status === 'awaiting_input' && !!awaitingStep}
+          />
 
           {/* ── Awaiting-input section ── */}
           {run.status === 'awaiting_input' && (
