@@ -89,6 +89,7 @@ export interface WorkflowRunConfig {
   max_rounds: number;
   thresholds: Record<string, number>;
   deadband: number;
+  target_score?: number;
   timeouts?: {
     score_step_seconds: number;
     refine_step_seconds: number;
@@ -165,6 +166,50 @@ export interface WorkflowRound {
   status: 'in_progress' | 'completed';
   started_at: string;
   completed_at?: string;
+}
+
+// ── Workflow round detail (returned by /rounds endpoint) ──────────────────
+
+export interface ScoreSnapshotEntry {
+  overall: number;
+  dimensions: AdvisorDimension[];
+}
+
+export interface WorkflowRoundJudge {
+  /** Full decision object from the judge (action + action-specific fields) */
+  decision: JudgeDecisionOutput;
+  summary: string;
+  rationale: string;
+  /** Per-dimension delta from previous round. Key = "agent_type / dimension_name" */
+  delta_table?: Record<string, { delta: number; regressed: boolean }>;
+  /** Full score trajectory per dimension across all rounds so far */
+  trajectory?: Record<string, number[]>;
+  /** Per-scorer overall score and dimension breakdown captured at judge time */
+  score_snapshot?: Record<string, ScoreSnapshotEntry>;
+  /** Round policy context: how many rounds are allowed and which round this is */
+  policy?: {
+    max_rounds: number;
+    current_round: number;
+  };
+  /** Version of the brief that was used/produced in this round */
+  brief_version?: number;
+}
+
+export interface WorkflowRoundDetail {
+  round_number: number;
+  status: 'in_progress' | 'completed';
+  started_at: string;
+  completed_at?: string;
+  brief?: {
+    version: number;
+    content: string;
+  };
+  judge?: WorkflowRoundJudge;
+  /** Per-scorer overall scores before and after this round's refinement */
+  scores?: {
+    before: Record<string, number>;
+    after: Record<string, number>;
+  };
 }
 
 // ── Project brief ─────────────────────────────────────────────────────────

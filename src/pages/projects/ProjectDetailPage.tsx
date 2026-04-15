@@ -27,6 +27,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -40,6 +41,7 @@ import { extensions } from '../../components/editor/extensions';
 import { ScoreHistory } from '../../components/projects/ScoreHistory';
 import { VoiceCapture } from '../../components/projects/VoiceCapture';
 import { WorkflowTab } from '../../components/workflows/WorkflowRunPanel';
+import { WorkflowRecommendationModal } from '../../components/workflows/WorkflowRecommendationModal';
 import { TasksTab } from '../../components/tasks/TasksTab';
 import { useAuth } from '../../auth/useAuth';
 import {
@@ -52,8 +54,13 @@ import {
   getScoreHistory,
   getSectionQuestions,
 } from '../../api/projects';
+import {
+  getWorkflowRecommendation,
+  startWorkflowRun,
+} from '../../api/workflows';
 import { getTasks } from '../../api/tasks';
 import type { ProjectStatus, ScoreRun } from '../../types/project';
+import type { WorkflowRecommendation } from '../../types/workflow';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -309,6 +316,12 @@ const ProjectDetailPage: React.FC = () => {
   const [saveState, setSaveState] = useState<'idle' | 'pending' | 'saving' | 'saved'>('idle');
   const [loadingDimensions, setLoadingDimensions] = useState<Set<string>>(new Set());
 
+  // "Strengthen this idea" modal state
+  const [recModalOpen, setRecModalOpen] = useState(false);
+  const [recData, setRecData] = useState<WorkflowRecommendation[] | null>(null);
+  const [recLoading, setRecLoading] = useState(false);
+  const [startingRun, setStartingRun] = useState(false);
+
   const contentInitialized = useRef(false);
   const skipNextUpdate = useRef(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -456,6 +469,42 @@ const ProjectDetailPage: React.FC = () => {
     setEditingTitle(false);
   };
 
+  // ── "Strengthen this idea" handlers ──────────────────────────────────────
+
+  const handleStrengthen = async () => {
+    if (!id) return;
+    // Use cached recommendation if already fetched this session
+    if (recData) {
+      setRecModalOpen(true);
+      return;
+    }
+    setRecLoading(true);
+    try {
+      const recs = await getWorkflowRecommendation(id, token);
+      setRecData(recs);
+      setRecModalOpen(true);
+    } catch {
+      // Fall back to opening the modal with no recommendations
+      setRecModalOpen(true);
+    } finally {
+      setRecLoading(false);
+    }
+  };
+
+  const handleStartStrengthening = async (workflowId: string) => {
+    if (!id) return;
+    setStartingRun(true);
+    try {
+      await startWorkflowRun(id, { workflow_id: workflowId, mode: 'autonomous' }, token);
+      void queryClient.invalidateQueries({ queryKey: ['projects', id, 'workflow-runs'] });
+      setRecModalOpen(false);
+      // Switch to the Workflow tab so the user can watch the run
+      setTab(2);
+    } finally {
+      setStartingRun(false);
+    }
+  };
+
   const handleStatusChange = (newStatus: ProjectStatus) => {
     updateMutation.mutate({ status: newStatus });
   };
@@ -531,6 +580,16 @@ const ProjectDetailPage: React.FC = () => {
         {/* ── Action buttons + save indicator ── */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2, flexWrap: 'wrap' }}>
           <Stack direction="row" spacing={1}>
+            <Button
+              variant="contained"
+              size="small"
+              color="primary"
+              startIcon={recLoading ? <CircularProgress size={14} color="inherit" /> : <AutoFixHighIcon />}
+              onClick={() => { void handleStrengthen(); }}
+              disabled={recLoading}
+            >
+              Strengthen this idea
+            </Button>
             <Button
               variant="outlined"
               size="small"
@@ -768,6 +827,17 @@ const ProjectDetailPage: React.FC = () => {
           <TasksTab projectId={id!} token={token} />
         </TabPanel>
       </Box>
+
+      {/* Strengthen this idea — recommendation modal */}
+      {recData && recData.length > 0 && (
+        <WorkflowRecommendationModal
+          open={recModalOpen}
+          onClose={() => setRecModalOpen(false)}
+          recommendations={recData}
+          onStart={(wfId) => { void handleStartStrengthening(wfId); }}
+          starting={startingRun}
+        />
+      )}
 
       {/* Delete confirmation dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>

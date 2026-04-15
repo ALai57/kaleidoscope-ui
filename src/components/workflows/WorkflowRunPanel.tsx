@@ -6,7 +6,10 @@ import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
+import InputAdornment from '@mui/material/InputAdornment';
 import Snackbar from '@mui/material/Snackbar';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import {
   advanceRun,
@@ -29,6 +32,7 @@ import WorkflowRecommendationBanner from './WorkflowRecommendationBanner';
 import CustomStepDialog from './CustomStepDialog';
 import { ScrutinySelector } from './ScrutinySelector';
 import { BriefChangeIndicator } from './BriefChangeIndicator';
+import { RoundsTimeline } from './RoundsTimeline';
 import type { Agent } from '../../types/agent';
 import type { RunMode, ScrutinyLevel, WorkflowRun, WorkflowRecommendation, ProjectBrief } from '../../types/workflow';
 
@@ -122,6 +126,18 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'briefs'],
           });
+          // Re-fetch rounds so RoundsTimeline stays current
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'workflow-runs', run.id, 'rounds'],
+          });
+        } else if (event.event === 'round_complete') {
+          // A full round finished — re-fetch rounds immediately
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'workflow-runs', run.id, 'rounds'],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'workflow-runs', run.id],
+          });
         } else if (event.event === 'done') {
           setStreamingStepId(null);
           setStreamingOutput('');
@@ -130,6 +146,9 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           });
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'briefs'],
+          });
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'workflow-runs', run.id, 'rounds'],
           });
           break;
         }
@@ -243,6 +262,10 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
   // Identify the task-gen step (output_kind: 'tasks') for TeamLeadCard's taskGenRunning prop
   const taskGenStep = run.steps.find((s) => s.output_kind === 'tasks');
 
+  // Loop workflows (autonomous mode with score/decision steps) get the RoundsTimeline view
+  const isLoopWorkflow =
+    run.mode === 'autonomous' && hasAutonomousSteps;
+
   return (
     <Box>
       {/* Run header */}
@@ -297,45 +320,51 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         </Box>
       )}
 
-      {/* Step list */}
-      <WorkflowStepper
-        steps={run.steps}
-        streamingStepId={streamingStepId}
-        streamingOutput={streamingOutput}
-        agents={agents}
-        onRespond={(stepRunId, answer) =>
-          respondMutation.mutate({ stepRunId, answers: [answer] })
-        }
-        onRespondMulti={(stepRunId, answers) =>
-          respondMutation.mutate({ stepRunId, answers })
-        }
-        onSkip={(stepRunId) => skipStepMutation.mutate(stepRunId)}
-        respondingStepId={respondingStepId}
-        taskGenStepId={taskGenStep?.id ?? null}
-        onRememberPath={(path) => rememberPathMutation.mutate(path)}
-      />
+      {/* Loop workflows → rounds timeline; others → step list */}
+      {isLoopWorkflow ? (
+        <RoundsTimeline projectId={projectId} run={run} token={token} agents={agents} />
+      ) : (
+        <>
+          <WorkflowStepper
+            steps={run.steps}
+            streamingStepId={streamingStepId}
+            streamingOutput={streamingOutput}
+            agents={agents}
+            onRespond={(stepRunId, answer) =>
+              respondMutation.mutate({ stepRunId, answers: [answer] })
+            }
+            onRespondMulti={(stepRunId, answers) =>
+              respondMutation.mutate({ stepRunId, answers })
+            }
+            onSkip={(stepRunId) => skipStepMutation.mutate(stepRunId)}
+            respondingStepId={respondingStepId}
+            taskGenStepId={taskGenStep?.id ?? null}
+            onRememberPath={(path) => rememberPathMutation.mutate(path)}
+          />
 
-      {/* Completion summary */}
-      {isComplete && (
-        <Alert severity={run.status === 'completed' ? 'success' : 'error'} sx={{ mt: 2 }}>
-          {run.status === 'completed'
-            ? 'Workflow run completed.'
-            : 'Workflow run failed. Check steps for details.'}
-        </Alert>
+          {/* Completion summary */}
+          {isComplete && (
+            <Alert severity={run.status === 'completed' ? 'success' : 'error'} sx={{ mt: 2 }}>
+              {run.status === 'completed'
+                ? 'Workflow run completed.'
+                : 'Workflow run failed. Check steps for details.'}
+            </Alert>
+          )}
+
+          {/* Action bar */}
+          <WorkflowActionBar
+            run={run}
+            isStreaming={isStreaming}
+            onAdvance={() => advanceMutation.mutate()}
+            onSkip={() => skipMutation.mutate()}
+            onCustomAction={() => setCustomDialogOpen(true)}
+            onModeChange={(mode) => modeMutation.mutate(mode)}
+            advancing={!!advanceMutation.isPending}
+            skipping={!!skipMutation.isPending}
+            changingMode={!!modeMutation.isPending}
+          />
+        </>
       )}
-
-      {/* Action bar */}
-      <WorkflowActionBar
-        run={run}
-        isStreaming={isStreaming}
-        onAdvance={() => advanceMutation.mutate()}
-        onSkip={() => skipMutation.mutate()}
-        onCustomAction={() => setCustomDialogOpen(true)}
-        onModeChange={(mode) => modeMutation.mutate(mode)}
-        advancing={!!advanceMutation.isPending}
-        skipping={!!skipMutation.isPending}
-        changingMode={!!modeMutation.isPending}
-      />
 
       {/* Respond success feedback */}
       <Snackbar
@@ -393,12 +422,20 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
 
   const [recDismissed, setRecDismissed] = useState(false);
   const [scrutiny, setScrutiny] = useState<ScrutinyLevel>('standard');
+  const [targetScoreInput, setTargetScoreInput] = useState('');
+
+  const targetScore = targetScoreInput !== '' ? Number(targetScoreInput) : undefined;
 
   const startMutation = useMutation({
     mutationFn: (workflowId?: string) =>
       startWorkflowRun(
         projectId,
-        { workflow_id: workflowId ?? null, mode: 'autonomous', scrutiny },
+        {
+          workflow_id: workflowId ?? null,
+          mode: 'autonomous',
+          scrutiny,
+          ...(targetScore !== undefined && !isNaN(targetScore) ? { target_score: targetScore } : {}),
+        },
         token
       ),
     onSuccess: () => {
@@ -435,6 +472,23 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
         <Box sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
           <ScrutinySelector value={scrutiny} onChange={setScrutiny} />
           <Box sx={{ mt: 1.5 }}>
+            <Tooltip title="Loop will stop when average score reaches this threshold. Leave empty to let the judge decide.">
+              <TextField
+                label="Run until score ≥"
+                size="small"
+                type="number"
+                value={targetScoreInput}
+                onChange={(e) => setTargetScoreInput(e.target.value)}
+                inputProps={{ min: 0, max: 10, step: 0.5 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+                }}
+                placeholder="Optional"
+                sx={{ width: 180 }}
+              />
+            </Tooltip>
+          </Box>
+          <Box sx={{ mt: 1.5 }}>
             <Button
               variant="outlined"
               size="small"
@@ -466,6 +520,24 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
       <Divider sx={{ my: 2 }} />
 
       <ScrutinySelector value={scrutiny} onChange={setScrutiny} />
+
+      <Box sx={{ mt: 2 }}>
+        <Tooltip title="Loop will stop automatically when the average score reaches this threshold. Leave empty to let the judge decide.">
+          <TextField
+            label="Run until score ≥"
+            size="small"
+            type="number"
+            value={targetScoreInput}
+            onChange={(e) => setTargetScoreInput(e.target.value)}
+            inputProps={{ min: 0, max: 10, step: 0.5 }}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+            }}
+            placeholder="Optional"
+            sx={{ width: 180 }}
+          />
+        </Tooltip>
+      </Box>
 
       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
         <Button

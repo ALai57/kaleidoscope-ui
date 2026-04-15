@@ -3,6 +3,7 @@ import type {
   Workflow,
   WorkflowRun,
   WorkflowRecommendation,
+  WorkflowRoundDetail,
   StepRun,
   RunMode,
   WorkflowStatus,
@@ -74,7 +75,7 @@ export function getWorkflowRuns(projectId: string, token?: string): Promise<Work
 
 export function startWorkflowRun(
   projectId: string,
-  body: { workflow_id?: string | null; mode: RunMode; scrutiny?: ScrutinyLevel },
+  body: { workflow_id?: string | null; mode: RunMode; scrutiny?: ScrutinyLevel; target_score?: number },
   token?: string
 ): Promise<WorkflowRun> {
   return request<WorkflowRun>(`/projects/${projectId}/workflow-runs`, {
@@ -162,11 +163,36 @@ export function respondToStep(
   );
 }
 
+// ── Rounds ─────────────────────────────────────────────────────────────────
+
+export function getWorkflowRunRounds(
+  projectId: string,
+  runId: string,
+  token?: string
+): Promise<WorkflowRoundDetail[]> {
+  return request<WorkflowRoundDetail[]>(
+    `/projects/${projectId}/workflow-runs/${runId}/rounds`,
+    { token }
+  );
+}
+
+export function forceProceed(
+  projectId: string,
+  runId: string,
+  token?: string
+): Promise<void> {
+  return request<void>(
+    `/projects/${projectId}/workflow-runs/${runId}/force-proceed`,
+    { method: 'POST', body: {}, token }
+  );
+}
+
 // ── SSE stream ─────────────────────────────────────────────────────────────
 
 export type WorkflowStreamEvent =
   | { event: 'token'; data: string }
   | { event: 'step_complete'; data: StepRun }
+  | { event: 'round_complete'; data: { round_number: number; decision: string } }
   | { event: 'done' };
 
 export async function* streamWorkflowRun(
