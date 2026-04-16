@@ -15,9 +15,12 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import PersonIcon from '@mui/icons-material/Person';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
-import type { ScoreSnapshotEntry, WorkflowRoundDetail } from '../../types/workflow';
+import type { ScoreSnapshotEntry, TradeOff, Recommendation, WorkflowRoundDetail } from '../../types/workflow';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -202,6 +205,70 @@ const ScoreRow: React.FC<ScoreRowProps> = ({
   );
 };
 
+// ── Trade-offs panel ──────────────────────────────────────────────────────
+
+const TradeOffList: React.FC<{ tradeOffs: TradeOff[] }> = ({ tradeOffs }) => (
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+    {tradeOffs.map((t, i) => (
+      <Box key={i} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+        <SwapHorizIcon sx={{ fontSize: 13, mt: 0.2, flexShrink: 0, color: t.resolved_autonomously ? 'success.main' : 'warning.main' }} />
+        <Box>
+          <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', lineHeight: 1.3 }}>
+            {t.name}
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.67rem', lineHeight: 1.4 }}>
+            {t.description}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{ display: 'block', fontSize: '0.67rem', lineHeight: 1.4, fontStyle: 'italic',
+                  color: t.resolved_autonomously ? 'success.main' : 'warning.main' }}
+          >
+            {t.resolved_autonomously ? 'Resolved: ' : 'Unresolved: '}{t.resolution}
+          </Typography>
+        </Box>
+      </Box>
+    ))}
+  </Box>
+);
+
+// ── Recommendations panel ─────────────────────────────────────────────────
+
+const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
+
+const RecommendationList: React.FC<{ recommendations: Recommendation[] }> = ({ recommendations }) => {
+  const sorted = [...recommendations].sort(
+    (a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority],
+  );
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
+      {sorted.map((r, i) => (
+        <Box key={i} sx={{ display: 'flex', gap: 1, alignItems: 'flex-start' }}>
+          <Tooltip title={r.who === 'system' ? 'System will handle' : 'Needs your attention'}>
+            {r.who === 'system'
+              ? <SmartToyIcon sx={{ fontSize: 13, mt: 0.2, flexShrink: 0, color: 'primary.main' }} />
+              : <PersonIcon   sx={{ fontSize: 13, mt: 0.2, flexShrink: 0, color: 'warning.main' }} />}
+          </Tooltip>
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+              <Typography variant="caption" sx={{ fontWeight: 600, lineHeight: 1.3 }}>
+                {r.action}
+              </Typography>
+              {r.priority === 'high' && (
+                <Chip label="High" size="small" color="warning"
+                  sx={{ height: 14, fontSize: '0.6rem', fontWeight: 700, px: 0 }} />
+              )}
+            </Box>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.67rem', lineHeight: 1.4 }}>
+              {r.rationale}
+            </Typography>
+          </Box>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 interface RoundCardProps {
@@ -370,6 +437,44 @@ export const RoundCard: React.FC<RoundCardProps> = ({
               </Box>
             </>
           )}
+
+          {/* Trade-offs and recommendations — collapsible section */}
+          {(judge.decision.trade_offs?.length || judge.decision.recommendations?.length) ? (
+            <Accordion
+              disableGutters elevation={0}
+              sx={{ mt: 0.5, border: 0, '&:before': { display: 'none' }, bgcolor: 'transparent' }}
+            >
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon sx={{ fontSize: 14 }} />}
+                sx={{ px: 0, py: 0, minHeight: 'unset', '& .MuiAccordionSummary-content': { my: 0.25 } }}
+              >
+                <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                  Analysis &amp; recommendations
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 0, pt: 0.25, pb: 0 }}>
+                {judge.decision.trade_offs && judge.decision.trade_offs.length > 0 && (
+                  <Box sx={{ mb: judge.decision.recommendations?.length ? 1 : 0 }}>
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                      Trade-offs identified
+                    </Typography>
+                    <TradeOffList tradeOffs={judge.decision.trade_offs} />
+                  </Box>
+                )}
+                {judge.decision.recommendations && judge.decision.recommendations.length > 0 && (
+                  <Box>
+                    {judge.decision.trade_offs && judge.decision.trade_offs.length > 0 && (
+                      <Divider sx={{ my: 0.75 }} />
+                    )}
+                    <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', display: 'block', mb: 0.5 }}>
+                      Recommendations
+                    </Typography>
+                    <RecommendationList recommendations={judge.decision.recommendations} />
+                  </Box>
+                )}
+              </AccordionDetails>
+            </Accordion>
+          ) : null}
 
           {/* Expandable: judge reasoning */}
           {judge.rationale && (

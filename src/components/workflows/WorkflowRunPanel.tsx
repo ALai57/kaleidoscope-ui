@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -11,6 +14,9 @@ import Snackbar from '@mui/material/Snackbar';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HistoryIcon from '@mui/icons-material/History';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import {
   advanceRun,
   skipStep,
@@ -36,11 +42,26 @@ import { RoundsTimeline } from './RoundsTimeline';
 import type { Agent } from '../../types/agent';
 import type { RunMode, ScrutinyLevel, WorkflowRun, WorkflowRecommendation, ProjectBrief } from '../../types/workflow';
 
-interface WorkflowRunPanelProps {
-  projectId: string;
-  run: WorkflowRun;
-  token: string | undefined;
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function formatRelativeTime(iso: string): string {
+  const d = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - d.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffH = Math.floor(diffMin / 60);
+  if (diffH < 24) return `${diffH}h ago`;
+  const diffD = Math.floor(diffH / 24);
+  if (diffD < 7) return `${diffD}d ago`;
+  return d.toLocaleDateString(undefined, {
+    month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
 }
+
+// ── Constants ──────────────────────────────────────────────────────────────
 
 const STATUS_COLOR: Record<string, 'default' | 'info' | 'warning' | 'success' | 'error'> = {
   pending: 'default',
@@ -49,6 +70,20 @@ const STATUS_COLOR: Record<string, 'default' | 'info' | 'warning' | 'success' | 
   completed: 'success',
   failed: 'error',
 };
+
+const SCRUTINY_LABEL: Record<string, string> = {
+  quick: 'Quick',
+  standard: 'Standard',
+  rigorous: 'Rigorous',
+};
+
+// ── WorkflowRunPanel ───────────────────────────────────────────────────────
+
+interface WorkflowRunPanelProps {
+  projectId: string;
+  run: WorkflowRun;
+  token: string | undefined;
+}
 
 const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: initialRun, token }) => {
   const queryClient = useQueryClient();
@@ -65,7 +100,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
   const alreadyDone =
     initialRun.status === 'completed' || initialRun.status === 'failed';
 
-  // Poll the run while it's in-flight so the panel stays fresh.
   const { data: run = initialRun } = useQuery({
     queryKey: ['projects', projectId, 'workflow-runs', initialRun.id],
     queryFn: () => getWorkflowRun(projectId, initialRun.id, token),
@@ -78,7 +112,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     queryFn: () => getAgents(token),
   });
 
-  // Fetch project briefs when the run has autonomous steps (score/decision output kinds)
   const hasAutonomousSteps = run.steps.some(
     (s) => s.output_kind === 'score' || s.output_kind === 'decision'
   );
@@ -90,7 +123,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     refetchInterval: hasAutonomousSteps && !alreadyDone ? 5000 : false,
   });
 
-  // Build a list of brief changes (versions after initial) to show as callouts
   const briefChanges: Array<{ before: ProjectBrief; after: ProjectBrief }> = [];
   for (let i = 1; i < briefs.length; i++) {
     const before = briefs[i - 1];
@@ -100,7 +132,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
     }
   }
 
-  // ── SSE stream ──────────────────────────────────────────────────────────
+  // ── SSE stream ─────────────────────────────────────────────────────────
 
   const connectStream = useCallback(async () => {
     streamAbortRef.current?.abort();
@@ -122,16 +154,13 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'workflow-runs', run.id],
           });
-          // Re-fetch briefs on step completion so change indicators update
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'briefs'],
           });
-          // Re-fetch rounds so RoundsTimeline stays current
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'workflow-runs', run.id, 'rounds'],
           });
         } else if (event.event === 'round_complete') {
-          // A full round finished — re-fetch rounds immediately
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'workflow-runs', run.id, 'rounds'],
           });
@@ -150,15 +179,18 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
           void queryClient.invalidateQueries({
             queryKey: ['projects', projectId, 'workflow-runs', run.id, 'rounds'],
           });
+          // Also invalidate the runs list so history updates immediately
+          void queryClient.invalidateQueries({
+            queryKey: ['projects', projectId, 'workflow-runs'],
+          });
           break;
         }
       }
     } catch {
-      // Stream ended or aborted — ignore
+      // Stream ended or aborted
     }
   }, [projectId, run.id, token, queryClient]);
 
-  // Connect stream when a step starts running
   useEffect(() => {
     const runningStep = run.steps.find((s) => s.status === 'running');
     if (runningStep) {
@@ -175,9 +207,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
 
   const advanceMutation = useMutation({
     mutationFn: () => advanceRun(projectId, run.id, token),
-    onSuccess: () => {
-      void connectStream();
-    },
+    onSuccess: () => { void connectStream(); },
   });
 
   const skipMutation = useMutation({
@@ -214,9 +244,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
   const respondMutation = useMutation({
     mutationFn: ({ stepRunId, answers }: { stepRunId: string; answers: string[] }) =>
       respondToStep(projectId, run.id, stepRunId, answers, token),
-    onMutate: ({ stepRunId }) => {
-      setRespondingStepId(stepRunId);
-    },
+    onMutate: ({ stepRunId }) => { setRespondingStepId(stepRunId); },
     onSuccess: () => {
       setRespondingStepId(null);
       setRespondSnackbar(true);
@@ -225,13 +253,11 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
       });
       void connectStream();
     },
-    onError: () => {
-      setRespondingStepId(null);
-    },
+    onError: () => { setRespondingStepId(null); },
   });
 
   const rememberPathMutation = useMutation({
-    mutationFn: (path: string) => updateProjectLocalPaths(projectId, [path], token),
+    mutationFn: (paths: string[]) => updateProjectLocalPaths(projectId, paths, token),
   });
 
   const customStepMutation = useMutation({
@@ -258,43 +284,11 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
 
   const isStreaming = !!streamingStepId;
   const isComplete = run.status === 'completed' || run.status === 'failed';
-
-  // Identify the task-gen step (output_kind: 'tasks') for TeamLeadCard's taskGenRunning prop
   const taskGenStep = run.steps.find((s) => s.output_kind === 'tasks');
-
-  // Loop workflows (autonomous mode with score/decision steps) get the RoundsTimeline view
-  const isLoopWorkflow =
-    run.mode === 'autonomous' && hasAutonomousSteps;
+  const isLoopWorkflow = run.mode === 'autonomous' && hasAutonomousSteps;
 
   return (
     <Box>
-      {/* Run header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          {run.workflow_name ?? 'Free-form run'}
-        </Typography>
-        <Chip
-          label={run.status.replace('_', ' ')}
-          size="small"
-          color={STATUS_COLOR[run.status] ?? 'default'}
-          sx={{ textTransform: 'capitalize' }}
-        />
-        <Chip
-          label={run.mode}
-          size="small"
-          variant="outlined"
-          sx={{ textTransform: 'capitalize' }}
-        />
-        {run.config?.scrutiny && (
-          <Chip
-            label={run.config.scrutiny === 'quick' ? 'Quick check' : run.config.scrutiny === 'rigorous' ? 'Rigorous review' : 'Standard review'}
-            size="small"
-            variant="outlined"
-            color="secondary"
-          />
-        )}
-      </Box>
-
       {/* Post-custom recommendation */}
       {postCustomRecs.length > 0 && (
         <WorkflowRecommendationBanner
@@ -306,7 +300,7 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         />
       )}
 
-      {/* Brief change indicators (shown before the step list so user sees what was edited) */}
+      {/* Brief change indicators */}
       {briefChanges.length > 0 && (
         <Box sx={{ mb: 1 }}>
           {briefChanges.map(({ before, after }) => (
@@ -339,10 +333,9 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
             onSkip={(stepRunId) => skipStepMutation.mutate(stepRunId)}
             respondingStepId={respondingStepId}
             taskGenStepId={taskGenStep?.id ?? null}
-            onRememberPath={(path) => rememberPathMutation.mutate(path)}
+            onRememberPath={(paths) => rememberPathMutation.mutate(paths)}
           />
 
-          {/* Completion summary */}
           {isComplete && (
             <Alert severity={run.status === 'completed' ? 'success' : 'error'} sx={{ mt: 2 }}>
               {run.status === 'completed'
@@ -351,7 +344,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
             </Alert>
           )}
 
-          {/* Action bar */}
           <WorkflowActionBar
             run={run}
             isStreaming={isStreaming}
@@ -366,7 +358,6 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         </>
       )}
 
-      {/* Respond success feedback */}
       <Snackbar
         open={respondSnackbar}
         autoHideDuration={3000}
@@ -375,16 +366,11 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
         message="Answers submitted — the team is reviewing again"
       />
 
-      {/* Custom step dialog */}
       <CustomStepDialog
         open={customDialogOpen}
         onClose={() => setCustomDialogOpen(false)}
         onSubmit={async (name, description, agentType) => {
-          await customStepMutation.mutateAsync({
-            name,
-            description,
-            agent_type: agentType,
-          });
+          await customStepMutation.mutateAsync({ name, description, agent_type: agentType });
           setCustomDialogOpen(false);
         }}
         newRecommendations={postCustomRecs}
@@ -398,7 +384,190 @@ const WorkflowRunPanel: React.FC<WorkflowRunPanelProps> = ({ projectId, run: ini
   );
 };
 
-// ── Wrapper: no run yet ────────────────────────────────────────────────────
+// ── RunHistoryRow ──────────────────────────────────────────────────────────
+
+interface RunHistoryRowProps {
+  projectId: string;
+  run: WorkflowRun;
+  token: string | undefined;
+  runNumber: number;
+  defaultExpanded?: boolean;
+}
+
+const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
+  projectId, run, token, runNumber, defaultExpanded = false,
+}) => {
+  const isLoopRun = run.mode === 'autonomous' && run.steps.some(s => s.output_kind === 'score');
+  const roundCount = new Set(
+    run.steps.filter(s => s.round_id).map(s => s.round_id)
+  ).size;
+  const completedSteps = run.steps.filter(s => s.status === 'completed').length;
+  const timestamp = run.started_at ?? run.created_at;
+
+  // Extract the last judge summary for loop runs — gives a one-line outcome
+  const lastJudgeSummary: string | null = (() => {
+    if (!isLoopRun) return null;
+    const decisionSteps = run.steps
+      .filter(s => s.output_kind === 'decision' && s.output)
+      .sort((a, b) => b.position - a.position);
+    if (!decisionSteps[0]?.output) return null;
+    try {
+      const parsed = JSON.parse(decisionSteps[0].output) as { summary?: string };
+      return parsed.summary ?? null;
+    } catch {
+      return null;
+    }
+  })();
+
+  return (
+    <Accordion
+      defaultExpanded={defaultExpanded}
+      disableGutters
+      elevation={0}
+      sx={{
+        border: 1,
+        borderColor: run.status === 'failed' ? 'error.light' : 'divider',
+        borderRadius: 1,
+        mb: 0.75,
+        overflow: 'hidden',
+        '&:before': { display: 'none' },
+        '&.Mui-expanded': {
+          borderColor: run.status === 'failed' ? 'error.light' : 'primary.light',
+        },
+      }}
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon sx={{ fontSize: 18 }} />}
+        sx={{
+          px: 1.5, py: 0.75, minHeight: 'unset',
+          bgcolor: 'action.hover',
+          '& .MuiAccordionSummary-content': { my: 0.5, alignItems: 'center', gap: 1, flexWrap: 'wrap' },
+        }}
+      >
+        {/* Run number */}
+        <Typography
+          variant="caption"
+          sx={{ fontFamily: 'monospace', fontSize: '0.68rem', color: 'text.disabled', flexShrink: 0 }}
+        >
+          #{runNumber}
+        </Typography>
+
+        {/* Workflow name */}
+        <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.primary', flexShrink: 0 }}>
+          {run.workflow_name ?? 'Free-form run'}
+        </Typography>
+
+        {/* Timestamp */}
+        <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+          {formatRelativeTime(timestamp)}
+        </Typography>
+
+        {/* Judge summary preview (loop runs) */}
+        {lastJudgeSummary && (
+          <Typography
+            variant="caption"
+            color="text.disabled"
+            sx={{
+              flex: 1, overflow: 'hidden', textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap', fontSize: '0.68rem', minWidth: 0,
+            }}
+          >
+            — {lastJudgeSummary}
+          </Typography>
+        )}
+
+        {/* Right-side chips */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto', mr: 1, flexShrink: 0 }}>
+          <Chip
+            label={run.status.replace(/_/g, ' ')}
+            size="small"
+            color={STATUS_COLOR[run.status] ?? 'default'}
+            sx={{ height: 18, fontSize: '0.62rem', textTransform: 'capitalize' }}
+          />
+          <Chip
+            label={run.mode}
+            size="small"
+            variant="outlined"
+            sx={{ height: 18, fontSize: '0.62rem', textTransform: 'capitalize' }}
+          />
+          {run.config?.scrutiny && (
+            <Chip
+              label={SCRUTINY_LABEL[run.config.scrutiny] ?? run.config.scrutiny}
+              size="small"
+              variant="outlined"
+              color="secondary"
+              sx={{ height: 18, fontSize: '0.62rem' }}
+            />
+          )}
+          <Typography
+            variant="caption"
+            color="text.disabled"
+            sx={{ fontSize: '0.68rem', ml: 0.25 }}
+          >
+            {isLoopRun
+              ? `${roundCount} ${roundCount === 1 ? 'round' : 'rounds'}`
+              : `${completedSteps}/${run.steps.length} steps`}
+          </Typography>
+        </Box>
+      </AccordionSummary>
+
+      <AccordionDetails sx={{ px: 1.5, pt: 1.25, pb: 1.5, borderTop: 1, borderColor: 'divider' }}>
+        <WorkflowRunPanel projectId={projectId} run={run} token={token} />
+      </AccordionDetails>
+    </Accordion>
+  );
+};
+
+// ── StartRunControls ───────────────────────────────────────────────────────
+
+interface StartRunControlsProps {
+  scrutiny: ScrutinyLevel;
+  onScrutinyChange: (s: ScrutinyLevel) => void;
+  targetScoreInput: string;
+  onTargetScoreChange: (v: string) => void;
+  onStart: () => void;
+  starting: boolean;
+  label?: string;
+}
+
+const StartRunControls: React.FC<StartRunControlsProps> = ({
+  scrutiny, onScrutinyChange, targetScoreInput, onTargetScoreChange,
+  onStart, starting, label = 'Start run',
+}) => (
+  <Box>
+    <ScrutinySelector value={scrutiny} onChange={onScrutinyChange} />
+    <Box sx={{ mt: 1.5 }}>
+      <Tooltip title="Loop will stop when average score reaches this threshold. Leave empty to let the judge decide.">
+        <TextField
+          label="Run until score ≥"
+          size="small"
+          type="number"
+          value={targetScoreInput}
+          onChange={(e) => onTargetScoreChange(e.target.value)}
+          inputProps={{ min: 0, max: 10, step: 0.5 }}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+          }}
+          placeholder="Optional"
+          sx={{ width: 180 }}
+        />
+      </Tooltip>
+    </Box>
+    <Box sx={{ mt: 1.5 }}>
+      <Button
+        variant="outlined"
+        size="small"
+        onClick={onStart}
+        disabled={starting}
+        startIcon={starting ? <CircularProgress size={14} /> : <PlayCircleOutlineIcon />}
+      >
+        {label}
+      </Button>
+    </Box>
+  </Box>
+);
+
+// ── WorkflowTab ────────────────────────────────────────────────────────────
 
 interface WorkflowTabProps {
   projectId: string;
@@ -408,23 +577,25 @@ interface WorkflowTabProps {
 export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) => {
   const queryClient = useQueryClient();
 
+  const [recDismissed, setRecDismissed] = useState(false);
+  const [scrutiny, setScrutiny] = useState<ScrutinyLevel>('standard');
+  const [targetScoreInput, setTargetScoreInput] = useState('');
+
+  const targetScore = targetScoreInput !== '' ? Number(targetScoreInput) : undefined;
+
   const { data: runs, isLoading: runsLoading } = useQuery({
     queryKey: ['projects', projectId, 'workflow-runs'],
     queryFn: () => getWorkflowRuns(projectId, token),
     enabled: !!projectId,
   });
 
+  const hasAnyRuns = (runs?.length ?? 0) > 0;
+
   const { data: recommendations, isLoading: recLoading } = useQuery({
     queryKey: ['projects', projectId, 'workflow-recommendation'],
     queryFn: () => getWorkflowRecommendation(projectId, token),
-    enabled: !!projectId && runs !== undefined && runs.length === 0,
+    enabled: !!projectId && runs !== undefined && !hasAnyRuns,
   });
-
-  const [recDismissed, setRecDismissed] = useState(false);
-  const [scrutiny, setScrutiny] = useState<ScrutinyLevel>('standard');
-  const [targetScoreInput, setTargetScoreInput] = useState('');
-
-  const targetScore = targetScoreInput !== '' ? Number(targetScoreInput) : undefined;
 
   const startMutation = useMutation({
     mutationFn: (workflowId?: string) =>
@@ -457,99 +628,143 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
     (r) => r.status === 'in_progress' || r.status === 'pending' || r.status === 'awaiting_input'
   );
 
-  if (activeRun) {
-    return <WorkflowRunPanel projectId={projectId} run={activeRun} token={token} />;
-  }
+  // History: completed or failed, most recent first
+  const historyRuns = (runs ?? [])
+    .filter((r) => r.status === 'completed' || r.status === 'failed')
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-  const latestCompleted = runs?.find(
-    (r) => r.status === 'completed' || r.status === 'failed'
+  // Global run number (across all runs, for labelling — 1 = oldest)
+  const totalRuns = (runs?.length ?? 0);
+  // Map run.id → sequential run number (oldest = #1)
+  const runNumberMap = new Map<string, number>(
+    [...(runs ?? [])]
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+      .map((r, i) => [r.id, i + 1])
   );
 
-  if (latestCompleted) {
-    return (
-      <Box>
-        <WorkflowRunPanel projectId={projectId} run={latestCompleted} token={token} />
-        <Box sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: 'divider' }}>
-          <ScrutinySelector value={scrutiny} onChange={setScrutiny} />
-          <Box sx={{ mt: 1.5 }}>
-            <Tooltip title="Loop will stop when average score reaches this threshold. Leave empty to let the judge decide.">
-              <TextField
-                label="Run until score ≥"
-                size="small"
-                type="number"
-                value={targetScoreInput}
-                onChange={(e) => setTargetScoreInput(e.target.value)}
-                inputProps={{ min: 0, max: 10, step: 0.5 }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
-                }}
-                placeholder="Optional"
-                sx={{ width: 180 }}
-              />
-            </Tooltip>
-          </Box>
-          <Box sx={{ mt: 1.5 }}>
-            <Button
-              variant="outlined"
-              size="small"
-              onClick={() => startMutation.mutate(undefined)}
-              disabled={startMutation.isPending}
-              startIcon={startMutation.isPending ? <CircularProgress size={14} /> : undefined}
-            >
-              Start new run
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-    );
-  }
-
-  // No runs yet: show recommendation or free-form start.
   return (
     <Box>
-      {!recDismissed && recommendations && recommendations.length > 0 && (
-        <WorkflowRecommendationBanner
-          recommendations={recommendations}
-          onAccept={(wfId) => startMutation.mutate(wfId)}
-          onDismiss={() => setRecDismissed(true)}
-          accepting={!!startMutation.isPending}
-          token={token}
-        />
+      {/* ── Active run ───────────────────────────────────────────────────── */}
+      {activeRun && (
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+            <CircularProgress size={14} thickness={5} />
+            <Typography variant="overline" color="primary.main" sx={{ lineHeight: 1 }}>
+              Run #{runNumberMap.get(activeRun.id)} — in progress
+            </Typography>
+            <Chip
+              label={activeRun.status.replace(/_/g, ' ')}
+              size="small"
+              color={STATUS_COLOR[activeRun.status] ?? 'default'}
+              sx={{ height: 18, fontSize: '0.62rem', textTransform: 'capitalize' }}
+            />
+            {activeRun.config?.scrutiny && (
+              <Chip
+                label={SCRUTINY_LABEL[activeRun.config.scrutiny] ?? activeRun.config.scrutiny}
+                size="small"
+                variant="outlined"
+                color="secondary"
+                sx={{ height: 18, fontSize: '0.62rem' }}
+              />
+            )}
+          </Box>
+          <WorkflowRunPanel projectId={projectId} run={activeRun} token={token} />
+        </Box>
       )}
 
-      <Divider sx={{ my: 2 }} />
+      {/* ── Start new run (when no active run) ──────────────────────────── */}
+      {!activeRun && (
+        <Box sx={{ mb: historyRuns.length > 0 ? 2 : 0 }}>
+          {!recDismissed && recommendations && recommendations.length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <WorkflowRecommendationBanner
+                recommendations={recommendations}
+                onAccept={(wfId) => startMutation.mutate(wfId)}
+                onDismiss={() => setRecDismissed(true)}
+                accepting={!!startMutation.isPending}
+                token={token}
+              />
+            </Box>
+          )}
 
-      <ScrutinySelector value={scrutiny} onChange={setScrutiny} />
+          {historyRuns.length > 0 ? (
+            /* Has prior runs — compact "start new run" strip */
+            <Box
+              sx={{
+                display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap',
+                p: 1.5, border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'action.hover',
+              }}
+            >
+              <ScrutinySelector value={scrutiny} onChange={setScrutiny} compact />
+              <Tooltip title="Loop will stop when average score reaches this threshold. Leave empty to let the judge decide.">
+                <TextField
+                  label="Run until ≥"
+                  size="small"
+                  type="number"
+                  value={targetScoreInput}
+                  onChange={(e) => setTargetScoreInput(e.target.value)}
+                  inputProps={{ min: 0, max: 10, step: 0.5 }}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+                  }}
+                  placeholder="Optional"
+                  sx={{ width: 160 }}
+                />
+              </Tooltip>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => startMutation.mutate(undefined)}
+                disabled={startMutation.isPending}
+                startIcon={startMutation.isPending ? <CircularProgress size={14} /> : <PlayCircleOutlineIcon />}
+              >
+                Start new run
+              </Button>
+            </Box>
+          ) : (
+            /* No runs yet — full start controls */
+            <StartRunControls
+              scrutiny={scrutiny}
+              onScrutinyChange={setScrutiny}
+              targetScoreInput={targetScoreInput}
+              onTargetScoreChange={setTargetScoreInput}
+              onStart={() => startMutation.mutate(undefined)}
+              starting={!!startMutation.isPending}
+              label="Start run"
+            />
+          )}
+        </Box>
+      )}
 
-      <Box sx={{ mt: 2 }}>
-        <Tooltip title="Loop will stop automatically when the average score reaches this threshold. Leave empty to let the judge decide.">
-          <TextField
-            label="Run until score ≥"
-            size="small"
-            type="number"
-            value={targetScoreInput}
-            onChange={(e) => setTargetScoreInput(e.target.value)}
-            inputProps={{ min: 0, max: 10, step: 0.5 }}
-            InputProps={{
-              endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
-            }}
-            placeholder="Optional"
-            sx={{ width: 180 }}
-          />
-        </Tooltip>
-      </Box>
+      {/* ── Run history ──────────────────────────────────────────────────── */}
+      {historyRuns.length > 0 && (
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
+            <HistoryIcon sx={{ fontSize: 15, color: 'text.secondary' }} />
+            <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1 }}>
+              Run history ({historyRuns.length})
+            </Typography>
+          </Box>
 
-      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
-        <Button
-          variant="contained"
-          size="small"
-          onClick={() => startMutation.mutate(undefined)}
-          disabled={startMutation.isPending}
-          startIcon={startMutation.isPending ? <CircularProgress size={14} /> : undefined}
-        >
-          Start run
-        </Button>
-      </Box>
+          {historyRuns.map((run, idx) => (
+            <RunHistoryRow
+              key={run.id}
+              projectId={projectId}
+              run={run}
+              token={token}
+              runNumber={runNumberMap.get(run.id) ?? (totalRuns - idx)}
+              defaultExpanded={idx === 0 && !activeRun}
+            />
+          ))}
+        </Box>
+      )}
+
+      {/* ── Empty state ──────────────────────────────────────────────────── */}
+      {!activeRun && historyRuns.length === 0 && !startMutation.isPending && (
+        <Box sx={{ mt: 2 }}>
+          <Divider />
+        </Box>
+      )}
     </Box>
   );
 };

@@ -188,7 +188,7 @@ interface WorkflowStepperProps {
   /** ID of a task-gen step that is currently running (used by TeamLeadCard) */
   taskGenStepId?: string | null;
   /** Called when the user checks "Remember this path" in the code context path picker */
-  onRememberPath?: ((path: string) => void) | undefined;
+  onRememberPath?: ((paths: string[]) => void) | undefined;
 }
 
 const WorkflowStepper: React.FC<WorkflowStepperProps> = ({

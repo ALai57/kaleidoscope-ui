@@ -81,7 +81,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
   });
 
   const rememberPathMutation = useMutation({
-    mutationFn: (path: string) => updateProjectLocalPaths(projectId, [path], token),
+    mutationFn: (paths: string[]) => updateProjectLocalPaths(projectId, paths, token),
   });
 
   // ── Derived state ──────────────────────────────────────────────────────
@@ -120,6 +120,39 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
     );
   }
 
+  // ── Completed run: flat history list ──────────────────────────────────────
+  // No "latest vs older" distinction — all rounds are history, show them all.
+  if (isRunComplete) {
+    return (
+      <Box>
+        {rounds.length === 0 ? (
+          <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
+            No round data recorded for this run.
+          </Typography>
+        ) : (
+          rounds.map((round) => (
+            <RoundCard
+              key={round.round_number}
+              round={round}
+              thresholds={run.config?.thresholds}
+              agents={agents}
+            />
+          ))
+        )}
+        <Alert
+          severity={run.status === 'completed' ? 'success' : 'error'}
+          sx={{ mt: 1 }}
+        >
+          {run.status === 'completed'
+            ? `Completed after ${rounds.length} ${rounds.length === 1 ? 'round' : 'rounds'}.`
+            : 'Run failed. Check the step list for details.'}
+        </Alert>
+      </Box>
+    );
+  }
+
+  // ── Active run ─────────────────────────────────────────────────────────────
+
   if (rounds.length === 0) {
     return (
       <Box sx={{ py: 2 }}>
@@ -135,7 +168,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
 
   return (
     <Box>
-      {/* Older rounds (collapsed feel — just shown smaller) */}
+      {/* Earlier rounds */}
       {olderRounds.length > 0 && (
         <Box sx={{ mb: 1 }}>
           {olderRounds.map((round) => (
@@ -146,7 +179,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                 <CheckCircleIcon sx={{ fontSize: 12, color: 'success.main' }} />
                 <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1, fontSize: '0.65rem' }}>
-                  {olderRounds.length} earlier {olderRounds.length === 1 ? 'round' : 'rounds'} complete
+                  {olderRounds.length} earlier {olderRounds.length === 1 ? 'round' : 'rounds'}
                 </Typography>
               </Box>
             </Divider>
@@ -154,7 +187,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
         </Box>
       )}
 
-      {/* Latest round */}
+      {/* Current round */}
       {latestRound && (
         <Box>
           <RoundCard
@@ -164,12 +197,11 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
             awaitingInput={run.status === 'awaiting_input' && !!awaitingStep}
           />
 
-          {/* ── Awaiting-input section ── */}
+          {/* Awaiting-input section */}
           {run.status === 'awaiting_input' && (
             <Box sx={{ mt: 1, mb: 1 }}>
               {awaitingStep ? (
                 <>
-                  {/* Code-context-path form */}
                   {pendingCodeContext ? (
                     <CodeContextPathInput
                       stepRun={awaitingStep}
@@ -178,10 +210,9 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
                       responding={respondMutation.isPending}
                       onRespond={(stepRunId, answers) => respondMutation.mutate({ stepRunId, answers })}
                       onSkip={(stepRunId) => skipMutation.mutate(stepRunId)}
-                      onRememberPath={(path) => rememberPathMutation.mutate(path)}
+                      onRememberPath={(paths) => rememberPathMutation.mutate(paths)}
                     />
                   ) : (
-                    /* Generic awaiting-input fallback — step is paused for some other reason */
                     <Alert severity="warning" variant="outlined">
                       <AlertTitle>{awaitingStep.name} needs your input</AlertTitle>
                       Use <strong>Add context</strong> below to provide additional information and
@@ -190,7 +221,6 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
                   )}
                 </>
               ) : (
-                /* No awaiting step found — run is paused but we don't know why */
                 <Alert severity="warning" variant="outlined">
                   <AlertTitle>Workflow paused</AlertTitle>
                   The run is waiting for input before it can continue. Use{' '}
@@ -201,7 +231,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
             </Box>
           )}
 
-          {/* Action bar — only on the latest round while run is still active */}
+          {/* Action bar */}
           {showActionBar && (
             <RoundActionBar
               roundInProgress={roundInProgress}
@@ -218,18 +248,6 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
             />
           )}
         </Box>
-      )}
-
-      {/* Completion notice */}
-      {isRunComplete && (
-        <Alert
-          severity={run.status === 'completed' ? 'success' : 'error'}
-          sx={{ mt: 1.5 }}
-        >
-          {run.status === 'completed'
-            ? `Loop finished after ${rounds.length} ${rounds.length === 1 ? 'round' : 'rounds'}.`
-            : 'Workflow run failed. Check the step list for details.'}
-        </Alert>
       )}
 
       <Snackbar

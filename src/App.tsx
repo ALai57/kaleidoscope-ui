@@ -5,7 +5,6 @@ import { ErrorPage } from './components/layout/ErrorPage';
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const ProjectsPage = React.lazy(() => import('./pages/projects/ProjectsPage'));
-const ProjectDetailPage = React.lazy(() => import('./pages/projects/ProjectDetailPage'));
 const ProjectDevelopPage = React.lazy(() => import('./pages/projects/ProjectDevelopPage'));
 const ProjectSkillsPage = React.lazy(() => import('./pages/projects/ProjectSkillsPage'));
 const ScoreDefinitionsPage = React.lazy(() => import('./pages/projects/ScoreDefinitionsPage'));
@@ -53,7 +52,6 @@ const router = createBrowserRouter([
       { path: '/about', element: <AboutPage /> },
       { path: '/experience', element: <ExperiencePage /> },
       { path: '/projects', element: <ProjectsPage /> },
-      { path: '/projects/:id', element: <ProjectDetailPage /> },
       { path: '/projects/:id/develop', element: <ProjectDevelopPage /> },
       { path: '/projects/:id/skills', element: <ProjectSkillsPage /> },
       { path: '/score-definitions', element: <ScoreDefinitionsPage /> },

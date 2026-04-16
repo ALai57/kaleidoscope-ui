@@ -6,7 +6,6 @@ import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import { useNavigate } from 'react-router-dom';
 import type { Project, ScoreRun } from '../../types/project';
 
 const STATUS_COLORS: Record<string, 'default' | 'primary' | 'success'> = {
@@ -72,7 +71,6 @@ interface ProjectCardProps {
 }
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) => {
-  const navigate = useNavigate();
   const scores = project.scores ?? [];
 
   return (
@@ -85,7 +83,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
       }}
     >
       <CardActionArea
-        onClick={() => (onSelect ? onSelect() : navigate(`/projects/${project.id}`))}
+        onClick={() => onSelect?.()}
+        disabled={!onSelect}
         sx={{ height: '100%', alignItems: 'flex-start' }}
       >
         <CardContent>

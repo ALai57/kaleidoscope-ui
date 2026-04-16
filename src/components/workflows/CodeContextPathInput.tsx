@@ -1,23 +1,39 @@
 import React, { useState } from 'react';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
-import type { PendingInputsCodeContextPath, StepRun } from '../../types/workflow';
+import type { CodeContextPathCandidate, PendingInputsCodeContextPath, StepRun } from '../../types/workflow';
 
-// Sentinel value used in the radio group when the user selects manual entry
-const MANUAL_VALUE = '__manual__';
+// ── Path helper ────────────────────────────────────────────────────────────
+
+function pathBasename(p: string): string {
+  const trimmed = p.replace(/\/+$/, '');
+  return trimmed.split('/').pop() || trimmed;
+}
+
+// ── Option type (candidates + ad-hoc paths) ────────────────────────────────
+
+interface PathOption {
+  path: string;
+  reason?: string;
+  /** True when the user typed a custom path not in the candidate list */
+  isCustom?: boolean;
+}
+
+const filter = createFilterOptions<PathOption>();
+
+// ── Component ──────────────────────────────────────────────────────────────
 
 interface CodeContextPathInputProps {
   stepRun: StepRun;
@@ -26,7 +42,7 @@ interface CodeContextPathInputProps {
   responding: boolean;
   onRespond: (stepRunId: string, answers: string[]) => void;
   onSkip: (stepRunId: string) => void;
-  onRememberPath?: ((path: string) => void) | undefined;
+  onRememberPath?: ((paths: string[]) => void) | undefined;
 }
 
 export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
@@ -40,25 +56,25 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
 }) => {
   const persona = getAgentPersona(stepRun.agent_type, agents);
 
-  const defaultSelected =
-    pendingInputs.candidates.length > 0
-      ? (pendingInputs.candidates[0]?.path ?? MANUAL_VALUE)
-      : MANUAL_VALUE;
+  // Pre-build the options list from candidates
+  const candidateOptions: PathOption[] = pendingInputs.candidates.map(
+    (c: CodeContextPathCandidate) => ({ path: c.path, reason: c.reason })
+  );
 
-  const [selected, setSelected] = useState<string>(defaultSelected);
-  const [manualPath, setManualPath] = useState('');
+  // Default: top-ranked candidate pre-selected
+  const defaultSelected: PathOption[] = candidateOptions.length > 0 ? [candidateOptions[0]!] : [];
+  const [selected, setSelected] = useState<PathOption[]>(defaultSelected);
   const [remember, setRemember] = useState(false);
 
-  const isManual = selected === MANUAL_VALUE;
-  const effectivePath = isManual ? manualPath.trim() : selected;
-  const canSubmit = !!effectivePath;
+  const selectedPaths = selected.map((o) => o.path);
+  const canSubmit = selectedPaths.length > 0;
 
   const handleSubmit = () => {
-    if (!effectivePath) return;
+    if (!canSubmit) return;
     if (remember && onRememberPath) {
-      onRememberPath(effectivePath);
+      onRememberPath(selectedPaths);
     }
-    onRespond(stepRun.id, [effectivePath]);
+    onRespond(stepRun.id, selectedPaths);
   };
 
   return (
@@ -115,65 +131,88 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
           {pendingInputs.question}
         </Typography>
 
-        <RadioGroup value={selected} onChange={(e) => setSelected(e.target.value)}>
-          {pendingInputs.candidates.map((candidate) => (
-            <FormControlLabel
-              key={candidate.path}
-              value={candidate.path}
-              control={<Radio size="small" disabled={responding} />}
-              label={
-                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                  <Typography
-                    variant="body2"
-                    sx={{ fontFamily: 'monospace', fontSize: '0.8rem', wordBreak: 'break-all' }}
-                  >
-                    {candidate.path}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {candidate.reason}
-                  </Typography>
-                </Box>
-              }
-              sx={{
-                mb: 0.5,
-                alignItems: 'flex-start',
-                '& .MuiRadio-root': { mt: 0.25 },
-              }}
-            />
-          ))}
-
-          <FormControlLabel
-            value={MANUAL_VALUE}
-            control={<Radio size="small" disabled={responding} />}
-            label={
-              <Typography variant="body2" color="text.secondary">
-                Enter a path manually…
-              </Typography>
+        <Autocomplete<PathOption, true, false, true>
+          multiple
+          freeSolo
+          size="small"
+          disableCloseOnSelect
+          options={candidateOptions}
+          value={selected}
+          disabled={responding}
+          onChange={(_, newValue) => {
+            // newValue elements can be string (freeSolo typed entry) or PathOption
+            const normalised: PathOption[] = newValue.map((v) =>
+              typeof v === 'string'
+                ? { path: v, isCustom: true }
+                : v.isCustom
+                ? v
+                : v
+            );
+            setSelected(normalised);
+          }}
+          // Allow typing a path not in the list — show an "Add …" option
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            const inputValue = params.inputValue.trim();
+            if (
+              inputValue !== '' &&
+              !options.some((o) => o.path === inputValue)
+            ) {
+              filtered.push({ path: inputValue, isCustom: true });
             }
-            sx={{ mb: isManual ? 0.5 : 0 }}
-          />
-        </RadioGroup>
+            return filtered;
+          }}
+          getOptionLabel={(option) =>
+            typeof option === 'string' ? option : option.path
+          }
+          isOptionEqualToValue={(option, value) => option.path === value.path}
+          renderTags={(tagValues, getTagProps) =>
+            tagValues.map((option, index) => {
+              const { key, ...tagProps } = getTagProps({ index });
+              return (
+                <Tooltip key={key} title={option.path} placement="top">
+                  <Chip
+                    {...tagProps}
+                    icon={<FolderOpenIcon sx={{ fontSize: 14 }} />}
+                    label={
+                      <Typography component="span" sx={{ fontFamily: 'monospace', fontSize: '0.72rem' }}>
+                        {pathBasename(option.path)}
+                      </Typography>
+                    }
+                    size="small"
+                    sx={{ maxWidth: 240, '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' } }}
+                  />
+                </Tooltip>
+              );
+            })
+          }
+          renderOption={(props, option) => {
+            const { key, ...optionProps } = props as React.HTMLAttributes<HTMLLIElement> & { key: React.Key };
+            return (
+              <li key={key} {...optionProps}>
+                <Box sx={{ py: 0.25 }}>
+                  <Typography sx={{ fontFamily: 'monospace', fontSize: '0.8rem', lineHeight: 1.4 }}>
+                    {option.isCustom ? `Add "${option.path}"` : option.path}
+                  </Typography>
+                  {option.reason && (
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.3 }}>
+                      {option.reason}
+                    </Typography>
+                  )}
+                </Box>
+              </li>
+            );
+          }}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          renderInput={(params) => (
+            <TextField
+              {...(params as any)}
+              placeholder={selected.length === 0 ? 'Select or type a repository path…' : ''}
+            />
+          )}
+        />
 
-        {isManual && (
-          <TextField
-            size="small"
-            fullWidth
-            placeholder="/path/to/your/codebase"
-            value={manualPath}
-            onChange={(e) => setManualPath(e.target.value)}
-            disabled={responding}
-            autoFocus
-            sx={{
-              mt: 0.25,
-              mb: 0.5,
-              '& input': { fontFamily: 'monospace', fontSize: '0.85rem' },
-            }}
-          />
-        )}
-
-        <Divider sx={{ my: 1.5 }} />
-
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1.5 }}>
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5, mb: 1.5 }}>
           <Button
             variant="contained"
             size="small"
@@ -181,7 +220,9 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
             disabled={responding || !canSubmit}
             startIcon={responding ? <CircularProgress size={14} /> : undefined}
           >
-            Use this path
+            {selectedPaths.length > 1
+              ? `Review ${selectedPaths.length} repos`
+              : 'Review selected repo'}
           </Button>
           <Button
             variant="text"
@@ -206,7 +247,7 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
           }
           label={
             <Typography variant="caption" color="text.secondary">
-              Remember this path for this project
+              Remember {selectedPaths.length > 1 ? 'these paths' : 'this path'} for this project
             </Typography>
           }
         />

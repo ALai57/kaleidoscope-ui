@@ -20,12 +20,18 @@ import Typography from '@mui/material/Typography';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AssessmentIcon from '@mui/icons-material/Assessment';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import CheckIcon from '@mui/icons-material/Check';
+import ChecklistIcon from '@mui/icons-material/Checklist';
 import DeleteIcon from '@mui/icons-material/Delete';
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import HistoryIcon from '@mui/icons-material/History';
+import SchoolIcon from '@mui/icons-material/School';
 import Divider from '@mui/material/Divider';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import { EditorToolbar } from '../../components/editor/EditorToolbar';
 import { extensions } from '../../components/editor/extensions';
+import { ScoreHistory } from '../../components/projects/ScoreHistory';
 import { WorkflowTab } from '../../components/workflows/WorkflowRunPanel';
 import { TasksTab } from '../../components/tasks/TasksTab';
 import { useAuth } from '../../auth/useAuth';
@@ -34,6 +40,7 @@ import {
   updateProject,
   deleteProject,
   triggerScore,
+  getScoreHistory,
   getSectionQuestions,
 } from '../../api/projects';
 import type { ScoreRun } from '../../types/project';
@@ -240,6 +247,7 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
   const { token } = useAuth();
   const queryClient = useQueryClient();
 
+  const [tab, setTab] = useState(0);
   const [activeScoreId, setActiveScoreId] = useState<string | null>(null);
   const [scoreAnchorEl, setScoreAnchorEl] = useState<HTMLElement | null>(null);
   const [saveState, setSaveState] = useState<'idle' | 'pending' | 'saving' | 'saved'>('idle');
@@ -280,6 +288,12 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
       void queryClient.invalidateQueries({ queryKey: ['projects'] });
       onClose();
     },
+  });
+
+  const { data: scoreHistory = [] } = useQuery({
+    queryKey: ['projects', projectId, 'scores', 'history'],
+    queryFn: () => getScoreHistory(projectId, token),
+    enabled: !!projectId && tab === 0,
   });
 
   const editor = useEditor({
@@ -384,18 +398,20 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
 
           <Button
             size="small"
+            startIcon={<SchoolIcon />}
+            onClick={() => navigate(`/projects/${projectId}/skills`)}
+          >
+            Skills
+          </Button>
+
+          <Button
+            size="small"
             color="error"
             startIcon={<DeleteIcon />}
             onClick={() => setDeleteDialogOpen(true)}
           >
             Delete
           </Button>
-
-          <Tooltip title="Open full project view">
-            <IconButton size="small" onClick={() => navigate(`/projects/${projectId}`)}>
-              <OpenInFullIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
         </Box>
       </Box>
 
@@ -492,13 +508,29 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
         </Box>
       </motion.div>
 
-      {/* ── Workflow ── */}
-      <Divider sx={{ my: 2.5 }} />
-      <WorkflowTab projectId={projectId} token={token} />
+      {/* ── Tabs ── */}
+      <Divider sx={{ mt: 2.5, mb: 0 }} />
+      <Tabs value={tab} onChange={(_, v) => setTab(v as number)} sx={{ mt: 1 }}>
+        <Tab label="Score history" icon={<HistoryIcon />} iconPosition="start" />
+        <Tab label="Workflow" icon={<AccountTreeIcon />} iconPosition="start" />
+        <Tab label="Tasks" icon={<ChecklistIcon />} iconPosition="start" />
+      </Tabs>
 
-      {/* ── Tasks ── */}
-      <Divider sx={{ my: 2.5 }} />
-      <TasksTab projectId={projectId} token={token} />
+      {tab === 0 && (
+        <Box sx={{ pt: 2 }}>
+          <ScoreHistory history={scoreHistory} />
+        </Box>
+      )}
+      {tab === 1 && (
+        <Box sx={{ pt: 2 }}>
+          <WorkflowTab projectId={projectId} token={token} />
+        </Box>
+      )}
+      {tab === 2 && (
+        <Box sx={{ pt: 2 }}>
+          <TasksTab projectId={projectId} token={token} />
+        </Box>
+      )}
 
       {/* Delete confirmation dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>

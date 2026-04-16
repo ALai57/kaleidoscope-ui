@@ -55,12 +55,28 @@ export interface AdvisorScoreOutput {
 
 // ── Decision step output (output_kind: 'decision') ────────────────────────
 
+export interface TradeOff {
+  name: string;
+  description: string;
+  resolution: string;
+  resolved_autonomously: boolean;
+}
+
+export interface Recommendation {
+  action: string;
+  rationale: string;
+  who: 'system' | 'user';
+  priority: 'high' | 'medium' | 'low';
+}
+
 export interface JudgeDecisionRefine {
   action: 'refine';
   agent_to_refine: string;
   refinement_prompt: string;
   summary: string;
   rationale: string;
+  trade_offs?: TradeOff[];
+  recommendations?: Recommendation[];
 }
 
 export interface JudgeDecisionClarify {
@@ -68,6 +84,8 @@ export interface JudgeDecisionClarify {
   questions: string[];
   summary: string;
   rationale: string;
+  trade_offs?: TradeOff[];
+  recommendations?: Recommendation[];
 }
 
 export interface JudgeDecisionProceed {
@@ -75,6 +93,8 @@ export interface JudgeDecisionProceed {
   unresolved?: string[];
   summary: string;
   rationale: string;
+  trade_offs?: TradeOff[];
+  recommendations?: Recommendation[];
 }
 
 export type JudgeDecisionOutput =
