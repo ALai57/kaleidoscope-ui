@@ -81,61 +81,80 @@ dependency with **zero** `src` imports — a candidate for removal, but it's a
 large tree pulling its own `styled-components` peer, so verify nothing relies on
 it transitively before touching it.
 
-## Phase 1 — Design tokens (~1 week)
+## Phase 1 — Design tokens (~1 week) — DONE
 
-Introduce a token layer between raw color math and MUI's theme object, so
-both the component library and the theming engine consume the same source of
-truth instead of components picking arbitrary MUI palette keys or hex values.
+Introduced a token layer between raw color math and MUI's theme object.
+**Key decision:** because the app may leave MUI soon, tokens are a
+framework-agnostic source of truth and the MUI theme is *derived* from them via
+an adapter — not the MUI-first hybrid originally floated. A future MUI swap
+touches the adapter, not components.
 
-- Formalize tokens for: color roles (surface, border, status colors —
-  success/warning/error/info — currently ad hoc per component), spacing scale
-  (confirm against MUI's default 8px unit or override), typography scale
-  (currently only `body1.fontSize` is customized in `makeTheme`), radius, and
-  elevation/shadow steps.
-- Extend `ThemeParams`/`makeTheme` to emit these as part of the MUI theme
-  (`theme.palette`, a custom `theme.tokens` namespace, or MUI's
-  `components.MuiX.styleOverrides` — pick one pattern and document it).
-- This phase is a prerequisite for Phase 2 (the picker needs to *drive*
-  tokens) and Phase 3 (shared components need to *consume* tokens instead of
-  hardcoding).
+Completed:
+- ✅ `src/theme/tokens.ts` — a MUI-independent `Tokens` type + `makeTokens(params,
+  mode)` covering brand colors, status colors (success/warning/error/info),
+  surface/border/text neutrals, spacing (8px base), radius, elevation, and a
+  type scale. Also gives `tertiary` a real home (it was computed then dropped).
+- ✅ `makeTheme` derives the MUI theme from tokens via `paletteFromTokens` /
+  `typographyFromTokens` adapters and exposes `theme.tokens` (module-augmented).
+- ✅ Tests for tokens + adapter.
 
-## Phase 2 — Finish the adaptive theming engine (~1-2 weeks)
+Prerequisite for Phase 2 (the picker drives tokens) and Phase 3 (shared
+components consume tokens).
 
-This is the highest-priority goal, and the groundwork already exists — it
-needs to be connected end-to-end and made production-grade rather than
-experimental.
+## Phase 2 — Adaptive theming engine (~1-2 weeks) — MOSTLY DONE
 
-- Replace the naive `lightness: 100 - lightness` dark-mode flip in
-  `makeTheme` with a real recompute through `leonardo-contrast-colors`
-  (already proven out in `ColorFamily.tsx`) so dark mode is contrast-checked,
-  not just inverted.
-- Wire `ColorWheel`/`ColorPicker` into `main.tsx` as an actual theme-picker UI
-  (behind a settings panel, not just a Storybook story), with the seed color
-  persisted (localStorage now, user profile/API later since `src/api` and
-  `src/store` already exist for this app).
-- Un-experimental-ize `ColorFamily.tsx`: make the `leonardo-contrast-colors`
-  import a normal top-level dependency rather than a try/catch'd dynamic
-  import, once you're committing to it as core infrastructure rather than a
-  spike.
-- Decide explicitly where MUI's own theming model conflicts with adaptive
-  contrast-driven color (e.g. MUI computes its own `contrastText` via simple
-  luminance thresholds, which will disagree with leonardo's ratio-targeted
-  pairs). Likely resolution: stop relying on MUI's auto-contrast and inject
-  leonardo's computed pairs directly into each palette slot's `contrastText`.
-- Add an automated contrast-ratio check (unit test or Storybook a11y addon)
-  that runs against generated palettes so a bad seed color can't ship a
-  low-contrast theme.
+The highest-priority goal. Landed in two commits (engine core + wiring).
+**Discovery:** the doc was stale — `UIManagerPage` (`/ui`) already wired
+`ColorPicker` → `themeStore` → the `themes` API. The real gap was that
+`main.tsx` built the theme statically and never read the store, so picker edits
+never reached the live app.
 
-## Phase 3 — Component library consolidation (~2-3 weeks)
+Completed:
+- ✅ `src/theme/contrast.ts` — `leonardo-contrast-colors` as a proper top-level
+  dependency (no more try/catch dynamic import). Provides `adaptiveColor`,
+  `contrastRatio`, `onColor`, hex/hsl normalization, and `toHsl`. A local
+  `.d.ts` declares leonardo's class API (its shipped types cover only the
+  legacy function API and resolve untyped under Vite).
+- ✅ Replaced the naive `100 - lightness` dark flip with a real leonardo
+  recompute of brand colors against the dark surface.
+- ✅ Injected leonardo-derived `contrastText` into each palette slot instead of
+  MUI's luminance-threshold auto-contrast.
+- ✅ Automated a11y gate (`contrast.test.ts`) asserting generated themes meet
+  WCAG AA across a spread of seed hues.
+- ✅ `main.tsx` builds the theme reactively from the store (`ThemedApp`); picker
+  edits now take effect app-wide. Fixed the previously no-op picker with real
+  hex→HSL conversion.
+- ✅ Persistence: versioned `ThemeConfig` ({ version, seed, mode }) stored as
+  JSON via the themes API (confirmed JSON storage → extensible without a
+  backend migration); `themeStore` also caches the seed to localStorage for
+  instant paint. `ThemeBootstrap` loads the API config once on startup.
+  `normalizeThemeConfig` migrates legacy records whose `config` was raw
+  `ThemeParams`.
+
+Still open (carry into Phase 2 polish / Phase 3):
+- ⏳ `ColorFamily.tsx` is still experimental (its default `lightness: 0.1`
+  would make leonardo throw — needs real params + wiring, not just the import
+  swap).
+- ⏳ `theme.tokens` is attached light-mode only — make it mode-reactive before
+  components start reading it in dark mode.
+- ⏳ `makeTheme` runs leonardo on every seed change — debounce the picker.
+- ⏳ Not yet runtime-verified in the browser (needs Auth0 login at `/ui`); MUI's
+  `useColorScheme` mode system with the current `ThemeProvider` is unproven and
+  two pre-existing test failures touch the dark-mode toggle.
+
+## Phase 3 — Component library consolidation (~2-3 weeks) — IN PROGRESS
 
 Target the highest-duplication, zero-story folders first since that's where
-new work is actively happening and drifting.
+new work is actively happening and drifting. Phase 1 tokens + Phase 2
+`contrastText` are now available for these primitives to consume.
 
-- Extract shared primitives from the 7-8 existing "Card" implementations
+- Extract shared primitives from the ~10 existing "Card" implementations
   (`WorkflowCard`, `RoundCard`, `TeamLeadCard`, `AdvisorReviewCard`,
-  `ProjectCard`, `ScoreRunCard`, ...) into one themed `Card` (or a small
-  family: e.g. `EntityCard` + slots) that consumes Phase 1 tokens.
-- Same for the status/chip pattern repeated across ~20 files — one
+  `ProjectCard`, `ScoreRunCard`, `AgentCard`, `ArticleCard`, ...) into one
+  themed `Card` (or a small family: e.g. `EntityCard` + slots) that consumes
+  Phase 1 tokens.
+- Same for the status/chip pattern repeated across ~25 files using inline
+  `<Chip>` (only `TaskTypeChip` is a dedicated component today) — one
   `StatusChip`/`StatusBadge` with a fixed set of semantic variants
   (success/warning/error/pending/etc.) instead of each component choosing its
   own color.
@@ -153,9 +172,8 @@ new work is actively happening and drifting.
 - Add visual regression coverage. You already have Playwright configured
   (`playwright.config.ts`, `e2e/`) — Storybook has a Playwright test runner
   integration that can screenshot every story; that's lower-lift than
-  introducing a new tool. (The `cypress/` folder in the working tree looks
-  like unmodified `cypress open` scaffolding, not a real suite — worth
-  confirming whether it's intentional before it gets committed.)
+  introducing a new tool. (The untracked `cypress/` folder was stock
+  `cypress open` scaffolding and was removed — not committed.)
 - Contrast/a11y checks from Phase 2 become a CI gate, not just a local check.
 
 ## Suggested sequencing
@@ -165,13 +183,23 @@ Phase 2 (theming) is the stated top priority and is mostly *finishing*
 existing work rather than new build, so it can run concurrently with the
 start of Phase 3 once tokens exist. Phase 4 is continuous, not a discrete step.
 
-## Open decisions to make along the way
+## Resolved decisions
 
-- Token implementation: bespoke `theme.tokens` namespace vs. leaning fully on
-  MUI's `palette`/`typography`/`shape` extension points.
-- How far to take "open to replacing parts of MUI" — recommend scoping this
-  narrowly to the contrast/color-pairing logic (where MUI's model actively
-  conflicts with leonardo) rather than a broader migration away from MUI
-  components, given 94 components are already built on it.
-- Where theme persistence lives (localStorage vs. a user-profile API call via
-  the existing `src/api`/`src/store`).
+- **Token implementation:** framework-agnostic `theme.tokens` source of truth
+  with the MUI theme derived via an adapter — *not* the MUI-first hybrid —
+  because the app may leave MUI soon (below).
+- **MUI's future:** the app may migrate off MUI soon, so design decisions favor
+  framework-agnostic structures. MUI stays the base for now (94 components), but
+  nothing new should deepen coupling to it.
+- **Theme persistence:** the themes API is the cross-device source of truth
+  (config stored as JSON, so extensible without a backend migration), with a
+  localStorage cache for instant paint. Persisted shape is a versioned
+  `ThemeConfig`.
+
+## Still open
+
+- Whether to let users customize beyond the brand seed (status colors, radius,
+  type). If so, they go under `ThemeConfig.overrides` (version bump, no
+  migration needed).
+- Multi-theme support: the themes API returns a list + `display_name`, but only
+  `themes[0]` is used and there are no create/delete endpoints.
