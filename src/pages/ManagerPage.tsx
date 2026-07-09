@@ -49,6 +49,13 @@ const CAPABILITIES: Capability[] = [
     alt: 'Manage UI Customization',
     to: '/ui',
   },
+  {
+    name: 'Projects',
+    description: 'Create and manage Projects',
+    src: '/static/images/project-management-logo.svg',
+    alt: 'Manage projects',
+    to: '/projects',
+  },
 ];
 
 // ── Manager card ───────────────────────────────────────────────────────────

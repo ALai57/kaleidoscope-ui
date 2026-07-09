@@ -30,6 +30,7 @@ describe('ManagerPage', () => {
     expect(screen.getByText('Images')).toBeTruthy();
     expect(screen.getByText('Audiences')).toBeTruthy();
     expect(screen.getByText('UI Customization')).toBeTruthy();
+    expect(screen.getByText('Projects')).toBeTruthy();
   });
 
   it('renders article link pointing to /articles', () => {
@@ -51,5 +52,12 @@ describe('ManagerPage', () => {
     const links = screen.getAllByRole('link');
     const groupsLink = links.find((el) => el.getAttribute('href') === '/groups');
     expect(groupsLink).toBeTruthy();
+  });
+
+  it('renders projects link pointing to /projects', () => {
+    render(<ManagerPage />, { wrapper: Wrapper });
+    const links = screen.getAllByRole('link');
+    const projectsLink = links.find((el) => el.getAttribute('href') === '/projects');
+    expect(projectsLink).toBeTruthy();
   });
 });
