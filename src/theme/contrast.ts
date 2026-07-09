@@ -70,6 +70,33 @@ export function toHex(color: string): string {
   return '#' + [r, g, b].map((c) => c.toString(16).padStart(2, '0')).join('');
 }
 
+/** Converts an [r, g, b] triplet to HSL (h: 0–360, s/l: 0–100). Inverse of the
+ *  token layer's `hsl()`, used to turn a picked color back into seed params. */
+export function rgbToHsl([r, g, b]: Rgb): { h: number; s: number; l: number } {
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+  const d = max - min;
+  const l = (max + min) / 2;
+  let h = 0;
+  let s = 0;
+  if (d !== 0) {
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    if (max === rn) h = (gn - bn) / d + (gn < bn ? 6 : 0);
+    else if (max === gn) h = (bn - rn) / d + 2;
+    else h = (rn - gn) / d + 4;
+    h /= 6;
+  }
+  return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+}
+
+/** Converts a hex or `hsl(...)` color to HSL components. */
+export function toHsl(color: string): { h: number; s: number; l: number } {
+  return rgbToHsl(toRgb(color));
+}
+
 /** WCAG contrast ratio (1–21) between two colors (hex or hsl). */
 export function contrastRatio(foreground: string, background: string): number {
   return Math.abs(contrast(toRgb(foreground), toRgb(background), 1));

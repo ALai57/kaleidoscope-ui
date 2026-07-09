@@ -1,10 +1,12 @@
 import { request } from './client';
-import type { ThemeParams } from '../types/theme';
+import type { ThemeConfig } from '../types/theme';
 
 export interface ThemeRecord {
   id: string;
   display_name: string;
-  config: ThemeParams;
+  /** Stored as JSON. May be a legacy raw-ThemeParams object for old records;
+   *  callers should run it through normalizeThemeConfig. */
+  config: ThemeConfig;
 }
 
 export function getThemes(token?: string): Promise<ThemeRecord[]> {

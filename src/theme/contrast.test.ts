@@ -9,6 +9,7 @@ import {
   onColor,
   adaptiveColor,
   hexToRgb,
+  toHsl,
   WCAG_AA_LARGE,
 } from './contrast';
 
@@ -18,6 +19,17 @@ describe('hexToRgb', () => {
   });
   it('expands 3-digit hex', () => {
     expect(hexToRgb('#fff')).toEqual([255, 255, 255]);
+  });
+});
+
+describe('toHsl', () => {
+  it('extracts hue from a hex color', () => {
+    expect(toHsl('#ff0000').h).toBe(0);
+    expect(toHsl('#00ff00').h).toBe(120);
+    expect(toHsl('#0000ff').h).toBe(240);
+  });
+  it('round-trips an hsl() string back to its components', () => {
+    expect(toHsl('hsl(217, 65%, 40%)')).toEqual({ h: 217, s: 65, l: 40 });
   });
 });
 

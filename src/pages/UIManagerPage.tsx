@@ -12,13 +12,16 @@ import { useAuth } from '../auth/useAuth';
 import { useThemeStore } from '../store/themeStore';
 import { getThemes, updateTheme } from '../api/themes';
 import type { ThemeRecord } from '../api/themes';
+import { CURRENT_THEME_VERSION } from '../types/theme';
+import type { ThemeConfig } from '../types/theme';
 import { hsl } from '../theme';
+import { toHex, toHsl } from '../theme/contrast';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-/** Map hue (0-360) to a hex-ish representation for the color picker. */
-function hueToHex(hue: number): string {
-  return hsl(hue, 65, 40);
+/** Current brand seed as a hex color for the picker's initial value. */
+function seedToHex(hue: number, saturation: number, lightness: number): string {
+  return toHex(hsl(hue, saturation, lightness));
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -47,19 +50,28 @@ const UIManagerPage: React.FC = () => {
   });
 
   const handleSave = () => {
+    const config: ThemeConfig = {
+      version: CURRENT_THEME_VERSION,
+      seed: themeParams,
+      mode: mode ?? 'system',
+    };
     const existing = themes[0];
     if (existing) {
-      saveThemeMutation.mutate({ ...existing, config: themeParams });
+      saveThemeMutation.mutate({ ...existing, config });
     } else {
       saveThemeMutation.mutate({
         id: '00000000-0000-0000-0000-000000000000',
         display_name: 'My theme',
-        config: themeParams,
+        config,
       });
     }
   };
 
-  const currentColor = hueToHex(themeParams.hue);
+  const currentColor = seedToHex(
+    themeParams.hue,
+    themeParams.saturation,
+    themeParams.lightness
+  );
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
@@ -92,10 +104,10 @@ const UIManagerPage: React.FC = () => {
           <ColorPicker
             initialColor={currentColor}
             onChange={(color) => {
-              // Simple mapping: just update hue as-is (full hex-to-hue conversion
-              // would require a colour library — for now we store the raw value).
-              void color; // mark used
-              setThemeParams({ ...themeParams });
+              // Convert the picked hex back into brand seed params so it drives
+              // the live theme (main.tsx builds the theme from the store).
+              const { h, s, l } = toHsl(color);
+              setThemeParams({ ...themeParams, hue: h, saturation: s, lightness: l });
             }}
           />
         </Box>
