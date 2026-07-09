@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import { ImageAdd } from '@styled-icons/boxicons-regular/ImageAdd';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Image, ImageVersion } from '@/types/image';
 import { FullImageCard } from './FullImageCard';
 import { ImageThumbnail } from './ImageThumbnail';
@@ -43,7 +43,7 @@ const NewPhotoButton: React.FC<{
 }> = ({ addPhoto, isUploading = false }) => (
   <Button
     variant="contained"
-    startIcon={<ImageAdd style={{ height: '20px' }} />}
+    startIcon={<AddPhotoAlternateIcon sx={{ fontSize: 20 }} />}
     component="label"
     disabled={isUploading}
   >

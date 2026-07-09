@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, TextField, Button, InputLabel, FormControl, Stack } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import { Save } from '@styled-icons/boxicons-regular/Save';
+import SaveIcon from '@mui/icons-material/Save';
 import { Image, ImageVersion } from '@/types/image';
 import { VersionSelector } from './VersionSelector';
 
@@ -29,7 +29,7 @@ interface SaveButtonProps {
 const SaveButton: React.FC<SaveButtonProps> = ({ onSave, isSaving = false }) => (
   <Button
     variant="contained"
-    startIcon={<Save style={{ height: '20px' }} />}
+    startIcon={<SaveIcon sx={{ fontSize: 20 }} />}
     sx={{ mt: 1 }}
     onClick={onSave}
     disabled={isSaving}

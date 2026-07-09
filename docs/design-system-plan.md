@@ -15,7 +15,12 @@ where its defaults fight the adaptive-color goal.
 - **Theming**: `src/theme/index.ts` derives a 3-color HSL palette (`primary`,
   `secondary`, `tertiary`) from `ThemeParams` (`hue/saturation/lightness/angle/theta`)
   and feeds it into `createTheme()`. Dark mode is a naive `lightness: 100 - lightness`
-  flip, not a real adaptive recompute.
+  flip, not a real adaptive recompute. **Note:** `makeTheme` computes `tertiary`
+  but only wires `primary` and `secondary` into the MUI theme — `tertiary` is
+  dropped on the floor today. `main.tsx` calls `makeTheme(BASE_THEME)`
+  *statically*; a `themeStore` (zustand) and a `themes` API (`getThemes`/
+  `updateTheme`) already exist but are **neither persisted nor connected** to
+  `main.tsx`. So Phase 2 is even more "finish existing wiring" than "new build."
 - **Contrast-safe color generation**: `ColorFamily.tsx` already wires up
   `@adobe/leonardo-contrast-colors` to generate WCAG-ratio-targeted color
   scales from a seed + background. It's dynamically imported and treated as
@@ -27,11 +32,13 @@ where its defaults fight the adaptive-color goal.
   `workflows` (17 components), `projects` (8), and `tasks` (7) have **zero**
   stories despite being the newest, most actively developed areas (per recent
   commit history: "Updating UI for autonomous workflow(s)").
-- **Duplication**: 7-8 components across `workflows`/`projects` independently
-  implement a "Card" pattern (`WorkflowCard`, `RoundCard`, `TeamLeadCard`,
-  `AdvisorReviewCard`, `ProjectCard`, `ScoreRunCard`, ...), and ~20 components
-  implement their own status/chip/badge treatment. No shared `StatusChip` or
-  card primitive exists yet — each one likely hand-rolls color and spacing.
+- **Duplication**: ~10 components independently implement a "Card" pattern
+  (`WorkflowCard`, `RoundCard`, `TeamLeadCard`, `AdvisorReviewCard`,
+  `ProjectCard`, `ScoreRunCard`, `AgentCard`, `ArticleCard`, plus the image/
+  notification cards). And ~25 files use inline `<Chip>` for their own status/
+  badge treatment; only `TaskTypeChip` is a dedicated component. No shared
+  `StatusChip` or card primitive exists yet — each one hand-rolls color and
+  spacing.
 - **Styling approaches**: contrary to what `package.json` suggests,
   `styled-components` and `@emotion/styled` are **declared dependencies but
   unused** in `src/` — zero imports found. The app already consistently uses
@@ -41,19 +48,38 @@ where its defaults fight the adaptive-color goal.
   `rgba(0, 0, 0, 0.18)` instead of a theme token). This is a much smaller
   problem than a 3-library split — good news.
 
-## Phase 0 — Clean up the foundation (~1-2 days)
+## Phase 0 — Clean up the foundation (~1-2 days) — DONE
 
-Cheap wins that remove noise before building on top of it:
-- Drop unused `styled-components` and `@emotion/styled`/`@emotion/react`
-  dependencies (confirm emotion isn't a transitive MUI requirement first —
-  MUI v6 uses emotion internally by default, so check `@mui/styled-engine`
-  before removing `@emotion/react`; `styled-components` itself is safe to drop).
-- Write down the styling rule now, while it's still true: **`sx` for one-off
-  layout/spacing, `styled()` for reusable styled primitives, no raw `style={{}}`,
-  no hardcoded colors** — put it in a short `docs/styling-conventions.md` or a
-  Storybook "Guidelines" page.
-- Sweep the 12 `style={{}}` offenders (`DarkModeToggle.tsx` is one) onto theme
-  tokens/`sx` as Phase 1 tokens land, not before — no point migrating twice.
+Cheap wins that remove noise before building on top of it. **Correction to the
+original assumption:** neither `styled-components` nor the `@emotion/*` packages
+were free to drop:
+- `@emotion/react` **and** `@emotion/styled` are required peer dependencies of
+  `@mui/styled-engine` (MUI v6). Both **stay**.
+- `styled-components` was **not** unused — it's a runtime peer dependency of the
+  `@styled-icons/*` icons, and `@styled-icons/boxicons-regular` was imported in
+  2 files (`ImageBrowser.tsx`, `EditorPanel.tsx`). Dropping it required first
+  migrating those 2 icons to `@mui/icons-material` (`AddPhotoAlternate`, `Save`).
+
+Completed:
+- ✅ Migrated the 2 `@styled-icons/boxicons-regular` icons to
+  `@mui/icons-material`, which also cleaned up 2 of the 12 raw-`style` offenders
+  (the icons' `style={{ height: '20px' }}` → `sx={{ fontSize: 20 }}`).
+- ✅ Removed `styled-components`, `@styled-icons/boxicons-regular`,
+  `@styled-icons/material`, and `@styled-icons/remix-fill` from `package.json`
+  (the latter two were entirely unused).
+- ✅ Wrote `docs/styling-conventions.md` (the `sx` / `styled()` / no-raw-`style` /
+  no-hardcoded-color rules).
+
+Still deferred (correctly) to Phase 1:
+- Sweep the remaining 10 `style={{}}` offenders (`DarkModeToggle.tsx`'s hardcoded
+  `rgba` is one) onto theme tokens/`sx` **as Phase 1 tokens land**, not before —
+  no point migrating twice. Note `components/colors/*` uses `style={{}}` for
+  genuinely dynamic per-pixel swatch rendering; review those case-by-case.
+
+Possible follow-up (out of Phase 0 scope): `@udecode/plate*` is a declared
+dependency with **zero** `src` imports — a candidate for removal, but it's a
+large tree pulling its own `styled-components` peer, so verify nothing relies on
+it transitively before touching it.
 
 ## Phase 1 — Design tokens (~1 week)
 

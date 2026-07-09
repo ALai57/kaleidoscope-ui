@@ -2,6 +2,9 @@
   "name": "kaleidoscope-ui",
   "description": "Front end app UI for Kaleidoscope",
   "version": "1.0.68",
+  "engines": {
+    "node": ">=20"
+  },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@storybook/addon-essentials": "^8.6.14",
@@ -43,9 +46,6 @@
     "@mui/x-data-grid": "^7.29.12",
     "@stripe/react-stripe-js": "^2.7.1",
     "@stripe/stripe-js": "^3.4.1",
-    "@styled-icons/boxicons-regular": "^10.46.0",
-    "@styled-icons/material": "^10.46.0",
-    "@styled-icons/remix-fill": "^10.46.0",
     "@tanstack/react-query": "^5.96.2",
     "@tiptap/extension-code-block-lowlight": "^3.22.3",
     "@tiptap/extension-color": "^3.22.3",
@@ -77,7 +77,6 @@
     "slate-history": "^0.86.0",
     "slate-hyperscript": "^0.77.0",
     "slate-react": "^0.92.0",
-    "styled-components": "^5.3.5",
     "typescript": "^6.0.2",
     "vite": "^8.0.7",
     "zustand": "^5.0.12"
