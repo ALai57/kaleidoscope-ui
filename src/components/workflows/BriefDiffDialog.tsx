@@ -12,6 +12,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import type { ProjectBrief } from '../../types/workflow';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
+import { StatusChip } from '../common/StatusChip';
 
 // ── Simple line diff ──────────────────────────────────────────────────────
 //
@@ -143,8 +144,8 @@ export const BriefDiffDialog: React.FC<BriefDiffDialogProps> = ({
             color="primary"
           />
           <Box sx={{ flex: 1 }} />
-          <Chip label={`+${addedCount}`} size="small" sx={{ bgcolor: 'rgba(34,197,94,0.15)', color: 'success.main' }} />
-          <Chip label={`-${removedCount}`} size="small" sx={{ bgcolor: 'rgba(239,68,68,0.12)', color: 'error.main' }} />
+          <StatusChip status="success" label={`+${addedCount}`} />
+          <StatusChip status="error" label={`-${removedCount}`} />
         </Box>
       </DialogTitle>
 
