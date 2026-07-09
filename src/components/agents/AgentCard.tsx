@@ -5,6 +5,7 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import type { Agent } from '../../types/agent';
+import { SurfaceCard } from '../common/SurfaceCard';
 
 interface AgentCardProps {
   agent: Agent;
@@ -12,19 +13,14 @@ interface AgentCardProps {
 }
 
 const AgentCard: React.FC<AgentCardProps> = ({ agent, onEdit }) => (
-  <Box
+  <SurfaceCard
+    interactive
     sx={{
-      border: 1,
-      borderColor: 'divider',
-      borderRadius: 2,
       p: 2.5,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       gap: 1,
-      bgcolor: 'background.paper',
-      transition: 'box-shadow 0.15s',
-      '&:hover': { boxShadow: 3 },
     }}
   >
     {/* Avatar */}
@@ -92,7 +88,7 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onEdit }) => (
     >
       Edit
     </Button>
-  </Box>
+  </SurfaceCard>
 );
 
 export default AgentCard;
