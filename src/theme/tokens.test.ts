@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { BASE_THEME } from './index';
 import { hsl, makeBrand, makeTokens } from './tokens';
+import { contrastRatio, WCAG_AA_LARGE } from './contrast';
 
 describe('hsl', () => {
   it('returns a valid hsl string', () => {
@@ -41,13 +42,21 @@ describe('makeTokens', () => {
     expect(makeTokens(BASE_THEME).mode).toBe('light');
   });
 
-  it('dark mode flips brand lightness and swaps neutrals', () => {
+  it('light mode uses the raw seed-derived brand color', () => {
+    const light = makeTokens(BASE_THEME, 'light');
+    expect(light.color.brand.primary).toContain(`${BASE_THEME.lightness}%`);
+  });
+
+  it('dark mode recomputes a contrast-safe brand color (not a lightness flip)', () => {
     const light = makeTokens(BASE_THEME, 'light');
     const dark = makeTokens(BASE_THEME, 'dark');
     expect(dark.mode).toBe('dark');
-    expect(light.color.brand.primary).toContain(`${BASE_THEME.lightness}%`);
-    expect(dark.color.brand.primary).toContain(`${100 - BASE_THEME.lightness}%`);
-    // neutral surfaces differ between modes
+    // no longer the naive hsl flip — it's a leonardo-generated hex
+    expect(dark.color.brand.primary).toMatch(/^#[0-9a-fA-F]{6}$/);
+    // and it is actually legible against the dark surface
+    expect(
+      contrastRatio(dark.color.brand.primary, dark.color.surface.base)
+    ).toBeGreaterThanOrEqual(WCAG_AA_LARGE);
     expect(dark.color.surface.base).not.toBe(light.color.surface.base);
   });
 });

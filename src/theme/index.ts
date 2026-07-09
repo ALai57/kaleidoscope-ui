@@ -7,6 +7,7 @@ import type {
 import type { ThemeParams } from '../types/theme';
 import { makeTokens, makeBrand, hsl } from './tokens';
 import type { Tokens } from './tokens';
+import { onColor } from './contrast';
 
 export { hsl, makeTokens, makeBrand } from './tokens';
 export type { Tokens, ThemeMode } from './tokens';
@@ -43,17 +44,21 @@ export function makePalette(params: ThemeParams): {
   return makeBrand(params);
 }
 
-/** Adapter: maps design tokens onto an MUI palette for one color scheme. */
+/** Adapter: maps design tokens onto an MUI palette for one color scheme.
+ *  `contrastText` is set from the token's on-color (leonardo-derived) rather
+ *  than MUI's luminance-threshold auto-contrast, which disagrees with
+ *  ratio-targeted pairs. */
 function paletteFromTokens(tokens: Tokens): PaletteOptions {
   const { brand, status, surface, text, border } = tokens.color;
+  const slot = (main: string) => ({ main, contrastText: onColor(main) });
   return {
     mode: tokens.mode,
-    primary: { main: brand.primary },
-    secondary: { main: brand.secondary },
-    success: { main: status.success },
-    warning: { main: status.warning },
-    error: { main: status.error },
-    info: { main: status.info },
+    primary: slot(brand.primary),
+    secondary: slot(brand.secondary),
+    success: slot(status.success),
+    warning: slot(status.warning),
+    error: slot(status.error),
+    info: slot(status.info),
     background: { default: surface.base, paper: surface.raised },
     text: { primary: text.primary, secondary: text.secondary, disabled: text.disabled },
     divider: border.subtle,

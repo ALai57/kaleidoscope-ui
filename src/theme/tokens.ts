@@ -1,4 +1,5 @@
 import type { ThemeParams } from '../types/theme';
+import { adaptiveColor, WCAG_AA } from './contrast';
 
 /**
  * Design tokens — the framework-agnostic source of truth for the design
@@ -126,20 +127,29 @@ const DARK_STATUS = { success: '#66bb6a', warning: '#ffa726', error: '#f44336', 
 /**
  * Derives the full token set from theme params for a given color mode.
  *
- * Dark mode currently flips brand lightness (`100 - lightness`), matching the
- * pre-existing behavior. Phase 2 replaces this flip with a contrast-checked
- * recompute.
+ * Light mode uses the raw seed-derived brand colors. Dark mode recomputes each
+ * brand color to be contrast-safe against the dark surface via
+ * leonardo-contrast-colors — replacing the old naive `100 - lightness` flip, so
+ * dark mode is contrast-checked rather than merely inverted.
  */
 export function makeTokens(params: ThemeParams, mode: ThemeMode = 'light'): Tokens {
-  const brandParams =
-    mode === 'dark' ? { ...params, lightness: 100 - params.lightness } : params;
   const neutrals = mode === 'dark' ? DARK_NEUTRALS : LIGHT_NEUTRALS;
   const status = mode === 'dark' ? DARK_STATUS : LIGHT_STATUS;
+
+  const seedBrand = makeBrand(params);
+  const brand =
+    mode === 'dark'
+      ? {
+          primary: adaptiveColor(seedBrand.primary, neutrals.surface.base, WCAG_AA),
+          secondary: adaptiveColor(seedBrand.secondary, neutrals.surface.base, WCAG_AA),
+          tertiary: adaptiveColor(seedBrand.tertiary, neutrals.surface.base, WCAG_AA),
+        }
+      : seedBrand;
 
   return {
     mode,
     color: {
-      brand: makeBrand(brandParams),
+      brand,
       status: { ...status },
       surface: { ...neutrals.surface },
       border: { ...neutrals.border },
