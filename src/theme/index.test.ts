@@ -47,4 +47,19 @@ describe('makeTheme', () => {
     // primary in dark uses complementary lightness
     expect(darkPalette.primary).toContain(`${100 - BASE_THEME.lightness}%`);
   });
+
+  it('exposes the design tokens on theme.tokens', () => {
+    const theme = makeTheme(BASE_THEME);
+    expect(theme.tokens).toBeDefined();
+    expect(theme.tokens.color.brand.primary).toBe(makePalette(BASE_THEME).primary);
+    expect(theme.tokens.space.md).toBe(16);
+  });
+
+  it('derives the MUI palette and shape from tokens', () => {
+    const theme = makeTheme(BASE_THEME);
+    expect(theme.palette.primary.main).toBe(makePalette(BASE_THEME).primary);
+    expect(theme.palette.success.main).toBe(theme.tokens.color.status.success);
+    // shape.borderRadius is derived from the radius.md token (8)
+    expect(theme.shape.borderRadius).toBe(theme.tokens.radius.md);
+  });
 });

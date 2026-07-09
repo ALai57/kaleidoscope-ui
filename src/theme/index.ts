@@ -1,6 +1,27 @@
 import { createTheme } from '@mui/material/styles';
-import type { Theme } from '@mui/material/styles';
+import type {
+  Theme,
+  PaletteOptions,
+  TypographyVariantsOptions,
+} from '@mui/material/styles';
 import type { ThemeParams } from '../types/theme';
+import { makeTokens, makeBrand, hsl } from './tokens';
+import type { Tokens } from './tokens';
+
+export { hsl, makeTokens, makeBrand } from './tokens';
+export type { Tokens, ThemeMode } from './tokens';
+
+// Expose the framework-agnostic token set on the MUI theme so components can
+// read `theme.tokens.*` today, and so the token layer survives a future MUI
+// migration (the MUI theme is derived from tokens, not vice versa).
+declare module '@mui/material/styles' {
+  interface Theme {
+    tokens: Tokens;
+  }
+  interface ThemeOptions {
+    tokens?: Tokens;
+  }
+}
 
 export const BASE_THEME: ThemeParams = {
   hue: 217,
@@ -11,55 +32,68 @@ export const BASE_THEME: ThemeParams = {
 };
 
 /**
- * Returns an HSL color string.
- * Ports `hsl` from color-wheel.cljs.
- */
-export function hsl(h: number, s: number, l: number): string {
-  return `hsl(${h}, ${s}%, ${l}%)`;
-}
-
-/**
- * Computes primary, secondary, and tertiary colors from theme params.
- * Ports `make-theme` from theme.cljs.
+ * Back-compat alias for the brand-color derivation. Prefer `makeBrand` /
+ * `makeTokens` in new code.
  */
 export function makePalette(params: ThemeParams): {
   primary: string;
   secondary: string;
   tertiary: string;
 } {
-  const { hue, saturation, lightness, angle } = params;
+  return makeBrand(params);
+}
+
+/** Adapter: maps design tokens onto an MUI palette for one color scheme. */
+function paletteFromTokens(tokens: Tokens): PaletteOptions {
+  const { brand, status, surface, text, border } = tokens.color;
   return {
-    primary: hsl(hue, saturation, lightness),
-    secondary: hsl(hue + 180 + angle, saturation, lightness),
-    tertiary: hsl(hue + 180 - angle, saturation, lightness),
+    mode: tokens.mode,
+    primary: { main: brand.primary },
+    secondary: { main: brand.secondary },
+    success: { main: status.success },
+    warning: { main: status.warning },
+    error: { main: status.error },
+    info: { main: status.info },
+    background: { default: surface.base, paper: surface.raised },
+    text: { primary: text.primary, secondary: text.secondary, disabled: text.disabled },
+    divider: border.subtle,
   };
 }
 
+/** Adapter: maps the token type scale onto MUI's typography options. The token
+ *  `TypeStyle` is a structural subset of MUI's CSSProperties-based variant type,
+ *  so the cast at this boundary is where framework-agnostic meets MUI. */
+function typographyFromTokens(tokens: Tokens): TypographyVariantsOptions {
+  const { fontFamily, scale } = tokens.typography;
+  return {
+    fontFamily,
+    h1: scale.h1,
+    h2: scale.h2,
+    h3: scale.h3,
+    h4: scale.h4,
+    body1: scale.body1,
+    body2: scale.body2,
+    caption: scale.caption,
+  } as TypographyVariantsOptions;
+}
+
 /**
- * Creates an MUI v6 theme with light and dark color schemes.
+ * Creates an MUI v6 theme derived from design tokens, with light and dark
+ * color schemes. `theme.tokens` currently carries the light-mode tokens;
+ * Phase 2 makes it mode-reactive alongside the adaptive dark-mode recompute.
  */
 export function makeTheme(params: ThemeParams): Theme {
-  const { lightness } = params;
-  const lightPalette = makePalette(params);
-  const darkPalette = makePalette({ ...params, lightness: 100 - lightness });
+  const lightTokens = makeTokens(params, 'light');
+  const darkTokens = makeTokens(params, 'dark');
 
   return createTheme({
     colorSchemes: {
-      light: {
-        palette: {
-          primary: { main: lightPalette.primary },
-          secondary: { main: lightPalette.secondary },
-        },
-      },
-      dark: {
-        palette: {
-          primary: { main: darkPalette.primary },
-          secondary: { main: darkPalette.secondary },
-        },
-      },
+      light: { palette: paletteFromTokens(lightTokens) },
+      dark: { palette: paletteFromTokens(darkTokens) },
     },
-    typography: {
-      body1: { fontSize: '1.3rem' },
-    },
+    shape: { borderRadius: lightTokens.radius.md },
+    spacing: lightTokens.space.sm, // 8px base unit
+    typography: typographyFromTokens(lightTokens),
+    tokens: lightTokens,
   });
 }
