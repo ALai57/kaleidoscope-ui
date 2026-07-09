@@ -64,6 +64,20 @@ const STATUS_TONE: Record<string, StatusTone> = {
   // neutral
   default: 'neutral',
   neutral: 'neutral',
+
+  // ── App-domain statuses (workflows / projects / advisor) ──
+  // workflow lifecycle
+  live: 'success',
+  draft: 'warning',
+  archived: 'neutral',
+  // project lifecycle
+  idea: 'neutral',
+  developing: 'info', // was `primary`; info matches its in-progress meaning
+  executing: 'success',
+  // advisor review outcome
+  clear: 'success',
+  needs_work: 'warning',
+  blocked: 'error',
 };
 
 /** Resolves a domain status (or a tone) to a canonical tone. */
@@ -79,6 +93,8 @@ export interface StatusChipProps {
   size?: 'small' | 'medium';
   variant?: 'filled' | 'outlined';
   icon?: React.ReactElement;
+  /** Passed through to the underlying Chip for one-off layout tweaks. */
+  sx?: ChipProps['sx'];
 }
 
 export const StatusChip: React.FC<StatusChipProps> = ({
@@ -87,6 +103,7 @@ export const StatusChip: React.FC<StatusChipProps> = ({
   size = 'small',
   variant = 'outlined',
   icon,
+  sx,
 }) => {
   const tone = statusToTone(status);
   const text = label ?? (TONE_LABEL[tone] || status);
@@ -97,6 +114,7 @@ export const StatusChip: React.FC<StatusChipProps> = ({
       size={size}
       variant={variant}
       {...(icon ? { icon } : {})}
+      {...(sx ? { sx } : {})}
     />
   );
 };

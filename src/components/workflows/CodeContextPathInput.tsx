@@ -14,6 +14,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { CodeContextPathCandidate, PendingInputsCodeContextPath, StepRun } from '../../types/workflow';
+import { StatusChip } from '../common/StatusChip';
 
 // ── Path helper ────────────────────────────────────────────────────────────
 
@@ -122,7 +123,7 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
           {stepRun.name}
         </Typography>
 
-        <Chip label="Needs your input" size="small" color="warning" />
+        <StatusChip status="warning" label="Needs your input" variant="filled" />
       </Box>
 
       {/* Body */}

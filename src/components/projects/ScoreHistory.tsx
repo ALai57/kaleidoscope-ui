@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import { StatusChip } from '../common/StatusChip';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -90,12 +91,9 @@ export const ScoreHistory: React.FC<ScoreHistoryProps> = ({ history }) => {
               <Typography variant="caption" color="text.secondary">
                 {new Date(run.scored_at).toLocaleString()}
               </Typography>
-              <Chip
+              <StatusChip
                 label={`${run.overall.toFixed(1)} / 10`}
-                size="small"
-                color={
-                  run.overall >= 7 ? 'success' : run.overall >= 4 ? 'warning' : 'error'
-                }
+                status={run.overall >= 7 ? 'success' : run.overall >= 4 ? 'warning' : 'error'}
                 variant="outlined"
               />
             </Box>

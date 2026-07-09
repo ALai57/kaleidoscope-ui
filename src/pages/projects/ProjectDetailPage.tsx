@@ -7,6 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
+import { StatusChip } from '../../components/common/StatusChip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -163,10 +164,10 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
         </Typography>
 
         {/* Overall score chip */}
-        <Chip
+        <StatusChip
+          status={overallChipColor(run.overall)}
           label={`${run.overall.toFixed(1)} / 10`}
-          color={overallChipColor(run.overall)}
-          size="small"
+          variant="filled"
           sx={{ fontWeight: 700, fontSize: '0.75rem' }}
         />
       </Box>

@@ -3,16 +3,10 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import type { Project, ScoreRun } from '../../types/project';
-
-const STATUS_COLORS: Record<string, 'default' | 'primary' | 'success'> = {
-  idea: 'default',
-  developing: 'primary',
-  executing: 'success',
-};
+import { StatusChip } from '../common/StatusChip';
 
 interface ScoreSparklineProps {
   scores: ScoreRun[];
@@ -92,10 +86,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
             <Typography variant="h6" sx={{ fontWeight: 600, lineHeight: 1.3, flex: 1, mr: 1 }}>
               {project.title}
             </Typography>
-            <Chip
+            <StatusChip
+              status={project.status}
               label={project.status}
-              size="small"
-              color={STATUS_COLORS[project.status] ?? 'default'}
+              variant="filled"
               sx={{ textTransform: 'capitalize', flexShrink: 0 }}
             />
           </Box>

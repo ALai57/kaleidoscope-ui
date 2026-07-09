@@ -41,6 +41,7 @@ import { BriefChangeIndicator } from './BriefChangeIndicator';
 import { RoundsTimeline } from './RoundsTimeline';
 import type { Agent } from '../../types/agent';
 import type { RunMode, ScrutinyLevel, WorkflowRun, WorkflowRecommendation, ProjectBrief } from '../../types/workflow';
+import { StatusChip } from '../common/StatusChip';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -62,14 +63,6 @@ function formatRelativeTime(iso: string): string {
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────
-
-const STATUS_COLOR: Record<string, 'default' | 'info' | 'warning' | 'success' | 'error'> = {
-  pending: 'default',
-  in_progress: 'info',
-  awaiting_input: 'warning',
-  completed: 'success',
-  failed: 'error',
-};
 
 const SCRUTINY_LABEL: Record<string, string> = {
   quick: 'Quick',
@@ -478,10 +471,10 @@ const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
 
         {/* Right-side chips */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, ml: 'auto', mr: 1, flexShrink: 0 }}>
-          <Chip
+          <StatusChip
+            status={run.status}
             label={run.status.replace(/_/g, ' ')}
-            size="small"
-            color={STATUS_COLOR[run.status] ?? 'default'}
+            variant="filled"
             sx={{ height: 18, fontSize: '0.62rem', textTransform: 'capitalize' }}
           />
           <Chip
@@ -652,10 +645,10 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
             <Typography variant="overline" color="primary.main" sx={{ lineHeight: 1 }}>
               Run #{runNumberMap.get(activeRun.id)} — in progress
             </Typography>
-            <Chip
+            <StatusChip
+              status={activeRun.status}
               label={activeRun.status.replace(/_/g, ' ')}
-              size="small"
-              color={STATUS_COLOR[activeRun.status] ?? 'default'}
+              variant="filled"
               sx={{ height: 18, fontSize: '0.62rem', textTransform: 'capitalize' }}
             />
             {activeRun.config?.scrutiny && (

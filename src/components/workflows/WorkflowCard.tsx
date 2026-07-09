@@ -5,7 +5,8 @@ import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
-import type { Workflow, WorkflowStatus } from '../../types/workflow';
+import type { Workflow } from '../../types/workflow';
+import { StatusChip } from '../common/StatusChip';
 
 interface WorkflowCardProps {
   workflow: Workflow;
@@ -13,12 +14,6 @@ interface WorkflowCardProps {
   onArchive: (id: string) => void;
   archiving: boolean;
 }
-
-const STATUS_COLOR: Record<WorkflowStatus, 'default' | 'success' | 'warning'> = {
-  draft: 'warning',
-  live: 'success',
-  archived: 'default',
-};
 
 const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive, archiving }) => (
   <Box
@@ -38,10 +33,10 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }} noWrap>
           {workflow.name}
         </Typography>
-        <Chip
+        <StatusChip
+          status={workflow.status}
           label={workflow.status}
-          size="small"
-          color={STATUS_COLOR[workflow.status]}
+          variant="filled"
           sx={{ textTransform: 'capitalize', flexShrink: 0 }}
         />
         {workflow.is_default && (

@@ -21,13 +21,14 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { ScoreSnapshotEntry, TradeOff, Recommendation, WorkflowRoundDetail } from '../../types/workflow';
+import { StatusChip } from '../common/StatusChip';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
 const DECISION_CONFIG = {
-  refine:  { label: 'Refining',    color: 'warning' as const, icon: <AutorenewIcon sx={{ fontSize: 14 }} /> },
-  clarify: { label: 'Needs input', color: 'warning' as const, icon: <HelpOutlineIcon sx={{ fontSize: 14 }} /> },
-  proceed: { label: 'Approved',    color: 'success' as const, icon: <CheckCircleIcon sx={{ fontSize: 14 }} /> },
+  refine:  { label: 'Refining',    icon: <AutorenewIcon sx={{ fontSize: 14 }} /> },
+  clarify: { label: 'Needs input', icon: <HelpOutlineIcon sx={{ fontSize: 14 }} /> },
+  proceed: { label: 'Approved',    icon: <CheckCircleIcon sx={{ fontSize: 14 }} /> },
 };
 
 // ── Score bar with threshold marker ───────────────────────────────────────
@@ -255,7 +256,7 @@ const RecommendationList: React.FC<{ recommendations: Recommendation[] }> = ({ r
                 {r.action}
               </Typography>
               {r.priority === 'high' && (
-                <Chip label="High" size="small" color="warning"
+                <StatusChip status="warning" label="High" variant="filled"
                   sx={{ height: 14, fontSize: '0.6rem', fontWeight: 700, px: 0 }} />
               )}
             </Box>
@@ -353,12 +354,12 @@ export const RoundCard: React.FC<RoundCardProps> = ({
           </Box>
         )}
 
-        {decisionConfig && (
-          <Chip
+        {decisionConfig && action && (
+          <StatusChip
+            status={action}
             icon={decisionConfig.icon}
             label={decisionConfig.label}
-            size="small"
-            color={decisionConfig.color}
+            variant="filled"
             sx={{ ml: 'auto', height: 20, fontSize: '0.68rem', fontWeight: 700 }}
           />
         )}

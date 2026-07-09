@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
+import { StatusChip } from '../../components/common/StatusChip';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -136,10 +136,10 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
           {persona.label}
         </Typography>
-        <Chip
+        <StatusChip
+          status={overallChipColor(run.overall)}
           label={`${run.overall.toFixed(1)} / 10`}
-          color={overallChipColor(run.overall)}
-          size="small"
+          variant="filled"
           sx={{ fontWeight: 700, fontSize: '0.75rem' }}
         />
       </Box>

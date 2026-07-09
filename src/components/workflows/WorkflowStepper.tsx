@@ -23,6 +23,7 @@ import MarkdownRenderer from '../content/MarkdownRenderer';
 import { AdvisorReviewCard } from './AdvisorReviewCard';
 import { CodeContextPathInput } from './CodeContextPathInput';
 import { TeamLeadCard } from './TeamLeadCard';
+import { StatusChip } from '../common/StatusChip';
 
 // ── Content normalisation ─────────────────────────────────────────────────
 
@@ -344,7 +345,7 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
               </Typography>
             )}
             {isAwaitingInput && (
-              <Chip label="Needs your input" size="small" color="warning" />
+              <StatusChip status="warning" label="Needs your input" variant="filled" />
             )}
             {step.status === 'skipped' && (
               <Typography variant="caption" color="text.disabled">

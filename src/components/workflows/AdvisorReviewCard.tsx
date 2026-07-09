@@ -1,6 +1,5 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
@@ -12,6 +11,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { AdvisorScoreOutput, AdvisorStatus, StepRunStatus } from '../../types/workflow';
+import { StatusChip } from '../common/StatusChip';
 
 // ── Score helpers ─────────────────────────────────────────────────────────
 
@@ -39,11 +39,6 @@ const STATUS_LABELS: Record<AdvisorStatus, string> = {
   blocked: 'Blocked',
 };
 
-const STATUS_CHIP_COLOR: Record<AdvisorStatus, 'success' | 'warning' | 'error'> = {
-  clear: 'success',
-  needs_work: 'warning',
-  blocked: 'error',
-};
 
 const DimensionStatusIcon: React.FC<{ status: AdvisorStatus }> = ({ status }) => {
   switch (status) {
@@ -204,18 +199,16 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
           </Stack>
         )}
         {!isRunning && !isFailed && scoreOutput?.overall !== undefined && (
-          <Chip
+          <StatusChip
+            status={overallStatus ?? 'neutral'}
             label={`${scoreOutput.overall.toFixed(1)} / 10`}
-            size="small"
-            color={overallStatus ? STATUS_CHIP_COLOR[overallStatus] : 'default'}
             variant="filled"
           />
         )}
         {!isRunning && !isFailed && overallStatus && scoreOutput?.overall === undefined && (
-          <Chip
+          <StatusChip
+            status={overallStatus}
             label={STATUS_LABELS[overallStatus]}
-            size="small"
-            color={STATUS_CHIP_COLOR[overallStatus]}
             variant="filled"
           />
         )}
