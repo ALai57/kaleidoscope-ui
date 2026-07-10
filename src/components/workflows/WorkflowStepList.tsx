@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { getAgentPersona, DEFAULT_AGENT_PERSONAS } from '../../types/agent';
+import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { WorkflowStepInput } from '../../api/workflows';
 

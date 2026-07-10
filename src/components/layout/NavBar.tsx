@@ -40,7 +40,6 @@ export const NavBar: React.FC<NavBarProps> = ({
   user,
   isAuthenticated = false,
   login,
-  logout,
   logoSrc = '/static/images/nav-bar/favicon.svg',
 }) => {
   const theme = useTheme();

@@ -9,7 +9,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import InputBase from '@mui/material/InputBase';
 import Snackbar from '@mui/material/Snackbar';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
@@ -135,7 +134,6 @@ const WorkflowEditorPage: React.FC = () => {
 
   if (!isNew && isLoading) return <LoadingScreen />;
 
-  const currentStatus = STATUS_OPTIONS.find((o) => o.value === status)!;
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>

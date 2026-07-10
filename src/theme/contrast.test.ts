@@ -10,7 +10,6 @@ import {
   adaptiveColor,
   hexToRgb,
   toHsl,
-  WCAG_AA_LARGE,
 } from './contrast';
 
 describe('hexToRgb', () => {

@@ -204,9 +204,9 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
               </li>
             );
           }}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           renderInput={(params) => (
             <TextField
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               {...(params as any)}
               placeholder={selected.length === 0 ? 'Select or type a repository path…' : ''}
             />

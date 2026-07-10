@@ -5,7 +5,7 @@ import type {
   TypographyVariantsOptions,
 } from '@mui/material/styles';
 import type { ThemeParams } from '../types/theme';
-import { makeTokens, makeBrand, hsl } from './tokens';
+import { makeTokens, makeBrand } from './tokens';
 import type { Tokens } from './tokens';
 import { onColor } from './contrast';
 
