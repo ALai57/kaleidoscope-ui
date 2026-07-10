@@ -231,7 +231,13 @@ const ArticleManagerPage: React.FC = () => {
       width: 120,
       renderCell: (params) => {
         const val = params.value as string | null | undefined;
-        return val ? new Date(val).toLocaleDateString() : <em style={{ color: '#999' }}>Unpublished</em>;
+        return val ? (
+          new Date(val).toLocaleDateString()
+        ) : (
+          <Box component="em" sx={{ color: 'text.disabled' }}>
+            Unpublished
+          </Box>
+        );
       },
     },
     {
@@ -262,7 +268,11 @@ const ArticleManagerPage: React.FC = () => {
         const row = params.row as BranchRow;
         const groupNames = audiencesByArticle.get(row.article_id) ?? [];
         if (!groupNames.length) {
-          return <em style={{ color: '#999' }}>—</em>;
+          return (
+            <Box component="em" sx={{ color: 'text.disabled' }}>
+              —
+            </Box>
+          );
         }
         return (
           <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center', height: '100%' }}>
