@@ -2,6 +2,7 @@ import React, { useCallback, useRef } from 'react';
 import ForceGraph2D, { type ForceGraphMethods, type NodeObject, type LinkObject } from 'react-force-graph-2d';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import type { Project } from '../../types/project';
 
@@ -23,19 +24,16 @@ interface GraphData {
   links: GraphLink[];
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  idea: '#9e9e9e',
-  developing: '#1976d2',
-  executing: '#2e7d32',
-};
-
-function buildGraphData(projects: Project[]): GraphData {
+function buildGraphData(
+  projects: Project[],
+  statusColor: (status: string) => string
+): GraphData {
   const nodes: GraphNode[] = projects.map((p) => ({
     id: p.id,
     name: p.title,
     status: p.status,
     val: 3,
-    color: STATUS_COLORS[p.status] ?? '#9e9e9e',
+    color: statusColor(p.status),
   }));
 
   // Add status cluster nodes
@@ -45,7 +43,7 @@ function buildGraphData(projects: Project[]): GraphData {
     name: s.charAt(0).toUpperCase() + s.slice(1),
     status: s,
     val: 8,
-    color: STATUS_COLORS[s] ?? '#9e9e9e',
+    color: statusColor(s),
   }));
 
   // Links from each project to its status cluster
@@ -72,10 +70,23 @@ export const ProjectGraph: React.FC<ProjectGraphProps> = ({
   height = 500,
 }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const graphRef = useRef<ForgeGraphRef | undefined>(undefined);
   type ForgeGraphRef = ForceGraphMethods<NodeObject<GraphNode>, LinkObject<GraphNode, GraphLink>>;
 
-  const graphData = buildGraphData(projects);
+  // Project status -> node color, from the theme (info/success/grey).
+  const statusColor = (status: string): string => {
+    switch (status) {
+      case 'developing':
+        return theme.palette.info.main;
+      case 'executing':
+        return theme.palette.success.main;
+      default:
+        return theme.palette.grey[500];
+    }
+  };
+
+  const graphData = buildGraphData(projects, statusColor);
 
   const handleNodeClick = useCallback(
     (node: { id?: string | number }) => {
@@ -100,7 +111,7 @@ export const ProjectGraph: React.FC<ProjectGraphProps> = ({
 
       ctx.beginPath();
       ctx.arc(x, y, r, 0, 2 * Math.PI, false);
-      ctx.fillStyle = node.color ?? '#9e9e9e';
+      ctx.fillStyle = node.color ?? theme.palette.grey[500];
       ctx.fill();
 
       const fontSize = Math.max(10 / globalScale, 2);
@@ -110,7 +121,7 @@ export const ProjectGraph: React.FC<ProjectGraphProps> = ({
       ctx.fillStyle = 'white';
       ctx.fillText(label.slice(0, 20), x, y);
     },
-    []
+    [theme]
   );
 
   if (projects.length === 0) {
@@ -143,9 +154,9 @@ export const ProjectGraph: React.FC<ProjectGraphProps> = ({
         height={height}
         nodeCanvasObject={nodeCanvasObject}
         onNodeClick={handleNodeClick}
-        linkColor={() => '#e0e0e0'}
+        linkColor={() => theme.palette.divider}
         linkWidth={1}
-        backgroundColor="#fafafa"
+        backgroundColor={theme.palette.background.default}
         nodeRelSize={4}
       />
     </Box>
