@@ -34,3 +34,8 @@ resources/media/*
 resources/*/media
 .DS_Store
 .mise.toml
+
+# Storybook visual-regression: transient diff output (committed baselines live
+# in __image_snapshots__/, generated per-environment — see docs/visual-regression.md)
+__image_snapshots__/**/__diff_output__/
+storybook-static/

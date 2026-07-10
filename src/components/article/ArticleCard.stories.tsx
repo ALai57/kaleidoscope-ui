@@ -4,6 +4,9 @@ import { ArticleCard, ThinArticleCard } from './ArticleCard';
 const meta: Meta<typeof ArticleCard> = {
   title: 'Article/ArticleCard',
   component: ArticleCard,
+  // Excluded from the Storybook test-runner: renders against external CSS
+  // (bootstrap/app stylesheets) not present in the test environment.
+  tags: ['!test'],
   parameters: {
     layout: 'centered',
   },
