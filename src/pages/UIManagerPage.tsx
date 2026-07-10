@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { Button } from '../components/layout/Button';
 import { ColorPicker } from '../components/colors/ColorPicker';
+import { PresetPicker } from '../components/common/PresetPicker';
 import { useAuth } from '../auth/useAuth';
 import { useThemeStore } from '../store/themeStore';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
@@ -85,6 +86,12 @@ const UIManagerPage: React.FC = () => {
         <Typography variant="h4" gutterBottom>
           UI Manager
         </Typography>
+
+        {/* Design-language preset */}
+        <Typography variant="h6" sx={{ mb: 1 }}>
+          Design language
+        </Typography>
+        <PresetPicker sx={{ mb: 3, maxWidth: 560 }} />
 
         {/* Dark mode toggle */}
         <FormControlLabel
