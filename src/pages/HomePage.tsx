@@ -10,6 +10,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import PersonIcon from '@mui/icons-material/Person';
 import WorkIcon from '@mui/icons-material/Work';
 import { alpha, useTheme } from '@mui/material/styles';
+import { keyframes } from '@mui/system';
 import { NavBar } from '../components/layout/NavBar';
 import { EntityCard } from '../components/common/EntityCard';
 import { PortfolioSection } from '../components/layout/PortfolioSection';
@@ -18,6 +19,15 @@ import { useAuth } from '../auth/useAuth';
 import { getArticles } from '../api/articles';
 
 // ── Feature card ───────────────────────────────────────────────────────────
+
+// Icon flip looped while the card is hovered: a 3D rotation about the vertical
+// axis, so the icon turns edge-on (perpendicular to the screen) at the halfway
+// point. `perspective` gives the depth; the animation's ease-in-out timing makes
+// each turn start slow, accelerate, then decelerate. Disabled under reduced motion.
+const spin = keyframes`
+  from { transform: perspective(400px) rotateY(0deg); }
+  to { transform: perspective(400px) rotateY(360deg); }
+`;
 
 interface FeatureCardProps {
   title: string;
@@ -29,7 +39,11 @@ interface FeatureCardProps {
 const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, to, icon }) => (
   // EntityCard/SurfaceCard are plain FCs (no RouterLink `to` in their props), so
   // the whole card is wrapped in a RouterLink rather than rendered `as` one.
-  <RouterLink to={to} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+  <RouterLink
+    to={to}
+    className="feature-card"
+    style={{ textDecoration: 'none', display: 'block', height: '100%' }}
+  >
     <EntityCard
       interactive
       title={title}
@@ -44,7 +58,32 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, to, icon 
             borderRadius: `${t.tokens?.radius.md ?? 8}px`,
             color: 'primary.main',
             bgcolor: alpha(t.palette.primary.main, 0.12),
-            '& svg': { fontSize: 28 },
+            // Emphasis-on-hover: the tile deepens its tint, gains a soft accent
+            // glow + ring, and the icon brightens — signalling the active card.
+            transition: 'background-color 220ms ease, box-shadow 220ms ease, color 220ms ease',
+            '& svg': {
+              fontSize: 28,
+              transition: 'transform 200ms ease',
+            },
+            '.feature-card:hover &': {
+              bgcolor: alpha(t.palette.primary.main, 0.22),
+              color: t.palette.primary.dark,
+              boxShadow: `0 0 0 3px ${alpha(t.palette.primary.main, 0.22)}, 0 6px 18px ${alpha(
+                t.palette.primary.main,
+                0.3
+              )}`,
+            },
+            '.feature-card:hover & svg': {
+              animation: `${spin} 1.2s ease-in-out infinite`,
+            },
+            // Reduce-motion users get static hover feedback — a slight turn into
+            // the same 3D plane, plus a scale — instead of the looping flip.
+            '@media (prefers-reduced-motion: reduce)': {
+              '.feature-card:hover & svg': {
+                animation: 'none',
+                transform: 'perspective(400px) rotateY(28deg) scale(1.12)',
+              },
+            },
           })}
         >
           {icon}
