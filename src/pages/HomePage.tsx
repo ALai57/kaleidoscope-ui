@@ -3,8 +3,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -13,6 +11,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import WorkIcon from '@mui/icons-material/Work';
 import { alpha, useTheme } from '@mui/material/styles';
 import { NavBar } from '../components/layout/NavBar';
+import { EntityCard } from '../components/common/EntityCard';
 import { PortfolioSection } from '../components/layout/PortfolioSection';
 import { Footer } from '../components/layout/Footer';
 import { useAuth } from '../auth/useAuth';
@@ -28,31 +27,36 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, to, icon }) => (
-  <Card
-    component={RouterLink}
-    to={to}
-    elevation={2}
-    sx={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      textDecoration: 'none',
-      transition: 'transform 0.2s, box-shadow 0.2s',
-      '&:hover': { transform: 'translateY(-4px)', boxShadow: 8 },
-    }}
-  >
-    <CardContent sx={{ flexGrow: 1, textAlign: 'center', py: 4 }}>
-      <Box sx={{ mb: 2, color: 'primary.main', '& svg': { fontSize: 48 } }}>
-        {icon}
-      </Box>
-      <Typography variant="h5" gutterBottom>
-        {title}
-      </Typography>
+  // EntityCard/SurfaceCard are plain FCs (no RouterLink `to` in their props), so
+  // the whole card is wrapped in a RouterLink rather than rendered `as` one.
+  <RouterLink to={to} style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+    <EntityCard
+      interactive
+      title={title}
+      avatar={
+        <Box
+          sx={(t) => ({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 48,
+            height: 48,
+            borderRadius: `${t.tokens?.radius.md ?? 8}px`,
+            color: 'primary.main',
+            bgcolor: alpha(t.palette.primary.main, 0.12),
+            '& svg': { fontSize: 28 },
+          })}
+        >
+          {icon}
+        </Box>
+      }
+      sx={{ height: '100%', color: 'text.primary' }}
+    >
       <Typography variant="body2" color="text.secondary">
         {description}
       </Typography>
-    </CardContent>
-  </Card>
+    </EntityCard>
+  </RouterLink>
 );
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -74,53 +78,68 @@ const HomePage: React.FC = () => {
       }
     : undefined;
 
-  const heroBg = `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.light} 100%)`;
+  // Structural tokens (mono voice / spring motion), each with a bare-MUI
+  // fallback so the hero re-skins from the active preset without hardcoding it.
+  const tokens = theme.tokens;
+  const mono = tokens?.typography.mono ?? 'monospace';
+  const headingFamily = tokens?.typography.headingFamily === 'mono' ? mono : 'inherit';
+  const durBase = tokens?.motion.duration.base ?? 250;
+  const snap = tokens?.motion.easing.springSnap ?? 'ease';
+  const ctaSx = {
+    fontFamily: mono,
+    letterSpacing: '0.05em',
+    transition: `transform ${durBase}ms ${snap}, box-shadow ${durBase}ms`,
+    '&:hover': { transform: 'translateY(-2px)' },
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
 
-      {/* Hero */}
-      <Box sx={{ background: heroBg, color: 'white', py: { xs: 6, md: 10 } }}>
+      {/* Hero — a seed-derived accent wash over the page surface (no hardcoded
+          white/gradient), so it re-colors with the active preset + mode. */}
+      <Box
+        sx={(t) => ({
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          background: `linear-gradient(135deg, ${alpha(t.palette.primary.main, 0.12)} 0%, ${alpha(
+            t.palette.primary.main,
+            0.02
+          )} 45%, transparent 100%)`,
+          py: { xs: 6, md: 9 },
+        })}
+      >
         <Container maxWidth="lg">
           <Grid container spacing={4} alignItems="center">
             <Grid item xs={12} md={7}>
-              <Typography variant="h2" sx={{ fontWeight: 700, mb: 1 }}>
-                Andrew Lai
-              </Typography>
-              <Typography variant="h5" sx={{ opacity: 0.9, mb: 3 }}>
+              <Typography
+                sx={{
+                  fontFamily: mono,
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.18em',
+                  textTransform: 'uppercase',
+                  color: 'primary.main',
+                  mb: 1.5,
+                }}
+              >
                 Software Engineering Manager · Writer · Tinkerer
               </Typography>
-              <Typography variant="body1" sx={{ opacity: 0.85, mb: 4, maxWidth: 520 }}>
-                I build software, manage engineering teams, and write about
-                the things I&#39;m learning and figuring out along the way.
+              <Typography
+                variant="h2"
+                sx={{ fontFamily: headingFamily, fontWeight: 700, mb: 2, color: 'text.primary' }}
+              >
+                Andrew Lai
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 520 }}>
+                I build software, manage engineering teams, and write about the things I&#39;m
+                learning and figuring out along the way.
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                <Button
-                  variant="contained"
-                  component={RouterLink}
-                  to="/about"
-                  sx={{
-                    bgcolor: 'white',
-                    color: 'primary.dark',
-                    '&:hover': { bgcolor: 'grey.100' },
-                  }}
-                >
+                <Button variant="contained" component={RouterLink} to="/about" sx={ctaSx}>
                   About Me
                 </Button>
-                <Button
-                  variant="outlined"
-                  component={RouterLink}
-                  to="/archive"
-                  sx={(theme) => ({
-                    color: 'white',
-                    borderColor: alpha(theme.palette.common.white, 0.7),
-                    '&:hover': {
-                      borderColor: 'white',
-                      bgcolor: alpha(theme.palette.common.white, 0.1),
-                    },
-                  })}
-                >
+                <Button variant="outlined" component={RouterLink} to="/archive" sx={ctaSx}>
                   Read my writing
                 </Button>
               </Box>
@@ -129,17 +148,17 @@ const HomePage: React.FC = () => {
               <Box
                 component="img"
                 alt="Andrew Lai"
-                sx={{
+                sx={(t) => ({
                   width: '100%',
                   maxWidth: 340,
-                  borderRadius: 3,
-                  boxShadow: 6,
+                  borderRadius: `${t.tokens?.radius.lg ?? 16}px`,
+                  boxShadow: t.tokens?.elevation.lg ?? 6,
                   content: {
                     xs: 'url(/static/images/andrew-lai-small.png)',
                     md: 'url(/static/images/andrew-lai.jpeg)',
                     xl: 'url(/static/images/me-tree.png)',
                   },
-                }}
+                })}
               />
             </Grid>
           </Grid>
