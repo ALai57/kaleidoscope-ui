@@ -75,7 +75,11 @@ a11y for a fully-clickable card) or `CardMedia` (images) — e.g. `ProjectCard`,
 - Need a raw token value → `theme.tokens.*` (note: `theme.tokens` is currently
   light-mode only; prefer the palette for anything that must be correct in dark
   mode until that's addressed).
-- **Never** write a hex/`rgb()`/`rgba()` literal in a component.
+- **Never** write a hex/`rgb()`/`rgba()`/`hsl()` literal in a component — this is
+  **lint-enforced** (`no-restricted-syntax` in `eslint.config.js`). The rule is
+  off only in the token layer (`src/theme/**`), the color-picker tooling
+  (`src/components/colors/**`), tests, and stories, where raw colors are the
+  point. Add new colors to `src/theme/tokens.ts`.
 
 ## The decision, in one line
 
