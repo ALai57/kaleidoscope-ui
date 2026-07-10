@@ -248,10 +248,12 @@ Roll-out (in progress — landed as per-component vertical slices):
 Still open (roll-out):
 - ⏳ Restyle the remaining Prism surfaces to consume the tokens: the nav rail +
   top bar, table/inputs/editor treatments. Each follows the NavBar pattern.
-- 🔶 Migrate the existing entity cards onto `EntityCard`: ✅ `AgentCard` +
-  `WorkflowCard` (both now on the shared skeleton, with smoke tests added);
-  ⏳ `TeamLeadCard`, `AdvisorReviewCard`, `RoundCard` still to go. Also adopt
-  `StatTile` where dashboards hand-roll metrics.
+- ✅ Migrate the existing entity cards onto `EntityCard` (all with smoke tests):
+  `AgentCard` + `WorkflowCard` on the default `card` variant; `TeamLeadCard`,
+  `AdvisorReviewCard`, `RoundCard` on a new `panel` variant (filled header bar +
+  accent border + full-bleed body) that factors out the shell those three status
+  cards each hand-rolled. ⏳ Still adopt `StatTile` where dashboards hand-roll
+  metrics, and migrate the remaining CSS-class/MUI-`Card` cards opportunistically.
 - ⏳ Consider folding `headingFamily` into the global MUI typography adapter (the
   NavBar/primitives consume `tokens.typography.mono` directly for now, to contain
   blast radius).
