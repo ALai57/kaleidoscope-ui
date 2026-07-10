@@ -63,9 +63,11 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 // ── Tests ──────────────────────────────────────────────────────────────────
 
 describe('ArticleManagerPage', () => {
-  it('renders heading', () => {
+  it('renders heading', async () => {
     render(<ArticleManagerPage />, { wrapper: Wrapper });
-    expect(screen.getByText('Article Manager')).toBeTruthy();
+    // The heading is in the DataGrid toolbar, which renders after the branches
+    // query resolves (past the loading state), so wait for it.
+    expect(await screen.findByText('Article Manager')).toBeTruthy();
   });
 
   it('renders branch list', async () => {
