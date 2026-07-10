@@ -2,13 +2,16 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { MemoryRouter } from 'react-router-dom';
 import { PortfolioSection } from './PortfolioSection';
 import type { Article } from '../../types/article';
 import type { PortfolioCard } from './PortfolioSection';
 
 const theme = createTheme();
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ThemeProvider theme={theme}>{children}</ThemeProvider>
+  <ThemeProvider theme={theme}>
+    <MemoryRouter>{children}</MemoryRouter>
+  </ThemeProvider>
 );
 
 const mockCards: PortfolioCard[] = [
