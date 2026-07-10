@@ -18,6 +18,7 @@ import { RichTextEditor } from '../components/editor/RichTextEditor';
 import { useAuth } from '../auth/useAuth';
 import { getArticle, getArticles } from '../api/articles';
 import type { Article } from '../types/article';
+import { CATEGORICAL } from '../theme/tokens';
 
 // ── Single article view ────────────────────────────────────────────────────
 
@@ -73,14 +74,14 @@ const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
 // ── Tag color map ──────────────────────────────────────────────────────────
 
 const TAG_COLORS: Record<string, string> = {
-  research: '#4a90e2',
-  thoughts: '#e26b4a',
-  about: '#7c4ae2',
-  archive: '#4ae2a0',
+  research: CATEGORICAL.blue,
+  thoughts: CATEGORICAL.amber,
+  about: CATEGORICAL.violet,
+  archive: CATEGORICAL.green,
 };
 
 function tagColor(tag: string): string {
-  return TAG_COLORS[tag] ?? '#aaa';
+  return TAG_COLORS[tag] ?? CATEGORICAL.grey;
 }
 
 // ── Archive article row ────────────────────────────────────────────────────
@@ -165,7 +166,7 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
             size="small"
             sx={{
               background: color,
-              color: '#fff',
+              color: 'white',
               fontWeight: 600,
               fontSize: '0.7rem',
               display: { xs: 'none', sm: 'flex' },
@@ -272,7 +273,7 @@ const ArchiveView: React.FC = () => {
                   size="small"
                   sx={
                     activeTag === tag
-                      ? { background: tagColor(tag), color: '#fff', fontWeight: 600, borderColor: tagColor(tag) }
+                      ? { background: tagColor(tag), color: 'white', fontWeight: 600, borderColor: tagColor(tag) }
                       : { borderColor: tagColor(tag), color: tagColor(tag) }
                   }
                 />
