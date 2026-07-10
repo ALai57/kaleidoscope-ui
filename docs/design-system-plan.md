@@ -229,15 +229,30 @@ Landed (vertical slice — proved end-to-end through the NavBar):
   **zero hardcoded color** — so it re-skins from the active preset/seed.
   Storybook `PrismPreset` story renders it dark; test wrapper uses `makeTheme`.
 
+Roll-out (in progress — landed as per-component vertical slices):
+- ✅ **Preset picker** (`common/PresetPicker.tsx`) — a segmented control wired
+  into `UIManagerPage` that reads the active preset from the store and calls
+  `useSelectPreset`. Each option previews its own preset's voice + radius.
+  Closes the gap where the hook existed but nothing selected a preset at runtime.
+- ✅ **`StatusChip` pulsing dot** — opt-in leading dot (`dot` prop, default off)
+  that inherits the chip's tone via `currentColor` and pulses for live/in-flight
+  tones using the preset motion tokens. `isLiveTone` is the single source of
+  which tones read as active work.
+- ✅ **`StatTile`** (`common/StatTile.tsx`) — mission-control metric tile on
+  `SurfaceCard`: uppercase mono label, value in the heading voice, unit, optional
+  live `StatusChip`, and a trend/delta line (caller-overridable `trendTone`).
+- ✅ **`EntityCard`** (`common/EntityCard.tsx`) — the header/body/actions
+  skeleton (avatar + title/subtitle, top-right status/action slot, body, footer
+  actions) on `SurfaceCard`, for the ~10 hand-rolled entity cards to migrate onto.
+
 Still open (roll-out):
-- ⏳ A **preset picker** UI (likely in `UIManagerPage`, calling `useSelectPreset`)
-  — the hook exists but nothing selects a preset at runtime yet.
-- ⏳ Restyle the remaining Prism primitives to consume the tokens: `StatusChip`
-  (pulsing dot), an `EntityCard` on `SurfaceCard`, `StatTile`, the nav rail +
+- ⏳ Restyle the remaining Prism surfaces to consume the tokens: the nav rail +
   top bar, table/inputs/editor treatments. Each follows the NavBar pattern.
+- ⏳ Migrate the existing entity cards (`AgentCard`, `WorkflowCard`, …) onto
+  `EntityCard`, and adopt `StatTile` where dashboards hand-roll metrics.
 - ⏳ Consider folding `headingFamily` into the global MUI typography adapter (the
-  NavBar consumes `tokens.typography.mono` directly for now, to contain blast
-  radius).
+  NavBar/primitives consume `tokens.typography.mono` directly for now, to contain
+  blast radius).
 
 ## Suggested sequencing
 
