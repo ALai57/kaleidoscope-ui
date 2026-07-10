@@ -258,6 +258,105 @@ Still open (roll-out):
   NavBar/primitives consume `tokens.typography.mono` directly for now, to contain
   blast radius).
 
+## Phase 6 — Public site (marketing pages) — PROPOSED
+
+The admin/workflow surfaces now speak the design system, but the **public pages
+a visitor actually lands on** — `HomePage`, `AboutPage`, `ExperiencePage` (and
+their shared `PortfolioSection` / `SkillsSection` / `Timeline` / `Footer`) —
+predate it and look out of place next to the reskinned `NavBar`. This phase
+brings them onto the same tokens + primitives.
+
+### Why they look out of place (measured against the NavBar)
+
+The NavBar sets the reference: mono "data voice", accent-underline motif,
+bordered controls, spring motion, **zero hardcoded color** (re-skins from the
+active preset/seed/mode). The public pages violate each of these:
+
+1. **Typography voice.** Pages use sans MUI headings (`h2`/`h3`/`h4`); Prism's
+   identity is the monospace heading voice (`tokens.typography.mono` +
+   `headingFamily`) the NavBar already speaks. Nothing on these pages opts in.
+2. **Hand-rolled cards.** `FeatureCard`, `PortfolioSection`'s card, and
+   `SkillsSection`'s `Paper` are raw MUI `Card`/`Paper elevation={n}` with
+   generic `translateY(-4px)` / `boxShadow: 8` hover — bypassing `SurfaceCard`/
+   `EntityCard` and the preset's radius + spring-motion tokens.
+3. **Hardcoded color.** The hero hardcodes `linear-gradient(primary.dark →
+   primary.light)` + `color: 'white'` + `grey.100`; `Footer` hardcodes
+   `grey.900`/`grey.400`; `TimelineDot` hardcodes `backgroundColor: 'black'`.
+   None of these re-skin with preset/seed/mode — the footer reads as a dark slab
+   under a light Classic theme.
+4. **Motion.** Generic `transition: transform 0.2s` instead of the preset's
+   `motion.easing.spring*` + `motion.duration.*`.
+5. **No shared section rhythm.** Bare `<Divider>` rules and plain headings; none
+   of the accent-underline / mono-eyebrow motif that would tie a page back to the
+   NavBar.
+
+### Guardrail
+
+Do **not** hardcode the Prism dark look. Consume tokens so the pages re-skin
+under *both* presets and *both* modes exactly like the NavBar — this preserves
+Phase 2's headline "customizable, contrast-safe" goal. The pages should look
+right in Classic-light and Prism-dark from the same code.
+
+### New primitive (the unifier)
+
+- **`SectionHeading`** (`common/SectionHeading.tsx`) — a mono eyebrow (e.g.
+  `// PROFILE`) + a heading in the heading voice + an accent underline that
+  echoes the NavBar link motif. This is the single element that makes all three
+  pages read as one system; every page below leans on it. Story + test, same as
+  the other primitives.
+
+### Page-by-page
+
+**HomePage**
+- *Hero*: drop the hardcoded gradient/`white`. Back it with a token surface
+  (`surface.sunken`, or a seed-derived token gradient), render the name in the
+  heading voice, the tagline as mono-uppercase letter-spaced text (NavBar-link
+  style), and the CTAs with the NavBar's bordered/accent-underline button idiom
+  (accent border + spring hover) instead of `bgcolor: 'white'`. Portrait gets
+  `radius.lg` + a token elevation.
+- *Feature cards* → **`EntityCard`** (`card` variant, `interactive`,
+  `component={RouterLink}`): icon in the `avatar` slot, `title`, description as
+  body. Inherits spring hover + token radius for free.
+- *PortfolioSection* → cards on **`SurfaceCard interactive`** (or `EntityCard`);
+  date as subtitle, tags as tokenized chips; "Recent Writing" via
+  `SectionHeading`; "View all →" as a mono link.
+
+**AboutPage**
+- "About" → `SectionHeading` with a mono eyebrow. Body prose stays (readability).
+  Image → `radius.lg` + token elevation. Optionally surface the "outside of work"
+  interests (cooking, Spanish, board games, tango) as tokenized chips to echo the
+  mission-control vibe.
+
+**ExperiencePage**
+- Section headings ("Experience", "Skills", "Career History") → `SectionHeading`,
+  replacing the bare `<Divider>`s.
+- The role intro is a natural fit for a **`StatTile`** strip (e.g. Role · Company
+  · Focus) — reusing the mission-control metric primitive on a résumé.
+- `SkillsSection`'s `Paper` → `SurfaceCard`; section titles in the heading voice.
+- *Timeline* (the biggest offender): restyle `TimelineEntry` — `TimelineDot`
+  from hardcoded `black` → `primary.main`/token; dates + org headings in the
+  heading voice; wrap each entry's content in a `SurfaceCard`; replace raw `<a>`
+  / `<br><br>` with MUI `Link` + spacing; connector color from tokens.
+
+**Footer**
+- Tokenize: `surface.sunken` bg + `text.secondary`, and mono-uppercase nav links
+  echoing the NavBar — so it re-skins with mode/preset instead of being a fixed
+  dark slab.
+
+### Suggested order
+
+`SectionHeading` first (unblocks all three pages), then HomePage (hero + cards),
+then ExperiencePage (Timeline is the largest lift), then AboutPage, then Footer.
+Each ships as a vertical slice with a story + test, like the Phase 5 slices.
+
+### Open decision
+
+Prism is *spiritually* dark-committed but the engine is preset-driven. Should the
+public `kaleidoscope.pub` tenant **default to** the Prism look, or stay Classic
+until a visitor selects Prism? This phase assumes the latter (token-consuming, so
+it's correct under either) and defers the default-preset-per-tenant question to a
+product call — it only needs `ThemeBootstrap` to seed a per-tenant default.
+
 ## Suggested sequencing
 
 Phase 0 and Phase 1 are short and unblock everything else — do those first.
