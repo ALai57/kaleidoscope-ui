@@ -2,10 +2,11 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
+import { SurfaceCard } from '../common/SurfaceCard';
 import { SKILLS } from '../../data/skills';
 import type { SkillSection } from '../../data/skills';
 
@@ -65,13 +66,23 @@ export interface SkillsSectionProps {
 
 // ── Component ──────────────────────────────────────────────────────────────
 
-export const SkillsSection: React.FC<SkillsSectionProps> = ({ sections = SKILLS }) => (
-  <>
+export const SkillsSection: React.FC<SkillsSectionProps> = ({ sections = SKILLS }) => {
+  const theme = useTheme();
+  const mono = theme.tokens?.typography.mono ?? 'monospace';
+  const headingFamily = theme.tokens?.typography.headingFamily === 'mono' ? mono : 'inherit';
+
+  return (
+    <>
     {sections.map((section) => (
       <Grid key={section.title} item xs={11} sm={11} md={5} lg={5} xl={4}>
-        <Paper elevation={3} sx={{ margin: { xs: '5px', sm: '5px' } }}>
+        <SurfaceCard sx={{ margin: { xs: '5px', sm: '5px' } }}>
           <Stack direction="column" width="100%" sx={{ p: 2 }}>
-            <Typography variant="h5" sx={{ mb: 2 }}>{section.title}</Typography>
+            <Typography
+              variant="h5"
+              sx={{ mb: 2, fontFamily: headingFamily, fontWeight: 700 }}
+            >
+              {section.title}
+            </Typography>
             {section.groups.map((group, groupIdx) => (
               <Stack
                 key={groupIdx}
@@ -85,8 +96,9 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ sections = SKILLS 
               </Stack>
             ))}
           </Stack>
-        </Paper>
+        </SurfaceCard>
       </Grid>
     ))}
-  </>
-);
+    </>
+  );
+};

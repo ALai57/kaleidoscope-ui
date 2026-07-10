@@ -1,7 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
@@ -9,6 +8,8 @@ import { NavBar } from '../components/layout/NavBar';
 import { SkillsSection } from '../components/layout/SkillsSection';
 import { Timeline } from '../components/layout/Timeline';
 import { Footer } from '../components/layout/Footer';
+import { SectionHeading } from '../components/common/SectionHeading';
+import { StatTile } from '../components/common/StatTile';
 import { useAuth } from '../auth/useAuth';
 
 const ExperiencePage: React.FC = () => {
@@ -28,10 +29,15 @@ const ExperiencePage: React.FC = () => {
 
       <Box sx={{ flex: 1 }}>
         <Container maxWidth="lg" sx={{ py: 6 }}>
-          <Typography variant="h3" gutterBottom>Experience</Typography>
-          <Divider sx={{ mb: 4 }} />
+          <SectionHeading eyebrow="// CAREER" title="Experience" level="h3" sx={{ mb: 4 }} />
 
-          <Typography variant="h5" sx={{ mb: 2 }}>Software Engineering Leader</Typography>
+          {/* Quick-facts strip — the mission-control metric primitive on a résumé */}
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 4 }}>
+            <StatTile label="Current role" value="Eng. Manager" />
+            <StatTile label="Company" value="Freshpaint" />
+            <StatTile label="Focus" value="Privacy-first adtech" />
+          </Box>
+
           <Typography variant="body1" sx={{ mb: 2 }}>
             As a professional, I&#39;m driven by the love of solving technical problems, working
             with excellent teams, building and learning.
@@ -42,13 +48,12 @@ const ExperiencePage: React.FC = () => {
             {", where I'm working on a platform that enables healthcare marketers to advertise in a privacy-first, HIPAA-compliant way."}
           </Typography>
 
-          <Typography variant="h4" sx={{ mb: 3 }}>Skills</Typography>
+          <SectionHeading eyebrow="// TOOLKIT" title="Skills" level="h4" sx={{ mb: 3 }} />
           <Grid container spacing={2} justifyContent="center">
             <SkillsSection />
           </Grid>
 
-          <Typography variant="h4" sx={{ mt: 8, mb: 1 }}>Career History</Typography>
-          <Divider sx={{ mb: 2 }} />
+          <SectionHeading eyebrow="// TIMELINE" title="Career History" level="h4" sx={{ mt: 8, mb: 2 }} />
         </Container>
 
         <Timeline />

@@ -1,13 +1,16 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import MuiTimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineDot from '@mui/lab/TimelineDot';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import { SurfaceCard } from '../common/SurfaceCard';
 import type { TimelineEntry as TimelineEntryData } from '../../data/timeline';
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -17,7 +20,7 @@ const OrgIcon: React.FC<{ src: string; alt: string }> = ({ src, alt }) => (
     component="img"
     src={src}
     alt={alt}
-    sx={{ height: '40px', objectFit: 'contain' }}
+    sx={{ height: '32px', objectFit: 'contain' }}
   />
 );
 
@@ -36,77 +39,87 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
   connectorHeight = 80,
 }) => {
   const { year, since, until, iconSrc, iconAlt, heading, orgUrl, body, bullets, link } = entry;
+  const theme = useTheme();
+  // Heading voice (mono under Prism) with a bare-MUI fallback, so dates + org
+  // names re-skin with the active preset instead of hardcoding the look.
+  const tokens = theme.tokens;
+  const mono = tokens?.typography.mono ?? 'monospace';
+  const headingFamily = tokens?.typography.headingFamily === 'mono' ? mono : 'inherit';
 
   return (
     <MuiTimelineItem>
-      {/* Left column — dates */}
-      <TimelineOppositeContent
-        variant="h2"
-        sx={{ flex: 0.3 }}
-      >
-        {until ?? year}
+      {/* Left column — dates in the heading voice */}
+      <TimelineOppositeContent sx={{ flex: 0.3 }}>
+        <Typography
+          component="div"
+          sx={{ fontFamily: headingFamily, fontWeight: 700, fontSize: '2rem', lineHeight: 1.15 }}
+        >
+          {until ?? year}
+        </Typography>
         {since && (
-          <Typography variant="h4">{`Since: ${since}`}</Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontFamily: mono, letterSpacing: '0.04em' }}
+          >
+            {`Since: ${since}`}
+          </Typography>
         )}
       </TimelineOppositeContent>
 
-      {/* Middle — dot + connector */}
+      {/* Middle — dot + connector (token palette, no hardcoded black) */}
       <TimelineSeparator>
         <TimelineDot
-          color="primary"
           variant="outlined"
-          sx={{ backgroundColor: 'black' }}
+          sx={{ bgcolor: 'background.paper', borderColor: 'primary.main', borderWidth: 2 }}
         >
-          {iconSrc ? (
-            <OrgIcon src={iconSrc} alt={iconAlt ?? ''} />
-          ) : null}
+          {iconSrc ? <OrgIcon src={iconSrc} alt={iconAlt ?? ''} /> : null}
         </TimelineDot>
-        <TimelineConnector sx={{ height: `${connectorHeight}px` }} />
+        <TimelineConnector sx={{ height: `${connectorHeight}px`, bgcolor: 'divider' }} />
       </TimelineSeparator>
 
-      {/* Right column — content */}
-      <TimelineContent sx={{ padding: '5px', flex: 1 }}>
-        <Typography variant="h6" component="span" sx={{ padding: '5px', fontWeight: 'bold' }}>
-          {orgUrl ? (
-            <a href={orgUrl} target="_blank" rel="noreferrer">
-              {heading}
-            </a>
-          ) : (
-            heading
-          )}
-        </Typography>
-
-        <Divider />
-
-        {body.map((paragraph, i) => (
+      {/* Right column — content on the shared card surface */}
+      <TimelineContent sx={{ py: 0, pr: 0 }}>
+        <SurfaceCard sx={{ p: 2, mb: 1 }}>
           <Typography
-            key={i}
-            sx={{ padding: '5px', color: 'text.secondary' }}
+            component="h3"
+            sx={{ m: 0, fontFamily: headingFamily, fontWeight: 700, fontSize: '1.05rem', lineHeight: 1.3 }}
           >
-            {paragraph}
+            {orgUrl ? (
+              <Link href={orgUrl} target="_blank" rel="noreferrer" color="inherit" underline="hover">
+                {heading}
+              </Link>
+            ) : (
+              heading
+            )}
           </Typography>
-        ))}
 
-        {bullets && bullets.length > 0 && (
-          <Box component="ul" sx={{ mt: 1 }}>
-            {bullets.map((bullet, i) => (
-              <Typography key={i} component="li" sx={{ padding: '5px', color: 'text.secondary' }}>
-                {bullet}
-              </Typography>
-            ))}
-          </Box>
-        )}
+          <Divider sx={{ my: 1 }} />
 
-        {link && (
-          <Typography sx={{ padding: '5px', color: 'text.secondary' }}>
-            <a href={link.href} target="_blank" rel="noreferrer">
-              {link.label}
-            </a>
-          </Typography>
-        )}
+          {body.map((paragraph, i) => (
+            <Typography key={i} variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              {paragraph}
+            </Typography>
+          ))}
 
-        <br />
-        <br />
+          {bullets && bullets.length > 0 && (
+            <Box component="ul" sx={{ mt: 0.5, mb: 0, pl: 2.5 }}>
+              {bullets.map((bullet, i) => (
+                <Typography key={i} component="li" variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                  {bullet}
+                </Typography>
+              ))}
+            </Box>
+          )}
+
+          {link && (
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              <Link href={link.href} target="_blank" rel="noreferrer" underline="hover">
+                {link.label}
+              </Link>
+            </Typography>
+          )}
+        </SurfaceCard>
       </TimelineContent>
     </MuiTimelineItem>
   );
