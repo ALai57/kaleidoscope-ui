@@ -137,33 +137,40 @@ Still open (carry into Phase 2 polish / Phase 3):
   swap).
 - ⏳ `theme.tokens` is attached light-mode only — make it mode-reactive before
   components start reading it in dark mode.
-- ⏳ `makeTheme` runs leonardo on every seed change — debounce the picker.
+- ✅ `makeTheme` ran leonardo on every seed change — the picker now debounces
+  store updates (`useDebouncedCallback`, 120ms).
 - ⏳ Not yet runtime-verified in the browser (needs Auth0 login at `/ui`); MUI's
   `useColorScheme` mode system with the current `ThemeProvider` is unproven and
   two pre-existing test failures touch the dark-mode toggle.
 
-## Phase 3 — Component library consolidation (~2-3 weeks) — IN PROGRESS
+## Phase 3 — Component library consolidation (~2-3 weeks) — MOSTLY DONE
 
-Target the highest-duplication, zero-story folders first since that's where
-new work is actively happening and drifting. Phase 1 tokens + Phase 2
-`contrastText` are now available for these primitives to consume.
+Target the highest-duplication, zero-story folders first. Phase 1 tokens +
+Phase 2 `contrastText` feed these primitives.
 
-- Extract shared primitives from the ~10 existing "Card" implementations
-  (`WorkflowCard`, `RoundCard`, `TeamLeadCard`, `AdvisorReviewCard`,
-  `ProjectCard`, `ScoreRunCard`, `AgentCard`, `ArticleCard`, ...) into one
-  themed `Card` (or a small family: e.g. `EntityCard` + slots) that consumes
-  Phase 1 tokens.
-- Same for the status/chip pattern repeated across ~25 files using inline
-  `<Chip>` (only `TaskTypeChip` is a dedicated component today) — one
-  `StatusChip`/`StatusBadge` with a fixed set of semantic variants
-  (success/warning/error/pending/etc.) instead of each component choosing its
-  own color.
-- Backfill Storybook stories for `workflows`, `projects`, and `tasks` as each
-  component is touched during extraction — don't do a separate "write all the
-  stories" pass, fold it into the refactor so stories stay accurate.
-- Once 2-3 shared primitives exist, write the one doc that matters most for a
-  living design system: "when to use X vs Y vs a one-off," since that's what
-  prevents next quarter's `WorkflowCard`-style re-duplication.
+- ✅ **`StatusChip`** (`common/StatusChip.tsx`) — one semantic status→color
+  source of truth (tones + a domain-status alias map). Migrated the genuine
+  status/score chips across workflows/projects and deleted the per-component
+  color maps (`STATUS_COLOR`, `STATUS_COLORS`, `STATUS_CHIP_COLOR`, decision
+  colors). Left true label/category chips as plain `<Chip>`.
+- ✅ **`SurfaceCard`** (`common/SurfaceCard.tsx`) — the shared card *surface*
+  (border/radius/paper-bg/hover), since the ~10 cards share a surface but not an
+  internal layout. Migrated the hand-rolled Box surfaces (`AgentCard`,
+  `WorkflowCard`, `AdvisorReviewCard`, `TeamLeadCard`, `RoundCard`). Left MUI
+  `Card` cards (`ProjectCard`/`ImageCard`/`FullImageCard`, for
+  `CardActionArea`/`CardMedia`), the `Accordion`-based `ScoreRunCard`, and the
+  CSS-class cards (`ArticleCard`/`NotificationCard`).
+- ✅ Backfilled Storybook stories for the touched components
+  (`WorkflowCard`, `ProjectCard`, `AgentCard`, `TaskTypeChip`, plus
+  `StatusChip`/`SurfaceCard`). Validated with `build-storybook`.
+- ✅ Wrote the usage doc: [`design-system-usage.md`](./design-system-usage.md)
+  ("when to use X vs a one-off").
+
+Still open:
+- ⏳ Optional `EntityCard` (header/body/actions) on top of `SurfaceCard` for the
+  header-row cards — only if the pattern proves worth it.
+- ⏳ Migrate more `StatusChip`/`SurfaceCard` call sites opportunistically as
+  files are touched.
 
 ## Phase 4 — Documentation & governance (~ongoing)
 
