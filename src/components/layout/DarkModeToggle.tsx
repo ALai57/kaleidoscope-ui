@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
-import { useColorScheme } from '@mui/material/styles';
+import { alpha, useColorScheme } from '@mui/material/styles';
 
 export const DarkModeToggle: React.FC = () => {
   const { mode, setMode } = useColorScheme();
@@ -27,19 +27,19 @@ export const DarkModeToggle: React.FC = () => {
           onClick={handleToggle}
           size="small"
           aria-label="toggle dark mode"
-          sx={{
+          sx={(theme) => ({
             width: 32,
             height: 32,
-            bgcolor: 'rgba(0, 0, 0, 0.18)',
+            bgcolor: alpha(theme.palette.common.black, 0.18),
             backdropFilter: 'blur(4px)',
-            color: 'white',
+            color: theme.palette.common.white,
             opacity: 0.65,
             transition: 'opacity 0.2s, background-color 0.2s',
             '&:hover': {
-              bgcolor: 'rgba(0, 0, 0, 0.32)',
+              bgcolor: alpha(theme.palette.common.black, 0.32),
               opacity: 1,
             },
-          }}
+          })}
         >
           {mode === 'dark' ? (
             <Brightness7Icon sx={{ fontSize: 16 }} />
