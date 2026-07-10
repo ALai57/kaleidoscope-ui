@@ -10,6 +10,7 @@ import { Button } from '../components/layout/Button';
 import { ColorPicker } from '../components/colors/ColorPicker';
 import { useAuth } from '../auth/useAuth';
 import { useThemeStore } from '../store/themeStore';
+import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
 import { getThemes, updateTheme } from '../api/themes';
 import type { ThemeRecord } from '../api/themes';
 import { CURRENT_THEME_VERSION } from '../types/theme';
@@ -30,6 +31,9 @@ const UIManagerPage: React.FC = () => {
   const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const { mode, setMode } = useColorScheme();
   const { themeParams, setThemeParams } = useThemeStore();
+  // The picker updates its own swatch instantly; defer the (leonardo-driven)
+  // theme rebuild until the user pauses dragging.
+  const debouncedSetThemeParams = useDebouncedCallback(setThemeParams, 120);
 
   const user = userProfile
     ? {
@@ -107,7 +111,7 @@ const UIManagerPage: React.FC = () => {
               // Convert the picked hex back into brand seed params so it drives
               // the live theme (main.tsx builds the theme from the store).
               const { h, s, l } = toHsl(color);
-              setThemeParams({ ...themeParams, hue: h, saturation: s, lightness: l });
+              debouncedSetThemeParams({ ...themeParams, hue: h, saturation: s, lightness: l });
             }}
           />
         </Box>
