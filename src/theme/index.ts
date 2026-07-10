@@ -22,6 +22,13 @@ declare module '@mui/material/styles' {
   interface ThemeOptions {
     tokens?: Tokens;
   }
+  // Expose the sunken surface as a mode-reactive palette slot. Unlike
+  // `theme.tokens` (frozen to the light scheme), palette values ride the
+  // colorSchemes CSS variables, so `bgcolor: 'background.sunken'` flips
+  // correctly in dark mode.
+  interface TypeBackground {
+    sunken: string;
+  }
 }
 
 /** The app's default brand seed — the 'default' preset's seed. */
@@ -54,7 +61,7 @@ function paletteFromTokens(tokens: Tokens): PaletteOptions {
     warning: slot(status.warning),
     error: slot(status.error),
     info: slot(status.info),
-    background: { default: surface.base, paper: surface.raised },
+    background: { default: surface.base, paper: surface.raised, sunken: surface.sunken },
     text: { primary: text.primary, secondary: text.secondary, disabled: text.disabled },
     divider: border.subtle,
   };
