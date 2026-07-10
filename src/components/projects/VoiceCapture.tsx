@@ -1,4 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
+import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
@@ -81,14 +82,14 @@ export const VoiceCapture: React.FC<VoiceCaptureProps> = ({ onAudioCaptured, dis
             color={isRecording ? 'error' : 'default'}
             onClick={isRecording ? stopRecording : () => void startRecording()}
             disabled={disabled || isUploading}
-            sx={{
+            sx={(theme) => ({
               animation: isRecording ? 'pulse 1.5s infinite' : 'none',
               '@keyframes pulse': {
-                '0%': { boxShadow: '0 0 0 0 rgba(244, 67, 54, 0.4)' },
-                '70%': { boxShadow: '0 0 0 8px rgba(244, 67, 54, 0)' },
-                '100%': { boxShadow: '0 0 0 0 rgba(244, 67, 54, 0)' },
+                '0%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.error.main, 0.4)}` },
+                '70%': { boxShadow: `0 0 0 8px ${alpha(theme.palette.error.main, 0)}` },
+                '100%': { boxShadow: `0 0 0 0 ${alpha(theme.palette.error.main, 0)}` },
               },
-            }}
+            })}
           >
             {isUploading ? (
               <CircularProgress size={20} />
