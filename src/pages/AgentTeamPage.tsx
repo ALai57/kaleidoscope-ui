@@ -48,7 +48,9 @@ const NewAgentDialog: React.FC<NewAgentDialogProps> = ({ open, onClose, onSubmit
   const [shortName, setShortName] = useState('');
   const [avatar, setAvatar] = useState('');
   const [systemPrompt, setSystemPrompt] = useState('');
-  const [color] = useState(DEFAULT_COLORS[Math.floor(Math.random() * DEFAULT_COLORS.length)]!);
+  const [color] = useState(
+    () => DEFAULT_COLORS[Math.floor(Math.random() * DEFAULT_COLORS.length)]!
+  );
 
   const reset = () => {
     setAgentType(''); setName(''); setShortName(''); setAvatar(''); setSystemPrompt('');

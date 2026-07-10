@@ -74,9 +74,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     },
   });
 
-  // Container: drop target + drag preview
+  // Container: drop target + drag preview.
+  // react-dnd connects its drag/drop sources to refs during render — that's the
+  // library's required API, not an unsafe ref access.
+  /* eslint-disable react-hooks/refs */
   drag(handleRef);
   dragPreview(drop(containerRef));
+  /* eslint-enable react-hooks/refs */
 
   return (
     <Box

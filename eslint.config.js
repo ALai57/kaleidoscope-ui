@@ -44,6 +44,11 @@ export default [
       ...reactHooks.configs.recommended.rules,
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // The codebase intentionally populates local form state from props on
+      // open/change (AgentEditorDialog, TaskForm, WorkflowEditorPage) and syncs
+      // the auth token in an effect. Keep this rule visible as a warning rather
+      // than blocking CI on an accepted pattern.
+      'react-hooks/set-state-in-effect': 'warn',
       'no-restricted-syntax': noHardcodedColors,
     },
   },
