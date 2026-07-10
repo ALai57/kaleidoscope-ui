@@ -3,14 +3,13 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { SkillsSection } from '../components/layout/SkillsSection';
 import { Timeline } from '../components/layout/Timeline';
 import { Footer } from '../components/layout/Footer';
 import { SectionHeading } from '../components/common/SectionHeading';
-import { StatTile } from '../components/common/StatTile';
+import { FactList } from '../components/common/FactList';
 import { useAuth } from '../auth/useAuth';
 
 const ExperiencePage: React.FC = () => {
@@ -31,8 +30,8 @@ const ExperiencePage: React.FC = () => {
       <Box sx={{ flex: 1 }}>
         <Container maxWidth="lg" sx={{ py: 6 }}>
           {/* Hero — page title, intro, and quick-facts read as one unit: prose on
-              the left, the metric rail on the right (stacked on mobile). */}
-          <SectionHeading eyebrow="// CAREER" title="Experience" level="h2" sx={{ mb: 4 }} />
+              the left, a compact fact rail on the right (stacked on mobile). */}
+          <SectionHeading eyebrow="// CAREER" title="Experience" level="h1" sx={{ mb: 4 }} />
           <Grid container spacing={4} alignItems="flex-start" sx={{ mb: 10 }}>
             <Grid item xs={12} md={7}>
               <Typography variant="body1" sx={{ mb: 2 }}>
@@ -46,20 +45,22 @@ const ExperiencePage: React.FC = () => {
               </Typography>
             </Grid>
             <Grid item xs={12} md={5}>
-              <Stack spacing={2}>
-                <StatTile label="Current role" value="Eng. Manager" />
-                <StatTile label="Company" value="Freshpaint" />
-                <StatTile label="Focus" value="Privacy-first adtech" />
-              </Stack>
+              <FactList
+                facts={[
+                  { label: 'Current role', value: 'Eng. Manager' },
+                  { label: 'Company', value: 'Freshpaint' },
+                  { label: 'Focus', value: 'Privacy-first adtech' },
+                ]}
+              />
             </Grid>
           </Grid>
 
-          <SectionHeading eyebrow="// TOOLKIT" title="Skills" level="h4" sx={{ mb: 3 }} />
+          <SectionHeading eyebrow="// TOOLKIT" title="Skills" level="h3" sx={{ mb: 3 }} />
           <Grid container spacing={2} justifyContent="center" sx={{ mb: 10 }}>
             <SkillsSection />
           </Grid>
 
-          <SectionHeading eyebrow="// TIMELINE" title="Career History" level="h4" sx={{ mb: 4 }} />
+          <SectionHeading eyebrow="// TIMELINE" title="Career History" level="h3" sx={{ mb: 4 }} />
           <Timeline />
         </Container>
       </Box>

@@ -78,8 +78,8 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ sections = SKILLS 
         <SurfaceCard sx={{ margin: { xs: '5px', sm: '5px' } }}>
           <Stack direction="column" width="100%" sx={{ p: 2 }}>
             <Typography
-              variant="h5"
-              sx={{ mb: 2, fontFamily: headingFamily, fontWeight: 700 }}
+              component="h3"
+              sx={{ mb: 2, fontFamily: headingFamily, fontWeight: 700, fontSize: '1.1rem', lineHeight: 1.3 }}
             >
               {section.title}
             </Typography>

@@ -15,10 +15,11 @@ import type { SxProps, Theme } from '@mui/material/styles';
  * so a heading re-skins with the active preset/seed/mode instead of hardcoding
  * the Prism look.
  */
-export type SectionHeadingLevel = 'h2' | 'h3' | 'h4';
+export type SectionHeadingLevel = 'h1' | 'h2' | 'h3' | 'h4';
 
 // Sizes mirror the token type scale (see theme/tokens.ts TYPE_SCALE).
 const LEVEL_SIZE: Record<SectionHeadingLevel, string> = {
+  h1: '2.5rem',
   h2: '2rem',
   h3: '1.6rem',
   h4: '1.4rem',

@@ -55,7 +55,8 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
       <TimelineOppositeContent sx={{ flex: 0.3 }}>
         <Typography
           component="div"
-          sx={{ fontFamily: headingFamily, fontWeight: 700, fontSize: '2rem', lineHeight: 1.15 }}
+          color="text.secondary"
+          sx={{ fontFamily: mono, fontWeight: 700, fontSize: '1.1rem', lineHeight: 1.2, letterSpacing: '0.02em' }}
         >
           {until ?? year}
         </Typography>
