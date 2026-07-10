@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import ArticleIcon from '@mui/icons-material/Article';
 import PersonIcon from '@mui/icons-material/Person';
 import WorkIcon from '@mui/icons-material/Work';
-import { useTheme } from '@mui/material/styles';
+import { alpha, useTheme } from '@mui/material/styles';
 import { NavBar } from '../components/layout/NavBar';
 import { PortfolioSection } from '../components/layout/PortfolioSection';
 import { Footer } from '../components/layout/Footer';
@@ -112,11 +112,14 @@ const HomePage: React.FC = () => {
                   variant="outlined"
                   component={RouterLink}
                   to="/archive"
-                  sx={{
+                  sx={(theme) => ({
                     color: 'white',
-                    borderColor: 'rgba(255,255,255,0.7)',
-                    '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
-                  }}
+                    borderColor: alpha(theme.palette.common.white, 0.7),
+                    '&:hover': {
+                      borderColor: 'white',
+                      bgcolor: alpha(theme.palette.common.white, 0.1),
+                    },
+                  })}
                 >
                   Read my writing
                 </Button>
