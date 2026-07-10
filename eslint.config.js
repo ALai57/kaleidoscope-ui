@@ -5,9 +5,6 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 
 export default [
   {
-    ignores: ['src/kaleidoscope/**', 'src/kaleidoscope-js/**'],
-  },
-  {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsparser,

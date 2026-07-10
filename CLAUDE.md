@@ -131,9 +131,6 @@ backend's AI-workflow and CMS data model — keep them in sync with `../kaleidos
 ## Sharp edges
 
 1. **`README.md` is out of date** (old ClojureScript app) — ignore it.
-2. **Legacy ClojureScript is excluded and off-limits**: `src/kaleidoscope/**` and
-   `src/kaleidoscope-js/**` are old code excluded from the Vitest suite (`vite.config.ts`). Don't edit
-   or refactor them unless that is explicitly the task.
 3. **`vite build` empties the output dir** (`emptyOutDir`) and **does not copy `publicDir`**
    (`copyPublicDir: false`) — per-tenant static assets are deployed by their own scripts, not the build.
 4. **`npm run deploy` mutates git** — it runs `npm version patch`, bumping and committing the version.
