@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
@@ -14,8 +13,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import AgentCard from '../components/agents/AgentCard';
 import AgentEditorDialog from '../components/agents/AgentEditorDialog';
 import { useAuth } from '../auth/useAuth';
@@ -180,8 +178,7 @@ const NewAgentDialog: React.FC<NewAgentDialogProps> = ({ open, onClose, onSubmit
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AgentTeamPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
 
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
@@ -219,46 +216,31 @@ const AgentTeamPage: React.FC = () => {
   const defaultAgents = agents.filter((a) => a.is_default);
   const customAgents = agents.filter((a) => !a.is_default);
 
+  const headerActions = (
+    <Button
+      variant="contained"
+      startIcon={<AddIcon />}
+      onClick={() => setNewDialogOpen(true)}
+      disableElevation
+      sx={{ flexShrink: 0 }}
+    >
+      New agent
+    </Button>
+  );
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
-      <Box sx={{ maxWidth: 900, mx: 'auto', px: 3, pt: 3, pb: 8 }}>
-        {/* Breadcrumb */}
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 3 }}>
-          <Button
-            size="small"
-            startIcon={<ArrowBackIcon sx={{ fontSize: '1rem !important' }} />}
-            onClick={() => navigate('/projects')}
-            sx={{ color: 'text.secondary', fontWeight: 400, px: 0.5, minWidth: 0 }}
-          >
-            Projects
-          </Button>
-          <Typography variant="body2" color="text.disabled">/</Typography>
-          <Typography variant="body2" color="text.secondary">Agent Team</Typography>
-        </Box>
-
-        {/* Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Agent Team
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Define the agents that evaluate and advise on your projects. Each agent has its
-              own persona and system prompt.
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setNewDialogOpen(true)}
-            disableElevation
-            sx={{ flexShrink: 0 }}
-          >
-            New agent
-          </Button>
-        </Box>
+    <AdminLayout
+      title="Agent Team"
+      actions={headerActions}
+      user={user}
+      isAuthenticated={isAuthenticated}
+      login={login}
+    >
+      <Box sx={{ maxWidth: 900, mx: 'auto', pb: 5 }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Define the agents that evaluate and advise on your projects. Each agent has its own
+          persona and system prompt.
+        </Typography>
 
         {error && (
           <Alert severity="error" sx={{ mb: 3 }}>
@@ -344,7 +326,7 @@ const AgentTeamPage: React.FC = () => {
         onSubmit={(body) => createMutation.mutate(body)}
         submitting={createMutation.isPending}
       />
-    </Box>
+    </AdminLayout>
   );
 };
 

@@ -8,14 +8,14 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import WorkflowCard from '../components/workflows/WorkflowCard';
 import { useAuth } from '../auth/useAuth';
 import { getWorkflows, getWorkflow, updateWorkflow } from '../api/workflows';
 
 const WorkflowsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
   const [archivingId, setArchivingId] = useState<string | null>(null);
 
@@ -59,12 +59,11 @@ const WorkflowsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ minHeight: '100vh' }}>
-        <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
+      <AdminLayout title="Workflows" user={user} isAuthenticated={isAuthenticated} login={login}>
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
         </Box>
-      </Box>
+      </AdminLayout>
     );
   }
 
@@ -72,28 +71,24 @@ const WorkflowsPage: React.FC = () => {
   const draft = workflowsWithSteps.filter((w) => w.status === 'draft');
   const archived = workflowsWithSteps.filter((w) => w.status === 'archived');
 
-  return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
+  const headerActions = (
+    <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate('/workflows/new')}>
+      New workflow
+    </Button>
+  );
 
-      <Box sx={{ p: 3, maxWidth: 900, mx: 'auto' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Workflows
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Reusable step sequences applied to projects.
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => navigate('/workflows/new')}
-          >
-            New workflow
-          </Button>
-        </Box>
+  return (
+    <AdminLayout
+      title="Workflows"
+      actions={headerActions}
+      user={user}
+      isAuthenticated={isAuthenticated}
+      login={login}
+    >
+      <Box sx={{ maxWidth: 900, mx: 'auto' }}>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          Reusable step sequences applied to projects.
+        </Typography>
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
@@ -187,7 +182,7 @@ const WorkflowsPage: React.FC = () => {
           </Box>
         )}
       </Box>
-    </Box>
+    </AdminLayout>
   );
 };
 
