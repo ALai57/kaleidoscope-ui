@@ -64,11 +64,11 @@ describe('HomePage', () => {
     expect(screen.getByText('Andrew Lai')).toBeTruthy();
   });
 
-  it('renders toggle buttons', () => {
+  it('renders the portfolio sections', () => {
     render(<HomePage />, { wrapper: Wrapper });
-    expect(screen.getByText('Personal')).toBeTruthy();
-    expect(screen.getByText('Professional')).toBeTruthy();
-    expect(screen.getByText('CV')).toBeTruthy();
+    expect(screen.getAllByText('About Me').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Experience').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Writing').length).toBeGreaterThan(0);
   });
 
   it('renders recent articles from API', async () => {

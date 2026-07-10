@@ -43,8 +43,6 @@ describe('NavBar', () => {
     expect(handleLogin).toHaveBeenCalled();
   });
 
-  it('shows dark mode toggle button', () => {
-    render(<NavBar />, { wrapper: Wrapper });
-    expect(screen.getByRole('button', { name: /toggle dark mode/i })).toBeTruthy();
-  });
+  // The dark-mode toggle is a global element (DarkModeToggle in main.tsx),
+  // not part of NavBar, so it's not asserted here.
 });

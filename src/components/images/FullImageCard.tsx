@@ -61,6 +61,7 @@ export const FullImageCard: React.FC<FullImageCardProps> = ({
       <CardActionArea sx={{ height: '100%' }} onClick={onClick}>
         <CardMedia
           component="img"
+          id={`full-${image.src}`}
           height={image.height}
           alt=""
           ref={imgRef}
