@@ -50,6 +50,9 @@ const ThemeBootstrap: React.FC = () => {
     const config = normalizeThemeConfig(record.config);
     setThemeParams(config.seed);
     setMode(config.mode);
+    // Set the preset directly (not via setPreset, which would reset the seed to
+    // the preset default and clobber the saved seed we just restored).
+    useThemeStore.setState({ preset: config.preset });
   }, [data, setThemeParams, setMode]);
 
   return null;
@@ -59,7 +62,8 @@ const ThemeBootstrap: React.FC = () => {
  *  take effect app-wide immediately. */
 const ThemedApp: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const themeParams = useThemeStore((s) => s.themeParams);
-  const theme = React.useMemo(() => makeTheme(themeParams), [themeParams]);
+  const preset = useThemeStore((s) => s.preset);
+  const theme = React.useMemo(() => makeTheme(themeParams, preset), [themeParams, preset]);
 
   return (
     <ThemeProvider theme={theme}>

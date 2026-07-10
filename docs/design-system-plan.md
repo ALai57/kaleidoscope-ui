@@ -192,6 +192,53 @@ Still open:
   committed from a dev machine (see [`visual-regression.md`](./visual-regression.md)).
   Two pre-existing broken stories are excluded via `tags: ['!test']`.
 
+## Phase 5 — Design-language presets ("Prism") — IN PROGRESS
+
+Context: a full visual mockup ("Prism" — a dark, monospace, spring-motion
+"mission-control" look) was proposed as a wholesale redesign. Prism is
+*dark-committed and fixed*, which directly conflicts with Phase 2's headline
+goal (user-customizable, contrast-safe theming). **Decision:** rather than
+replace the adaptive engine, express Prism as a **selectable preset** *within*
+it — the engine stays the source of truth; Prism becomes a look you pick. The
+accepted trade-off: Prism loses its dark-committed *purity* (you can run it
+light, or recolor its seed), but its personality (mono voice, spring motion,
+radii, accent) survives and the customization goal is preserved.
+
+What a "preset" is: a named bundle of the **non-color, structural** tokens
+(radius, motion, typography voice) plus a default brand seed and default color
+mode. The live seed and mode still come from the store, so a preset stays fully
+re-colorable.
+
+Landed (vertical slice — proved end-to-end through the NavBar):
+- ✅ **Token model** (`theme/tokens.ts`): added `Motion` (spring easings +
+  durations), a `mono`/`headingFamily` typography voice, and a preset-driven
+  `RadiusScale`. `PRESETS` defines `default` (Classic) and `prism`;
+  `makeTokens(params, mode, presetId)` emits them and stamps `tokens.preset`.
+- ✅ **Adapter/wiring**: `makeTheme(params, presetId)` threads the preset;
+  `ThemeConfig` gained a `preset` field (**bumped to v2**;
+  `normalizeThemeConfig` migrates v1 → preset `default`); `themeStore` gained
+  `preset` + `setPreset` (resets the seed to the preset default);
+  `ThemeBootstrap` restores a saved preset without clobbering the saved seed.
+- ✅ **Prism defaults to dark**: each preset carries a `defaultMode`
+  (`prism: 'dark'`). `useSelectPreset()` is the user-action entry point —
+  it applies the preset (store) *and* its default mode (MUI `useColorScheme`),
+  distinct from bootstrap which restores a user's saved mode.
+- ✅ **NavBar reskin** (`components/layout/NavBar.tsx`): rebuilt to the Prism
+  structure (rotating kaleidoscope wordmark, uppercase-mono links with an
+  accent underline, bordered controls), reading `theme.tokens` + palette with
+  **zero hardcoded color** — so it re-skins from the active preset/seed.
+  Storybook `PrismPreset` story renders it dark; test wrapper uses `makeTheme`.
+
+Still open (roll-out):
+- ⏳ A **preset picker** UI (likely in `UIManagerPage`, calling `useSelectPreset`)
+  — the hook exists but nothing selects a preset at runtime yet.
+- ⏳ Restyle the remaining Prism primitives to consume the tokens: `StatusChip`
+  (pulsing dot), an `EntityCard` on `SurfaceCard`, `StatTile`, the nav rail +
+  top bar, table/inputs/editor treatments. Each follows the NavBar pattern.
+- ⏳ Consider folding `headingFamily` into the global MUI typography adapter (the
+  NavBar consumes `tokens.typography.mono` directly for now, to contain blast
+  radius).
+
 ## Suggested sequencing
 
 Phase 0 and Phase 1 are short and unblock everything else — do those first.

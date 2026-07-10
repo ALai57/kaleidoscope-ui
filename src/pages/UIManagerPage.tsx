@@ -30,7 +30,7 @@ function seedToHex(hue: number, saturation: number, lightness: number): string {
 const UIManagerPage: React.FC = () => {
   const { token, isAuthenticated, userProfile, login, logout } = useAuth();
   const { mode, setMode } = useColorScheme();
-  const { themeParams, setThemeParams } = useThemeStore();
+  const { themeParams, setThemeParams, preset } = useThemeStore();
   // The picker updates its own swatch instantly; defer the (leonardo-driven)
   // theme rebuild until the user pauses dragging.
   const debouncedSetThemeParams = useDebouncedCallback(setThemeParams, 120);
@@ -58,6 +58,7 @@ const UIManagerPage: React.FC = () => {
       version: CURRENT_THEME_VERSION,
       seed: themeParams,
       mode: mode ?? 'system',
+      preset,
     };
     const existing = themes[0];
     if (existing) {

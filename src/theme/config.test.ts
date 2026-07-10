@@ -5,13 +5,30 @@ import { CURRENT_THEME_VERSION } from '../types/theme';
 
 describe('normalizeThemeConfig', () => {
   it('passes through a current-version config', () => {
-    const cfg = { version: 1, seed: { ...BASE_THEME, hue: 10 }, mode: 'dark' as const };
+    const cfg = {
+      version: CURRENT_THEME_VERSION,
+      seed: { ...BASE_THEME, hue: 10 },
+      mode: 'dark' as const,
+      preset: 'prism' as const,
+    };
     expect(normalizeThemeConfig(cfg)).toEqual(cfg);
   });
 
-  it('defaults an invalid mode to system', () => {
-    const cfg = { version: 1, seed: BASE_THEME, mode: 'neon' };
-    expect(normalizeThemeConfig(cfg).mode).toBe('system');
+  it('migrates a v1 config forward, defaulting the preset', () => {
+    const v1 = { version: 1, seed: { ...BASE_THEME, hue: 10 }, mode: 'dark' as const };
+    expect(normalizeThemeConfig(v1)).toEqual({
+      version: CURRENT_THEME_VERSION,
+      seed: v1.seed,
+      mode: 'dark',
+      preset: 'default',
+    });
+  });
+
+  it('defaults an invalid mode to system and an invalid preset to default', () => {
+    const cfg = { version: CURRENT_THEME_VERSION, seed: BASE_THEME, mode: 'neon', preset: 'nope' };
+    const out = normalizeThemeConfig(cfg);
+    expect(out.mode).toBe('system');
+    expect(out.preset).toBe('default');
   });
 
   it('migrates a legacy record whose config WAS the raw ThemeParams', () => {
@@ -20,6 +37,7 @@ describe('normalizeThemeConfig', () => {
       version: CURRENT_THEME_VERSION,
       seed: legacy,
       mode: 'system',
+      preset: 'default',
     });
   });
 

@@ -2,11 +2,13 @@ import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
 import { NavBar } from './NavBar';
+import { makeTheme, BASE_THEME } from '../../theme';
 
-// Create a theme with CssVarsProvider support or use createTheme
-const theme = createTheme();
+// Render under the real design-system theme so components read `theme.tokens`
+// (radius/motion/typography voice), the way they do in the app.
+const theme = makeTheme(BASE_THEME, 'prism');
 
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <MemoryRouter>

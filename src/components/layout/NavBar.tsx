@@ -2,14 +2,14 @@ import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
-import { useTheme } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import { alpha, useTheme } from '@mui/material/styles';
+import type { SxProps, Theme } from '@mui/material/styles';
+import { Link, useLocation } from 'react-router-dom';
 
 export interface NavBarUser {
   firstName?: string | undefined;
@@ -21,12 +21,10 @@ export interface NavBarProps {
   user?: NavBarUser | undefined;
   isAuthenticated?: boolean | undefined;
   login?: (() => void) | undefined;
+  /** Accepted for API compatibility; logout is triggered from the admin area,
+   *  not the nav bar. */
   logout?: (() => void) | undefined;
-  logoSrc?: string | undefined;
 }
-
-const IMAGE_SIZE = { xs: '25px', sm: '60px', md: '80px', lg: '80px', xl: '100px' };
-const ICON_SIZE = { xs: 24, sm: 32, md: 40, lg: 40, xl: 48 };
 
 const ADMIN_ROLE_SUFFIX = ':admin';
 
@@ -36,104 +34,181 @@ const NAV_LINKS = [
   { label: 'Writing', to: '/archive' },
 ];
 
-export const NavBar: React.FC<NavBarProps> = ({
-  user,
-  isAuthenticated = false,
-  login,
-  logoSrc = '/static/images/nav-bar/favicon.svg',
-}) => {
+// The kaleidoscope mark: six wedges + a hub. Wedge fills come from the theme's
+// categorical palette (mode-independent identity hues) so the logo re-colors
+// with the active preset instead of hardcoding brand hex.
+const WEDGE_PATHS = [
+  'M15 15 L15 3 A12 12 0 0 1 25.4 9Z',
+  'M15 15 L25.4 9 A12 12 0 0 1 25.4 21Z',
+  'M15 15 L25.4 21 A12 12 0 0 1 15 27Z',
+  'M15 15 L15 27 A12 12 0 0 1 4.6 21Z',
+  'M15 15 L4.6 21 A12 12 0 0 1 4.6 9Z',
+  'M15 15 L4.6 9 A12 12 0 0 1 15 3Z',
+];
+
+export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, login }) => {
   const theme = useTheme();
+  const { pathname } = useLocation();
 
   const hostname = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
   const adminRole = hostname + ADMIN_ROLE_SUFFIX;
   const roles = new Set(user?.realm_access?.roles ?? []);
   const isSiteAdmin = roles.has(adminRole);
 
-  const primaryLight = (theme.palette as unknown as Record<string, Record<string, string>>)
-    ?.primary?.light;
-  const accentMain = (theme.palette as unknown as Record<string, Record<string, string>>)
-    ?.accent?.main;
+  // Structural tokens (radius/motion/mono voice) drive the Prism look; each has
+  // a non-color fallback so the bar still renders under a bare MUI theme.
+  const tokens = theme.tokens;
+  const mono = tokens?.typography.mono ?? 'monospace';
+  const rSm = tokens?.radius.sm ?? 6;
+  const durFast = tokens?.motion.duration.fast ?? 150;
+  const durBase = tokens?.motion.duration.base ?? 250;
+  const durSlow = tokens?.motion.duration.slow ?? 400;
+  const snap = tokens?.motion.easing.springSnap ?? 'ease';
+  const settle = tokens?.motion.easing.springSettle ?? 'ease';
+  const wedgeColors = tokens?.color.categorical ?? [
+    theme.palette.primary.main,
+    theme.palette.secondary.main,
+    theme.palette.info.main,
+    theme.palette.success.main,
+    theme.palette.warning.main,
+    theme.palette.error.main,
+  ];
 
-  const gradientBg =
-    primaryLight && accentMain
-      ? `linear-gradient(4deg, ${primaryLight} 40%, ${accentMain} 100%)`
-      : undefined;
+  // A nav link: monospace/uppercase with an accent underline that wipes in on
+  // hover and stays lit on the active route.
+  const linkSx = (active: boolean): SxProps<Theme> => ({
+    position: 'relative',
+    fontFamily: mono,
+    fontSize: { xs: '0.7rem', sm: '0.72rem', md: '0.78rem' },
+    fontWeight: 600,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase',
+    color: active ? 'primary.main' : 'text.secondary',
+    textDecoration: 'none',
+    px: 1.5,
+    py: 1,
+    borderRadius: `${rSm}px`,
+    whiteSpace: 'nowrap',
+    transition: `color ${durFast}ms`,
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: 12,
+      right: 12,
+      bottom: 6,
+      height: '2px',
+      borderRadius: '1px',
+      bgcolor: 'primary.main',
+      transform: active ? 'scaleX(1)' : 'scaleX(0)',
+      transformOrigin: 'left',
+      transition: `transform ${durBase}ms ${settle}`,
+    },
+    '&:hover': { color: 'text.primary' },
+    '&:hover::after': { transform: 'scaleX(1)' },
+  });
+
+  const iconBtnSx: SxProps<Theme> = {
+    border: '1px solid',
+    borderColor: 'divider',
+    borderRadius: `${rSm}px`,
+    color: 'text.secondary',
+    transition: `color ${durFast}ms, border-color ${durFast}ms`,
+    '& svg': { transition: `transform ${durBase}ms ${snap}` },
+    '&:hover': { color: 'primary.main', borderColor: 'primary.main' },
+    '&:hover svg': { transform: 'scale(1.12)' },
+  };
 
   return (
     <AppBar
       position="static"
+      elevation={0}
+      color="default"
       sx={{
-        height: { xs: '50px', sm: '80px', md: '100px', lg: '100px', xl: '120px' },
-        background: gradientBg,
+        backgroundColor: 'background.paper',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        backgroundImage: 'none',
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Logo */}
+        <Toolbar disableGutters sx={{ gap: 1, minHeight: { xs: 56, sm: 64 } }}>
+          {/* Wordmark → home */}
           <Box
             component={Link}
             to="/home"
+            aria-label="Home"
             sx={{
-              transition: 'transform 0.3s',
-              display: 'inline-block',
-              '&:hover': { transform: 'scale(1.08)' },
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1.25,
+              textDecoration: 'none',
+              color: 'text.primary',
+              '& .klogo': { transition: `transform ${durSlow}ms ${snap}` },
+              '&:hover .klogo': { transform: 'rotate(120deg)' },
             }}
           >
             <Box
-              component="img"
-              src={logoSrc}
-              alt="Home"
+              component="svg"
+              className="klogo"
+              width={30}
+              height={30}
+              viewBox="0 0 30 30"
+              aria-hidden="true"
+              sx={{ flexShrink: 0 }}
+            >
+              {WEDGE_PATHS.map((d, i) => (
+                <path key={d} d={d} fill={wedgeColors[i % wedgeColors.length]} />
+              ))}
+              <circle cx="15" cy="15" r="4.5" fill={theme.palette.background.default} />
+              <circle
+                cx="15"
+                cy="15"
+                r="4.5"
+                fill="none"
+                stroke={theme.palette.primary.main}
+                strokeWidth="1"
+              />
+            </Box>
+            <Box
+              component="span"
               sx={{
-                maxWidth: '90px',
-                float: 'right',
-                marginTop: { xs: '2px', sm: '10px' },
-                width: IMAGE_SIZE,
-                height: IMAGE_SIZE,
+                display: { xs: 'none', sm: 'inline' },
+                fontFamily: mono,
+                fontWeight: 700,
+                fontSize: { sm: '0.8rem', md: '0.85rem' },
+                letterSpacing: '0.2em',
               }}
-            />
+            >
+              KALEIDOSCOPE
+            </Box>
           </Box>
 
           {/* Spacer */}
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Primary nav links — hidden on xs */}
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: { sm: 0.5, md: 1 } }}>
+          <Box sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 0.5 }}>
             {NAV_LINKS.map(({ label, to }) => (
-              <Button
-                key={to}
-                component={Link}
-                to={to}
-                sx={{
-                  color: 'white',
-                  fontSize: { sm: '0.85rem', md: '0.95rem', lg: '1rem' },
-                  textTransform: 'none',
-                  fontWeight: 500,
-                }}
-              >
+              <Box key={to} component={Link} to={to} sx={linkSx(pathname === to)}>
                 {label}
-              </Button>
+              </Box>
             ))}
           </Box>
 
           {/* Right-side: admin + user */}
-          <Box sx={{ maxHeight: '100%', display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
             {isSiteAdmin && (
               <>
-                <Button
+                <Box
                   component={Link}
                   to="/projects"
-                  sx={{
-                    color: 'white',
-                    fontSize: { sm: '0.85rem', md: '0.95rem', lg: '1rem' },
-                    textTransform: 'none',
-                    fontWeight: 500,
-                  }}
+                  sx={{ ...linkSx(pathname === '/projects'), display: { xs: 'none', sm: 'block' } }}
                 >
                   Projects
-                </Button>
+                </Box>
                 <Tooltip title="Manager">
-                  <IconButton component={Link} to="/manager" color="inherit" aria-label="manager">
-                    <EditIcon sx={{ color: 'white', fontSize: ICON_SIZE }} />
+                  <IconButton component={Link} to="/manager" aria-label="manager" sx={iconBtnSx}>
+                    <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </>
@@ -141,18 +216,39 @@ export const NavBar: React.FC<NavBarProps> = ({
 
             {isAuthenticated ? (
               <Tooltip title={`Logged in as ${user?.firstName ?? 'User'}`}>
-                <IconButton component={Link} to="/admin" color="inherit" aria-label="admin">
+                <IconButton
+                  component={Link}
+                  to="/admin"
+                  aria-label="admin"
+                  sx={{
+                    p: 0.25,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    transition: `border-color ${durFast}ms, transform ${durBase}ms ${snap}`,
+                    '&:hover': { borderColor: 'primary.main', transform: 'scale(1.08)' },
+                  }}
+                >
                   <Avatar
                     alt={user?.firstName ?? 'User'}
                     src="/static/images/nav-bar/user.svg"
-                    sx={{ width: ICON_SIZE, height: ICON_SIZE }}
+                    sx={{ width: 34, height: 34 }}
                   />
                 </IconButton>
               </Tooltip>
             ) : (
               <Tooltip title="Login">
-                <IconButton onClick={login} color="inherit" aria-label="login">
-                  <Avatar alt="Login" sx={{ width: ICON_SIZE, height: ICON_SIZE, bgcolor: 'primary.main' }}>
+                <IconButton onClick={login} aria-label="login" sx={iconBtnSx}>
+                  <Avatar
+                    alt="Login"
+                    sx={{
+                      width: 34,
+                      height: 34,
+                      fontFamily: mono,
+                      fontWeight: 700,
+                      color: 'primary.main',
+                      bgcolor: alpha(theme.palette.primary.main, 0.14),
+                    }}
+                  >
                     ?
                   </Avatar>
                 </IconButton>

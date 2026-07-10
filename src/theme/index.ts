@@ -4,13 +4,13 @@ import type {
   PaletteOptions,
   TypographyVariantsOptions,
 } from '@mui/material/styles';
-import type { ThemeParams } from '../types/theme';
-import { makeTokens, makeBrand } from './tokens';
+import type { ThemeParams, PresetId } from '../types/theme';
+import { makeTokens, makeBrand, DEFAULT_SEED } from './tokens';
 import type { Tokens } from './tokens';
 import { onColor } from './contrast';
 
-export { hsl, makeTokens, makeBrand } from './tokens';
-export type { Tokens, ThemeMode } from './tokens';
+export { hsl, makeTokens, makeBrand, PRESETS, DEFAULT_SEED } from './tokens';
+export type { Tokens, ThemeMode, RadiusScale, Motion, ThemePreset } from './tokens';
 
 // Expose the framework-agnostic token set on the MUI theme so components can
 // read `theme.tokens.*` today, and so the token layer survives a future MUI
@@ -24,13 +24,8 @@ declare module '@mui/material/styles' {
   }
 }
 
-export const BASE_THEME: ThemeParams = {
-  hue: 217,
-  saturation: 65,
-  lightness: 40,
-  angle: 103,
-  theta: 45,
-};
+/** The app's default brand seed — the 'default' preset's seed. */
+export const BASE_THEME: ThemeParams = DEFAULT_SEED;
 
 /**
  * Back-compat alias for the brand-color derivation. Prefer `makeBrand` /
@@ -87,9 +82,9 @@ function typographyFromTokens(tokens: Tokens): TypographyVariantsOptions {
  * color schemes. `theme.tokens` currently carries the light-mode tokens;
  * Phase 2 makes it mode-reactive alongside the adaptive dark-mode recompute.
  */
-export function makeTheme(params: ThemeParams): Theme {
-  const lightTokens = makeTokens(params, 'light');
-  const darkTokens = makeTokens(params, 'dark');
+export function makeTheme(params: ThemeParams, presetId: PresetId = 'default'): Theme {
+  const lightTokens = makeTokens(params, 'light', presetId);
+  const darkTokens = makeTokens(params, 'dark', presetId);
 
   return createTheme({
     colorSchemes: {

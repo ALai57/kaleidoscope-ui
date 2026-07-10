@@ -8,9 +8,10 @@ const mockTheme: ThemeRecord = {
   id: 't1',
   display_name: 'Default',
   config: {
-    version: 1,
+    version: 2,
     seed: { hue: 217, saturation: 65, lightness: 40, angle: 103, theta: 45 },
     mode: 'system',
+    preset: 'default',
   },
 };
 

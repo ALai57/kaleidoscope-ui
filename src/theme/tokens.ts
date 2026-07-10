@@ -1,4 +1,4 @@
-import type { ThemeParams } from '../types/theme';
+import type { ThemeParams, PresetId, ColorModePreference } from '../types/theme';
 import { adaptiveColor, WCAG_AA } from './contrast';
 
 /**
@@ -15,8 +15,46 @@ import { adaptiveColor, WCAG_AA } from './contrast';
 
 export type ThemeMode = 'light' | 'dark';
 
+/** Corner-radius scale, in px. Sourced from the active preset. */
+export interface RadiusScale {
+  sm: number;
+  md: number;
+  lg: number;
+  pill: number;
+}
+
+/**
+ * Motion tokens — durations (ms) and easing curves. This is where a preset's
+ * *personality* lives: Prism is spring physics (overshoot-and-settle), the
+ * default preset is standard material easing. Components read these instead of
+ * hardcoding transition curves.
+ */
+export interface Motion {
+  duration: { fast: number; base: number; slow: number };
+  easing: {
+    /** overshoots ~12% then snaps back — icons, presses */
+    springSnap: string;
+    /** gentle overshoot — cards, lifts */
+    springSettle: string;
+    /** decelerate-out */
+    easeOut: string;
+    /** symmetric standard */
+    standard: string;
+  };
+}
+
+/** Typography families + which family headings/labels speak in. Prism uses a
+ *  monospace "data voice"; the default preset is all-sans. */
+export interface TypographyFamilies {
+  sans: string;
+  mono: string;
+  headingFamily: 'sans' | 'mono';
+}
+
 export interface Tokens {
   mode: ThemeMode;
+  /** Which design-language preset produced this token set. */
+  preset: PresetId;
   color: {
     /** Seed-derived brand colors. `tertiary` finally has a home (it was
      *  computed but dropped before the token layer existed). */
@@ -34,12 +72,19 @@ export interface Tokens {
   };
   /** Spacing scale, in px, on MUI's 8px base unit. */
   space: { xs: number; sm: number; md: number; lg: number; xl: number; xxl: number };
-  /** Corner radius, in px. */
-  radius: { sm: number; md: number; lg: number; pill: number };
+  /** Corner radius, in px. Preset-driven. */
+  radius: RadiusScale;
+  /** Motion tokens. Preset-driven. */
+  motion: Motion;
   /** Elevation as CSS box-shadow strings, low-to-high. */
   elevation: { none: string; sm: string; md: string; lg: string };
   typography: {
+    /** Base (body) family — the preset's sans stack. */
     fontFamily: string;
+    /** Monospace stack — the data voice. */
+    mono: string;
+    /** Which family headings/labels use in this preset. */
+    headingFamily: 'sans' | 'mono';
     /** Type scale — each step is a CSS-ready set of properties. */
     scale: Record<TypographyStep, TypeStyle>;
   };
@@ -79,7 +124,82 @@ export function makeBrand(params: ThemeParams): Tokens['color']['brand'] {
 }
 
 const SPACE = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
-const RADIUS = { sm: 4, md: 8, lg: 16, pill: 9999 } as const;
+
+const SANS = '"Roboto", "Helvetica", "Arial", sans-serif';
+const MONO = 'ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace';
+
+/**
+ * A design-language preset: a named bundle of the *non-color, structural* tokens
+ * (radius, motion, typography voice) plus a default brand seed. The live seed
+ * and color mode still come from the store, so a preset stays fully re-colorable
+ * — Prism is a *look you can select*, not a fixed skin. Adding a preset touches
+ * this file (its tokens) and the picker; components read the tokens.
+ */
+export interface ThemePreset {
+  id: PresetId;
+  label: string;
+  /** The brand seed this preset ships with (a starting point; user-recolorable). */
+  seed: ThemeParams;
+  /** The color mode to apply when a user selects this preset. Prism reads best
+   *  on a dark plane, so it defaults to dark; the user can still toggle after. */
+  defaultMode: ColorModePreference;
+  radius: RadiusScale;
+  motion: Motion;
+  typography: TypographyFamilies;
+}
+
+/** The app's original brand seed (blue). */
+export const DEFAULT_SEED: ThemeParams = {
+  hue: 217,
+  saturation: 65,
+  lightness: 40,
+  angle: 103,
+  theta: 45,
+};
+
+/** Prism's cyan interactive accent (~#45D6E8), expressed as a re-colorable seed. */
+const PRISM_SEED: ThemeParams = { hue: 186, saturation: 72, lightness: 47, angle: 103, theta: 45 };
+
+const STANDARD_MOTION: Motion = {
+  duration: { fast: 150, base: 250, slow: 400 },
+  easing: {
+    springSnap: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    springSettle: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    easeOut: 'cubic-bezier(0.0, 0, 0.2, 1)',
+    standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+};
+
+const PRISM_MOTION: Motion = {
+  duration: { fast: 120, base: 300, slow: 450 },
+  easing: {
+    springSnap: 'cubic-bezier(0.34, 1.72, 0.44, 1)',
+    springSettle: 'cubic-bezier(0.22, 1.24, 0.36, 1)',
+    easeOut: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+};
+
+export const PRESETS: Record<PresetId, ThemePreset> = {
+  default: {
+    id: 'default',
+    label: 'Classic',
+    seed: DEFAULT_SEED,
+    defaultMode: 'system',
+    radius: { sm: 4, md: 8, lg: 16, pill: 9999 },
+    motion: STANDARD_MOTION,
+    typography: { sans: SANS, mono: MONO, headingFamily: 'sans' },
+  },
+  prism: {
+    id: 'prism',
+    label: 'Prism',
+    seed: PRISM_SEED,
+    defaultMode: 'dark',
+    radius: { sm: 6, md: 10, lg: 14, pill: 9999 },
+    motion: PRISM_MOTION,
+    typography: { sans: SANS, mono: MONO, headingFamily: 'mono' },
+  },
+};
 
 /**
  * Categorical/identity palette — the single source of the distinct hues used to
@@ -170,7 +290,12 @@ const DARK_STATUS = { success: '#66bb6a', warning: '#ffa726', error: '#f44336', 
  * leonardo-contrast-colors — replacing the old naive `100 - lightness` flip, so
  * dark mode is contrast-checked rather than merely inverted.
  */
-export function makeTokens(params: ThemeParams, mode: ThemeMode = 'light'): Tokens {
+export function makeTokens(
+  params: ThemeParams,
+  mode: ThemeMode = 'light',
+  presetId: PresetId = 'default'
+): Tokens {
+  const preset = PRESETS[presetId];
   const neutrals = mode === 'dark' ? DARK_NEUTRALS : LIGHT_NEUTRALS;
   const status = mode === 'dark' ? DARK_STATUS : LIGHT_STATUS;
 
@@ -186,6 +311,7 @@ export function makeTokens(params: ThemeParams, mode: ThemeMode = 'light'): Toke
 
   return {
     mode,
+    preset: presetId,
     color: {
       brand,
       status: { ...status },
@@ -195,10 +321,13 @@ export function makeTokens(params: ThemeParams, mode: ThemeMode = 'light'): Toke
       categorical: CATEGORICAL_PALETTE,
     },
     space: { ...SPACE },
-    radius: { ...RADIUS },
+    radius: { ...preset.radius },
+    motion: preset.motion,
     elevation: { ...neutrals.elevation },
     typography: {
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: preset.typography.sans,
+      mono: preset.typography.mono,
+      headingFamily: preset.typography.headingFamily,
       scale: TYPE_SCALE,
     },
   };

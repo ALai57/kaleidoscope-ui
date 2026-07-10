@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { BASE_THEME } from './index';
-import { hsl, makeBrand, makeTokens } from './tokens';
+import { hsl, makeBrand, makeTokens, PRESETS } from './tokens';
 import { contrastRatio, WCAG_AA_LARGE } from './contrast';
 
 describe('hsl', () => {
@@ -58,5 +58,22 @@ describe('makeTokens', () => {
       contrastRatio(dark.color.brand.primary, dark.color.surface.base)
     ).toBeGreaterThanOrEqual(WCAG_AA_LARGE);
     expect(dark.color.surface.base).not.toBe(light.color.surface.base);
+  });
+
+  it('applies the preset’s structural tokens (radius/motion/type voice)', () => {
+    const prism = makeTokens(BASE_THEME, 'light', 'prism');
+    const classic = makeTokens(BASE_THEME, 'light', 'default');
+    expect(prism.preset).toBe('prism');
+    expect(prism.radius.sm).toBe(PRESETS.prism.radius.sm);
+    expect(prism.radius.sm).not.toBe(classic.radius.sm);
+    expect(prism.typography.headingFamily).toBe('mono');
+    expect(prism.motion.easing.springSnap).toBe(PRESETS.prism.motion.easing.springSnap);
+  });
+});
+
+describe('PRESETS', () => {
+  it('defaults Prism to dark mode and Classic to system', () => {
+    expect(PRESETS.prism.defaultMode).toBe('dark');
+    expect(PRESETS.default.defaultMode).toBe('system');
   });
 });
