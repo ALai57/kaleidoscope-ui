@@ -27,6 +27,10 @@ export interface Tokens {
     surface: { base: string; raised: string; sunken: string };
     border: { subtle: string; strong: string };
     text: { primary: string; secondary: string; disabled: string };
+    /** Categorical/identity palette — an ordered set of distinct, mode-
+     *  independent hues for distinguishing entities with no inherent semantic
+     *  color (agent avatars, personas, content tags). */
+    categorical: readonly string[];
   };
   /** Spacing scale, in px, on MUI's 8px base unit. */
   space: { xs: number; sm: number; md: number; lg: number; xl: number; xxl: number };
@@ -76,6 +80,40 @@ export function makeBrand(params: ThemeParams): Tokens['color']['brand'] {
 
 const SPACE = { xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48 } as const;
 const RADIUS = { sm: 4, md: 8, lg: 16, pill: 9999 } as const;
+
+/**
+ * Categorical/identity palette — the single source of the distinct hues used to
+ * distinguish entities (agent avatars, personas, content tags). Ordered so
+ * consumers can round-robin through it; named indices below keep semantic
+ * assignments readable. Exported as a plain constant so non-React code (e.g.
+ * agent persona lookups) can consume it too.
+ */
+export const CATEGORICAL_PALETTE = [
+  '#0891b2', // 0 teal
+  '#7c3aed', // 1 purple
+  '#0369a1', // 2 blue
+  '#059669', // 3 green
+  '#dc2626', // 4 red
+  '#d97706', // 5 amber
+  '#9333ea', // 6 violet
+  '#db2777', // 7 pink
+  '#0ea5e9', // 8 sky
+  '#6b7280', // 9 grey
+] as const;
+
+/** Semantic picks from CATEGORICAL_PALETTE, for readable assignments. */
+export const CATEGORICAL = {
+  teal: CATEGORICAL_PALETTE[0],
+  purple: CATEGORICAL_PALETTE[1],
+  blue: CATEGORICAL_PALETTE[2],
+  green: CATEGORICAL_PALETTE[3],
+  red: CATEGORICAL_PALETTE[4],
+  amber: CATEGORICAL_PALETTE[5],
+  violet: CATEGORICAL_PALETTE[6],
+  pink: CATEGORICAL_PALETTE[7],
+  sky: CATEGORICAL_PALETTE[8],
+  grey: CATEGORICAL_PALETTE[9],
+} as const;
 
 const TYPE_SCALE: Record<TypographyStep, TypeStyle> = {
   h1: { fontSize: '2.5rem', fontWeight: 700, lineHeight: 1.2 },
@@ -154,6 +192,7 @@ export function makeTokens(params: ThemeParams, mode: ThemeMode = 'light'): Toke
       surface: { ...neutrals.surface },
       border: { ...neutrals.border },
       text: { ...neutrals.text },
+      categorical: CATEGORICAL_PALETTE,
     },
     space: { ...SPACE },
     radius: { ...RADIUS },
