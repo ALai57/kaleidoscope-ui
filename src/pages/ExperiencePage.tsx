@@ -31,7 +31,7 @@ const ExperiencePage: React.FC = () => {
         <Container maxWidth="lg" sx={{ py: 6 }}>
           {/* Hero — page title, intro, and quick-facts read as one unit: prose on
               the left, a compact fact rail on the right (stacked on mobile). */}
-          <SectionHeading eyebrow="// CAREER" title="Experience" level="h1" sx={{ mb: 4 }} />
+          <SectionHeading title="Experience" level="h1" sx={{ mb: 4 }} />
           <Grid container spacing={4} alignItems="flex-start" sx={{ mb: 10 }}>
             <Grid item xs={12} md={7}>
               <Typography variant="body1" sx={{ mb: 2 }}>
@@ -55,12 +55,12 @@ const ExperiencePage: React.FC = () => {
             </Grid>
           </Grid>
 
-          <SectionHeading eyebrow="// TOOLKIT" title="Skills" level="h3" sx={{ mb: 3 }} />
+          <SectionHeading title="Skills" level="h3" sx={{ mb: 3 }} />
           <Grid container spacing={2} justifyContent="center" sx={{ mb: 10 }}>
             <SkillsSection />
           </Grid>
 
-          <SectionHeading eyebrow="// TIMELINE" title="Career History" level="h3" sx={{ mb: 4 }} />
+          <SectionHeading title="Career History" level="h3" sx={{ mb: 4 }} />
           <Timeline />
         </Container>
       </Box>

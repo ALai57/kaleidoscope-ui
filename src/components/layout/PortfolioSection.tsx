@@ -115,7 +115,6 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
   return (
     <Box sx={{ width: '100%', py: 2 }}>
       <SectionHeading
-        eyebrow="// WRITING"
         title="Recent Writing"
         action={
           <Link component={RouterLink} to="/archive" variant="body2">

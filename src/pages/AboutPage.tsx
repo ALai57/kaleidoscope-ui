@@ -31,7 +31,7 @@ const AboutPage: React.FC = () => {
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
 
       <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
-        <SectionHeading eyebrow="// PROFILE" title="About" level="h3" sx={{ mb: 4 }} />
+        <SectionHeading title="About" level="h3" sx={{ mb: 4 }} />
 
         <Grid container spacing={4} alignItems="flex-start">
           <Grid item xs={12} sm={8}>
