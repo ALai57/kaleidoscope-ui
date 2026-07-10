@@ -7,7 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import type { Workflow } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
-import { SurfaceCard } from '../common/SurfaceCard';
+import { EntityCard } from '../common/EntityCard';
 
 interface WorkflowCardProps {
   workflow: Workflow;
@@ -16,64 +16,58 @@ interface WorkflowCardProps {
   archiving: boolean;
 }
 
-const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive, archiving }) => (
-  <SurfaceCard
-    sx={{
-      p: 2,
-      display: 'flex',
-      alignItems: 'center',
-      gap: 2,
-      opacity: workflow.status === 'archived' ? 0.6 : 1,
-    }}
-  >
-    <Box sx={{ flex: 1, minWidth: 0 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.25 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }} noWrap>
-          {workflow.name}
-        </Typography>
-        <StatusChip
-          status={workflow.status}
-          label={workflow.status}
-          variant="filled"
-          sx={{ textTransform: 'capitalize', flexShrink: 0 }}
-        />
-        {workflow.is_default && (
-          <Chip label="Default" size="small" variant="outlined" sx={{ flexShrink: 0 }} />
-        )}
-      </Box>
+const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive, archiving }) => {
+  const stepCount = (workflow.steps ?? []).length;
+  return (
+    <EntityCard
+      title={workflow.name}
+      sx={{ opacity: workflow.status === 'archived' ? 0.6 : 1 }}
+      headerAction={
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <StatusChip
+            status={workflow.status}
+            label={workflow.status}
+            variant="filled"
+            sx={{ textTransform: 'capitalize' }}
+          />
+          {workflow.is_default && <Chip label="Default" size="small" variant="outlined" />}
+        </Box>
+      }
+      actions={
+        <>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={() => onEdit(workflow.id)}
+          >
+            Edit
+          </Button>
+          {!workflow.is_default && workflow.status !== 'archived' && (
+            <Button
+              size="small"
+              variant="outlined"
+              color="warning"
+              startIcon={<ArchiveIcon />}
+              onClick={() => onArchive(workflow.id)}
+              disabled={!!archiving}
+            >
+              Archive
+            </Button>
+          )}
+        </>
+      }
+    >
       {workflow.description && (
         <Typography variant="body2" color="text.secondary" noWrap>
           {workflow.description}
         </Typography>
       )}
       <Typography variant="caption" color="text.disabled">
-        {(workflow.steps ?? []).length} step{(workflow.steps ?? []).length !== 1 ? 's' : ''}
+        {stepCount} step{stepCount !== 1 ? 's' : ''}
       </Typography>
-    </Box>
-
-    <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
-      <Button
-        size="small"
-        variant="outlined"
-        startIcon={<EditIcon />}
-        onClick={() => onEdit(workflow.id)}
-      >
-        Edit
-      </Button>
-      {!workflow.is_default && workflow.status !== 'archived' && (
-        <Button
-          size="small"
-          variant="outlined"
-          color="warning"
-          startIcon={<ArchiveIcon />}
-          onClick={() => onArchive(workflow.id)}
-          disabled={!!archiving}
-        >
-          Archive
-        </Button>
-      )}
-    </Box>
-  </SurfaceCard>
-);
+    </EntityCard>
+  );
+};
 
 export default WorkflowCard;
