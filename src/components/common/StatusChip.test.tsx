@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { StatusChip, statusToTone } from './StatusChip';
+import { StatusChip, statusToTone, isLiveTone } from './StatusChip';
 
 describe('statusToTone', () => {
   it('maps domain statuses to canonical tones', () => {
@@ -34,5 +34,23 @@ describe('StatusChip', () => {
   it('falls back to the raw status text when neutral and no label', () => {
     render(<StatusChip status="banana" />);
     expect(screen.getByText('banana')).toBeInTheDocument();
+  });
+
+  it('still renders the label text when a dot is shown', () => {
+    render(<StatusChip status="running" dot />);
+    expect(screen.getByText('In progress')).toBeInTheDocument();
+  });
+});
+
+describe('isLiveTone', () => {
+  it('treats in-flight (info) work as live', () => {
+    expect(isLiveTone('info')).toBe(true);
+  });
+
+  it('treats settled tones as not live', () => {
+    expect(isLiveTone('success')).toBe(false);
+    expect(isLiveTone('error')).toBe(false);
+    expect(isLiveTone('pending')).toBe(false);
+    expect(isLiveTone('neutral')).toBe(false);
   });
 });

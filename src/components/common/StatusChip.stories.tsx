@@ -49,3 +49,19 @@ export const DomainStatuses: Story = {
 export const Filled: Story = {
   args: { status: 'completed', variant: 'filled' },
 };
+
+/**
+ * With a leading status dot. Live/in-flight tones (e.g. `running`) pulse using
+ * the active preset's motion; settled tones show a static dot.
+ */
+export const WithDot: Story = {
+  render: (args) => (
+    <Stack direction="row" spacing={1} flexWrap="wrap">
+      <StatusChip {...args} dot status="running" />
+      <StatusChip {...args} dot status="completed" />
+      <StatusChip {...args} dot status="failed" />
+      <StatusChip {...args} dot status="awaiting_input" />
+      <StatusChip {...args} dot status="pending" />
+    </Stack>
+  ),
+};

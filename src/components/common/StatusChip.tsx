@@ -1,4 +1,5 @@
 import React from 'react';
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import type { ChipProps } from '@mui/material/Chip';
 
@@ -85,6 +86,48 @@ export function statusToTone(status: string): StatusTone {
   return STATUS_TONE[status.trim().toLowerCase()] ?? 'neutral';
 }
 
+/** Tones that represent live, in-flight work — their status dot pulses. */
+const LIVE_TONES: ReadonlySet<StatusTone> = new Set(['info']);
+
+/** Whether a tone represents active work (drives the pulsing dot). */
+export function isLiveTone(tone: StatusTone): boolean {
+  return LIVE_TONES.has(tone);
+}
+
+/**
+ * A leading status dot. Inherits the chip's tone color via `currentColor`, so
+ * it stays mode-safe and in sync with the Chip's palette color. For live tones
+ * it pulses using the active preset's motion tokens (Prism → spring timing);
+ * a non-token fallback keeps it animating under a bare MUI theme.
+ */
+const StatusDot: React.FC<{ live: boolean }> = ({ live }) => (
+  <Box
+    component="span"
+    aria-hidden="true"
+    sx={(theme) => {
+      const period = theme.tokens ? theme.tokens.motion.duration.slow * 4 : 1600;
+      const easing = theme.tokens?.motion.easing.easeOut ?? 'ease-out';
+      return {
+        width: 7,
+        height: 7,
+        borderRadius: '50%',
+        flexShrink: 0,
+        bgcolor: 'currentColor',
+        ...(live && {
+          // A ring that expands from the dot's own color out to transparent —
+          // no alpha() needed since `currentColor` → `transparent` fades it.
+          animation: `status-pulse ${period}ms ${easing} infinite`,
+          '@keyframes status-pulse': {
+            '0%': { boxShadow: '0 0 0 0 currentColor' },
+            '70%': { boxShadow: '0 0 0 5px transparent' },
+            '100%': { boxShadow: '0 0 0 0 transparent' },
+          },
+        }),
+      };
+    }}
+  />
+);
+
 export interface StatusChipProps {
   /** A domain status (e.g. "in_progress", "completed") or a tone directly. */
   status: string;
@@ -93,6 +136,8 @@ export interface StatusChipProps {
   size?: 'small' | 'medium';
   variant?: 'filled' | 'outlined';
   icon?: React.ReactElement;
+  /** Shows a leading status dot; it pulses for live/in-flight tones (Prism look). */
+  dot?: boolean;
   /** Passed through to the underlying Chip for one-off layout tweaks. */
   sx?: ChipProps['sx'];
 }
@@ -103,13 +148,23 @@ export const StatusChip: React.FC<StatusChipProps> = ({
   size = 'small',
   variant = 'outlined',
   icon,
+  dot = false,
   sx,
 }) => {
   const tone = statusToTone(status);
   const text = label ?? (TONE_LABEL[tone] || status);
+  const content =
+    dot && !icon ? (
+      <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75 }}>
+        <StatusDot live={isLiveTone(tone)} />
+        {text}
+      </Box>
+    ) : (
+      text
+    );
   return (
     <Chip
-      label={text}
+      label={content}
       color={TONE_COLOR[tone]}
       size={size}
       variant={variant}
