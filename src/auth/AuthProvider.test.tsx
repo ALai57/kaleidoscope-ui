@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { AuthProvider, AuthContext } from './AuthProvider';
 import type { AuthContextValue } from './AuthProvider';
 
@@ -30,6 +31,16 @@ const authConfig = {
   audience: 'https://test-api',
 };
 
+function renderWithProviders(ui: React.ReactNode, client?: QueryClient) {
+  const queryClient =
+    client ?? new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider authConfig={authConfig}>{ui}</AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
 const TestConsumer: React.FC = () => {
   const ctx = React.useContext(AuthContext) as AuthContextValue;
   return (
@@ -55,11 +66,7 @@ describe('AuthProvider', () => {
   it('starts as unauthenticated when Auth0 reports not authenticated', () => {
     mockIsAuthenticated = false;
 
-    render(
-      <AuthProvider authConfig={authConfig}>
-        <TestConsumer />
-      </AuthProvider>
-    );
+    renderWithProviders(<TestConsumer />);
 
     expect(screen.getByTestId('auth').textContent).toBe('unauthenticated');
     expect(screen.getByTestId('token').textContent).toBe('no-token');
@@ -69,11 +76,7 @@ describe('AuthProvider', () => {
     mockIsAuthenticated = true;
     mockUser = { email: 'a@b.com', given_name: 'Alice', family_name: 'Smith' };
 
-    render(
-      <AuthProvider authConfig={authConfig}>
-        <TestConsumer />
-      </AuthProvider>
-    );
+    renderWithProviders(<TestConsumer />);
 
     await waitFor(() => {
       expect(screen.getByTestId('auth').textContent).toBe('authenticated');
@@ -90,11 +93,7 @@ describe('AuthProvider', () => {
       realm_access: { roles: ['andrewslai:admin'] },
     };
 
-    render(
-      <AuthProvider authConfig={authConfig}>
-        <TestConsumer />
-      </AuthProvider>
-    );
+    renderWithProviders(<TestConsumer />);
 
     await waitFor(() => {
       expect(screen.getByTestId('email').textContent).toBe('user@example.com');
@@ -105,11 +104,7 @@ describe('AuthProvider', () => {
   it('calls loginWithRedirect when login() is invoked', async () => {
     mockIsAuthenticated = false;
 
-    render(
-      <AuthProvider authConfig={authConfig}>
-        <TestConsumer />
-      </AuthProvider>
-    );
+    renderWithProviders(<TestConsumer />);
 
     await act(async () => {
       await userEvent.click(screen.getByText('login'));
@@ -121,16 +116,56 @@ describe('AuthProvider', () => {
   it('calls auth0Logout when logout() is invoked', async () => {
     mockIsAuthenticated = false;
 
-    render(
-      <AuthProvider authConfig={authConfig}>
-        <TestConsumer />
-      </AuthProvider>
-    );
+    renderWithProviders(<TestConsumer />);
 
     await act(async () => {
       await userEvent.click(screen.getByText('logout'));
     });
 
     expect(mockLogout).toHaveBeenCalledOnce();
+  });
+
+  // Regression: on the redirect back from login, isAuthenticated flips true before
+  // the token resolves. An auth-dependent query that fires during that gap fetches
+  // anonymously (public data only) and — because its queryKey never changes — will
+  // not refetch on its own. The provider must invalidate the cache once the token
+  // arrives so the query refetches the content the user has access to.
+  it('refetches auth-dependent queries once the token resolves after login', async () => {
+    mockIsAuthenticated = true;
+    mockUser = { email: 'a@b.com' };
+
+    // Defer the token to reproduce the async gap between auth and token.
+    let resolveToken: (t: string) => void = () => {};
+    mockGetAccessTokenSilently.mockReturnValue(
+      new Promise<string>((res) => {
+        resolveToken = res;
+      })
+    );
+
+    const ArticlesConsumer: React.FC = () => {
+      const ctx = React.useContext(AuthContext) as AuthContextValue;
+      const { data = [] } = useQuery({
+        queryKey: ['articles'],
+        // Mirrors real pages: the token lives in the queryFn closure, not the key.
+        queryFn: () => Promise.resolve(ctx.token ? ['private', 'public'] : ['public']),
+      });
+      return <span data-testid="articles">{data.join(',')}</span>;
+    };
+
+    renderWithProviders(<ArticlesConsumer />);
+
+    // Query fired during the auth gap → anonymous result, public only.
+    await waitFor(() => {
+      expect(screen.getByTestId('articles').textContent).toBe('public');
+    });
+
+    // Token arrives; the cache invalidation should refetch with it available.
+    await act(async () => {
+      resolveToken('test-token');
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('articles').textContent).toBe('private,public');
+    });
   });
 });
