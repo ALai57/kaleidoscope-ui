@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import { Box, Modal } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { extensions } from './extensions';
 import { EditorToolbar } from './EditorToolbar';
 import { ImageBrowser } from '@/components/images/ImageBrowser';
@@ -121,7 +122,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           open={imageBrowserOpen}
           onClose={() => setImageBrowserOpen(false)}
           slotProps={{
-            backdrop: { style: { backgroundColor: 'rgba(0, 0, 40, 0.8)' } },
+            backdrop: {
+              sx: (theme) => ({ backgroundColor: alpha(theme.palette.common.black, 0.8) }),
+            },
           }}
         >
           <Box sx={modalBoxStyle}>
