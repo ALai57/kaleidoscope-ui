@@ -9,6 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { alpha } from '@mui/material/styles';
 import type { ProjectBrief } from '../../types/workflow';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
@@ -68,26 +69,27 @@ function computeDiff(before: string, after: string): DiffLine[] {
 
 // ── Diff line rendering ───────────────────────────────────────────────────
 
-const BG: Record<DiffKind, string> = {
-  equal: 'transparent',
-  added: 'rgba(34, 197, 94, 0.12)',
-  removed: 'rgba(239, 68, 68, 0.12)',
+// Diff-line background tone; resolved to a token-derived color in the row's sx.
+const TONE: Record<DiffKind, 'success' | 'error' | null> = {
+  equal: null,
+  added: 'success',
+  removed: 'error',
 };
 
 const DiffLineRow: React.FC<{ line: DiffLine }> = ({ line }) => (
   <Box
-    sx={{
+    sx={(theme) => ({
       display: 'flex',
       gap: 1,
       px: 1,
       py: 0.15,
-      bgcolor: BG[line.kind],
+      bgcolor: TONE[line.kind] ? alpha(theme.palette[TONE[line.kind]!].main, 0.12) : 'transparent',
       fontFamily: 'monospace',
       fontSize: '0.78rem',
       lineHeight: 1.6,
       whiteSpace: 'pre-wrap',
       wordBreak: 'break-word',
-    }}
+    })}
   >
     <Box sx={{ width: 14, flexShrink: 0, color: line.kind === 'added' ? 'success.main' : line.kind === 'removed' ? 'error.main' : 'transparent', display: 'flex', alignItems: 'flex-start', pt: 0.1 }}>
       {line.kind === 'added' && <AddIcon sx={{ fontSize: 12 }} />}
