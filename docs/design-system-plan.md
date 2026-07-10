@@ -258,7 +258,7 @@ Still open (roll-out):
   NavBar/primitives consume `tokens.typography.mono` directly for now, to contain
   blast radius).
 
-## Phase 6 — Public site (marketing pages) — PROPOSED
+## Phase 6 — Public site (marketing pages) — IN PROGRESS
 
 The admin/workflow surfaces now speak the design system, but the **public pages
 a visitor actually lands on** — `HomePage`, `AboutPage`, `ExperiencePage` (and
@@ -299,46 +299,45 @@ right in Classic-light and Prism-dark from the same code.
 
 ### New primitive (the unifier)
 
-- **`SectionHeading`** (`common/SectionHeading.tsx`) — a mono eyebrow (e.g.
+- ✅ **`SectionHeading`** (`common/SectionHeading.tsx`) — a mono eyebrow (e.g.
   `// PROFILE`) + a heading in the heading voice + an accent underline that
   echoes the NavBar link motif. This is the single element that makes all three
-  pages read as one system; every page below leans on it. Story + test, same as
-  the other primitives.
+  pages read as one system; every page below leans on it. Shipped with story +
+  test.
 
 ### Page-by-page
 
-**HomePage**
-- *Hero*: drop the hardcoded gradient/`white`. Back it with a token surface
-  (`surface.sunken`, or a seed-derived token gradient), render the name in the
-  heading voice, the tagline as mono-uppercase letter-spaced text (NavBar-link
-  style), and the CTAs with the NavBar's bordered/accent-underline button idiom
-  (accent border + spring hover) instead of `bgcolor: 'white'`. Portrait gets
-  `radius.lg` + a token elevation.
-- *Feature cards* → **`EntityCard`** (`card` variant, `interactive`,
-  `component={RouterLink}`): icon in the `avatar` slot, `title`, description as
-  body. Inherits spring hover + token radius for free.
-- *PortfolioSection* → cards on **`SurfaceCard interactive`** (or `EntityCard`);
-  date as subtitle, tags as tokenized chips; "Recent Writing" via
-  `SectionHeading`; "View all →" as a mono link.
+**HomePage** — ✅ done
+- *Hero*: dropped the hardcoded gradient/`white` for a seed-derived accent wash
+  over the page surface; name in the heading voice, role line as a mono-uppercase
+  eyebrow, CTAs with mono labels + spring hover; portrait on `radius.lg` + a token
+  elevation.
+- *Feature cards* → **`EntityCard`** (`interactive`), icon in the `avatar` slot,
+  description as body. `EntityCard`/`SurfaceCard` are plain FCs without a
+  RouterLink `to` prop, so the card is **wrapped in `RouterLink`** rather than
+  rendered `as` one (applies to any link-card migration).
+- *PortfolioSection* → cards on **`SurfaceCard interactive`**; "Recent Writing"
+  via `SectionHeading` with a "View all →" action.
 
-**AboutPage**
+**AboutPage** — ⏳ pending
 - "About" → `SectionHeading` with a mono eyebrow. Body prose stays (readability).
   Image → `radius.lg` + token elevation. Optionally surface the "outside of work"
   interests (cooking, Spanish, board games, tango) as tokenized chips to echo the
   mission-control vibe.
 
-**ExperiencePage**
+**ExperiencePage** — ✅ done
 - Section headings ("Experience", "Skills", "Career History") → `SectionHeading`,
   replacing the bare `<Divider>`s.
-- The role intro is a natural fit for a **`StatTile`** strip (e.g. Role · Company
-  · Focus) — reusing the mission-control metric primitive on a résumé.
-- `SkillsSection`'s `Paper` → `SurfaceCard`; section titles in the heading voice.
-- *Timeline* (the biggest offender): restyle `TimelineEntry` — `TimelineDot`
-  from hardcoded `black` → `primary.main`/token; dates + org headings in the
-  heading voice; wrap each entry's content in a `SurfaceCard`; replace raw `<a>`
-  / `<br><br>` with MUI `Link` + spacing; connector color from tokens.
+- The role intro gained a **`StatTile`** quick-facts strip (Role · Company ·
+  Focus) — the mission-control metric primitive on a résumé.
+- `SkillsSection`'s `Paper` → `SurfaceCard` (+ a smoke test it lacked); section
+  titles in the heading voice.
+- *Timeline*: restyled `TimelineEntry` — `TimelineDot` from hardcoded `black` →
+  token surface + `primary.main` outline; dates + org headings in the heading
+  voice; each entry's content on a `SurfaceCard`; raw `<a>` / `<br><br>` →
+  MUI `Link` + spacing; connector color from the `divider` token.
 
-**Footer**
+**Footer** — ⏳ pending
 - Tokenize: `surface.sunken` bg + `text.secondary`, and mono-uppercase nav links
   echoing the NavBar — so it re-skins with mode/preset instead of being a fixed
   dark slab.
@@ -348,14 +347,16 @@ right in Classic-light and Prism-dark from the same code.
 `SectionHeading` first (unblocks all three pages), then HomePage (hero + cards),
 then ExperiencePage (Timeline is the largest lift), then AboutPage, then Footer.
 Each ships as a vertical slice with a story + test, like the Phase 5 slices.
+Progress: `SectionHeading` ✅, HomePage ✅, ExperiencePage ✅; **AboutPage** and
+**Footer** remain.
 
-### Open decision
+### Resolved decision
 
-Prism is *spiritually* dark-committed but the engine is preset-driven. Should the
-public `kaleidoscope.pub` tenant **default to** the Prism look, or stay Classic
-until a visitor selects Prism? This phase assumes the latter (token-consuming, so
-it's correct under either) and defers the default-preset-per-tenant question to a
-product call — it only needs `ThemeBootstrap` to seed a per-tenant default.
+Prism is *spiritually* dark-committed but the engine is preset-driven. **Decision:
+`kaleidoscope.pub` stays Classic for now** — a visitor gets Prism only by
+selecting it. All of Phase 6 is token-consuming, so it renders correctly under
+either preset today; flipping a tenant's default later is just seeding a
+per-tenant preset in `ThemeBootstrap`, no page changes needed.
 
 ## Suggested sequencing
 
