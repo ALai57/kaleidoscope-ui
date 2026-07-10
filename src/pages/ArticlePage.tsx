@@ -61,7 +61,7 @@ const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
               {article.created_at && new Date(article.created_at).toLocaleDateString()}
             </Typography>
             <RichTextEditor
-              initialContent={article.content}
+              initialContent={article.content ?? ''}
               editable={false}
             />
           </>

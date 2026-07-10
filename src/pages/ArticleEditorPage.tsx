@@ -32,7 +32,7 @@ import type { Group } from '../types/group';
 
 interface AudienceManagerProps {
   articleId: string;
-  token?: string;
+  token?: string | undefined;
   open: boolean;
   onClose: () => void;
 }
@@ -193,7 +193,7 @@ const ArticleEditorPage: React.FC = () => {
             : {}),
           content: editorHtmlRef.current,
           article_tags: 'thoughts',
-          author,
+          ...(author !== undefined ? { author } : {}),
         },
         token
       ),
@@ -219,7 +219,11 @@ const ArticleEditorPage: React.FC = () => {
   const createMutation = useMutation({
     mutationFn: () =>
       saveArticleVersion(
-        { article_title: newTitle, content: editorHtmlRef.current, author },
+        {
+          article_title: newTitle,
+          content: editorHtmlRef.current,
+          ...(author !== undefined ? { author } : {}),
+        },
         token
       ),
     onSuccess: () => {
