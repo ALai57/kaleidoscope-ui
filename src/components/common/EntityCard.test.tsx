@@ -49,4 +49,30 @@ describe('EntityCard', () => {
     fireEvent.click(screen.getByText('Agent'));
     expect(onClick).toHaveBeenCalledOnce();
   });
+
+  describe('panel variant', () => {
+    it('renders title, headerAction, and body', () => {
+      render(
+        <EntityCard variant="panel" title="Team Lead" headerAction={<span>Reviewing</span>}>
+          <span>panel body</span>
+        </EntityCard>,
+        { wrapper: Wrapper }
+      );
+      expect(screen.getByText('Team Lead')).toBeInTheDocument();
+      expect(screen.getByText('Reviewing')).toBeInTheDocument();
+      expect(screen.getByText('panel body')).toBeInTheDocument();
+    });
+
+    it('treats a falsy body (the `cond && node` idiom) as no body', () => {
+      const running = true;
+      render(
+        <EntityCard variant="panel" title="Team Lead">
+          {!running && <span>done body</span>}
+        </EntityCard>,
+        { wrapper: Wrapper }
+      );
+      expect(screen.queryByText('done body')).toBeNull();
+      expect(screen.getByText('Team Lead')).toBeInTheDocument();
+    });
+  });
 });

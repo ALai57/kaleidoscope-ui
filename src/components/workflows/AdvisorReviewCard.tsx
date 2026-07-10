@@ -12,7 +12,7 @@ import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { AdvisorScoreOutput, AdvisorStatus, StepRunStatus } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
-import { SurfaceCard } from '../common/SurfaceCard';
+import { EntityCard } from '../common/EntityCard';
 
 // ── Score helpers ─────────────────────────────────────────────────────────
 
@@ -131,92 +131,74 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
 
   const overallStatus = scoreOutput ? resolveOverallStatus(scoreOutput) : undefined;
 
-  return (
-    <SurfaceCard
-      sx={{
-        // dynamic status border overrides SurfaceCard's default divider
-        borderColor: isFailed ? 'error.main' : isRunning ? 'primary.main' : 'divider',
-        mb: 0.5,
-        overflow: 'hidden',
-      }}
-    >
-      {/* Header */}
+  // Status accent border.
+  const accentColor = isFailed ? 'error.main' : isRunning ? 'primary.main' : 'divider';
+
+  const avatar = (
+    <Tooltip title={persona.name} placement="left">
       <Box
         sx={{
+          width: 26,
+          height: 26,
+          borderRadius: '50%',
+          bgcolor: persona.color,
           display: 'flex',
           alignItems: 'center',
-          gap: 1.5,
-          px: 1.5,
-          py: 1,
-          bgcolor: 'action.hover',
-          borderBottom: scoreOutput ? 1 : 0,
-          borderColor: 'divider',
+          justifyContent: 'center',
+          fontSize: '0.85rem',
+          flexShrink: 0,
         }}
       >
-        <Tooltip title={persona.name} placement="left">
-          <Box
-            sx={{
-              width: 26,
-              height: 26,
-              borderRadius: '50%',
-              bgcolor: persona.color,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '0.85rem',
-              flexShrink: 0,
-            }}
-          >
-            {persona.avatar}
-          </Box>
-        </Tooltip>
-
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            {stepName}
-          </Typography>
-          {!isRunning && scoreOutput?.context_path && (
-            <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              Reviewed with {scoreOutput.context_path}
-            </Typography>
-          )}
-        </Box>
-
-        {isRunning && (
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <CircularProgress size={14} />
-            <Typography variant="caption" color="primary.main">
-              Reviewing…
-            </Typography>
-          </Stack>
-        )}
-        {!isRunning && isFailed && (
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <ErrorIcon color="error" sx={{ fontSize: 16 }} />
-            <Typography variant="caption" color="error.main">
-              Could not complete review
-            </Typography>
-          </Stack>
-        )}
-        {!isRunning && !isFailed && scoreOutput?.overall !== undefined && (
-          <StatusChip
-            status={overallStatus ?? 'neutral'}
-            label={`${scoreOutput.overall.toFixed(1)} / 10`}
-            variant="filled"
-          />
-        )}
-        {!isRunning && !isFailed && overallStatus && scoreOutput?.overall === undefined && (
-          <StatusChip
-            status={overallStatus}
-            label={STATUS_LABELS[overallStatus]}
-            variant="filled"
-          />
-        )}
+        {persona.avatar}
       </Box>
+    </Tooltip>
+  );
 
-      {/* Body */}
+  const headerAction = isRunning ? (
+    <Stack direction="row" spacing={0.5} alignItems="center">
+      <CircularProgress size={14} />
+      <Typography variant="caption" color="primary.main">
+        Reviewing…
+      </Typography>
+    </Stack>
+  ) : isFailed ? (
+    <Stack direction="row" spacing={0.5} alignItems="center">
+      <ErrorIcon color="error" sx={{ fontSize: 16 }} />
+      <Typography variant="caption" color="error.main">
+        Could not complete review
+      </Typography>
+    </Stack>
+  ) : scoreOutput?.overall !== undefined ? (
+    <StatusChip
+      status={overallStatus ?? 'neutral'}
+      label={`${scoreOutput.overall.toFixed(1)} / 10`}
+      variant="filled"
+    />
+  ) : overallStatus ? (
+    <StatusChip status={overallStatus} label={STATUS_LABELS[overallStatus]} variant="filled" />
+  ) : undefined;
+
+  return (
+    <EntityCard
+      variant="panel"
+      accentColor={accentColor}
+      avatar={avatar}
+      title={stepName}
+      {...(!isRunning && scoreOutput?.context_path
+        ? {
+            subtitle: (
+              <Box component="span" sx={{ fontStyle: 'italic' }}>
+                Reviewed with {scoreOutput.context_path}
+              </Box>
+            ),
+          }
+        : {})}
+      headerAction={headerAction}
+      headerDivider={!!scoreOutput}
+      sx={{ mb: 0.5 }}
+    >
       {!isRunning && (
-        <Box sx={{ px: 1.5, py: 1 }}>
+        <>
           {isFailed && (
             <Typography variant="caption" color="text.secondary">
               {scoreOutput?.reason
@@ -247,9 +229,9 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
               No dimension breakdown available.
             </Typography>
           )}
-        </Box>
+        </>
       )}
-    </SurfaceCard>
+    </EntityCard>
   );
 };
 

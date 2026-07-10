@@ -22,7 +22,7 @@ import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { ScoreSnapshotEntry, TradeOff, Recommendation, WorkflowRoundDetail } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
-import { SurfaceCard } from '../common/SurfaceCard';
+import { EntityCard } from '../common/EntityCard';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -321,54 +321,57 @@ export const RoundCard: React.FC<RoundCardProps> = ({
     : isInProgress && !hasJudge ? 'primary.50'
     : 'action.hover';
 
+  // The header's left zone: the round label plus an inline analyzing/paused
+  // indicator. The decision chip is the header's right-side action.
+  const headerContent = (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Typography variant="overline" sx={{ lineHeight: 1, color: 'text.secondary', flexShrink: 0 }}>
+        Round {round.round_number}{maxRounds !== undefined ? ` of ${maxRounds}` : ''}
+      </Typography>
+
+      {/* Analyzing spinner — only when no judge yet and not paused for input */}
+      {isInProgress && !hasJudge && !awaitingInput && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <CircularProgress size={12} />
+          <Typography variant="caption" color="primary.main">Analyzing…</Typography>
+        </Box>
+      )}
+
+      {/* Paused-for-input indicator */}
+      {awaitingInput && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <PauseCircleOutlineIcon sx={{ fontSize: 14, color: 'warning.main' }} />
+          <Typography variant="caption" color="warning.main" sx={{ fontWeight: 600 }}>
+            Waiting for your input
+          </Typography>
+        </Box>
+      )}
+    </Box>
+  );
+
+  const decisionChip =
+    decisionConfig && action ? (
+      <StatusChip
+        status={action}
+        icon={decisionConfig.icon}
+        label={decisionConfig.label}
+        variant="filled"
+        sx={{ height: 20, fontSize: '0.68rem', fontWeight: 700 }}
+      />
+    ) : undefined;
+
   return (
-    <SurfaceCard sx={{ borderColor, overflow: 'hidden', mb: 1 }}>
-
-      {/* ── Header ── */}
-      <Box
-        sx={{
-          display: 'flex', alignItems: 'center', gap: 1.5,
-          px: 1.5, py: 1,
-          bgcolor: headerBg,
-          borderBottom: 1, borderColor: 'divider',
-        }}
-      >
-        <Typography variant="overline" sx={{ lineHeight: 1, color: 'text.secondary', flexShrink: 0 }}>
-          Round {round.round_number}{maxRounds !== undefined ? ` of ${maxRounds}` : ''}
-        </Typography>
-
-        {/* Analyzing spinner — only when no judge yet and not paused for input */}
-        {isInProgress && !hasJudge && !awaitingInput && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <CircularProgress size={12} />
-            <Typography variant="caption" color="primary.main">Analyzing…</Typography>
-          </Box>
-        )}
-
-        {/* Paused-for-input indicator */}
-        {awaitingInput && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-            <PauseCircleOutlineIcon sx={{ fontSize: 14, color: 'warning.main' }} />
-            <Typography variant="caption" color="warning.main" sx={{ fontWeight: 600 }}>
-              Waiting for your input
-            </Typography>
-          </Box>
-        )}
-
-        {decisionConfig && action && (
-          <StatusChip
-            status={action}
-            icon={decisionConfig.icon}
-            label={decisionConfig.label}
-            variant="filled"
-            sx={{ ml: 'auto', height: 20, fontSize: '0.68rem', fontWeight: 700 }}
-          />
-        )}
-      </Box>
-
+    <EntityCard
+      variant="panel"
+      accentColor={borderColor}
+      headerColor={headerBg}
+      title={headerContent}
+      headerAction={decisionChip}
+      sx={{ mb: 1 }}
+    >
       {/* ── Body — shown whenever there's a judge decision ── */}
       {judge && (
-        <Box sx={{ px: 1.5, py: 1 }}>
+        <Box>
 
           {/* Clarify: alert + questions */}
           {judge.decision.action === 'clarify' && (
@@ -515,7 +518,7 @@ export const RoundCard: React.FC<RoundCardProps> = ({
           )}
         </Box>
       )}
-    </SurfaceCard>
+    </EntityCard>
   );
 };
 

@@ -11,7 +11,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ReplayIcon from '@mui/icons-material/Replay';
-import { SurfaceCard } from '../common/SurfaceCard';
+import { EntityCard } from '../common/EntityCard';
 import type {
   JudgeDecisionOutput,
   StepRunStatus,
@@ -226,64 +226,43 @@ export const TeamLeadCard: React.FC<TeamLeadCardProps> = ({
   const isRunning = isStreaming || stepStatus === 'running';
   const action = decisionOutput?.action;
 
+  // Status accent border — emphasized to 2px via sx below.
+  const accentColor =
+    action === 'clarify' && stepStatus === 'awaiting_input'
+      ? 'warning.main'
+      : action === 'proceed'
+        ? 'success.main'
+        : isRunning
+          ? 'primary.main'
+          : 'divider';
+
+  const headerAction = isRunning ? (
+    <Stack direction="row" spacing={0.5} alignItems="center">
+      <CircularProgress size={14} />
+      <Typography variant="caption" color="primary.main">
+        Reviewing…
+      </Typography>
+    </Stack>
+  ) : action ? (
+    <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: ACTION_COLOR[action] }}>
+      {ACTION_ICON[action]}
+      <Typography variant="caption" sx={{ color: ACTION_COLOR[action], fontWeight: 600 }}>
+        {ACTION_LABEL[action]}
+      </Typography>
+    </Stack>
+  ) : undefined;
+
   return (
-    <SurfaceCard
-      sx={{
-        // emphasized 2px status border overrides SurfaceCard's default 1px divider
-        border: 2,
-        borderColor: action === 'clarify' && stepStatus === 'awaiting_input'
-          ? 'warning.main'
-          : action === 'proceed'
-            ? 'success.main'
-            : isRunning
-              ? 'primary.main'
-              : 'divider',
-        mb: 0.5,
-        overflow: 'hidden',
-      }}
+    <EntityCard
+      variant="panel"
+      title="Team Lead"
+      accentColor={accentColor}
+      headerAction={headerAction}
+      sx={{ borderWidth: 2, mb: 0.5 }}
     >
-      {/* Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          px: 1.5,
-          py: 1,
-          bgcolor: 'action.hover',
-          borderBottom: 1,
-          borderColor: 'divider',
-        }}
-      >
-        <Typography variant="body2" sx={{ fontWeight: 700, flex: 1 }}>
-          Team Lead
-        </Typography>
-
-        {isRunning && (
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <CircularProgress size={14} />
-            <Typography variant="caption" color="primary.main">
-              Reviewing…
-            </Typography>
-          </Stack>
-        )}
-
-        {!isRunning && action && (
-          <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: ACTION_COLOR[action] }}>
-            {ACTION_ICON[action]}
-            <Typography variant="caption" sx={{ color: ACTION_COLOR[action], fontWeight: 600 }}>
-              {ACTION_LABEL[action]}
-            </Typography>
-          </Stack>
-        )}
-      </Box>
-
-      {/* Body */}
       {!isRunning && decisionOutput && (
-        <Box sx={{ px: 1.5, py: 1.25 }}>
-          {decisionOutput.action === 'refine' && (
-            <RefineBody decision={decisionOutput} />
-          )}
+        <>
+          {decisionOutput.action === 'refine' && <RefineBody decision={decisionOutput} />}
 
           {decisionOutput.action === 'clarify' && (
             <ClarifyBody
@@ -296,14 +275,11 @@ export const TeamLeadCard: React.FC<TeamLeadCardProps> = ({
           )}
 
           {decisionOutput.action === 'proceed' && (
-            <ProceedBody
-              decision={decisionOutput}
-              taskGenRunning={taskGenRunning}
-            />
+            <ProceedBody decision={decisionOutput} taskGenRunning={taskGenRunning} />
           )}
-        </Box>
+        </>
       )}
-    </SurfaceCard>
+    </EntityCard>
   );
 };
 
