@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { NavBar } from '../components/layout/NavBar';
 import { SkillsSection } from '../components/layout/SkillsSection';
@@ -29,34 +30,38 @@ const ExperiencePage: React.FC = () => {
 
       <Box sx={{ flex: 1 }}>
         <Container maxWidth="lg" sx={{ py: 6 }}>
-          <SectionHeading eyebrow="// CAREER" title="Experience" level="h3" sx={{ mb: 4 }} />
-
-          {/* Quick-facts strip — the mission-control metric primitive on a résumé */}
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 4 }}>
-            <StatTile label="Current role" value="Eng. Manager" />
-            <StatTile label="Company" value="Freshpaint" />
-            <StatTile label="Focus" value="Privacy-first adtech" />
-          </Box>
-
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            As a professional, I&#39;m driven by the love of solving technical problems, working
-            with excellent teams, building and learning.
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 8 }}>
-            {'I\'m currently a Software Engineering Manager at '}
-            <Link href="https://freshpaint.io">Freshpaint.io</Link>
-            {", where I'm working on a platform that enables healthcare marketers to advertise in a privacy-first, HIPAA-compliant way."}
-          </Typography>
+          {/* Hero — page title, intro, and quick-facts read as one unit: prose on
+              the left, the metric rail on the right (stacked on mobile). */}
+          <SectionHeading eyebrow="// CAREER" title="Experience" level="h2" sx={{ mb: 4 }} />
+          <Grid container spacing={4} alignItems="flex-start" sx={{ mb: 10 }}>
+            <Grid item xs={12} md={7}>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                As a professional, I&#39;m driven by the love of solving technical problems, working
+                with excellent teams, building and learning.
+              </Typography>
+              <Typography variant="body1">
+                {'I\'m currently a Software Engineering Manager at '}
+                <Link href="https://freshpaint.io">Freshpaint.io</Link>
+                {", where I'm working on a platform that enables healthcare marketers to advertise in a privacy-first, HIPAA-compliant way."}
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <Stack spacing={2}>
+                <StatTile label="Current role" value="Eng. Manager" />
+                <StatTile label="Company" value="Freshpaint" />
+                <StatTile label="Focus" value="Privacy-first adtech" />
+              </Stack>
+            </Grid>
+          </Grid>
 
           <SectionHeading eyebrow="// TOOLKIT" title="Skills" level="h4" sx={{ mb: 3 }} />
-          <Grid container spacing={2} justifyContent="center">
+          <Grid container spacing={2} justifyContent="center" sx={{ mb: 10 }}>
             <SkillsSection />
           </Grid>
 
-          <SectionHeading eyebrow="// TIMELINE" title="Career History" level="h4" sx={{ mt: 8, mb: 2 }} />
+          <SectionHeading eyebrow="// TIMELINE" title="Career History" level="h4" sx={{ mb: 4 }} />
+          <Timeline />
         </Container>
-
-        <Timeline />
       </Box>
 
       <Footer />

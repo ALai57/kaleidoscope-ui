@@ -30,6 +30,8 @@ export interface TimelineEntryProps {
   entry: TimelineEntryData;
   /** Height of the connector below this entry in pixels (proportional to time span). */
   connectorHeight?: number | undefined;
+  /** The current role — gets an accent border, a "Current" badge, and a heavier dot. */
+  featured?: boolean | undefined;
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
@@ -37,6 +39,7 @@ export interface TimelineEntryProps {
 export const TimelineEntry: React.FC<TimelineEntryProps> = ({
   entry,
   connectorHeight = 80,
+  featured = false,
 }) => {
   const { year, since, until, iconSrc, iconAlt, heading, orgUrl, body, bullets, link } = entry;
   const theme = useTheme();
@@ -71,7 +74,12 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
       <TimelineSeparator>
         <TimelineDot
           variant="outlined"
-          sx={{ bgcolor: 'background.paper', borderColor: 'primary.main', borderWidth: 2 }}
+          sx={{
+            bgcolor: 'background.paper',
+            borderColor: 'primary.main',
+            borderWidth: featured ? 3 : 2,
+            ...(featured ? { boxShadow: (t) => `0 0 0 4px ${t.palette.primary.main}22` } : {}),
+          }}
         >
           {iconSrc ? <OrgIcon src={iconSrc} alt={iconAlt ?? ''} /> : null}
         </TimelineDot>
@@ -80,19 +88,54 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
 
       {/* Right column — content on the shared card surface */}
       <TimelineContent sx={{ py: 0, pr: 0 }}>
-        <SurfaceCard sx={{ p: 2, mb: 1 }}>
-          <Typography
-            component="h3"
-            sx={{ m: 0, fontFamily: headingFamily, fontWeight: 700, fontSize: '1.05rem', lineHeight: 1.3 }}
-          >
-            {orgUrl ? (
-              <Link href={orgUrl} target="_blank" rel="noreferrer" color="inherit" underline="hover">
-                {heading}
-              </Link>
-            ) : (
-              heading
+        <SurfaceCard
+          sx={{
+            p: 2,
+            mb: 1,
+            ...(featured
+              ? { borderColor: 'primary.main', borderWidth: 2, boxShadow: 2 }
+              : {}),
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 1 }}>
+            <Typography
+              component="h3"
+              sx={{
+                m: 0,
+                fontFamily: headingFamily,
+                fontWeight: 700,
+                fontSize: featured ? '1.2rem' : '1.05rem',
+                lineHeight: 1.3,
+              }}
+            >
+              {orgUrl ? (
+                <Link href={orgUrl} target="_blank" rel="noreferrer" color="inherit" underline="hover">
+                  {heading}
+                </Link>
+              ) : (
+                heading
+              )}
+            </Typography>
+            {featured && (
+              <Box
+                component="span"
+                sx={{
+                  px: 0.75,
+                  py: 0.25,
+                  borderRadius: '999px',
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
+                  fontFamily: mono,
+                  fontSize: '0.6rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Current
+              </Box>
             )}
-          </Typography>
+          </Box>
 
           <Divider sx={{ my: 1 }} />
 

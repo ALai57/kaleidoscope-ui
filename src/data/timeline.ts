@@ -1,6 +1,15 @@
 // Career / education timeline entries — ported from home.cljs
 
+/**
+ * Which band of the résumé an entry belongs to. The Experience page renders one
+ * grouped section per category (in the order `work`, `education`, `earlier`) so
+ * a current role no longer sits in the same visual stream as a high-school job.
+ */
+export type TimelineCategory = 'work' | 'education' | 'earlier';
+
 export interface TimelineEntry {
+  /** Which grouped section this entry renders under. Defaults to `work`. */
+  category?: TimelineCategory | undefined;
   /** Display year for the left column. Can be a number or formatted date string. */
   year: number | string;
   /** "Since" label (start of this role). */
@@ -30,6 +39,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
     iconSrc: '/static/images/freshpaint.svg',
     iconAlt: 'Freshpaint',
+    category: 'work',
     heading: 'Software Engineering Manager @ Freshpaint',
     orgUrl: 'https://www.freshpaint.io',
     body: [
@@ -46,6 +56,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'Oct, 2024',
     iconSrc: '/static/images/freshpaint.svg',
     iconAlt: 'Freshpaint',
+    category: 'work',
     heading: 'Senior Software Engineer @ Freshpaint',
     orgUrl: 'https://www.freshpaint.io',
     body: [
@@ -63,6 +74,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'Sept, 2023',
     iconSrc: '/static/images/splash-logo.svg',
     iconAlt: 'Splash Financial',
+    category: 'work',
     heading: 'Engineering Team Lead @ Splash Financial',
     orgUrl: 'https://www.splashfinancial.com',
     body: [
@@ -76,6 +88,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'Dec, 2022',
     iconSrc: '/static/images/splash-logo.svg',
     iconAlt: 'Splash Financial',
+    category: 'work',
     heading: 'Senior Software Engineer @ Splash Financial',
     orgUrl: 'https://www.splashfinancial.com',
     body: [
@@ -88,6 +101,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'June, 2021',
     iconSrc: '/static/images/opploans-logo.svg',
     iconAlt: 'Opportunity Financial',
+    category: 'work',
     heading: 'Software Engineer @ Opportunity Financial',
     orgUrl: 'https://www.oppfi.com',
     body: [
@@ -101,6 +115,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'Jan, 2019',
     iconSrc: '/static/images/opploans-logo.svg',
     iconAlt: 'Opportunity Financial',
+    category: 'work',
     heading: 'Business Operations Associate @ Opportunity Financial',
     orgUrl: 'https://www.oppfi.com',
     body: [
@@ -114,6 +129,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'Jan 2018',
     iconSrc: '/static/images/n-logo.svg',
     iconAlt: 'Northwestern University',
+    category: 'education',
     heading: 'PhD in Biomedical Engineering @ Northwestern University',
     orgUrl: 'https://northwestern.edu',
     body: [
@@ -131,6 +147,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     year: 2016,
     iconSrc: '/static/images/n-logo.svg',
     iconAlt: 'Northwestern University',
+    category: 'education',
     heading: 'Fellowship @ Northwestern University Center for Leadership',
     orgUrl: 'https://lead.northwestern.edu/our-approach/',
     body: [
@@ -143,6 +160,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'Aug, 2013',
     iconSrc: '/static/images/n-logo.svg',
     iconAlt: 'Northwestern University',
+    category: 'education',
     heading: 'MS in Biomedical Engineering @ Northwestern University',
     orgUrl: 'https://northwestern.edu',
     body: [
@@ -155,6 +173,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     until: 'May, 2011',
     iconSrc: '/static/images/lafayette-logo.svg',
     iconAlt: 'Lafayette College',
+    category: 'education',
     heading: 'BS in Chemical Engineering @ Lafayette College',
     orgUrl: 'https://lafayette.edu',
     body: [
@@ -166,6 +185,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     year: 2010,
     iconSrc: '/static/images/air-liquide.ico',
     iconAlt: 'Air Liquide',
+    category: 'earlier',
     heading: 'Chemical Engineering Internship @ Air Liquide',
     orgUrl: 'https://airliquide.com',
     body: [
@@ -176,6 +196,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
     year: 2006,
     iconSrc: '/static/images/dunkin.jpg',
     iconAlt: 'Dunkin',
+    category: 'earlier',
     heading: "Dunkin' Donuts",
     body: [
       "High school job — I was having fun and thought 'why not include my whole work history?'",
@@ -183,6 +204,7 @@ export const TIMELINE_ENTRIES: TimelineEntry[] = [
   },
   {
     year: 2005,
+    category: 'earlier',
     heading: "Acton Children's Discovery Museum",
     body: [
       "High school job — I was having fun and thought 'why not include my whole work history?'",
