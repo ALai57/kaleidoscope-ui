@@ -184,11 +184,13 @@ Still open:
   runs in `npm run test` (and `npm run ci`). (Note: `npm run ci` also runs
   `lint`, which currently has pre-existing errors unrelated to the design
   system — worth a separate cleanup.)
-- ⏳ Visual regression coverage. Playwright is configured (`playwright.config.ts`,
-  `e2e/`); Storybook's Playwright test-runner can screenshot every story.
-  Deferred — needs the `@storybook/test-runner` dev dependency and stable
-  screenshot baselines. (The untracked `cypress/` folder was stock `cypress
-  open` scaffolding and was removed — not committed.)
+- ✅ Visual regression coverage set up: `@storybook/test-runner` +
+  `jest-image-snapshot` screenshot every story against a baseline
+  (`.storybook/test-runner.ts`, `npm run test-storybook:ci`). Runs against the
+  dev server (the Vite/Storybook static build has a module-load-order issue).
+  Baselines are environment-sensitive → generated per-CI-environment, not
+  committed from a dev machine (see [`visual-regression.md`](./visual-regression.md)).
+  Two pre-existing broken stories are excluded via `tags: ['!test']`.
 
 ## Suggested sequencing
 
