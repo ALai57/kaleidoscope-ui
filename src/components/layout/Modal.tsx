@@ -2,19 +2,20 @@ import React from 'react';
 import MuiModal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import Close from '@mui/icons-material/Close';
 import { Button } from './Button';
 
-const COLORS: Record<string, string> = {
-  primary: '#1139c9',
-  secondary: '#f01c2e',
-  success: 'rgb(101, 221, 149)',
-  info: 'rgb(141, 174, 255)',
-  warn: 'rgb(233, 218, 45)',
-  error: 'rgb(245, 125, 111)',
+// Notification level -> theme palette slot (the header color comes from the theme).
+type PaletteLevel = 'primary' | 'secondary' | 'success' | 'info' | 'warning' | 'error';
+const LEVEL_PALETTE: Record<string, PaletteLevel> = {
+  primary: 'primary',
+  secondary: 'secondary',
+  success: 'success',
+  info: 'info',
+  warn: 'warning',
+  error: 'error',
 };
-
-const MODAL_BACKGROUND = 'rgba(0, 0, 40, 0.8)';
 
 export interface ModalTemplateProps {
   title?: React.ReactNode;
@@ -35,9 +36,11 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
     className="modal-content"
     style={{ border: 'none', maxHeight: '90vh' }}
   >
-    <div
+    <Box
       className="modal-header"
-      style={{ backgroundColor: COLORS[level] ?? COLORS['info'] }}
+      sx={(theme) => ({
+        backgroundColor: theme.palette[LEVEL_PALETTE[level] ?? 'info'].main,
+      })}
     >
       <Typography variant="h5" sx={{ display: 'inline-block' }}>
         {title}
@@ -51,7 +54,7 @@ export const ModalTemplate: React.FC<ModalTemplateProps> = ({
         }}
         text={<Close className="close-button" sx={{ padding: '0px' }} />}
       />
-    </div>
+    </Box>
     {body && <div className="modal-body">{body}</div>}
     {footer && <div className="modal-footer">{footer}</div>}
   </div>
@@ -86,7 +89,9 @@ export const BasicModal: React.FC<BasicModalProps> = ({
       open={open}
       onClose={handleClose}
       slotProps={{
-        backdrop: { style: { backgroundColor: MODAL_BACKGROUND } },
+        backdrop: {
+          sx: (theme) => ({ backgroundColor: alpha(theme.palette.common.black, 0.8) }),
+        },
       }}
     >
       <Box className="modal-box">
