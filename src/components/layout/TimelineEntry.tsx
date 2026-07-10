@@ -81,7 +81,7 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
         {body.map((paragraph, i) => (
           <Typography
             key={i}
-            sx={{ padding: '5px', color: '#888888' }}
+            sx={{ padding: '5px', color: 'text.secondary' }}
           >
             {paragraph}
           </Typography>
@@ -90,7 +90,7 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
         {bullets && bullets.length > 0 && (
           <Box component="ul" sx={{ mt: 1 }}>
             {bullets.map((bullet, i) => (
-              <Typography key={i} component="li" sx={{ padding: '5px', color: '#888888' }}>
+              <Typography key={i} component="li" sx={{ padding: '5px', color: 'text.secondary' }}>
                 {bullet}
               </Typography>
             ))}
@@ -98,7 +98,7 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
         )}
 
         {link && (
-          <Typography sx={{ padding: '5px', color: '#888888' }}>
+          <Typography sx={{ padding: '5px', color: 'text.secondary' }}>
             <a href={link.href} target="_blank" rel="noreferrer">
               {link.label}
             </a>
