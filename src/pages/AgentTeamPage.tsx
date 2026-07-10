@@ -21,8 +21,9 @@ import AgentEditorDialog from '../components/agents/AgentEditorDialog';
 import { useAuth } from '../auth/useAuth';
 import { getAgents, createAgent, updateAgent } from '../api/agents';
 import type { Agent, CreateAgentBody, UpdateAgentBody } from '../types/agent';
+import { CATEGORICAL_PALETTE } from '../theme/tokens';
 
-const DEFAULT_COLORS = ['#0891b2', '#7c3aed', '#0369a1', '#059669', '#d97706', '#9333ea'];
+const DEFAULT_COLORS = CATEGORICAL_PALETTE;
 
 const AVATAR_EMOJIS = [
   '🐬', '🦊', '🦉', '🦁', '🐯', '🦅', '🦈', '🐺',

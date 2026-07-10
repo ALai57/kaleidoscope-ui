@@ -11,19 +11,9 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import type { Agent, UpdateAgentBody } from '../../types/agent';
+import { CATEGORICAL_PALETTE } from '../../theme/tokens';
 
-const COLOR_PRESETS = [
-  '#0891b2', // teal  — Coach
-  '#7c3aed', // purple — Product Manager
-  '#0369a1', // blue  — Engineering Lead
-  '#059669', // green
-  '#dc2626', // red
-  '#d97706', // amber
-  '#9333ea', // violet
-  '#db2777', // pink
-  '#0ea5e9', // sky
-  '#6b7280', // grey
-];
+const COLOR_PRESETS = CATEGORICAL_PALETTE;
 
 // Curated emoji palette for agent avatars
 const AVATAR_EMOJIS = [
@@ -55,7 +45,7 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
   const [name, setName] = useState('');
   const [shortName, setShortName] = useState('');
   const [avatar, setAvatar] = useState('');
-  const [color, setColor] = useState(COLOR_PRESETS[0]!);
+  const [color, setColor] = useState<string>(COLOR_PRESETS[0]!);
   const [systemPrompt, setSystemPrompt] = useState('');
   const [error, setError] = useState<string | null>(null);
 
