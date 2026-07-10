@@ -172,16 +172,23 @@ Still open:
 - ⏳ Migrate more `StatusChip`/`SurfaceCard` call sites opportunistically as
   files are touched.
 
-## Phase 4 — Documentation & governance (~ongoing)
+## Phase 4 — Documentation & governance (~ongoing) — IN PROGRESS
 
-- Storybook becomes the canonical internal catalog: add a "Foundations"
-  section (tokens, color scales, typography) alongside component stories.
-- Add visual regression coverage. You already have Playwright configured
-  (`playwright.config.ts`, `e2e/`) — Storybook has a Playwright test runner
-  integration that can screenshot every story; that's lower-lift than
-  introducing a new tool. (The untracked `cypress/` folder was stock
-  `cypress open` scaffolding and was removed — not committed.)
-- Contrast/a11y checks from Phase 2 become a CI gate, not just a local check.
+- ✅ Storybook is now the canonical catalog: added a **Foundations** section
+  (`components/foundations/Foundations.stories.tsx`) — Colors (with live
+  contrast ratios), Typography, Spacing, Radius, Elevation, rendered from the
+  tokens. Also wrapped all stories in the real design-system theme via a
+  `ThemeProvider` decorator (`.storybook/preview.tsx`), so the catalog reflects
+  the actual theme, not default MUI.
+- ✅ Contrast/a11y checks are already a CI gate: `contrast.test.ts`'s a11y gate
+  runs in `npm run test` (and `npm run ci`). (Note: `npm run ci` also runs
+  `lint`, which currently has pre-existing errors unrelated to the design
+  system — worth a separate cleanup.)
+- ⏳ Visual regression coverage. Playwright is configured (`playwright.config.ts`,
+  `e2e/`); Storybook's Playwright test-runner can screenshot every story.
+  Deferred — needs the `@storybook/test-runner` dev dependency and stable
+  screenshot baselines. (The untracked `cypress/` folder was stock `cypress
+  open` scaffolding and was removed — not committed.)
 
 ## Suggested sequencing
 
