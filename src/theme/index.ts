@@ -31,11 +31,6 @@ declare module '@mui/material/styles' {
   interface ColorSystemOptions {
     tokens?: Tokens;
   }
-  // Expose the sunken surface as a mode-reactive palette slot, so
-  // `bgcolor: 'background.sunken'` resolves correctly in either mode.
-  interface TypeBackground {
-    sunken: string;
-  }
 }
 
 /** The app's default brand seed — the 'default' preset's seed. */
@@ -68,7 +63,7 @@ function paletteFromTokens(tokens: Tokens): PaletteOptions {
     warning: slot(status.warning),
     error: slot(status.error),
     info: slot(status.info),
-    background: { default: surface.base, paper: surface.raised, sunken: surface.sunken },
+    background: { default: surface.base, paper: surface.raised },
     text: { primary: text.primary, secondary: text.secondary, disabled: text.disabled },
     divider: border.subtle,
   };

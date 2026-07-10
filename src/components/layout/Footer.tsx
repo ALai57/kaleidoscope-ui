@@ -17,12 +17,12 @@ const NAV_LINKS = [
 export const Footer: React.FC = () => {
   const theme = useTheme();
   // Token-driven so the footer re-skins with the active preset/mode instead of
-  // being a fixed dark slab (it was hardcoded grey.900/grey.400). Links echo the
-  // NavBar's mono-uppercase voice. `theme.tokens` is frozen to the light scheme,
-  // so mode-dependent values (the sunken background) come from the palette, which
-  // rides the colorSchemes CSS variables and flips in dark mode.
+  // being a fixed dark slab (it was hardcoded grey.900/grey.400). theme.tokens is
+  // mode-reactive, so the sunken background flips in dark mode. Links echo the
+  // NavBar's mono-uppercase voice.
   const tokens = theme.tokens;
   const mono = tokens?.typography.mono ?? 'monospace';
+  const footerBg = tokens?.color.surface.sunken ?? theme.palette.background.default;
   const durFast = tokens?.motion.duration.fast ?? 150;
 
   const linkSx = {
@@ -40,7 +40,7 @@ export const Footer: React.FC = () => {
     <Box
       component="footer"
       sx={{
-        bgcolor: 'background.sunken',
+        bgcolor: footerBg,
         color: 'text.secondary',
         borderTop: '1px solid',
         borderColor: 'divider',
