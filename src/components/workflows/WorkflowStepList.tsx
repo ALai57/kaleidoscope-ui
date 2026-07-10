@@ -1,4 +1,5 @@
 import React from 'react';
+import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
@@ -97,7 +98,7 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, ag
             }}
           >
             <Box
-              sx={{
+              sx={(theme) => ({
                 border: 1,
                 borderColor: 'divider',
                 borderRadius: 2,
@@ -105,10 +106,10 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, ag
                 bgcolor: 'background.paper',
                 '&:focus-within': {
                   borderColor: 'primary.main',
-                  boxShadow: '0 0 0 2px rgba(99,102,241,0.08)',
+                  boxShadow: `0 0 0 2px ${alpha(theme.palette.primary.main, 0.08)}`,
                 },
                 transition: 'border-color 0.15s, box-shadow 0.15s',
-              }}
+              })}
             >
               {/* Step name row */}
               <Box sx={{ display: 'flex', alignItems: 'center', px: 1.5, pt: 1, pb: 0.5, gap: 0.5 }}>
