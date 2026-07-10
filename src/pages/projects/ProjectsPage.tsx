@@ -16,14 +16,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import GridViewIcon from '@mui/icons-material/GridView';
-import GroupsIcon from '@mui/icons-material/Groups';
 import HubIcon from '@mui/icons-material/Hub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { NavBar } from '../../components/layout/NavBar';
+import { AdminLayout } from '../../components/layout/AdminLayout';
 import { ProjectCard } from '../../components/projects/ProjectCard';
 import { ProjectGraph } from '../../components/projects/ProjectGraph';
 import { ProjectInlineDetail } from './ProjectInlineDetail';
@@ -100,8 +96,7 @@ const CARD_SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 };
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ProjectsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
-  const navigate = useNavigate();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [newDialogOpen, setNewDialogOpen] = useState(false);
@@ -146,81 +141,45 @@ const ProjectsPage: React.FC = () => {
 
   const isSplitView = selectedProjectId !== null && selectedProject !== undefined;
 
-  return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
-      <Box
-        sx={{
-          p: 3,
-          maxWidth: isSplitView ? 1400 : 1200,
-          mx: 'auto',
-          transition: 'max-width 0.4s ease',
+  // Section nav (Workflows/Agents/Workspace Roots) now lives in the rail; the
+  // top bar carries only page-specific actions (view toggle + New Project).
+  const headerActions = !isSplitView ? (
+    <>
+      <ToggleButtonGroup
+        value={viewMode}
+        exclusive
+        size="small"
+        onChange={(_, v) => {
+          if (v) setViewMode(v as ViewMode);
         }}
       >
-        {/* ── Header ── */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Projects
-            </Typography>
-          </Box>
+        <ToggleButton value="list" aria-label="list view">
+          <Tooltip title="List view">
+            <GridViewIcon fontSize="small" />
+          </Tooltip>
+        </ToggleButton>
+        <ToggleButton value="graph" aria-label="graph view">
+          <Tooltip title="Graph view">
+            <HubIcon fontSize="small" />
+          </Tooltip>
+        </ToggleButton>
+      </ToggleButtonGroup>
+      <Button variant="contained" startIcon={<AddIcon />} onClick={() => setNewDialogOpen(true)}>
+        New Project
+      </Button>
+    </>
+  ) : undefined;
 
-          {!isSplitView && (
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-              <ToggleButtonGroup
-                value={viewMode}
-                exclusive
-                size="small"
-                onChange={(_, v) => { if (v) setViewMode(v as ViewMode); }}
-              >
-                <ToggleButton value="list" aria-label="list view">
-                  <Tooltip title="List view">
-                    <GridViewIcon fontSize="small" />
-                  </Tooltip>
-                </ToggleButton>
-                <ToggleButton value="graph" aria-label="graph view">
-                  <Tooltip title="Graph view">
-                    <HubIcon fontSize="small" />
-                  </Tooltip>
-                </ToggleButton>
-              </ToggleButtonGroup>
-
-              <Button
-                variant="outlined"
-                startIcon={<AccountTreeIcon />}
-                onClick={() => navigate('/workflows')}
-              >
-                Workflows
-              </Button>
-
-              <Button
-                variant="outlined"
-                startIcon={<GroupsIcon />}
-                onClick={() => navigate('/agents')}
-              >
-                Agent Team
-              </Button>
-
-              <Button
-                variant="outlined"
-                startIcon={<FolderOpenIcon />}
-                onClick={() => navigate('/workspace-roots')}
-              >
-                Workspace Roots
-              </Button>
-
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => setNewDialogOpen(true)}
-              >
-                New Project
-              </Button>
-            </Box>
-          )}
-        </Box>
-
+  return (
+    <>
+      <AdminLayout
+        title="Projects"
+        actions={headerActions}
+        user={user}
+        isAuthenticated={isAuthenticated}
+        login={login}
+      >
+        <Box sx={{ maxWidth: isSplitView ? 1400 : 1200, mx: 'auto', transition: 'max-width 0.4s ease' }}>
         {/* ── Loading / empty states ── */}
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 8 }}>
@@ -323,7 +282,8 @@ const ProjectsPage: React.FC = () => {
             </Box>
           </LayoutGroup>
         )}
-      </Box>
+        </Box>
+      </AdminLayout>
 
       <NewProjectDialog
         open={newDialogOpen}
@@ -331,7 +291,7 @@ const ProjectsPage: React.FC = () => {
         onSubmit={(title, description) => createMutation.mutate({ title, description })}
         isSubmitting={createMutation.isPending}
       />
-    </Box>
+    </>
   );
 };
 
