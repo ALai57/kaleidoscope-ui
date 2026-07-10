@@ -246,8 +246,18 @@ Roll-out (in progress — landed as per-component vertical slices):
   actions) on `SurfaceCard`, for the ~10 hand-rolled entity cards to migrate onto.
 
 Still open (roll-out):
-- ⏳ Restyle the remaining Prism surfaces to consume the tokens: the nav rail +
-  top bar, table/inputs/editor treatments. Each follows the NavBar pattern.
+- 🔶 **Admin nav rail + top bar** — built the persistent mission-control shell
+  (`AdminNavRail` + `AdminTopBar` + `AdminLayout`, on a shared `KaleidoscopeMark`
+  deduped out of NavBar) and migrated the four admin **list** pages onto it
+  (Projects, Workflows, Agent Team, Workspace Roots): the public NavBar + the
+  hand-rolled per-page header/nav-button clusters + "Projects /" breadcrumbs are
+  gone; section nav lives in the rail, page actions in the top bar. ⏳ The
+  drill-down/editor pages (`ProjectDetailPage`, `WorkflowEditorPage`, and the
+  `/projects/:id/*` sub-pages) still use the old NavBar shell — they need their
+  own pass (the slim top bar has to host a dynamic title + save state + inline
+  rename, so it's not a clean list-page swap).
+- ⏳ Restyle the remaining Prism surfaces to consume the tokens: table/inputs/
+  editor treatments. Each follows the NavBar pattern.
 - ✅ Migrate the existing entity cards onto `EntityCard` (all with smoke tests):
   `AgentCard` + `WorkflowCard` on the default `card` variant; `TeamLeadCard`,
   `AdvisorReviewCard`, `RoundCard` on a new `panel` variant (filled header bar +
