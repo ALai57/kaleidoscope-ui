@@ -61,6 +61,7 @@ import {
 } from '../../api/workflows';
 import { getTasks } from '../../api/tasks';
 import type { ProjectStatus, ScoreRun } from '../../types/project';
+import { getAgentPersona } from '../../types/agent';
 import type { WorkflowRecommendation } from '../../types/workflow';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -85,18 +86,10 @@ interface ScorerPersona {
   color: string;
 }
 
-const SCORER_PERSONAS: Record<string, ScorerPersona> = {
-  pm:               { animal: '🦊', shortName: 'Product',   label: 'Product Manager',  color: '#7c3aed' },
-  engineering_lead: { animal: '🦉', shortName: 'Architect', label: 'Engineering Lead', color: '#0369a1' },
-  coach:            { animal: '🐬', shortName: 'Coach',     label: 'Project Coach',    color: '#0891b2' },
-};
-
-const DEFAULT_PERSONA: ScorerPersona = {
-  animal: '🐱', shortName: 'Advisor', label: 'Expert Advisor', color: '#6b7280',
-};
-
+// Single source of persona display info + identity color lives in types/agent.
 function getPersona(scorerType: string): ScorerPersona {
-  return SCORER_PERSONAS[scorerType] ?? DEFAULT_PERSONA;
+  const p = getAgentPersona(scorerType);
+  return { animal: p.avatar, shortName: p.short_name, label: p.name, color: p.color };
 }
 
 function overallChipColor(overall: number): 'success' | 'warning' | 'error' {
