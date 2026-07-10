@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { Link, useLocation } from 'react-router-dom';
+import { KaleidoscopeMark } from './KaleidoscopeMark';
 
 export interface NavBarUser {
   firstName?: string | undefined;
@@ -34,18 +35,6 @@ const NAV_LINKS = [
   { label: 'Writing', to: '/archive' },
 ];
 
-// The kaleidoscope mark: six wedges + a hub. Wedge fills come from the theme's
-// categorical palette (mode-independent identity hues) so the logo re-colors
-// with the active preset instead of hardcoding brand hex.
-const WEDGE_PATHS = [
-  'M15 15 L15 3 A12 12 0 0 1 25.4 9Z',
-  'M15 15 L25.4 9 A12 12 0 0 1 25.4 21Z',
-  'M15 15 L25.4 21 A12 12 0 0 1 15 27Z',
-  'M15 15 L15 27 A12 12 0 0 1 4.6 21Z',
-  'M15 15 L4.6 21 A12 12 0 0 1 4.6 9Z',
-  'M15 15 L4.6 9 A12 12 0 0 1 15 3Z',
-];
-
 export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, login }) => {
   const theme = useTheme();
   const { pathname } = useLocation();
@@ -65,14 +54,6 @@ export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, l
   const durSlow = tokens?.motion.duration.slow ?? 400;
   const snap = tokens?.motion.easing.springSnap ?? 'ease';
   const settle = tokens?.motion.easing.springSettle ?? 'ease';
-  const wedgeColors = tokens?.color.categorical ?? [
-    theme.palette.primary.main,
-    theme.palette.secondary.main,
-    theme.palette.info.main,
-    theme.palette.success.main,
-    theme.palette.warning.main,
-    theme.palette.error.main,
-  ];
 
   // A nav link: monospace/uppercase with an accent underline that wipes in on
   // hover and stays lit on the active route.
@@ -147,28 +128,7 @@ export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, l
               '&:hover .klogo': { transform: 'rotate(120deg)' },
             }}
           >
-            <Box
-              component="svg"
-              className="klogo"
-              width={30}
-              height={30}
-              viewBox="0 0 30 30"
-              aria-hidden="true"
-              sx={{ flexShrink: 0 }}
-            >
-              {WEDGE_PATHS.map((d, i) => (
-                <path key={d} d={d} fill={wedgeColors[i % wedgeColors.length]} />
-              ))}
-              <circle cx="15" cy="15" r="4.5" fill={theme.palette.background.default} />
-              <circle
-                cx="15"
-                cy="15"
-                r="4.5"
-                fill="none"
-                stroke={theme.palette.primary.main}
-                strokeWidth="1"
-              />
-            </Box>
+            <KaleidoscopeMark className="klogo" size={30} />
             <Box
               component="span"
               sx={{
