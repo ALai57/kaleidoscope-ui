@@ -258,7 +258,7 @@ Still open (roll-out):
   NavBar/primitives consume `tokens.typography.mono` directly for now, to contain
   blast radius).
 
-## Phase 6 — Public site (marketing pages) — IN PROGRESS
+## Phase 6 — Public site (marketing pages) — DONE
 
 The admin/workflow surfaces now speak the design system, but the **public pages
 a visitor actually lands on** — `HomePage`, `AboutPage`, `ExperiencePage` (and
@@ -319,11 +319,10 @@ right in Classic-light and Prism-dark from the same code.
 - *PortfolioSection* → cards on **`SurfaceCard interactive`**; "Recent Writing"
   via `SectionHeading` with a "View all →" action.
 
-**AboutPage** — ⏳ pending
-- "About" → `SectionHeading` with a mono eyebrow. Body prose stays (readability).
-  Image → `radius.lg` + token elevation. Optionally surface the "outside of work"
-  interests (cooking, Spanish, board games, tango) as tokenized chips to echo the
-  mission-control vibe.
+**AboutPage** — ✅ done
+- "About" → `SectionHeading` (`// PROFILE` eyebrow + accent rule); body prose
+  stays; image on `radius.lg` + a token elevation; the "outside of work"
+  interests surfaced as a tokenized chip row.
 
 **ExperiencePage** — ✅ done
 - Section headings ("Experience", "Skills", "Career History") → `SectionHeading`,
@@ -337,18 +336,18 @@ right in Classic-light and Prism-dark from the same code.
   voice; each entry's content on a `SurfaceCard`; raw `<a>` / `<br><br>` →
   MUI `Link` + spacing; connector color from the `divider` token.
 
-**Footer** — ⏳ pending
-- Tokenize: `surface.sunken` bg + `text.secondary`, and mono-uppercase nav links
-  echoing the NavBar — so it re-skins with mode/preset instead of being a fixed
-  dark slab.
+**Footer** — ✅ done
+- Tokenized: `surface.sunken` bg + `text.secondary` + a divider top border, with
+  mono-uppercase nav links echoing the NavBar — re-skins with mode/preset (light
+  under Classic, near-black under Prism) instead of being a fixed dark slab.
 
 ### Suggested order
 
 `SectionHeading` first (unblocks all three pages), then HomePage (hero + cards),
 then ExperiencePage (Timeline is the largest lift), then AboutPage, then Footer.
 Each ships as a vertical slice with a story + test, like the Phase 5 slices.
-Progress: `SectionHeading` ✅, HomePage ✅, ExperiencePage ✅; **AboutPage** and
-**Footer** remain.
+Progress: all shipped — `SectionHeading` ✅, HomePage ✅, ExperiencePage ✅,
+AboutPage ✅, Footer ✅.
 
 ### Resolved decision
 
