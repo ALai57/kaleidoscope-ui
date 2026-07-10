@@ -11,6 +11,7 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ReplayIcon from '@mui/icons-material/Replay';
+import { SurfaceCard } from '../common/SurfaceCard';
 import type {
   JudgeDecisionOutput,
   StepRunStatus,
@@ -226,8 +227,9 @@ export const TeamLeadCard: React.FC<TeamLeadCardProps> = ({
   const action = decisionOutput?.action;
 
   return (
-    <Box
+    <SurfaceCard
       sx={{
+        // emphasized 2px status border overrides SurfaceCard's default 1px divider
         border: 2,
         borderColor: action === 'clarify' && stepStatus === 'awaiting_input'
           ? 'warning.main'
@@ -236,7 +238,6 @@ export const TeamLeadCard: React.FC<TeamLeadCardProps> = ({
             : isRunning
               ? 'primary.main'
               : 'divider',
-        borderRadius: 1,
         mb: 0.5,
         overflow: 'hidden',
       }}
@@ -302,7 +303,7 @@ export const TeamLeadCard: React.FC<TeamLeadCardProps> = ({
           )}
         </Box>
       )}
-    </Box>
+    </SurfaceCard>
   );
 };
 

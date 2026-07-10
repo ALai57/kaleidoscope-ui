@@ -22,6 +22,7 @@ import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { ScoreSnapshotEntry, TradeOff, Recommendation, WorkflowRoundDetail } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
+import { SurfaceCard } from '../common/SurfaceCard';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -321,7 +322,7 @@ export const RoundCard: React.FC<RoundCardProps> = ({
     : 'action.hover';
 
   return (
-    <Box sx={{ border: 1, borderColor, borderRadius: 1, overflow: 'hidden', mb: 1 }}>
+    <SurfaceCard sx={{ borderColor, overflow: 'hidden', mb: 1 }}>
 
       {/* ── Header ── */}
       <Box
@@ -514,7 +515,7 @@ export const RoundCard: React.FC<RoundCardProps> = ({
           )}
         </Box>
       )}
-    </Box>
+    </SurfaceCard>
   );
 };
 

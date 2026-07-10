@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import type { Workflow } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
+import { SurfaceCard } from '../common/SurfaceCard';
 
 interface WorkflowCardProps {
   workflow: Workflow;
@@ -16,12 +17,9 @@ interface WorkflowCardProps {
 }
 
 const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive, archiving }) => (
-  <Box
+  <SurfaceCard
     sx={{
       p: 2,
-      border: 1,
-      borderColor: 'divider',
-      borderRadius: 1,
       display: 'flex',
       alignItems: 'center',
       gap: 2,
@@ -75,7 +73,7 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive
         </Button>
       )}
     </Box>
-  </Box>
+  </SurfaceCard>
 );
 
 export default WorkflowCard;

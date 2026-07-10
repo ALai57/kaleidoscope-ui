@@ -12,6 +12,7 @@ import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { AdvisorScoreOutput, AdvisorStatus, StepRunStatus } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
+import { SurfaceCard } from '../common/SurfaceCard';
 
 // ── Score helpers ─────────────────────────────────────────────────────────
 
@@ -131,11 +132,10 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
   const overallStatus = scoreOutput ? resolveOverallStatus(scoreOutput) : undefined;
 
   return (
-    <Box
+    <SurfaceCard
       sx={{
-        border: 1,
+        // dynamic status border overrides SurfaceCard's default divider
         borderColor: isFailed ? 'error.main' : isRunning ? 'primary.main' : 'divider',
-        borderRadius: 1,
         mb: 0.5,
         overflow: 'hidden',
       }}
@@ -249,7 +249,7 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
           )}
         </Box>
       )}
-    </Box>
+    </SurfaceCard>
   );
 };
 
