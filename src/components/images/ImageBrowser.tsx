@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { alpha } from '@mui/material/styles';
 import { Image, ImageVersion } from '@/types/image';
 import { FullImageCard } from './FullImageCard';
 import { ImageThumbnail } from './ImageThumbnail';
@@ -207,7 +208,9 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           slotProps={{
-            backdrop: { style: { backgroundColor: 'rgba(0, 0, 0, 0.6)' } },
+            backdrop: {
+              sx: (theme) => ({ backgroundColor: alpha(theme.palette.common.black, 0.6) }),
+            },
           }}
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
