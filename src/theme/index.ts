@@ -22,10 +22,17 @@ declare module '@mui/material/styles' {
   interface ThemeOptions {
     tokens?: Tokens;
   }
-  // Expose the sunken surface as a mode-reactive palette slot. Unlike
-  // `theme.tokens` (frozen to the light scheme), palette values ride the
-  // colorSchemes CSS variables, so `bgcolor: 'background.sunken'` flips
-  // correctly in dark mode.
+  // Carry the token set inside each color scheme so MUI swaps `theme.tokens`
+  // to the active mode's tokens (it spreads the whole scheme onto the theme,
+  // not just `palette`). This is what makes `theme.tokens.*` mode-reactive.
+  interface ColorSystem {
+    tokens: Tokens;
+  }
+  interface ColorSystemOptions {
+    tokens?: Tokens;
+  }
+  // Expose the sunken surface as a mode-reactive palette slot, so
+  // `bgcolor: 'background.sunken'` resolves correctly in either mode.
   interface TypeBackground {
     sunken: string;
   }
@@ -86,8 +93,11 @@ function typographyFromTokens(tokens: Tokens): TypographyVariantsOptions {
 
 /**
  * Creates an MUI v6 theme derived from design tokens, with light and dark
- * color schemes. `theme.tokens` currently carries the light-mode tokens;
- * Phase 2 makes it mode-reactive alongside the adaptive dark-mode recompute.
+ * color schemes. `theme.tokens` is mode-reactive: each scheme carries its own
+ * token set, and MUI swaps the active scheme (palette *and* tokens) onto the
+ * theme when the color mode changes, so components reading `theme.tokens.*`
+ * get the current mode's values. The top-level `tokens` is the light default
+ * for reads off the raw theme object (outside a provider).
  */
 export function makeTheme(params: ThemeParams, presetId: PresetId = 'default'): Theme {
   const lightTokens = makeTokens(params, 'light', presetId);
@@ -95,8 +105,8 @@ export function makeTheme(params: ThemeParams, presetId: PresetId = 'default'): 
 
   return createTheme({
     colorSchemes: {
-      light: { palette: paletteFromTokens(lightTokens) },
-      dark: { palette: paletteFromTokens(darkTokens) },
+      light: { palette: paletteFromTokens(lightTokens), tokens: lightTokens },
+      dark: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
     },
     shape: { borderRadius: lightTokens.radius.md },
     spacing: lightTokens.space.sm, // 8px base unit
