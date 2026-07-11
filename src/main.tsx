@@ -21,6 +21,7 @@ const authConfig = {
   audience: import.meta.env.VITE_AUTH0_AUDIENCE,
 };
 
+
 /**
  * Loads the persisted theme (source of truth = themes API) once the user is
  * authenticated and reconciles it into the store + color mode. The store is
