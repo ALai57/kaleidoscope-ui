@@ -11,7 +11,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { Link, useLocation } from 'react-router-dom';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
-import {getAdminHost} from "@/auth/authHelpers";
+import {isSiteAdmin} from "@/auth/authHelpers";
 
 export interface NavBarUser {
   firstName?: string | undefined;
@@ -28,8 +28,6 @@ export interface NavBarProps {
   logout?: (() => void) | undefined;
 }
 
-const ADMIN_ROLE_SUFFIX = ':admin';
-
 const NAV_LINKS = [
   { label: 'About', to: '/about' },
   { label: 'Experience', to: '/experience' },
@@ -41,15 +39,7 @@ export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, l
   const theme = useTheme();
   const { pathname } = useLocation();
 
-  const hostname = getAdminHost();
-  const adminRole = hostname + ADMIN_ROLE_SUFFIX;
-  const roles = new Set(user?.realm_access?.roles ?? []);
-  const isSiteAdmin = roles.has(adminRole);
-
-
-  console.log("User Profile and Is Authenticated?");
-  console.log(user);
-  console.log(isAuthenticated);
+  const userIsSiteAdmin = isSiteAdmin(user);
 
   // Structural tokens (radius/motion/mono voice) drive the Prism look; each has
   // a non-color fallback so the bar still renders under a bare MUI theme.
@@ -164,7 +154,7 @@ export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, l
 
           {/* Right-side: admin + user */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
-            {isSiteAdmin && (
+            {userIsSiteAdmin && (
               <>
                 <Box
                   component={Link}
