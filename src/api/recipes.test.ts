@@ -1,0 +1,158 @@
+import { describe, it, expect, beforeAll, afterEach, afterAll } from 'vitest';
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
+import {
+  getRecipes,
+  getRecipe,
+  createRecipe,
+  updateRecipe,
+  deleteRecipe,
+  scrapeRecipe,
+  getLabels,
+  createLabel,
+  createLabelGroup,
+  addRecipeAudience,
+  qualifiedLabelName,
+} from './recipes';
+import { ApiError } from './client';
+import type { Recipe } from '../types/recipe';
+
+const mockRecipe: Recipe = {
+  id: 'r1',
+  recipe_url: 'chana-masala',
+  hostname: 'andrewslai.com',
+  content: {
+    title: 'Chana Masala',
+    ingredients: ['2 cups chickpeas', '1 tbsp flour'],
+    instructions_html: '<ol><li>Cook</li></ol>',
+  },
+  labels: [],
+  public_visibility: true,
+  created_at: '2026-01-01T00:00:00Z',
+  modified_at: '2026-01-01T00:00:00Z',
+};
+
+const server = setupServer(
+  http.get('/recipes', ({ request: req }) => {
+    const url = new URL(req.url);
+    return HttpResponse.json([
+      { ...mockRecipe, _ingredient: url.searchParams.get('ingredient'), _label: url.searchParams.get('label-id') },
+    ]);
+  }),
+  http.get('/recipes/chana-masala', () => HttpResponse.json(mockRecipe)),
+  http.get('/recipes/missing', () => new HttpResponse(null, { status: 404 })),
+  http.post('/recipes', async ({ request: req }) => {
+    const body = (await req.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...mockRecipe, ...body }, { status: 200 });
+  }),
+  http.put('/recipes/chana-masala', async ({ request: req }) => {
+    const body = (await req.json()) as Record<string, unknown>;
+    return HttpResponse.json({ ...mockRecipe, ...body });
+  }),
+  http.delete('/recipes/chana-masala', () => new HttpResponse(null, { status: 204 })),
+  http.post('/recipes/scrape', () =>
+    HttpResponse.json({
+      recipe: { title: 'Scraped', ingredients: ['x'] },
+      suggested_labels: ['indian'],
+      extraction_method: 'json-ld',
+      warnings: [],
+    })
+  ),
+  http.get('/recipe-labels', () =>
+    HttpResponse.json([{ id: 'l1', name: 'indian', group_id: 'g1', group_name: 'ethnicity' }])
+  ),
+  http.post('/recipe-labels', async ({ request: req }) => {
+    const body = (await req.json()) as Record<string, unknown>;
+    return HttpResponse.json({ id: 'l2', ...body });
+  }),
+  http.post('/recipe-label-groups', async ({ request: req }) => {
+    const body = (await req.json()) as Record<string, unknown>;
+    return HttpResponse.json({ id: 'g2', ...body });
+  }),
+  http.put('/recipe-audiences', async ({ request: req }) => {
+    const body = (await req.json()) as Record<string, unknown>;
+    return HttpResponse.json({ id: 'aud1', ...body });
+  })
+);
+
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
+describe('recipes api', () => {
+  it('getRecipes sends the bearer token and forwards filters', async () => {
+    const result = await getRecipes({ ingredient: 'flour', labelId: 'l1' }, 'tok');
+    expect(result[0]).toMatchObject({ _ingredient: 'flour', _label: 'l1' });
+  });
+
+  it('getRecipe returns a single recipe with parsed content', async () => {
+    const recipe = await getRecipe('chana-masala');
+    expect(recipe.content.title).toBe('Chana Masala');
+    expect(recipe.content.ingredients).toHaveLength(2);
+  });
+
+  it('getRecipe surfaces ApiError on 404', async () => {
+    await expect(getRecipe('missing')).rejects.toBeInstanceOf(ApiError);
+  });
+
+  it('createRecipe derives the slug from the title when recipe_url is omitted', async () => {
+    const created = await createRecipe({
+      content: { title: 'My New Dish!', ingredients: ['a'] },
+    });
+    expect(created).toMatchObject({ recipe_url: 'my-new-dish' });
+  });
+
+  it('createRecipe forwards an explicit recipe_url and label_ids', async () => {
+    const created = (await createRecipe({
+      content: { title: 'X', ingredients: [] },
+      recipe_url: 'custom',
+      label_ids: ['l1'],
+    })) as Recipe & { label_ids: string[] };
+    expect(created.recipe_url).toBe('custom');
+    expect(created.label_ids).toEqual(['l1']);
+  });
+
+  it('updateRecipe PUTs the patch', async () => {
+    const updated = (await updateRecipe('chana-masala', { public_visibility: false })) as Recipe;
+    expect(updated.public_visibility).toBe(false);
+  });
+
+  it('deleteRecipe resolves on 204', async () => {
+    await expect(deleteRecipe('chana-masala')).resolves.toBeUndefined();
+  });
+
+  it('scrapeRecipe returns a draft with an extraction method', async () => {
+    const result = await scrapeRecipe('http://example.com/r');
+    expect(result.extraction_method).toBe('json-ld');
+    expect(result.suggested_labels).toContain('indian');
+  });
+
+  it('getLabels returns labels with group names', async () => {
+    const labels = await getLabels();
+    expect(labels[0]).toMatchObject({ name: 'indian', group_name: 'ethnicity' });
+  });
+
+  it('createLabel sends name + group_id', async () => {
+    const label = (await createLabel('mexican', 'g1')) as { name: string; group_id: string };
+    expect(label).toMatchObject({ name: 'mexican', group_id: 'g1' });
+  });
+
+  it('createLabelGroup sends the name', async () => {
+    const group = (await createLabelGroup('cuisine')) as { name: string };
+    expect(group.name).toBe('cuisine');
+  });
+
+  it('addRecipeAudience sends recipe_id and group_id', async () => {
+    const aud = (await addRecipeAudience('r1', 'grp1')) as { recipe_id: string; group_id: string };
+    expect(aud).toMatchObject({ recipe_id: 'r1', group_id: 'grp1' });
+  });
+});
+
+describe('qualifiedLabelName', () => {
+  it('qualifies grouped labels and leaves ungrouped ones bare', () => {
+    expect(qualifiedLabelName({ id: '1', name: 'indian', group_name: 'ethnicity' })).toBe(
+      'ethnicity/indian'
+    );
+    expect(qualifiedLabelName({ id: '2', name: 'baking' })).toBe('baking');
+  });
+});

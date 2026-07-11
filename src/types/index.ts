@@ -3,6 +3,16 @@ export type { Article, ArticleBranch, ArticleVersion } from './article';
 export type { Image, ImageVersion } from './image';
 export type { UserProfile } from './user';
 export type { Group, GroupMember, Audience } from './group';
+export type {
+  RecipeLabelGroup,
+  RecipeLabel,
+  RecipeContent,
+  Recipe,
+  ScrapeResult,
+  RecipeAudience,
+  CreateRecipePayload,
+  UpdateRecipePayload,
+} from './recipe';
 export type { ThemeParams } from './theme';
 export type {
   WorkflowStatus,
