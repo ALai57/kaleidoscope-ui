@@ -29,6 +29,13 @@ const CAPABILITIES: Capability[] = [
     to: '/articles',
   },
   {
+    name: 'Recipes',
+    description: 'Scrape, edit, search, and share Recipes',
+    src: '/static/images/writing.svg',
+    alt: 'Manage recipes',
+    to: '/recipes',
+  },
+  {
     name: 'Images',
     description: 'Create and manage Images',
     src: '/static/images/images.svg',

@@ -33,6 +33,7 @@ const NAV_LINKS = [
   { label: 'About', to: '/about' },
   { label: 'Experience', to: '/experience' },
   { label: 'Writing', to: '/archive' },
+  { label: 'Recipes', to: '/recipes' },
 ];
 
 export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, login }) => {

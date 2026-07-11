@@ -1,0 +1,354 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Collapse from '@mui/material/Collapse';
+import Container from '@mui/material/Container';
+import Divider from '@mui/material/Divider';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { NavBar } from '../components/layout/NavBar';
+import { LoadingScreen } from '../components/layout/LoadingScreen';
+import { RichTextEditor } from '../components/editor/RichTextEditor';
+import { LabelPicker } from '../components/recipes/LabelPicker';
+import { useAuth } from '../auth/useAuth';
+import {
+  getRecipe,
+  createRecipe,
+  updateRecipe,
+  scrapeRecipe,
+  getLabels,
+  createLabel,
+  addRecipeAudience,
+} from '../api/recipes';
+import { getGroups } from '../api/groups';
+import type { RecipeContent, ScrapeResult } from '../types/recipe';
+
+interface FormState {
+  title: string;
+  servings: string;
+  prep: string;
+  cook: string;
+  sourceUrl: string;
+  ingredients: string[];
+  labelIds: string[];
+  publicVisibility: boolean;
+}
+
+const EMPTY_FORM: FormState = {
+  title: '',
+  servings: '',
+  prep: '',
+  cook: '',
+  sourceUrl: '',
+  ingredients: [''],
+  labelIds: [],
+  publicVisibility: false,
+};
+
+function toContent(form: FormState, instructionsHtml: string): RecipeContent {
+  const num = (s: string): number | null => (s.trim() === '' ? null : Number(s));
+  return {
+    title: form.title,
+    ingredients: form.ingredients.map((i) => i.trim()).filter((i) => i !== ''),
+    instructions_html: instructionsHtml,
+    servings: form.servings.trim() === '' ? null : form.servings,
+    prep_time_minutes: num(form.prep),
+    cook_time_minutes: num(form.cook),
+  };
+}
+
+const RecipeEditorPage: React.FC = () => {
+  const { slug } = useParams();
+  const isEdit = Boolean(slug);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { token, userProfile, isAuthenticated, login } = useAuth();
+
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
+  const [scrapeUrl, setScrapeUrl] = useState('');
+  const [original, setOriginal] = useState<RecipeContent | null>(null);
+  const [showOriginal, setShowOriginal] = useState(false);
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const [editorKey, setEditorKey] = useState('new');
+  // Seed value for the editor (read at render); the ref captures live edits.
+  const [initialInstructions, setInitialInstructions] = useState('');
+  const instructionsRef = useRef<string>('');
+
+  const { data: labels = [] } = useQuery({ queryKey: ['recipe-labels'], queryFn: () => getLabels(token) });
+  const { data: groups = [] } = useQuery({ queryKey: ['groups'], queryFn: () => getGroups(token) });
+
+  const { data: existing, isLoading } = useQuery({
+    queryKey: ['recipe', slug],
+    queryFn: () => getRecipe(slug as string, token),
+    enabled: isEdit,
+  });
+
+  useEffect(() => {
+    if (existing) {
+      const c = existing.content;
+      setForm({
+        title: c.title,
+        servings: c.servings ?? '',
+        prep: c.prep_time_minutes != null ? String(c.prep_time_minutes) : '',
+        cook: c.cook_time_minutes != null ? String(c.cook_time_minutes) : '',
+        sourceUrl: existing.source_url ?? '',
+        ingredients: c.ingredients.length ? c.ingredients : [''],
+        labelIds: (existing.labels ?? []).map((l) => l.id),
+        publicVisibility: existing.public_visibility,
+      });
+      instructionsRef.current = c.instructions_html ?? '';
+      setInitialInstructions(c.instructions_html ?? '');
+      setOriginal(existing.original_content ?? null);
+      setEditorKey(existing.id);
+    }
+  }, [existing]);
+
+  const applyDraft = (draft: ScrapeResult): void => {
+    const r = draft.recipe;
+    setForm((f) => ({
+      ...f,
+      title: r.title,
+      servings: r.servings ?? '',
+      prep: r.prep_time_minutes != null ? String(r.prep_time_minutes) : '',
+      cook: r.cook_time_minutes != null ? String(r.cook_time_minutes) : '',
+      sourceUrl: scrapeUrl,
+      ingredients: r.ingredients.length ? r.ingredients : [''],
+    }));
+    instructionsRef.current = r.instructions_html ?? '';
+    setInitialInstructions(r.instructions_html ?? '');
+    setOriginal(r);
+    setWarnings(draft.warnings);
+    setEditorKey(`scraped-${Date.now()}`);
+  };
+
+  const scrapeMutation = useMutation({
+    mutationFn: () => scrapeRecipe(scrapeUrl, token),
+    onSuccess: applyDraft,
+  });
+
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const content = toContent(form, instructionsRef.current);
+      if (isEdit) {
+        return updateRecipe(
+          slug as string,
+          {
+            content,
+            source_url: form.sourceUrl || null,
+            label_ids: form.labelIds,
+            public_visibility: form.publicVisibility,
+          },
+          token
+        );
+      }
+      return createRecipe(
+        {
+          content,
+          ...(original ? { original_content: original } : {}),
+          source_url: form.sourceUrl || null,
+          label_ids: form.labelIds,
+          public_visibility: form.publicVisibility,
+        },
+        token
+      );
+    },
+    onSuccess: (saved) => {
+      void queryClient.invalidateQueries({ queryKey: ['recipes'] });
+      navigate(`/recipes/${saved.recipe_url}`);
+    },
+  });
+
+  const shareMutation = useMutation({
+    mutationFn: (groupId: string) => addRecipeAudience(existing?.id as string, groupId, token),
+  });
+
+  const setField = (patch: Partial<FormState>): void => setForm((f) => ({ ...f, ...patch }));
+  const setIngredient = (i: number, v: string): void =>
+    setForm((f) => ({ ...f, ingredients: f.ingredients.map((x, idx) => (idx === i ? v : x)) }));
+  const addIngredient = (): void => setForm((f) => ({ ...f, ingredients: [...f.ingredients, ''] }));
+  const removeIngredient = (i: number): void =>
+    setForm((f) => ({ ...f, ingredients: f.ingredients.filter((_, idx) => idx !== i) }));
+
+  if (isEdit && isLoading) return <LoadingScreen />;
+
+  return (
+    <>
+      <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
+      <Container maxWidth="md" sx={{ py: 4 }}>
+        <Typography variant="h3" gutterBottom>
+          {isEdit ? 'Edit recipe' : 'New recipe'}
+        </Typography>
+
+        {!isEdit && (
+          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Import from URL"
+              placeholder="https://…"
+              value={scrapeUrl}
+              onChange={(e) => setScrapeUrl(e.target.value)}
+            />
+            <Button
+              variant="outlined"
+              onClick={() => scrapeMutation.mutate()}
+              disabled={!scrapeUrl.trim() || scrapeMutation.isPending}
+            >
+              {scrapeMutation.isPending ? 'Importing…' : 'Import'}
+            </Button>
+          </Stack>
+        )}
+        {scrapeMutation.isError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            Could not import this URL. Paste the recipe below instead.
+          </Alert>
+        )}
+        {warnings.map((w, i) => (
+          <Alert key={i} severity="warning" sx={{ mb: 1 }}>
+            {w}
+          </Alert>
+        ))}
+
+        <Stack spacing={2}>
+          <TextField
+            label="Title"
+            value={form.title}
+            onChange={(e) => setField({ title: e.target.value })}
+            fullWidth
+          />
+          <Stack direction="row" spacing={2}>
+            <TextField label="Servings" value={form.servings} onChange={(e) => setField({ servings: e.target.value })} />
+            <TextField
+              label="Prep (min)"
+              type="number"
+              value={form.prep}
+              onChange={(e) => setField({ prep: e.target.value })}
+            />
+            <TextField
+              label="Cook (min)"
+              type="number"
+              value={form.cook}
+              onChange={(e) => setField({ cook: e.target.value })}
+            />
+          </Stack>
+          <TextField
+            label="Source URL"
+            value={form.sourceUrl}
+            onChange={(e) => setField({ sourceUrl: e.target.value })}
+            fullWidth
+          />
+
+          <Box>
+            <Typography variant="h6">Ingredients</Typography>
+            {form.ingredients.map((ing, i) => (
+              <Stack key={i} direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  value={ing}
+                  placeholder="2 cups flour"
+                  onChange={(e) => setIngredient(i, e.target.value)}
+                />
+                <IconButton aria-label={`remove ingredient ${i + 1}`} onClick={() => removeIngredient(i)}>
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </Stack>
+            ))}
+            <Button startIcon={<AddIcon />} onClick={addIngredient} size="small">
+              Add ingredient
+            </Button>
+          </Box>
+
+          <LabelPicker
+            labels={labels}
+            value={form.labelIds}
+            onChange={(ids) => setField({ labelIds: ids })}
+            onCreateLabel={(name) => createLabel(name, null, token)}
+          />
+
+          <Box>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Instructions
+            </Typography>
+            <RichTextEditor
+              key={editorKey}
+              initialContent={initialInstructions}
+              onChange={(html) => {
+                instructionsRef.current = html;
+              }}
+              editable
+            />
+          </Box>
+
+          {original && (
+            <Box>
+              <Button size="small" onClick={() => setShowOriginal((s) => !s)}>
+                {showOriginal ? 'Hide original' : 'View original (as scraped)'}
+              </Button>
+              <Collapse in={showOriginal}>
+                <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
+                  <Typography variant="subtitle2">{original.title}</Typography>
+                  <ul>
+                    {original.ingredients.map((ing, i) => (
+                      <li key={i}>{ing}</li>
+                    ))}
+                  </ul>
+                </Box>
+              </Collapse>
+            </Box>
+          )}
+
+          <Divider />
+          <FormControlLabel
+            control={
+              <Switch
+                checked={form.publicVisibility}
+                onChange={(e) => setField({ publicVisibility: e.target.checked })}
+              />
+            }
+            label="Publicly visible"
+          />
+
+          {isEdit && existing && groups.length > 0 && (
+            <Box>
+              <Typography variant="subtitle2">Share with a group</Typography>
+              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                {groups.map((g) => (
+                  <Chip
+                    key={g.group_id}
+                    label={g.display_name}
+                    onClick={() => shareMutation.mutate(g.group_id)}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          )}
+
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="contained"
+              onClick={() => saveMutation.mutate()}
+              disabled={!form.title.trim() || saveMutation.isPending}
+            >
+              {saveMutation.isPending ? 'Saving…' : 'Save'}
+            </Button>
+            <Button onClick={() => navigate('/recipes')}>Cancel</Button>
+          </Stack>
+          {saveMutation.isError && <Alert severity="error">Could not save the recipe.</Alert>}
+        </Stack>
+      </Container>
+    </>
+  );
+};
+
+export default RecipeEditorPage;

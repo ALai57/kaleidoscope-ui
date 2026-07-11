@@ -12,6 +12,9 @@ const ArticlePage = React.lazy(() => import('./pages/ArticlePage'));
 const ArticleManagerPage = React.lazy(() => import('./pages/ArticleManagerPage'));
 const ArticleEditorPage = React.lazy(() => import('./pages/ArticleEditorPage'));
 const ImageManagerPage = React.lazy(() => import('./pages/ImageManagerPage'));
+const RecipesPage = React.lazy(() => import('./pages/RecipesPage'));
+const RecipePage = React.lazy(() => import('./pages/RecipePage'));
+const RecipeEditorPage = React.lazy(() => import('./pages/RecipeEditorPage'));
 const UIManagerPage = React.lazy(() => import('./pages/UIManagerPage'));
 const GroupsPage = React.lazy(() => import('./pages/GroupsPage'));
 const SignUpPage = React.lazy(() => import('./pages/SignUpPage'));
@@ -42,6 +45,10 @@ const router = createBrowserRouter([
       { path: '/articles', element: <ArticleManagerPage /> },
       { path: '/articles/new', element: <ArticleEditorPage /> },
       { path: '/articles/:slug/edit', element: <ArticleEditorPage /> },
+      { path: '/recipes', element: <RecipesPage /> },
+      { path: '/recipes/new', element: <RecipeEditorPage /> },
+      { path: '/recipes/:slug', element: <RecipePage /> },
+      { path: '/recipes/:slug/edit', element: <RecipeEditorPage /> },
       { path: '/images', element: <ImageManagerPage /> },
       { path: '/ui', element: <UIManagerPage /> },
       { path: '/groups', element: <GroupsPage /> },
