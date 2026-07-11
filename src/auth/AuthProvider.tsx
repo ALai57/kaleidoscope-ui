@@ -67,19 +67,28 @@ const AuthContextBridge: React.FC<AuthContextBridgeProps> = ({ children }) => {
   }, [isAuthenticated, getAccessTokenSilently]);
 
   // The token resolves asynchronously *after* isAuthenticated flips true (e.g. on
-  // the redirect back from Auth0). Any auth-dependent query that fired during that
-  // gap fetched anonymously — public data only — and won't refetch on its own,
-  // because its queryKey never changed. When the token actually changes, refetch
-  // so those queries pick up the content the user has access to. This runs in its
-  // own effect — after the token-state commit — so consumers have already
-  // re-rendered with the new token in their queryFn closures before we refetch;
-  // invalidating inside the token-fetch callback instead would race that re-render
-  // and refetch with the stale (tokenless) closure.
+  // the redirect back from Auth0, or a returning session that revalidates on load).
+  // Auth-dependent queries put the token in their queryFn closure, not the queryKey,
+  // so any that fired during that gap fetched anonymously — public data only — and
+  // won't refetch on their own. When the token actually changes, reset those
+  // queries so they fetch again with it available.
+  //
+  // resetQueries (not invalidate/refetchQueries) is deliberate: the offending
+  // fetch is typically still *in flight* when the token lands, and both
+  // invalidateQueries and refetchQueries dedupe against an in-flight request and
+  // get swallowed — the query resolves once, tokenless, and never refetches.
+  // resetQueries clears the query to its initial state, which makes the mounted
+  // observer kick off a fresh fetch (abandoning the stale in-flight one).
+  //
+  // This runs in its own effect — after the token-state commit — so consumers have
+  // already re-rendered with the new token in their queryFn closures before we
+  // reset; resetting inside the token-fetch callback would race that re-render and
+  // fetch with the stale (tokenless) closure.
   const prevToken = useRef<string | undefined>(undefined);
   useEffect(() => {
     if (token === prevToken.current) return;
     prevToken.current = token;
-    void queryClient.invalidateQueries();
+    void queryClient.resetQueries();
   }, [token, queryClient]);
 
   const userProfile: AuthUserProfile | null = user

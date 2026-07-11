@@ -168,4 +168,61 @@ describe('AuthProvider', () => {
       expect(screen.getByTestId('articles').textContent).toBe('private,public');
     });
   });
+
+  // Same race, but the first (tokenless) request is still *in flight* when the
+  // token arrives — the real "type andrewslai.com" case. A bare cache
+  // invalidation is deduped against the in-flight fetch and gets swallowed, so
+  // the query resolves once with public-only data and never refetches.
+  it('refetches when the token arrives while the initial fetch is in flight', async () => {
+    mockIsAuthenticated = true;
+    mockUser = { email: 'a@b.com' };
+
+    let resolveToken: (t: string) => void = () => {};
+    mockGetAccessTokenSilently.mockReturnValue(
+      new Promise<string>((res) => {
+        resolveToken = res;
+      })
+    );
+
+    // Each article fetch captures the token it saw and blocks until we resolve it
+    // by hand, so we can hold the first fetch open across the token's arrival.
+    const pending: Array<{ token: string | undefined; resolve: (v: string[]) => void }> = [];
+    const ArticlesConsumer: React.FC = () => {
+      const ctx = React.useContext(AuthContext) as AuthContextValue;
+      const { data = [] } = useQuery({
+        queryKey: ['articles'],
+        queryFn: () =>
+          new Promise<string[]>((resolve) => {
+            pending.push({ token: ctx.token, resolve });
+          }),
+      });
+      return <span data-testid="articles">{data.join(',')}</span>;
+    };
+
+    renderWithProviders(<ArticlesConsumer />);
+
+    // First fetch is in flight, tokenless.
+    await waitFor(() => expect(pending).toHaveLength(1));
+    expect(pending[0]!.token).toBeUndefined();
+
+    // Token resolves *before* that fetch settles, then the tokenless fetch
+    // completes with public-only data.
+    await act(async () => {
+      resolveToken('test-token');
+    });
+    await act(async () => {
+      pending[0]!.resolve(['public']);
+    });
+
+    // The fix must drive a fresh fetch that now sees the token.
+    await waitFor(() => expect(pending).toHaveLength(2));
+    expect(pending[1]!.token).toBe('test-token');
+    await act(async () => {
+      pending[1]!.resolve(['private', 'public']);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('articles').textContent).toBe('private,public');
+    });
+  });
 });
