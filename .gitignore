@@ -9,6 +9,7 @@ coverage/
 figwheel_server.log
 .env*.local
 .env.production
+.env.ephemeral
 *.lein-repl-history
 .lein-failures
 log.txt
