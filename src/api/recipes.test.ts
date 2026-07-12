@@ -23,8 +23,7 @@ const mockRecipe: Recipe = {
   hostname: 'andrewslai.com',
   content: {
     title: 'Chana Masala',
-    ingredients: ['2 cups chickpeas', '1 tbsp flour'],
-    instructions_html: '<ol><li>Cook</li></ol>',
+    sections: [{ name: null, ingredients: ['2 cups chickpeas', '1 tbsp flour'], steps: ['Cook'] }],
   },
   labels: [],
   public_visibility: true,
@@ -52,7 +51,7 @@ const server = setupServer(
   http.delete('/recipes/chana-masala', () => new HttpResponse(null, { status: 204 })),
   http.post('/recipes/scrape', () =>
     HttpResponse.json({
-      recipe: { title: 'Scraped', ingredients: ['x'] },
+      recipe: { title: 'Scraped', sections: [{ name: null, ingredients: ['x'], steps: [] }] },
       suggested_labels: ['indian'],
       extraction_method: 'json-ld',
       warnings: [],
@@ -88,7 +87,7 @@ describe('recipes api', () => {
   it('getRecipe returns a single recipe with parsed content', async () => {
     const recipe = await getRecipe('chana-masala');
     expect(recipe.content.title).toBe('Chana Masala');
-    expect(recipe.content.ingredients).toHaveLength(2);
+    expect(recipe.content.sections[0]?.ingredients).toHaveLength(2);
   });
 
   it('getRecipe surfaces ApiError on 404', async () => {
@@ -97,14 +96,14 @@ describe('recipes api', () => {
 
   it('createRecipe derives the slug from the title when recipe_url is omitted', async () => {
     const created = await createRecipe({
-      content: { title: 'My New Dish!', ingredients: ['a'] },
+      content: { title: 'My New Dish!', sections: [{ name: null, ingredients: ['a'], steps: [] }] },
     });
     expect(created).toMatchObject({ recipe_url: 'my-new-dish' });
   });
 
   it('createRecipe forwards an explicit recipe_url and label_ids', async () => {
     const created = (await createRecipe({
-      content: { title: 'X', ingredients: [] },
+      content: { title: 'X', sections: [{ name: null, ingredients: [], steps: [] }] },
       recipe_url: 'custom',
       label_ids: ['l1'],
     })) as Recipe & { label_ids: string[] };

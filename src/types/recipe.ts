@@ -10,12 +10,19 @@ export interface RecipeLabel {
   group_name?: string | null; // "ethnicity" — render as `${group_name}/${name}` when grouped
 }
 
+// One section = one paired component (e.g. Cake, Frosting): its own
+// ingredients AND its own steps. A simple recipe is a single unnamed section.
+export interface RecipeSection {
+  name?: string | null; // absent/null ⇒ unnamed section
+  ingredients: string[]; // one freeform line per ingredient ("2 cups flour")
+  steps: string[]; // plain text, one per instruction step (no HTML)
+}
+
 // The one shared recipe-content shape: the current recipe and the scraped
-// original are both this.
+// original are both this. Always has at least one section.
 export interface RecipeContent {
   title: string;
-  ingredients: string[]; // one freeform line per ingredient ("2 cups flour")
-  instructions_html?: string; // HTML (TipTap)
+  sections: RecipeSection[];
   servings?: string | null;
   prep_time_minutes?: number | null;
   cook_time_minutes?: number | null;
@@ -38,7 +45,7 @@ export interface Recipe {
 export interface ScrapeResult {
   recipe: RecipeContent;
   suggested_labels: string[];
-  extraction_method: 'json-ld' | 'llm';
+  extraction_method: 'json-ld' | 'json-ld+llm-sections' | 'llm';
   warnings: string[];
 }
 
