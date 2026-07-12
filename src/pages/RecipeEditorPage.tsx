@@ -60,7 +60,9 @@ const EMPTY_FORM: FormState = {
 };
 
 function sectionsForEdit(content: RecipeContent): EditSection[] {
-  return content.sections.length ? content.sections.map(toEditSection) : [emptyEditSection()];
+  // `content` can come from an external scrape whose `sections` is missing.
+  const sections = content.sections ?? [];
+  return sections.length ? sections.map(toEditSection) : [emptyEditSection()];
 }
 
 function toContent(form: FormState): RecipeContent {
@@ -117,7 +119,9 @@ const RecipeEditorPage: React.FC = () => {
   }, [existing]);
 
   const applyDraft = (draft: ScrapeResult): void => {
-    const r = draft.recipe;
+    // Scrapes can arrive without a `sections` array; restore the RecipeContent
+    // invariant at the boundary so downstream readers (`original`) stay safe.
+    const r: RecipeContent = { ...draft.recipe, sections: draft.recipe.sections ?? [] };
     setForm((f) => ({
       ...f,
       title: r.title,

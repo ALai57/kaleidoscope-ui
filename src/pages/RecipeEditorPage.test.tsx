@@ -72,6 +72,29 @@ function render(ui: React.ReactElement): void {
 }
 
 describe('RecipeEditorPage', () => {
+  it('imports a URL whose scraped recipe has no sections without crashing', async () => {
+    server.use(
+      http.post('/recipes/scrape', () =>
+        HttpResponse.json({
+          // backend can omit `sections` when extraction yields none
+          recipe: { title: 'Sectionless Soup', servings: '2' },
+          suggested_labels: [],
+          extraction_method: 'llm',
+          warnings: [],
+        })
+      )
+    );
+    renderNew();
+
+    fireEvent.change(screen.getByLabelText('Import from URL'), {
+      target: { value: 'http://example.com/soup' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Import' }));
+
+    await waitFor(() => expect(screen.getByLabelText('Title')).toHaveValue('Sectionless Soup'));
+    expect(screen.getByLabelText('Servings')).toHaveValue('2');
+  });
+
   it('imports a URL, populates the form, and saves the draft as content + original_content', async () => {
     renderNew();
 
