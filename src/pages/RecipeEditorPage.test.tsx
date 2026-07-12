@@ -19,21 +19,6 @@ vi.mock('../auth/useAuth', () => ({
   }),
 }));
 
-vi.mock('../components/editor/RichTextEditor', () => ({
-  RichTextEditor: ({
-    initialContent,
-    onChange,
-  }: {
-    initialContent: string;
-    onChange?: (html: string) => void;
-  }) => (
-    <div data-testid="rich-text-editor">
-      <div data-testid="editor-content">{initialContent}</div>
-      <button onClick={() => onChange?.('<ol><li>Edited</li></ol>')}>Update content</button>
-    </div>
-  ),
-}));
-
 let createdBody: Record<string, unknown> | null = null;
 
 const server = setupServer(
@@ -43,8 +28,7 @@ const server = setupServer(
     HttpResponse.json({
       recipe: {
         title: 'Imported Stew',
-        ingredients: ['carrots', 'beef'],
-        instructions_html: '<ol><li>Simmer</li></ol>',
+        sections: [{ name: null, ingredients: ['carrots', 'beef'], steps: ['Simmer'] }],
         servings: '4',
         prep_time_minutes: 10,
         cook_time_minutes: 120,

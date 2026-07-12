@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Alert from '@mui/material/Alert';
@@ -9,16 +9,20 @@ import Collapse from '@mui/material/Collapse';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
-import { RichTextEditor } from '../components/editor/RichTextEditor';
+import { RecipeSections } from '../components/recipes/RecipeSections';
+import {
+  RecipeSectionsEditor,
+  emptyEditSection,
+  toEditSection,
+  toSection,
+  type EditSection,
+} from '../components/recipes/RecipeSectionsEditor';
 import { LabelPicker } from '../components/recipes/LabelPicker';
 import { useAuth } from '../auth/useAuth';
 import {
@@ -39,7 +43,7 @@ interface FormState {
   prep: string;
   cook: string;
   sourceUrl: string;
-  ingredients: string[];
+  sections: EditSection[];
   labelIds: string[];
   publicVisibility: boolean;
 }
@@ -50,17 +54,20 @@ const EMPTY_FORM: FormState = {
   prep: '',
   cook: '',
   sourceUrl: '',
-  ingredients: [''],
+  sections: [emptyEditSection()],
   labelIds: [],
   publicVisibility: false,
 };
 
-function toContent(form: FormState, instructionsHtml: string): RecipeContent {
+function sectionsForEdit(content: RecipeContent): EditSection[] {
+  return content.sections.length ? content.sections.map(toEditSection) : [emptyEditSection()];
+}
+
+function toContent(form: FormState): RecipeContent {
   const num = (s: string): number | null => (s.trim() === '' ? null : Number(s));
   return {
     title: form.title,
-    ingredients: form.ingredients.map((i) => i.trim()).filter((i) => i !== ''),
-    instructions_html: instructionsHtml,
+    sections: form.sections.map(toSection),
     servings: form.servings.trim() === '' ? null : form.servings,
     prep_time_minutes: num(form.prep),
     cook_time_minutes: num(form.cook),
@@ -79,12 +86,11 @@ const RecipeEditorPage: React.FC = () => {
   const [original, setOriginal] = useState<RecipeContent | null>(null);
   const [showOriginal, setShowOriginal] = useState(false);
   const [warnings, setWarnings] = useState<string[]>([]);
-  const [editorKey, setEditorKey] = useState('new');
-  // Seed value for the editor (read at render); the ref captures live edits.
-  const [initialInstructions, setInitialInstructions] = useState('');
-  const instructionsRef = useRef<string>('');
 
-  const { data: labels = [] } = useQuery({ queryKey: ['recipe-labels'], queryFn: () => getLabels(token) });
+  const { data: labels = [] } = useQuery({
+    queryKey: ['recipe-labels'],
+    queryFn: () => getLabels(token),
+  });
   const { data: groups = [] } = useQuery({ queryKey: ['groups'], queryFn: () => getGroups(token) });
 
   const { data: existing, isLoading } = useQuery({
@@ -102,14 +108,11 @@ const RecipeEditorPage: React.FC = () => {
         prep: c.prep_time_minutes != null ? String(c.prep_time_minutes) : '',
         cook: c.cook_time_minutes != null ? String(c.cook_time_minutes) : '',
         sourceUrl: existing.source_url ?? '',
-        ingredients: c.ingredients.length ? c.ingredients : [''],
+        sections: sectionsForEdit(c),
         labelIds: (existing.labels ?? []).map((l) => l.id),
         publicVisibility: existing.public_visibility,
       });
-      instructionsRef.current = c.instructions_html ?? '';
-      setInitialInstructions(c.instructions_html ?? '');
       setOriginal(existing.original_content ?? null);
-      setEditorKey(existing.id);
     }
   }, [existing]);
 
@@ -122,13 +125,10 @@ const RecipeEditorPage: React.FC = () => {
       prep: r.prep_time_minutes != null ? String(r.prep_time_minutes) : '',
       cook: r.cook_time_minutes != null ? String(r.cook_time_minutes) : '',
       sourceUrl: scrapeUrl,
-      ingredients: r.ingredients.length ? r.ingredients : [''],
+      sections: sectionsForEdit(r),
     }));
-    instructionsRef.current = r.instructions_html ?? '';
-    setInitialInstructions(r.instructions_html ?? '');
     setOriginal(r);
     setWarnings(draft.warnings);
-    setEditorKey(`scraped-${Date.now()}`);
   };
 
   const scrapeMutation = useMutation({
@@ -138,7 +138,7 @@ const RecipeEditorPage: React.FC = () => {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const content = toContent(form, instructionsRef.current);
+      const content = toContent(form);
       if (isEdit) {
         return updateRecipe(
           slug as string,
@@ -173,11 +173,6 @@ const RecipeEditorPage: React.FC = () => {
   });
 
   const setField = (patch: Partial<FormState>): void => setForm((f) => ({ ...f, ...patch }));
-  const setIngredient = (i: number, v: string): void =>
-    setForm((f) => ({ ...f, ingredients: f.ingredients.map((x, idx) => (idx === i ? v : x)) }));
-  const addIngredient = (): void => setForm((f) => ({ ...f, ingredients: [...f.ingredients, ''] }));
-  const removeIngredient = (i: number): void =>
-    setForm((f) => ({ ...f, ingredients: f.ingredients.filter((_, idx) => idx !== i) }));
 
   if (isEdit && isLoading) return <LoadingScreen />;
 
@@ -227,7 +222,11 @@ const RecipeEditorPage: React.FC = () => {
             fullWidth
           />
           <Stack direction="row" spacing={2}>
-            <TextField label="Servings" value={form.servings} onChange={(e) => setField({ servings: e.target.value })} />
+            <TextField
+              label="Servings"
+              value={form.servings}
+              onChange={(e) => setField({ servings: e.target.value })}
+            />
             <TextField
               label="Prep (min)"
               type="number"
@@ -249,24 +248,13 @@ const RecipeEditorPage: React.FC = () => {
           />
 
           <Box>
-            <Typography variant="h6">Ingredients</Typography>
-            {form.ingredients.map((ing, i) => (
-              <Stack key={i} direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-                <TextField
-                  fullWidth
-                  size="small"
-                  value={ing}
-                  placeholder="2 cups flour"
-                  onChange={(e) => setIngredient(i, e.target.value)}
-                />
-                <IconButton aria-label={`remove ingredient ${i + 1}`} onClick={() => removeIngredient(i)}>
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </Stack>
-            ))}
-            <Button startIcon={<AddIcon />} onClick={addIngredient} size="small">
-              Add ingredient
-            </Button>
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Ingredients &amp; steps
+            </Typography>
+            <RecipeSectionsEditor
+              sections={form.sections}
+              onChange={(sections) => setField({ sections })}
+            />
           </Box>
 
           <LabelPicker
@@ -276,20 +264,6 @@ const RecipeEditorPage: React.FC = () => {
             onCreateLabel={(name) => createLabel(name, null, token)}
           />
 
-          <Box>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Instructions
-            </Typography>
-            <RichTextEditor
-              key={editorKey}
-              initialContent={initialInstructions}
-              onChange={(html) => {
-                instructionsRef.current = html;
-              }}
-              editable
-            />
-          </Box>
-
           {original && (
             <Box>
               <Button size="small" onClick={() => setShowOriginal((s) => !s)}>
@@ -297,12 +271,10 @@ const RecipeEditorPage: React.FC = () => {
               </Button>
               <Collapse in={showOriginal}>
                 <Box sx={{ p: 2, bgcolor: 'action.hover', borderRadius: 1 }}>
-                  <Typography variant="subtitle2">{original.title}</Typography>
-                  <ul>
-                    {original.ingredients.map((ing, i) => (
-                      <li key={i}>{ing}</li>
-                    ))}
-                  </ul>
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                    {original.title}
+                  </Typography>
+                  <RecipeSections content={original} />
                 </Box>
               </Collapse>
             </Box>

@@ -67,7 +67,7 @@ export const RecipeSectionsEditor: React.FC<RecipeSectionsEditorProps> = ({
     label: string,
     placeholder: string
   ): React.ReactNode => {
-    const list = sections[si][key];
+    const list = sections[si]?.[key] ?? [];
     const setList = (next: string[]): void =>
       patchSection(si, key === 'ingredients' ? { ingredients: next } : { steps: next });
     return (
@@ -118,7 +118,7 @@ export const RecipeSectionsEditor: React.FC<RecipeSectionsEditorProps> = ({
       {sections.map((section, si) => (
         <Box
           key={si}
-          sx={multi ? { p: 2, border: 1, borderColor: 'divider', borderRadius: 1 } : undefined}
+          sx={multi ? { p: 2, border: 1, borderColor: 'divider', borderRadius: 1 } : {}}
         >
           {multi && (
             <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
