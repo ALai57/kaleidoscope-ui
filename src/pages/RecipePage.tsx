@@ -1,24 +1,25 @@
 import React from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
-import { RichTextEditor } from '../components/editor/RichTextEditor';
+import { RecipeSections } from '../components/recipes/RecipeSections';
 import { useAuth } from '../auth/useAuth';
 import { getRecipe, qualifiedLabelName } from '../api/recipes';
 
 function metaLine(recipe: {
-  content: { servings?: string | null; prep_time_minutes?: number | null; cook_time_minutes?: number | null };
+  content: {
+    servings?: string | null;
+    prep_time_minutes?: number | null;
+    cook_time_minutes?: number | null;
+  };
 }): string {
   const { servings, prep_time_minutes, cook_time_minutes } = recipe.content;
   return [
@@ -83,28 +84,7 @@ const RecipePage: React.FC = () => {
               </Stack>
             )}
 
-            <Typography variant="h5" sx={{ mt: 3 }}>
-              Ingredients
-            </Typography>
-            <Box>
-              {recipe.content.ingredients.map((ing, i) => (
-                <FormControlLabel
-                  key={`${ing}-${i}`}
-                  control={<Checkbox />}
-                  label={ing}
-                  sx={{ display: 'flex' }}
-                />
-              ))}
-            </Box>
-
-            <Typography variant="h5" sx={{ mt: 3, mb: 1 }}>
-              Instructions
-            </Typography>
-            <RichTextEditor
-              key={recipe.id}
-              initialContent={recipe.content.instructions_html ?? ''}
-              editable={false}
-            />
+            <RecipeSections content={recipe.content} />
           </>
         )}
       </Container>

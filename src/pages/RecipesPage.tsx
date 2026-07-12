@@ -33,6 +33,7 @@ import {
   deleteLabelGroup,
   qualifiedLabelName,
 } from '../api/recipes';
+import { previewIngredients } from '../utils/recipe';
 import type { RecipeLabel } from '../types/recipe';
 
 // ── Manage-labels dialog ─────────────────────────────────────────────────────
@@ -233,7 +234,7 @@ const RecipesPage: React.FC = () => {
                 <CardContent>
                   <Typography variant="h6">{r.content.title}</Typography>
                   <Typography variant="body2" color="text.secondary" noWrap>
-                    {r.content.ingredients.slice(0, 3).join(', ')}
+                    {previewIngredients(r.content)}
                   </Typography>
                   {r.labels && r.labels.length > 0 && (
                     <Stack direction="row" spacing={0.5} sx={{ mt: 1, flexWrap: 'wrap' }}>

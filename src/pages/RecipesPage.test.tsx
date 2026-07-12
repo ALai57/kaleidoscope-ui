@@ -27,7 +27,10 @@ const server = setupServer(
         id: 'r1',
         recipe_url: 'chana-masala',
         hostname: 'andrewslai.com',
-        content: { title: 'Chana Masala', ingredients: ['chickpeas', 'flour'] },
+        content: {
+          title: 'Chana Masala',
+          sections: [{ name: null, ingredients: ['chickpeas', 'flour'], steps: [] }],
+        },
         labels: [{ id: 'l1', name: 'indian', group_id: 'g1', group_name: 'ethnicity' }],
         public_visibility: true,
         created_at: '2026-01-01T00:00:00Z',
