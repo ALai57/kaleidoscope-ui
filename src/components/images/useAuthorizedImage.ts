@@ -8,7 +8,7 @@ export interface UseAuthorizedImageOptions {
 }
 
 export interface UseAuthorizedImageResult {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   src: string | undefined;
   inView: boolean;
   status: 'idle' | 'loading' | 'loaded' | 'error';

@@ -123,7 +123,7 @@ describe('ImageBrowser', () => {
   it('selects an image when its tile is clicked', () => {
     const { container } = render(<ImageBrowser images={mockImages} startingImage={0} />);
     const tiles = container.querySelectorAll('.placeholder');
-    fireEvent.click(tiles[2]);
+    fireEvent.click(tiles[2]!);
     expect(screen.queryByDisplayValue('Photo 3')).toBeTruthy();
   });
 });

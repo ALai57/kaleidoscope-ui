@@ -31,7 +31,7 @@ describe('useAuthorizedImage', () => {
   it('sends the bearer token in the Authorization header', async () => {
     const { result } = renderHook(() => useAuthorizedImage('https://x/img.jpg', 'tok'));
     await waitFor(() => expect(result.current.src).toBe('blob:mock-url'));
-    const init = mockFetch.mock.calls[0][1] as RequestInit;
+    const init = mockFetch.mock.calls[0]![1] as RequestInit;
     expect((init.headers as Headers).get('Authorization')).toBe('Bearer tok');
   });
 
