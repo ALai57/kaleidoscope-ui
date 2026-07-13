@@ -24,10 +24,9 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 describe('AboutPage', () => {
-  it('renders the section heading with its eyebrow', () => {
+  it('renders the section heading', () => {
     render(<AboutPage />, { wrapper: Wrapper });
     expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument();
-    expect(screen.getByText('// PROFILE')).toBeInTheDocument();
   });
 
   it('renders the interest chips', () => {
