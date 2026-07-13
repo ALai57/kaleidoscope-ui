@@ -126,4 +126,33 @@ describe('ImageBrowser', () => {
     fireEvent.click(tiles[2]!);
     expect(screen.queryByDisplayValue('Photo 3')).toBeTruthy();
   });
+
+  it('resizes the detail panel by dragging the handle', () => {
+    const { getByTestId } = render(<ImageBrowser images={mockImages} />);
+    const panel = getByTestId('detail-panel');
+    expect(panel.style.width).toBe('320px');
+
+    const handle = getByTestId('panel-resize-handle');
+    fireEvent.mouseDown(handle, { clientX: 500 });
+    fireEvent.mouseMove(document, { clientX: 400 }); // drag left 100px → wider panel
+    fireEvent.mouseUp(document);
+
+    expect(panel.style.width).toBe('420px');
+  });
+
+  it('clamps the detail panel width to its bounds while dragging', () => {
+    const { getByTestId } = render(<ImageBrowser images={mockImages} />);
+    const panel = getByTestId('detail-panel');
+    const handle = getByTestId('panel-resize-handle');
+
+    fireEvent.mouseDown(handle, { clientX: 500 });
+    fireEvent.mouseMove(document, { clientX: 5000 }); // drag far right → below min
+    fireEvent.mouseUp(document);
+    expect(panel.style.width).toBe('240px');
+
+    fireEvent.mouseDown(handle, { clientX: 500 });
+    fireEvent.mouseMove(document, { clientX: -5000 }); // drag far left → above max
+    fireEvent.mouseUp(document);
+    expect(panel.style.width).toBe('640px');
+  });
 });

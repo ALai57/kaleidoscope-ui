@@ -26,6 +26,10 @@ export interface ImageBrowserProps {
 
 const defaultImage: ImageVersion = { src: '' };
 
+const DEFAULT_PANEL_WIDTH = 320;
+const MIN_PANEL_WIDTH = 240;
+const MAX_PANEL_WIDTH = 640;
+
 const defaultLogger = (e: React.ChangeEvent<HTMLInputElement>) =>
   console.log('Clicked!', e.target.files);
 
@@ -120,6 +124,32 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
     jumpTo(index);
     if (isMobile) setModalOpen(true);
   };
+
+  // Draggable divider: widen the detail panel by dragging its handle left.
+  const [panelWidth, setPanelWidth] = React.useState(DEFAULT_PANEL_WIDTH);
+
+  const startResize = React.useCallback(
+    (e: React.MouseEvent): void => {
+      e.preventDefault();
+      const startX = e.clientX;
+      const startWidth = panelWidth;
+      const onMove = (ev: MouseEvent): void => {
+        const delta = startX - ev.clientX; // drag left → positive → wider panel
+        setPanelWidth(
+          Math.min(MAX_PANEL_WIDTH, Math.max(MIN_PANEL_WIDTH, startWidth + delta)),
+        );
+      };
+      const onUp = (): void => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        document.body.style.userSelect = '';
+      };
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+      document.body.style.userSelect = 'none';
+    },
+    [panelWidth],
+  );
 
   // ── Toolbar ───────────────────────────────────────────────────────────────
   const toolbar = (
@@ -260,8 +290,24 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
       <Box sx={{ display: 'flex', flex: 1, minHeight: 0, gap: 1 }}>
         {gallery}
         <Box
+          data-testid="panel-resize-handle"
+          role="separator"
+          aria-orientation="vertical"
+          onMouseDown={startResize}
           sx={{
-            width: 320,
+            width: '6px',
+            flexShrink: 0,
+            cursor: 'col-resize',
+            borderRadius: 1,
+            bgcolor: 'divider',
+            transition: 'background-color 0.15s',
+            '&:hover': { bgcolor: 'primary.main' },
+          }}
+        />
+        <Box
+          data-testid="detail-panel"
+          style={{ width: panelWidth }}
+          sx={{
             flexShrink: 0,
             display: 'flex',
             flexDirection: 'column',
