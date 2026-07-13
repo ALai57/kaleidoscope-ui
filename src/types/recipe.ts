@@ -49,6 +49,9 @@ export interface RecipeDraft {
   // and never flattens it back into a single label.
   techniques: { acquire: string; parse: string; normalize: string };
   warnings: string[];
+  // The processing run that produced this draft. Carried through to create so
+  // the recipe links back to its scrape (recipe → processing_run → raw_scrape).
+  scrape_processing_run_id: string;
 }
 
 // What a recipe source hands the editor page. `sourceUrl` is url-only knowledge
@@ -72,6 +75,9 @@ export interface CreateRecipePayload {
   source_url?: string | null;
   label_ids?: string[];
   public_visibility?: boolean;
+  // Lineage link set once at create; the backend's UpdateRecipeRequest has no
+  // counterpart, so it is intentionally absent from UpdateRecipePayload.
+  scrape_processing_run_id?: string | null;
 }
 
 export interface UpdateRecipePayload {

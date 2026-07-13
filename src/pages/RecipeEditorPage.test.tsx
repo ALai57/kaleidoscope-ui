@@ -70,6 +70,7 @@ const server = setupServer(
       suggested_labels: ['comfort'],
       techniques: { acquire: 'fetch', parse: 'json-ld', normalize: 'single-section' },
       warnings: [],
+      scrape_processing_run_id: 'run-abc123',
     })
   ),
   http.post('/recipes/scrape-photo', () =>
@@ -212,6 +213,33 @@ describe('RecipeEditorPage', () => {
       // the scraped draft is preserved as the immutable original
       'original-content': { title: 'Imported Stew' },
     });
+  });
+
+  it('persists the scrape processing run id as scrape->recipe lineage on create', async () => {
+    renderNew();
+
+    fireEvent.change(screen.getByLabelText('Import from URL'), {
+      target: { value: 'http://example.com/stew' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Import' }));
+
+    await waitFor(() => expect(screen.getByLabelText('Title')).toHaveValue('Imported Stew'));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => expect(screen.getByText('Recipe detail')).toBeInTheDocument());
+    // the run that produced the draft is linked to the created recipe
+    expect(createdBody).toMatchObject({ 'scrape-processing-run-id': 'run-abc123' });
+  });
+
+  it('omits the scrape processing run id for a manually entered recipe (no import)', async () => {
+    renderNew();
+
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Hand Written' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => expect(screen.getByText('Recipe detail')).toBeInTheDocument());
+    expect(createdBody).not.toHaveProperty('scrape-processing-run-id');
   });
 
   it('imports from a photo and populates the form', async () => {

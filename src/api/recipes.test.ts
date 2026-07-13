@@ -56,6 +56,7 @@ const server = setupServer(
       suggested_labels: ['indian'],
       techniques: { acquire: 'fetch', parse: 'json-ld', normalize: 'single-section' },
       warnings: [],
+      scrape_processing_run_id: 'run-url-1',
     })
   ),
   http.post('/recipes/scrape-photo', async ({ request: req }) => {
@@ -136,6 +137,11 @@ describe('recipes api', () => {
     const result = await importRecipeFromUrl('http://example.com/r');
     expect(result.techniques.parse).toBe('json-ld');
     expect(result.suggested_labels).toContain('indian');
+  });
+
+  it('importRecipeFromUrl surfaces the scrape processing run id for lineage', async () => {
+    const result = await importRecipeFromUrl('http://example.com/r');
+    expect(result.scrape_processing_run_id).toBe('run-url-1');
   });
 
   it('importRecipeFromPhoto posts each file as a distinct indexed part (duplicate filenames do not collide)', async () => {

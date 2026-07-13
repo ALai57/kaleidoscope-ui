@@ -85,6 +85,9 @@ const RecipeEditorPage: React.FC = () => {
 
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [original, setOriginal] = useState<RecipeContent | null>(null);
+  // Provenance of the current draft. Set by an import, sent once on create so
+  // the recipe links back to its scrape. Null for manually entered recipes.
+  const [scrapeRunId, setScrapeRunId] = useState<string | null>(null);
   const [showOriginal, setShowOriginal] = useState(false);
   const [warnings, setWarnings] = useState<string[]>([]);
 
@@ -136,6 +139,7 @@ const RecipeEditorPage: React.FC = () => {
       sections: sectionsForEdit(r),
     }));
     setOriginal(r);
+    setScrapeRunId(draft.scrape_processing_run_id);
     setWarnings(draft.warnings);
   };
 
@@ -158,6 +162,7 @@ const RecipeEditorPage: React.FC = () => {
         {
           content,
           ...(original ? { original_content: original } : {}),
+          ...(scrapeRunId ? { scrape_processing_run_id: scrapeRunId } : {}),
           source_url: form.sourceUrl || null,
           label_ids: form.labelIds,
           public_visibility: form.publicVisibility,
