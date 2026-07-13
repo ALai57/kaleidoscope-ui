@@ -24,18 +24,18 @@ import {
   type EditSection,
 } from '../components/recipes/RecipeSectionsEditor';
 import { LabelPicker } from '../components/recipes/LabelPicker';
+import { RecipeSourceChooser } from '../components/recipes/RecipeSourceChooser';
 import { useAuth } from '../auth/useAuth';
 import {
   getRecipe,
   createRecipe,
   updateRecipe,
-  importRecipeFromUrl,
   getLabels,
   createLabel,
   addRecipeAudience,
 } from '../api/recipes';
 import { getGroups } from '../api/groups';
-import type { RecipeContent, RecipeDraft } from '../types/recipe';
+import type { RecipeContent, AcquiredDraft } from '../types/recipe';
 
 interface FormState {
   title: string;
@@ -84,7 +84,6 @@ const RecipeEditorPage: React.FC = () => {
   const { token, userProfile, isAuthenticated, login } = useAuth();
 
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
-  const [scrapeUrl, setScrapeUrl] = useState('');
   const [original, setOriginal] = useState<RecipeContent | null>(null);
   const [showOriginal, setShowOriginal] = useState(false);
   const [warnings, setWarnings] = useState<string[]>([]);
@@ -123,8 +122,8 @@ const RecipeEditorPage: React.FC = () => {
     setOriginal(existing.original_content ?? null);
   }
 
-  const applyDraft = (draft: RecipeDraft): void => {
-    // Scrapes can arrive without a `sections` array; restore the RecipeContent
+  const applyDraft = ({ draft, sourceUrl }: AcquiredDraft): void => {
+    // Drafts can arrive without a `sections` array; restore the RecipeContent
     // invariant at the boundary so downstream readers (`original`) stay safe.
     const r: RecipeContent = { ...draft.recipe, sections: draft.recipe.sections ?? [] };
     setForm((f) => ({
@@ -133,17 +132,12 @@ const RecipeEditorPage: React.FC = () => {
       servings: r.servings ?? '',
       prep: r.prep_time_minutes != null ? String(r.prep_time_minutes) : '',
       cook: r.cook_time_minutes != null ? String(r.cook_time_minutes) : '',
-      sourceUrl: scrapeUrl,
+      sourceUrl: sourceUrl ?? '',
       sections: sectionsForEdit(r),
     }));
     setOriginal(r);
     setWarnings(draft.warnings);
   };
-
-  const scrapeMutation = useMutation({
-    mutationFn: () => importRecipeFromUrl(scrapeUrl, token),
-    onSuccess: applyDraft,
-  });
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -193,30 +187,7 @@ const RecipeEditorPage: React.FC = () => {
           {isEdit ? 'Edit recipe' : 'New recipe'}
         </Typography>
 
-        {!isEdit && (
-          <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-            <TextField
-              fullWidth
-              size="small"
-              label="Import from URL"
-              placeholder="https://…"
-              value={scrapeUrl}
-              onChange={(e) => setScrapeUrl(e.target.value)}
-            />
-            <Button
-              variant="outlined"
-              onClick={() => scrapeMutation.mutate()}
-              disabled={!scrapeUrl.trim() || scrapeMutation.isPending}
-            >
-              {scrapeMutation.isPending ? 'Importing…' : 'Import'}
-            </Button>
-          </Stack>
-        )}
-        {scrapeMutation.isError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            Could not import this URL. Paste the recipe below instead.
-          </Alert>
-        )}
+        {!isEdit && <RecipeSourceChooser onDraft={applyDraft} />}
         {warnings.map((w, i) => (
           <Alert key={i} severity="warning" sx={{ mb: 1 }}>
             {w}

@@ -19,6 +19,13 @@ vi.mock('../auth/useAuth', () => ({
   }),
 }));
 
+beforeAll(() => {
+  Object.assign(URL, {
+    createObjectURL: () => 'blob:preview',
+    revokeObjectURL: () => {},
+  });
+});
+
 let createdBody: Record<string, unknown> | null = null;
 
 const EXISTING_RECIPE = {
@@ -62,6 +69,18 @@ const server = setupServer(
       },
       suggested_labels: ['comfort'],
       techniques: { acquire: 'fetch', parse: 'json-ld', normalize: 'single-section' },
+      warnings: [],
+    })
+  ),
+  http.post('/recipes/scrape-photo', () =>
+    HttpResponse.json({
+      recipe: {
+        title: 'Photo Pancakes',
+        sections: [{ name: null, ingredients: ['flour', 'egg'], steps: ['Mix'] }],
+        servings: '3',
+      },
+      suggested_labels: [],
+      techniques: { acquire: 'claude-vision', parse: 'llm', normalize: 'single-section' },
       warnings: [],
     })
   ),
@@ -193,5 +212,23 @@ describe('RecipeEditorPage', () => {
       // the scraped draft is preserved as the immutable original
       'original-content': { title: 'Imported Stew' },
     });
+  });
+
+  it('imports from a photo and populates the form', async () => {
+    renderNew();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Photo' }));
+
+    const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+    const file = new File(['x'], 'pancakes.jpg', { type: 'image/jpeg' });
+    Object.defineProperty(file, 'size', { value: 1000 });
+    fireEvent.change(input, { target: { files: [file] } });
+
+    fireEvent.click(screen.getByRole('button', { name: /Import \(1\)/ }));
+
+    await waitFor(() => expect(screen.getByLabelText('Title')).toHaveValue('Photo Pancakes'));
+    expect(screen.getByLabelText('Servings')).toHaveValue('3');
+    // photo import leaves the Source URL blank
+    expect(screen.getByLabelText('Source URL')).toHaveValue('');
   });
 });
