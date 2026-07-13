@@ -8,6 +8,12 @@ export function useObjectUrls(files: File[]): string[] {
 
   useEffect(() => {
     const next = files.map((file) => URL.createObjectURL(file));
+    // Creating the URLs must happen in an effect so they can be revoked on
+    // cleanup; computing them during render (e.g. useMemo) would leak the
+    // URLs from StrictMode's discarded double-render. Storing the result in
+    // state is the correct pattern here, so the set-state-in-effect rule is a
+    // false positive.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUrls(next);
     return () => next.forEach((url) => URL.revokeObjectURL(url));
   }, [files]);
