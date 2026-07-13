@@ -48,11 +48,16 @@ const AuthContextBridge: React.FC<AuthContextBridgeProps> = ({ children }) => {
   const queryClient = useQueryClient();
   const [token, setToken] = useState<string | undefined>(undefined);
 
+  // Clear the token during render when the session is lost, rather than calling
+  // setState in the effect below (react-hooks/set-state-in-effect).
+  const [wasAuthenticated, setWasAuthenticated] = useState(isAuthenticated);
+  if (isAuthenticated !== wasAuthenticated) {
+    setWasAuthenticated(isAuthenticated);
+    if (!isAuthenticated) setToken(undefined);
+  }
+
   useEffect(() => {
-    if (!isAuthenticated) {
-      setToken(undefined);
-      return;
-    }
+    if (!isAuthenticated) return;
     let cancelled = false;
     getAccessTokenSilently()
       .then((newToken) => {

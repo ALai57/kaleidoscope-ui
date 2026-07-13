@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -49,16 +49,18 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
   const [systemPrompt, setSystemPrompt] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (agent) {
-      setName(agent.name ?? '');
-      setShortName(agent.short_name ?? '');
-      setAvatar(agent.avatar ?? '');
-      setColor(agent.color ?? COLOR_PRESETS[0]!);
-      setSystemPrompt(agent.system_prompt ?? '');
-      setError(null);
-    }
-  }, [agent]);
+  // Sync the edited agent into editable form state when it (re)loads. Adjusting
+  // state during render rather than in an effect avoids a cascading re-render.
+  const [syncedAgent, setSyncedAgent] = useState<Agent | null>(null);
+  if (agent && agent !== syncedAgent) {
+    setSyncedAgent(agent);
+    setName(agent.name ?? '');
+    setShortName(agent.short_name ?? '');
+    setAvatar(agent.avatar ?? '');
+    setColor(agent.color ?? COLOR_PRESETS[0]!);
+    setSystemPrompt(agent.system_prompt ?? '');
+    setError(null);
+  }
 
   const handleSave = async () => {
     if (!agent) return;

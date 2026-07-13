@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -45,14 +45,21 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   const [taskType, setTaskType] = useState('action');
   const [estimatedMinutes, setEstimatedMinutes] = useState('');
 
-  useEffect(() => {
-    if (open) {
-      setTitle(initialValues?.title ?? '');
-      setDescription(initialValues?.description ?? '');
-      setTaskType(initialValues?.task_type ?? 'action');
-      setEstimatedMinutes(initialValues?.estimated_minutes?.toString() ?? '');
-    }
-  }, [open, initialValues]);
+  // Reset the form to initialValues whenever the dialog (re)opens or the source
+  // values change while open. Syncing during render rather than in an effect
+  // avoids a cascading re-render.
+  const [syncedOpen, setSyncedOpen] = useState(false);
+  const [syncedInitial, setSyncedInitial] = useState<Partial<ProjectTask> | undefined>(undefined);
+  if (open && (!syncedOpen || initialValues !== syncedInitial)) {
+    setSyncedOpen(true);
+    setSyncedInitial(initialValues);
+    setTitle(initialValues?.title ?? '');
+    setDescription(initialValues?.description ?? '');
+    setTaskType(initialValues?.task_type ?? 'action');
+    setEstimatedMinutes(initialValues?.estimated_minutes?.toString() ?? '');
+  } else if (!open && syncedOpen) {
+    setSyncedOpen(false);
+  }
 
   const handleSubmit = () => {
     const trimmedTitle = title.trim();
