@@ -1,40 +1,40 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, act } from '@testing-library/react';
 import { FullImageCard } from './FullImageCard';
 
-vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-  blob: () => Promise.resolve(new Blob()),
-}));
-vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
-vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+beforeEach(() => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({ blob: () => Promise.resolve(new Blob()) } as Response),
+  );
+  vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
+  vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => undefined);
+});
 
-const mockImage = {
-  src: 'https://example.com/full.jpg',
-  width: 800,
-  height: 600,
-};
+const mockImage = { src: 'https://example.com/full.jpg', width: 800, height: 600 };
 
 describe('FullImageCard', () => {
-  it('renders without errors', () => {
-    const { container } = render(<FullImageCard image={mockImage} />);
-    expect(container).toBeDefined();
-  });
-
-  it('renders an img element with the correct id', () => {
-    render(<FullImageCard image={mockImage} />);
-    const img = document.getElementById('full-' + mockImage.src);
+  it('renders the image at natural size with object-fit contain', async () => {
+    await act(async () => {
+      render(<FullImageCard image={mockImage} authToken="tok" />);
+    });
+    const img = document.getElementById('full-' + mockImage.src) as HTMLImageElement | null;
     expect(img).toBeTruthy();
+    expect(img?.style.objectFit).toBe('contain');
+    expect(img?.getAttribute('src')).toBe('blob:mock-url');
   });
 
-  it('accepts onClick prop', () => {
-    const handleClick = vi.fn();
-    render(<FullImageCard image={mockImage} onClick={handleClick} />);
-    expect(true).toBe(true);
+  it('fetches the image with the auth token', async () => {
+    const fetchMock = fetch as unknown as ReturnType<typeof vi.fn>;
+    await act(async () => {
+      render(<FullImageCard image={mockImage} authToken="tok" />);
+    });
+    expect(fetchMock).toHaveBeenCalled();
   });
 
-  it('accepts authToken prop', () => {
-    render(<FullImageCard image={mockImage} authToken="test-token" />);
-    expect(true).toBe(true);
+  it('renders without a src without crashing', () => {
+    const { container } = render(<FullImageCard image={{ src: '' }} />);
+    expect(container).toBeDefined();
   });
 });

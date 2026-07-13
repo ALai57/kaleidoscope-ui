@@ -1,6 +1,7 @@
 import React from 'react';
-import { Card, CardMedia, CardActionArea } from '@mui/material';
+import { Box } from '@mui/material';
 import { ImageVersion } from '@/types/image';
+import { useAuthorizedImage } from './useAuthorizedImage';
 
 export interface FullImageCardProps {
   image: ImageVersion;
@@ -8,66 +9,40 @@ export interface FullImageCardProps {
   onClick?: () => void;
 }
 
-async function fetchWithAuthentication(url: string, authToken: string | null): Promise<Response> {
-  const headers = new Headers();
-  if (authToken) {
-    headers.set('Authorization', `Bearer ${authToken}`);
-  }
-  return fetch(url, { headers });
-}
-
 export const FullImageCard: React.FC<FullImageCardProps> = ({
   image,
   authToken = null,
   onClick,
 }) => {
-  const imgRef = React.useRef<HTMLImageElement>(null);
-
-  React.useEffect(() => {
-    if (!image.src) return;
-    const element = imgRef.current;
-    if (!element) return;
-
-    let cancelled = false;
-
-    fetchWithAuthentication(image.src, authToken)
-      .then((response) => response.blob())
-      .then((blob) => {
-        if (cancelled) return;
-        const objectUrl = URL.createObjectURL(blob);
-        element.src = objectUrl;
-        element.onload = () => URL.revokeObjectURL(objectUrl);
-      })
-      .catch((err) => {
-        if (!cancelled) console.error(err);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [image.src, authToken]);
+  const { src } = useAuthorizedImage(image.src, authToken, { lazy: false });
 
   return (
-    <Card
+    <Box
+      onClick={onClick}
       sx={{
-        float: 'left',
-        margin: '5px',
-        display: 'inherit',
-        height: '100%',
-        maxHeight: '100%',
         width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
       }}
     >
-      <CardActionArea sx={{ height: '100%' }} onClick={onClick}>
-        <CardMedia
-          component="img"
+      {src && (
+        <img
           id={`full-${image.src}`}
-          height={image.height}
+          src={src}
           alt=""
-          ref={imgRef}
-          sx={{ height: '100%' }}
+          style={{
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: 'auto',
+            height: 'auto',
+            objectFit: 'contain',
+            display: 'block',
+          }}
         />
-      </CardActionArea>
-    </Card>
+      )}
+    </Box>
   );
 };
