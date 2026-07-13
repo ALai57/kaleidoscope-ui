@@ -65,4 +65,13 @@ describe('ImageThumbnail — inView state triggered', () => {
     });
     expect(true).toBe(true); // renders without error
   });
+
+  it('renders a square img with object-fit cover once loaded', async () => {
+    await act(async () => {
+      render(<ImageThumbnail image={mockImage} />);
+    });
+    const img = document.querySelector('img') as HTMLImageElement | null;
+    expect(img).toBeTruthy();
+    expect(img?.style.objectFit).toBe('cover');
+  });
 });

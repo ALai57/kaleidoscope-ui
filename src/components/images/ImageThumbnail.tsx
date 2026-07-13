@@ -1,117 +1,58 @@
 import React from 'react';
-import { Box, Card, CardMedia, CardActionArea } from '@mui/material';
+import { Box } from '@mui/material';
 import { ImageVersion } from '@/types/image';
+import { useAuthorizedImage } from './useAuthorizedImage';
 
 export interface ImageThumbnailProps {
   image: ImageVersion;
   authToken?: string | null;
   onClick?: () => void;
+  selected?: boolean;
 }
-
-async function fetchWithAuthentication(url: string, authToken: string | null): Promise<Response> {
-  const headers = new Headers();
-  if (authToken) {
-    headers.set('Authorization', `Bearer ${authToken}`);
-  }
-  return fetch(url, { headers });
-}
-
-const viewableStyle = {
-  height: 'fit-content',
-  width: 'fit-content',
-  float: 'left' as const,
-};
-
-const placeholderStyle = {
-  height: '100px',
-  width: '100px',
-  float: 'left' as const,
-};
-
-const imageSizes = { xs: '70px', sm: '100px' };
 
 export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
   image,
   authToken = null,
   onClick,
+  selected = false,
 }) => {
-  const [inView, setInView] = React.useState(false);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const imgRef = React.useRef<HTMLImageElement>(null);
-  const observerRef = React.useRef<IntersectionObserver | null>(null);
-
-  // Intersection observer for lazy loading — only marks the thumbnail as visible
-  React.useEffect(() => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setInView(true);
-          observerRef.current?.disconnect();
-        }
-      },
-      { rootMargin: '5px' },
-    );
-    observerRef.current.observe(container);
-
-    return () => {
-      observerRef.current?.disconnect();
-    };
-  }, []);
-
-  // Fetch and display the protected image after the element is rendered
-  React.useEffect(() => {
-    if (!inView || !image.src) return;
-    const element = imgRef.current;
-    if (!element) return;
-
-    let cancelled = false;
-
-    fetchWithAuthentication(image.src, authToken)
-      .then((response) => response.blob())
-      .then((blob) => {
-        if (cancelled) return;
-        const objectUrl = URL.createObjectURL(blob);
-        element.src = objectUrl;
-        element.onload = () => URL.revokeObjectURL(objectUrl);
-      })
-      .catch((err) => {
-        if (!cancelled) console.error(err);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [inView, image.src, authToken]);
+  const { containerRef, src } = useAuthorizedImage(image.src, authToken, {
+    lazy: true,
+    rootMargin: '50px',
+  });
 
   return (
     <Box
       ref={containerRef}
       className="placeholder"
-      sx={inView ? viewableStyle : placeholderStyle}
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      sx={{
+        aspectRatio: '1 / 1',
+        width: '100%',
+        borderRadius: 1,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        bgcolor: 'action.hover',
+        outline: selected ? '3px solid' : '1px solid',
+        outlineColor: selected ? 'primary.main' : 'divider',
+        outlineOffset: '-1px',
+        '&:focus-visible': { outline: '3px solid', outlineColor: 'primary.main' },
+      }}
     >
-      {inView && (
-        <Card
-          sx={{
-            float: 'left',
-            margin: '5px',
-            height: imageSizes,
-            width: imageSizes,
-          }}
-        >
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              height="100px"
-              alt=""
-              ref={imgRef}
-              onClick={onClick}
-              sx={{ overflow: 'hidden' }}
-            />
-          </CardActionArea>
-        </Card>
+      {src && (
+        <img
+          src={src}
+          alt=""
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
       )}
     </Box>
   );
