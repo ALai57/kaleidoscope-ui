@@ -61,13 +61,13 @@ export function importRecipeFromUrl(url: string, token?: string): Promise<Recipe
   });
 }
 
-// Multipart upload; one part per image (keyed by filename, matching addPhoto).
-// The backend transcribes then reuses the shared interpretation pipeline.
+// Multipart upload; one part per image (keyed by index, not filename).
+// The backend enumerates multipart parts by value and uses each part's own filename,
+// and Ring collapses same-named fields — so duplicate filenames (e.g. two IMG_0001.JPG
+// pages) must not share a field key or one would be dropped.
 export function importRecipeFromPhoto(files: File[], token?: string): Promise<RecipeDraft> {
   const formData = new FormData();
-  for (const file of files) {
-    formData.append(file.name, file);
-  }
+  files.forEach((file, i) => formData.append(`image-${i}`, file));
   return uploadFile<RecipeDraft>('/recipes/scrape-photo', formData, token);
 }
 

@@ -60,13 +60,13 @@ const server = setupServer(
   ),
   http.post('/recipes/scrape-photo', async ({ request: req }) => {
     const form = await req.formData();
-    const names = [...form.keys()];
+    const keys = [...form.keys()];
     return HttpResponse.json({
       recipe: { title: 'From Photo', sections: [{ name: null, ingredients: ['y'], steps: [] }] },
       suggested_labels: [],
       techniques: { acquire: 'claude-vision', parse: 'llm', normalize: 'single-section' },
       warnings: [],
-      _uploaded: names, // echo the multipart field names so the test can assert them
+      _uploaded: keys,
     });
   }),
   http.get('/recipe-labels', () =>
@@ -138,14 +138,16 @@ describe('recipes api', () => {
     expect(result.suggested_labels).toContain('indian');
   });
 
-  it('importRecipeFromPhoto posts each file as multipart form data', async () => {
-    const file = new File(['x'], 'page.jpg', { type: 'image/jpeg' });
-    const result = (await importRecipeFromPhoto([file])) as unknown as {
+  it('importRecipeFromPhoto posts each file as a distinct indexed part (duplicate filenames do not collide)', async () => {
+    // two pages sharing a filename must not collapse into one multipart field
+    const p1 = new File(['a'], 'IMG_0001.JPG', { type: 'image/jpeg' });
+    const p2 = new File(['b'], 'IMG_0001.JPG', { type: 'image/jpeg' });
+    const result = (await importRecipeFromPhoto([p1, p2])) as unknown as {
       recipe: { title: string };
       _uploaded: string[];
     };
     expect(result.recipe.title).toBe('From Photo');
-    expect(result._uploaded).toContain('page.jpg');
+    expect(result._uploaded).toEqual(['image-0', 'image-1']);
   });
 
   it('getLabels returns labels with group names', async () => {
