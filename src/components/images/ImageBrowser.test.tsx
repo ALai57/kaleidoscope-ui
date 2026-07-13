@@ -113,4 +113,17 @@ describe('ImageBrowser', () => {
     render(<ImageBrowser images={mockImages} mode="edit" />);
     expect(screen.getByText('Add new photo')).toBeTruthy();
   });
+
+  it('renders one tile per image in the gallery', () => {
+    const { container, getByTestId } = render(<ImageBrowser images={mockImages} />);
+    expect(getByTestId('image-gallery')).toBeTruthy();
+    expect(container.querySelectorAll('.placeholder').length).toBe(mockImages.length);
+  });
+
+  it('selects an image when its tile is clicked', () => {
+    const { container } = render(<ImageBrowser images={mockImages} startingImage={0} />);
+    const tiles = container.querySelectorAll('.placeholder');
+    fireEvent.click(tiles[2]);
+    expect(screen.queryByDisplayValue('Photo 3')).toBeTruthy();
+  });
 });

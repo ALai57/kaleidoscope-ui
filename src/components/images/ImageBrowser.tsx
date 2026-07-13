@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  Modal,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
+import { Box, Button, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { alpha } from '@mui/material/styles';
@@ -31,9 +24,7 @@ export interface ImageBrowserProps {
   mode?: 'edit' | 'select';
 }
 
-const defaultImage: ImageVersion = {
-  src: '',
-};
+const defaultImage: ImageVersion = { src: '' };
 
 const defaultLogger = (e: React.ChangeEvent<HTMLInputElement>) =>
   console.log('Clicked!', e.target.files);
@@ -125,8 +116,12 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
     return () => window.removeEventListener('keydown', keypressHandler);
   }, [keypressHandler]);
 
-  // ── Toolbar ───────────────────────────────────────────────────────────────
+  const selectTile = (index: number): void => {
+    jumpTo(index);
+    if (isMobile) setModalOpen(true);
+  };
 
+  // ── Toolbar ───────────────────────────────────────────────────────────────
   const toolbar = (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
       {mode === 'edit' ? (
@@ -137,8 +132,7 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
     </Box>
   );
 
-  // ── Empty state ───────────────────────────────────────────────────────────
-
+  // ── Empty state ─────────────────────────────────────────────────────────
   if (images.length === 0) {
     return (
       <Box>
@@ -163,53 +157,77 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
     );
   }
 
-  // ── Thumbnail strip ───────────────────────────────────────────────────────
-
-  const thumbnailStrip = (
+  // ── Gallery grid ────────────────────────────────────────────────────────
+  const gallery = (
     <Box
+      data-testid="image-gallery"
       sx={{
-        display: 'flex',
-        overflowX: 'auto',
-        gap: 0.5,
-        py: 1,
-        bgcolor: 'background.paper',
-        borderTop: '1px solid',
-        borderColor: 'divider',
+        flex: 1,
+        minWidth: 0,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(112px, 1fr))',
+        gap: 1,
+        p: 1,
+        alignContent: 'start',
+        overflowY: 'auto',
+        overflowX: 'hidden',
       }}
     >
       {images.map((image, index) => (
-        <Box
-          key={'tmb' + (image.versions?.thumbnail?.src ?? index)}
-          sx={{
-            flexShrink: 0,
-            outline: index === selectedImageIndex ? '3px solid' : 'none',
-            outlineColor: 'primary.main',
-            borderRadius: 1,
-          }}
-        >
-          <ImageThumbnail
-            image={image.versions?.thumbnail ?? defaultImage}
-            authToken={authToken}
-            onClick={() => jumpTo(index)}
-          />
-        </Box>
+        <ImageThumbnail
+          key={image.name ?? index}
+          image={image.versions?.thumbnail ?? defaultImage}
+          authToken={authToken}
+          selected={index === selectedImageIndex}
+          onClick={() => selectTile(index)}
+        />
       ))}
     </Box>
   );
 
-  // ── Mobile layout ─────────────────────────────────────────────────────────
+  // ── Detail (large image + editor) ───────────────────────────────────────────
+  const detailImage = (
+    <Box
+      sx={{
+        height: 200,
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'background.default',
+        borderRadius: 1,
+        overflow: 'hidden',
+      }}
+    >
+      <FullImageCard image={selectedVersion ?? defaultImage} authToken={authToken} />
+    </Box>
+  );
 
+  const editor = (showVersionSelector: boolean) => (
+    <EditorPanel
+      key={selectedImage?.name ?? 'none-yet'}
+      mode={mode}
+      selectedImage={selectedImage}
+      onVersionChange={onVersionChange}
+      onEditPhoto={editPhoto}
+      selectedVersion={selectedVersion}
+      showVersionSelector={showVersionSelector}
+      isSaving={isSaving}
+    />
+  );
+
+  // ── Mobile layout: grid + detail modal ──────────────────────────────────────
   if (isMobile) {
     return (
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {toolbar}
-
+        {gallery}
         <Modal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
           slotProps={{
             backdrop: {
-              sx: (theme) => ({ backgroundColor: alpha(theme.palette.common.black, 0.6) }),
+              sx: (t) => ({ backgroundColor: alpha(t.palette.common.black, 0.6) }),
             },
           }}
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -222,56 +240,32 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
               maxHeight: '90vh',
               overflowY: 'auto',
               width: 'min(400px, 92vw)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
             }}
           >
-            <EditorPanel
-              key={selectedImage?.name ?? 'none-yet'}
-              mode={mode}
-              selectedImage={selectedImage}
-              onVersionChange={onVersionChange}
-              onEditPhoto={editPhoto}
-              selectedVersion={selectedVersion}
-              showVersionSelector={false}
-              isSaving={isSaving}
-            />
+            {detailImage}
+            {editor(false)}
           </Box>
         </Modal>
-
-        <Box
-          sx={{
-            flex: 1,
-            minHeight: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: 'background.default',
-            cursor: mode === 'edit' ? 'pointer' : 'default',
-          }}
-          onClick={mode === 'edit' ? () => setModalOpen(true) : undefined}
-        >
-          <FullImageCard
-            image={selectedVersion ?? defaultImage}
-            authToken={authToken}
-          />
-        </Box>
-
-        {thumbnailStrip}
       </Box>
     );
   }
 
-  // ── Desktop layout ────────────────────────────────────────────────────────
-
+  // ── Desktop layout: grid + side detail panel ─────────────────────────────────
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {toolbar}
-
       <Box sx={{ display: 'flex', flex: 1, minHeight: 0, gap: 1 }}>
-        {/* Editor panel */}
+        {gallery}
         <Box
           sx={{
-            width: 280,
+            width: 320,
             flexShrink: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
             overflowY: 'auto',
             bgcolor: 'background.paper',
             border: '1px solid',
@@ -280,38 +274,10 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
             p: 1,
           }}
         >
-          <EditorPanel
-            key={selectedImage?.name ?? 'none-yet'}
-            mode={mode}
-            selectedImage={selectedImage}
-            onVersionChange={onVersionChange}
-            onEditPhoto={editPhoto}
-            selectedVersion={selectedVersion}
-            isSaving={isSaving}
-          />
-        </Box>
-
-        {/* Full image */}
-        <Box
-          sx={{
-            flex: 1,
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: 'background.default',
-            borderRadius: 1,
-            overflow: 'hidden',
-          }}
-        >
-          <FullImageCard
-            image={selectedVersion ?? defaultImage}
-            authToken={authToken}
-          />
+          {detailImage}
+          {editor(true)}
         </Box>
       </Box>
-
-      {thumbnailStrip}
     </Box>
   );
 };
