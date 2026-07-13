@@ -68,21 +68,23 @@ const WorkflowEditorPage: React.FC = () => {
     queryFn: () => getAgents(token),
   });
 
-  useEffect(() => {
-    if (workflow) {
-      setName(workflow.name);
-      setDescription(workflow.description ?? '');
-      setStatus(workflow.status);
-      setSteps(
-        (workflow.steps ?? []).map((s) => ({
-          name: s.name,
-          description: s.description,
-          position: s.position,
-          ...(s.agent_type !== undefined ? { agent_type: s.agent_type } : {}),
-        }))
-      );
-    }
-  }, [workflow]);
+  // Sync fetched workflow into editable form state when it (re)loads. Adjusting
+  // state during render rather than in an effect avoids a cascading re-render.
+  const [syncedWorkflow, setSyncedWorkflow] = useState(workflow);
+  if (workflow && workflow !== syncedWorkflow) {
+    setSyncedWorkflow(workflow);
+    setName(workflow.name);
+    setDescription(workflow.description ?? '');
+    setStatus(workflow.status);
+    setSteps(
+      (workflow.steps ?? []).map((s) => ({
+        name: s.name,
+        description: s.description,
+        position: s.position,
+        ...(s.agent_type !== undefined ? { agent_type: s.agent_type } : {}),
+      }))
+    );
+  }
 
   // Focus name field on new workflow
   useEffect(() => {

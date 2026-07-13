@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Alert from '@mui/material/Alert';
@@ -101,22 +101,24 @@ const RecipeEditorPage: React.FC = () => {
     enabled: isEdit,
   });
 
-  useEffect(() => {
-    if (existing) {
-      const c = existing.content;
-      setForm({
-        title: c.title,
-        servings: c.servings ?? '',
-        prep: c.prep_time_minutes != null ? String(c.prep_time_minutes) : '',
-        cook: c.cook_time_minutes != null ? String(c.cook_time_minutes) : '',
-        sourceUrl: existing.source_url ?? '',
-        sections: sectionsForEdit(c),
-        labelIds: (existing.labels ?? []).map((l) => l.id),
-        publicVisibility: existing.public_visibility,
-      });
-      setOriginal(existing.original_content ?? null);
-    }
-  }, [existing]);
+  // Sync fetched recipe into editable form state when it (re)loads. Adjusting
+  // state during render rather than in an effect avoids a cascading re-render.
+  const [syncedExisting, setSyncedExisting] = useState(existing);
+  if (existing && existing !== syncedExisting) {
+    setSyncedExisting(existing);
+    const c = existing.content;
+    setForm({
+      title: c.title,
+      servings: c.servings ?? '',
+      prep: c.prep_time_minutes != null ? String(c.prep_time_minutes) : '',
+      cook: c.cook_time_minutes != null ? String(c.cook_time_minutes) : '',
+      sourceUrl: existing.source_url ?? '',
+      sections: sectionsForEdit(c),
+      labelIds: (existing.labels ?? []).map((l) => l.id),
+      publicVisibility: existing.public_visibility,
+    });
+    setOriginal(existing.original_content ?? null);
+  }
 
   const applyDraft = (draft: ScrapeResult): void => {
     // Scrapes can arrive without a `sections` array; restore the RecipeContent
