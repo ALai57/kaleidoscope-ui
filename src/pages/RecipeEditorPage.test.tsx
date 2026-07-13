@@ -61,7 +61,7 @@ const server = setupServer(
         cook_time_minutes: 120,
       },
       suggested_labels: ['comfort'],
-      extraction_method: 'json-ld',
+      techniques: { acquire: 'fetch', parse: 'json-ld', normalize: 'single-section' },
       warnings: [],
     })
   ),
@@ -156,7 +156,7 @@ describe('RecipeEditorPage', () => {
           // backend can omit `sections` when extraction yields none
           recipe: { title: 'Sectionless Soup', servings: '2' },
           suggested_labels: [],
-          extraction_method: 'llm',
+          techniques: { acquire: 'fetch', parse: 'llm', normalize: 'single-section' },
           warnings: [],
         })
       )

@@ -29,13 +29,13 @@ import {
   getRecipe,
   createRecipe,
   updateRecipe,
-  scrapeRecipe,
+  importRecipeFromUrl,
   getLabels,
   createLabel,
   addRecipeAudience,
 } from '../api/recipes';
 import { getGroups } from '../api/groups';
-import type { RecipeContent, ScrapeResult } from '../types/recipe';
+import type { RecipeContent, RecipeDraft } from '../types/recipe';
 
 interface FormState {
   title: string;
@@ -123,7 +123,7 @@ const RecipeEditorPage: React.FC = () => {
     setOriginal(existing.original_content ?? null);
   }
 
-  const applyDraft = (draft: ScrapeResult): void => {
+  const applyDraft = (draft: RecipeDraft): void => {
     // Scrapes can arrive without a `sections` array; restore the RecipeContent
     // invariant at the boundary so downstream readers (`original`) stay safe.
     const r: RecipeContent = { ...draft.recipe, sections: draft.recipe.sections ?? [] };
@@ -141,7 +141,7 @@ const RecipeEditorPage: React.FC = () => {
   };
 
   const scrapeMutation = useMutation({
-    mutationFn: () => scrapeRecipe(scrapeUrl, token),
+    mutationFn: () => importRecipeFromUrl(scrapeUrl, token),
     onSuccess: applyDraft,
   });
 

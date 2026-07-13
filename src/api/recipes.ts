@@ -1,11 +1,11 @@
-import { request } from './client';
+import { request, uploadFile } from './client';
 import { titleToSlug } from '../utils/url';
 import type {
   Recipe,
   RecipeLabel,
   RecipeLabelGroup,
   RecipeAudience,
-  ScrapeResult,
+  RecipeDraft,
   CreateRecipePayload,
   UpdateRecipePayload,
 } from '../types/recipe';
@@ -53,12 +53,22 @@ export function deleteRecipe(slug: string, token?: string): Promise<void> {
   return request<void>(`/recipes/${slug}`, { method: 'DELETE', token });
 }
 
-export function scrapeRecipe(url: string, token?: string): Promise<ScrapeResult> {
-  return request<ScrapeResult>('/recipes/scrape', {
+export function importRecipeFromUrl(url: string, token?: string): Promise<RecipeDraft> {
+  return request<RecipeDraft>('/recipes/scrape', {
     method: 'POST',
     body: { url },
     token,
   });
+}
+
+// Multipart upload; one part per image (keyed by filename, matching addPhoto).
+// The backend transcribes then reuses the shared interpretation pipeline.
+export function importRecipeFromPhoto(files: File[], token?: string): Promise<RecipeDraft> {
+  const formData = new FormData();
+  for (const file of files) {
+    formData.append(file.name, file);
+  }
+  return uploadFile<RecipeDraft>('/recipes/scrape-photo', formData, token);
 }
 
 // --- Labels ---

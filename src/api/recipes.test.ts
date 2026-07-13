@@ -7,7 +7,8 @@ import {
   createRecipe,
   updateRecipe,
   deleteRecipe,
-  scrapeRecipe,
+  importRecipeFromUrl,
+  importRecipeFromPhoto,
   getLabels,
   createLabel,
   createLabelGroup,
@@ -53,10 +54,21 @@ const server = setupServer(
     HttpResponse.json({
       recipe: { title: 'Scraped', sections: [{ name: null, ingredients: ['x'], steps: [] }] },
       suggested_labels: ['indian'],
-      extraction_method: 'json-ld',
+      techniques: { acquire: 'fetch', parse: 'json-ld', normalize: 'single-section' },
       warnings: [],
     })
   ),
+  http.post('/recipes/scrape-photo', async ({ request: req }) => {
+    const form = await req.formData();
+    const names = [...form.keys()];
+    return HttpResponse.json({
+      recipe: { title: 'From Photo', sections: [{ name: null, ingredients: ['y'], steps: [] }] },
+      suggested_labels: [],
+      techniques: { acquire: 'claude-vision', parse: 'llm', normalize: 'single-section' },
+      warnings: [],
+      _uploaded: names, // echo the multipart field names so the test can assert them
+    });
+  }),
   http.get('/recipe-labels', () =>
     HttpResponse.json([{ id: 'l1', name: 'indian', group_id: 'g1', group_name: 'ethnicity' }])
   ),
@@ -120,10 +132,20 @@ describe('recipes api', () => {
     await expect(deleteRecipe('chana-masala')).resolves.toBeUndefined();
   });
 
-  it('scrapeRecipe returns a draft with an extraction method', async () => {
-    const result = await scrapeRecipe('http://example.com/r');
-    expect(result.extraction_method).toBe('json-ld');
+  it('importRecipeFromUrl returns a draft with a techniques map', async () => {
+    const result = await importRecipeFromUrl('http://example.com/r');
+    expect(result.techniques.parse).toBe('json-ld');
     expect(result.suggested_labels).toContain('indian');
+  });
+
+  it('importRecipeFromPhoto posts each file as multipart form data', async () => {
+    const file = new File(['x'], 'page.jpg', { type: 'image/jpeg' });
+    const result = (await importRecipeFromPhoto([file])) as unknown as {
+      recipe: { title: string };
+      _uploaded: string[];
+    };
+    expect(result.recipe.title).toBe('From Photo');
+    expect(result._uploaded).toContain('page.jpg');
   });
 
   it('getLabels returns labels with group names', async () => {

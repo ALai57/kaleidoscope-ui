@@ -42,11 +42,21 @@ export interface Recipe {
   modified_at: string;
 }
 
-export interface ScrapeResult {
+export interface RecipeDraft {
   recipe: RecipeContent;
   suggested_labels: string[];
-  extraction_method: 'json-ld' | 'json-ld+llm-sections' | 'llm';
+  // Provenance from the backend, carried as data — the UI renders none of it,
+  // and never flattens it back into a single label.
+  techniques: { acquire: string; parse: string; normalize: string };
   warnings: string[];
+}
+
+// What a recipe source hands the editor page. `sourceUrl` is url-only knowledge
+// (the client's analog of RawSource's nullable url columns): the URL source
+// fills it; the photo source passes null.
+export interface AcquiredDraft {
+  draft: RecipeDraft;
+  sourceUrl: string | null;
 }
 
 export interface RecipeAudience {
