@@ -103,7 +103,10 @@ const RecipeEditorPage: React.FC = () => {
 
   // Sync fetched recipe into editable form state when it (re)loads. Adjusting
   // state during render rather than in an effect avoids a cascading re-render.
-  const [syncedExisting, setSyncedExisting] = useState(existing);
+  // Seed with `undefined` (not `existing`) so a synchronous cache hit — e.g.
+  // navigating from the recipe view page, which shares the ['recipe', slug]
+  // query key — still triggers the initial sync on first render.
+  const [syncedExisting, setSyncedExisting] = useState<typeof existing>(undefined);
   if (existing && existing !== syncedExisting) {
     setSyncedExisting(existing);
     const c = existing.content;

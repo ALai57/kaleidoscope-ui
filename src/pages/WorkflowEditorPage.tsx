@@ -70,7 +70,10 @@ const WorkflowEditorPage: React.FC = () => {
 
   // Sync fetched workflow into editable form state when it (re)loads. Adjusting
   // state during render rather than in an effect avoids a cascading re-render.
-  const [syncedWorkflow, setSyncedWorkflow] = useState(workflow);
+  // Seed with `undefined` (not `workflow`) so a synchronous cache hit — e.g.
+  // navigating from a page that shares the ['workflows', id] query key — still
+  // triggers the initial sync on first render.
+  const [syncedWorkflow, setSyncedWorkflow] = useState<typeof workflow>(undefined);
   if (workflow && workflow !== syncedWorkflow) {
     setSyncedWorkflow(workflow);
     setName(workflow.name);

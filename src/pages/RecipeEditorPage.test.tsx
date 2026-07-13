@@ -21,9 +21,36 @@ vi.mock('../auth/useAuth', () => ({
 
 let createdBody: Record<string, unknown> | null = null;
 
+const EXISTING_RECIPE = {
+  id: 'e019690d',
+  'recipe-url': 'wip-chilaquiles',
+  hostname: 'andrewslai.com',
+  content: {
+    title: 'WIP Chilaquiles',
+    sections: [
+      {
+        name: 'Salsa',
+        steps: ['peel and clean tomatillos', 'boil the tomatillos'],
+        ingredients: ['12 medium tomatillos', '1 jalapenos'],
+      },
+    ],
+    servings: null,
+    'cook-time-minutes': null,
+    'prep-time-minutes': null,
+  },
+  'original-content': null,
+  labels: [],
+  'source-url': null,
+  author: 'andrew.s.lai5@gmail.com',
+  'public-visibility': false,
+  'created-at': '2026-07-12T23:50:29Z',
+  'modified-at': '2026-07-13T01:15:42Z',
+};
+
 const server = setupServer(
   http.get('/recipe-labels', () => HttpResponse.json([])),
   http.get('/groups', () => HttpResponse.json([])),
+  http.get('/recipes/wip-chilaquiles', () => HttpResponse.json(EXISTING_RECIPE)),
   http.post('/recipes/scrape', () =>
     HttpResponse.json({
       recipe: {
@@ -65,6 +92,48 @@ function renderNew(): void {
   );
 }
 
+// Renders the editor at /recipes/:slug/edit with the recipe already in the
+// query cache, mirroring a click on "Edit" from the recipe view page (both use
+// the ['recipe', slug] key, so the data is a synchronous cache hit).
+function renderEditWithCache(): void {
+  const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  qc.setQueryData(['recipe', 'wip-chilaquiles'], {
+    id: 'e019690d',
+    recipe_url: 'wip-chilaquiles',
+    hostname: 'andrewslai.com',
+    content: {
+      title: 'WIP Chilaquiles',
+      sections: [
+        {
+          name: 'Salsa',
+          steps: ['peel and clean tomatillos', 'boil the tomatillos'],
+          ingredients: ['12 medium tomatillos', '1 jalapenos'],
+        },
+      ],
+      servings: null,
+      cook_time_minutes: null,
+      prep_time_minutes: null,
+    },
+    original_content: null,
+    labels: [],
+    source_url: null,
+    author: 'andrew.s.lai5@gmail.com',
+    public_visibility: false,
+    created_at: '2026-07-12T23:50:29Z',
+    modified_at: '2026-07-13T01:15:42Z',
+  });
+  render(
+    <QueryClientProvider client={qc}>
+      <MemoryRouter initialEntries={['/recipes/wip-chilaquiles/edit']}>
+        <Routes>
+          <Route path="/recipes/:slug/edit" element={<RecipeEditorPage />} />
+          <Route path="/recipes/:slug" element={<div>Recipe detail</div>} />
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>
+  );
+}
+
 // local render (we supply our own router + routes, so no testUtils MemoryRouter)
 function render(ui: React.ReactElement): void {
   const theme = makeTheme(BASE_THEME);
@@ -72,6 +141,14 @@ function render(ui: React.ReactElement): void {
 }
 
 describe('RecipeEditorPage', () => {
+  it('loads an existing recipe into the form when its data is already cached', async () => {
+    renderEditWithCache();
+
+    await waitFor(() => expect(screen.getByLabelText('Title')).toHaveValue('WIP Chilaquiles'));
+    expect(screen.getByDisplayValue('peel and clean tomatillos')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('12 medium tomatillos')).toBeInTheDocument();
+  });
+
   it('imports a URL whose scraped recipe has no sections without crashing', async () => {
     server.use(
       http.post('/recipes/scrape', () =>
