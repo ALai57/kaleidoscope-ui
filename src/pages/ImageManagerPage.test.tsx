@@ -75,4 +75,10 @@ describe('ImageManagerPage', () => {
       expect(screen.queryByText('Image Manager')).toBeTruthy();
     });
   });
+
+  it('renders the Prism eyebrow above the title', () => {
+    render(<ImageManagerPage />, { wrapper: Wrapper });
+    expect(screen.getByText('IMAGES')).toBeTruthy();
+    expect(screen.getByText('Image Manager')).toBeTruthy();
+  });
 });
