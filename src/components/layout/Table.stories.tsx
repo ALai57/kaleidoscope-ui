@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Table } from './Table';
 import { GridColDef } from '@mui/x-data-grid';
+import { PrismThemeProvider } from '../prism';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'User ID', width: 90 },
@@ -32,4 +33,15 @@ export const Default: Story = {
     columns,
     maxWidth: 650,
   },
+};
+
+// Prism (dark) canvas — proves the manager-list table re-skins to mono
+// hairline headers + row hover under PrismThemeProvider with zero per-table
+// changes, reusing the same rows/columns as the light story above.
+export const Prism: Story = {
+  render: () => (
+    <PrismThemeProvider>
+      <Table rows={rows} columns={columns} maxWidth={650} />
+    </PrismThemeProvider>
+  ),
 };

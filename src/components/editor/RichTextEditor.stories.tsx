@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import Box from '@mui/material/Box';
 import { RichTextEditor } from './RichTextEditor';
+import { PrismThemeProvider } from '../prism';
 
 const sampleHtml = `
 <h1>Welcome to the Rich Text Editor</h1>
@@ -41,6 +43,24 @@ export const ReadOnly: Story = {
     initialContent: sampleHtml,
     editable: false,
   },
+};
+
+// Prism (dark) canvas — proves the editor's toolbar + ProseMirror content
+// re-skin correctly under PrismThemeProvider (accent active buttons, legible
+// ink text, code block reading as a distinct inset). The reader path stays
+// on the light story above — this is the editor-only, admin-gated look.
+export const EditorDark: Story = {
+  render: () => (
+    <PrismThemeProvider>
+      <Box sx={{ bgcolor: 'background.default', p: 3 }}>
+        <RichTextEditor
+          initialContent={sampleHtml}
+          editable
+          onChange={(html: string) => console.log('Content changed:', html.slice(0, 100))}
+        />
+      </Box>
+    </PrismThemeProvider>
+  ),
 };
 
 export const Empty: Story = {
