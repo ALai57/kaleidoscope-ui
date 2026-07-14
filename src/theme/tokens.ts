@@ -146,6 +146,10 @@ export interface ThemePreset {
   radius: RadiusScale;
   motion: Motion;
   typography: TypographyFamilies;
+  /** Optional per-mode neutral/elevation override (Prism's committed dark plane). */
+  darkNeutrals?: typeof PRISM_DARK_NEUTRALS;
+  /** Optional categorical/series override (Prism's spectrum). */
+  categorical?: readonly string[];
 }
 
 /** The app's original brand seed (blue). */
@@ -180,6 +184,22 @@ const PRISM_MOTION: Motion = {
   },
 };
 
+/** Prism's dark instrument-panel planes (from the approved artifact). */
+const PRISM_DARK_NEUTRALS = {
+  surface: { base: '#0A0E15', raised: '#10151E', sunken: '#1D2634' },
+  border: { subtle: 'rgba(148, 170, 200, 0.13)', strong: 'rgba(148, 170, 200, 0.24)' },
+  text: { primary: '#E9EEF6', secondary: '#93A1B5', disabled: '#5C6A7E' },
+  elevation: {
+    none: 'none',
+    sm: '0 8px 18px rgba(0,0,0,0.35)',
+    md: '0 14px 34px rgba(0,0,0,0.45)',
+    lg: '0 30px 70px rgba(0,0,0,0.6)',
+  },
+} as const;
+
+/** Prism's spectrum — distinct series hues validated on #10151E. */
+const PRISM_SPECTRUM = ['#26A0BC', '#9085E9', '#C98500', '#2E9E5B', '#D55181'] as const;
+
 export const PRESETS: Record<PresetId, ThemePreset> = {
   default: {
     id: 'default',
@@ -198,6 +218,8 @@ export const PRESETS: Record<PresetId, ThemePreset> = {
     radius: { sm: 6, md: 10, lg: 14, pill: 9999 },
     motion: PRISM_MOTION,
     typography: { sans: SANS, mono: MONO, headingFamily: 'mono' },
+    darkNeutrals: PRISM_DARK_NEUTRALS,
+    categorical: PRISM_SPECTRUM,
   },
 };
 
@@ -297,15 +319,17 @@ export function makeTokens(
 ): Tokens {
   const preset = PRESETS[presetId];
   const neutrals = mode === 'dark' ? DARK_NEUTRALS : LIGHT_NEUTRALS;
+  const effectiveNeutrals =
+    mode === 'dark' && preset.darkNeutrals ? preset.darkNeutrals : neutrals;
   const status = mode === 'dark' ? DARK_STATUS : LIGHT_STATUS;
 
   const seedBrand = makeBrand(params);
   const brand =
     mode === 'dark'
       ? {
-          primary: adaptiveColor(seedBrand.primary, neutrals.surface.base, WCAG_AA),
-          secondary: adaptiveColor(seedBrand.secondary, neutrals.surface.base, WCAG_AA),
-          tertiary: adaptiveColor(seedBrand.tertiary, neutrals.surface.base, WCAG_AA),
+          primary: adaptiveColor(seedBrand.primary, effectiveNeutrals.surface.base, WCAG_AA),
+          secondary: adaptiveColor(seedBrand.secondary, effectiveNeutrals.surface.base, WCAG_AA),
+          tertiary: adaptiveColor(seedBrand.tertiary, effectiveNeutrals.surface.base, WCAG_AA),
         }
       : seedBrand;
 
@@ -315,15 +339,15 @@ export function makeTokens(
     color: {
       brand,
       status: { ...status },
-      surface: { ...neutrals.surface },
-      border: { ...neutrals.border },
-      text: { ...neutrals.text },
-      categorical: CATEGORICAL_PALETTE,
+      surface: { ...effectiveNeutrals.surface },
+      border: { ...effectiveNeutrals.border },
+      text: { ...effectiveNeutrals.text },
+      categorical: preset.categorical ?? CATEGORICAL_PALETTE,
     },
     space: { ...SPACE },
     radius: { ...preset.radius },
     motion: preset.motion,
-    elevation: { ...neutrals.elevation },
+    elevation: { ...effectiveNeutrals.elevation },
     typography: {
       fontFamily: preset.typography.sans,
       mono: preset.typography.mono,

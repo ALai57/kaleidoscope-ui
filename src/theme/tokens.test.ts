@@ -77,3 +77,21 @@ describe('PRESETS', () => {
     expect(PRESETS.default.defaultMode).toBe('system');
   });
 });
+
+describe('prism preset surfaces', () => {
+  const t = makeTokens(PRESETS.prism.seed, 'dark', 'prism');
+  it('uses the artifact dark planes', () => {
+    expect(t.color.surface.base).toBe('#0A0E15');
+    expect(t.color.surface.raised).toBe('#10151E');
+    expect(t.color.surface.sunken).toBe('#1D2634');
+  });
+  it('exposes the prism spectrum as categorical', () => {
+    expect(t.color.categorical.slice(0, 5)).toEqual(
+      ['#26A0BC', '#9085E9', '#C98500', '#2E9E5B', '#D55181']
+    );
+  });
+  it('leaves the default preset dark surfaces untouched', () => {
+    const d = makeTokens(PRESETS.default.seed, 'dark', 'default');
+    expect(d.color.surface.base).not.toBe('#0A0E15');
+  });
+});
