@@ -117,6 +117,12 @@ export function makeTheme(params: ThemeParams, presetId: PresetId = 'default'): 
 export function makePrismTheme(): Theme {
   const darkTokens = makeTokens(PRESETS.prism.seed, 'dark', 'prism');
   return createTheme({
+    // Top-level palette (not just `colorSchemes`) is required: PrismThemeProvider
+    // mounts this via a plain MUI ThemeProvider, which does NOT run color-scheme
+    // resolution, so components reading `theme.palette.*` (e.g. `palette.mode`)
+    // would otherwise fall back to the ambient app theme. Derived from the same
+    // darkTokens as both schemes, so it only pins the theme more deterministically
+    // dark. Removing this silently breaks the admin shell AND the Recipes route.
     palette: paletteFromTokens(darkTokens),
     colorSchemes: {
       light: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
