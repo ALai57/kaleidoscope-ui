@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { EditorToolbar } from './EditorToolbar';
 import { createMockEditor } from '@/test/mockEditor';
+import { PrismThemeProvider } from '@/components/prism';
 import type { Editor } from '@tiptap/react';
 
 describe('EditorToolbar', () => {
@@ -113,5 +114,16 @@ describe('EditorToolbar', () => {
     expect(screen.getByTestId('toolbar-align-center')).toBeDefined();
     expect(screen.getByTestId('toolbar-align-right')).toBeDefined();
     expect(screen.getByTestId('toolbar-align-justify')).toBeDefined();
+  });
+
+  it('renders the toolbar and keeps aria-pressed under the Prism theme', () => {
+    const editor = createMockEditor();
+    render(
+      <PrismThemeProvider>
+        <EditorToolbar editor={editor} />
+      </PrismThemeProvider>,
+    );
+    expect(screen.getByRole('toolbar')).toBeDefined();
+    expect(screen.getByTestId('toolbar-bold')).toHaveAttribute('aria-pressed');
   });
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Divider, IconButton, Tooltip } from '@mui/material';
+import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
@@ -47,11 +48,19 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   children,
   'data-testid': testId,
 }) => {
+  const theme = useTheme();
+
   const sx: SxProps<Theme> = {
     color: active ? activeColor : inactiveColor,
     borderRadius: 1,
     p: 0.5,
-    '&:hover': { backgroundColor: 'action.hover' },
+    border: '1px solid',
+    borderColor: active ? 'primary.main' : 'transparent',
+    backgroundColor: active ? alpha(theme.palette.primary.main, 0.14) : 'transparent',
+    '&:hover': {
+      backgroundColor: active ? alpha(theme.palette.primary.main, 0.2) : 'action.hover',
+      color: active ? activeColor : 'text.primary',
+    },
   };
 
   return (
