@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import WorkflowCard from './WorkflowCard';
 import type { Workflow } from '../../types/workflow';
 import { makeTheme, BASE_THEME } from '../../theme';
+import { PrismThemeProvider } from '../prism';
 
 const theme = makeTheme(BASE_THEME, 'prism');
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -63,5 +64,19 @@ describe('WorkflowCard', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /archive/i }));
     expect(onArchive).toHaveBeenCalledWith('wf-1');
+  });
+
+  // Regression guard for Task 1 (admin shell → Prism): EntityCard/StatusChip-based
+  // cards were re-skinned by wrapping AdminLayout in PrismThemeProvider, with no
+  // per-card changes. This asserts a representative card still renders its content
+  // when mounted under the Prism (dark) theme instead of the default app theme.
+  it('renders under the Prism theme with its title and status intact', () => {
+    render(<WorkflowCard workflow={base} onEdit={noop} onArchive={noop} archiving={false} />, {
+      wrapper: PrismThemeProvider,
+    });
+    expect(screen.getByText('Autonomous PR review')).toBeInTheDocument();
+    // StatusChip is passed `label={workflow.status}` explicitly by WorkflowCard, so
+    // the rendered text is the raw domain status ("live"), not the tone label.
+    expect(screen.getByText('live')).toBeInTheDocument();
   });
 });
