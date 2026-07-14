@@ -59,16 +59,16 @@ export function buildStages(lineage: RecipeLineage): StageView[] {
       key,
       label: STAGE_LABEL[key],
       artifact: STAGE_ARTIFACT[key],
-      technique: lineage.run.techniques[key] ?? null,
+      technique: lineage.run.techniques?.[key] ?? null,
       status,
-      llmCalls: lineage.run.llm_calls.filter((c) => PURPOSE_STAGE[c.purpose] === key),
+      llmCalls: (lineage.run.llm_calls ?? []).filter((c) => PURPOSE_STAGE[c.purpose] === key),
       errorDetail: status === 'failed' ? lineage.run.error_detail : null,
     };
   });
 }
 
 export function tokenTotals(calls: LlmCall[]): { input: number; output: number } {
-  return calls.reduce(
+  return (calls ?? []).reduce(
     (acc, c) => ({
       input: acc.input + (c.response.usage?.input_tokens ?? 0),
       output: acc.output + (c.response.usage?.output_tokens ?? 0),
@@ -80,9 +80,9 @@ export function tokenTotals(calls: LlmCall[]): { input: number; output: number }
 /** Header/section-label ingredient lines the NORMALIZE merge omitted: the count
  *  of facts ingredients that did not land in any final content section. */
 export function droppedIngredientLines(lineage: RecipeLineage): number {
-  const factsCount = lineage.run.facts?.ingredients.length ?? 0;
+  const factsCount = lineage.run.facts?.ingredients?.length ?? 0;
   const placed = (lineage.run.content?.sections ?? []).reduce(
-    (n, s) => n + s.ingredients.length, 0,
+    (n, s) => n + (s.ingredients?.length ?? 0), 0,
   );
   return Math.max(0, factsCount - placed);
 }
@@ -97,8 +97,9 @@ export function shortModel(model: string): string {
 }
 
 export function modelCallSummary(calls: LlmCall[]): { count: number; label: string } {
-  const label = calls.length ? shortModel(calls[0]!.model) : '';
-  return { count: calls.length, label };
+  const safe = calls ?? [];
+  const label = safe.length ? shortModel(safe[0]!.model) : '';
+  return { count: safe.length, label };
 }
 
 export function formatBytes(n: number): string {

@@ -28,10 +28,12 @@ export const LineageTrace: React.FC<{ lineage: RecipeLineage; slug: string; toke
   lineage, slug, token,
 }) => {
   const { color, typography } = useTheme().tokens;
-  const stages = buildStages(lineage);
-  const tokens = tokenTotals(lineage.run.llm_calls);
-  const dropped = droppedIngredientLines(lineage);
   const { raw, run } = lineage;
+  const llmCalls = run.llm_calls ?? [];
+  const warnings = run.warnings ?? [];
+  const stages = buildStages(lineage);
+  const tokens = tokenTotals(llmCalls);
+  const dropped = droppedIngredientLines(lineage);
 
   return (
     <div style={{ borderTop: `1px solid ${color.border.subtle}`, paddingTop: 4 }}>
@@ -55,7 +57,7 @@ export const LineageTrace: React.FC<{ lineage: RecipeLineage; slug: string; toke
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
         gap: 12, padding: '8px 22px 22px' }}>
         <Stat label="Stages run" value={`${stagesRunCount(stages)}`} suffix=" / 3" />
-        <Stat label="Model calls" value={`${run.llm_calls.length}`} />
+        <Stat label="Model calls" value={`${llmCalls.length}`} />
         <Stat label="Tokens (in / out)" value={fmt(tokens.input)} suffix={` / ${fmt(tokens.output)}`} />
         <Stat label="Header lines dropped" value={`${dropped}`}
           color={dropped > 0 ? color.status.warning : undefined} />
@@ -70,7 +72,7 @@ export const LineageTrace: React.FC<{ lineage: RecipeLineage; slug: string; toke
       </div>
 
       {/* warnings */}
-      {run.warnings.map((w, i) => (
+      {warnings.map((w, i) => (
         <WarnBox key={i}>
           <span style={{ color: color.status.warning, fontWeight: 600, fontFamily: typography.mono }}>⚠</span>
           <span>{w}</span>

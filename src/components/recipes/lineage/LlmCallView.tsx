@@ -64,7 +64,7 @@ export const LlmCallView: React.FC<{ call: LlmCall }> = ({ call }) => {
         {call.request.system && (
           <IoSection kind="sys" label="System prompt" text={call.request.system} />
         )}
-        {call.request.messages.map((m, i) => (
+        {(call.request.messages ?? []).map((m, i) => (
           <IoSection key={i} kind="user" label={`${m.role} message`} text={m.content} />
         ))}
         {responseText && <IoSection kind="asst" label="Response" text={responseText} />}

@@ -51,4 +51,35 @@ describe('LineageTrace', () => {
     expect(getByText('Normalize')).toBeInTheDocument();
     expect(getByText(/Dropped 1 header line/)).toBeInTheDocument();
   });
+
+  // A real ephemeral-env payload arrived with a required array field omitted,
+  // producing `undefined.map(...)`. The trace must tolerate a backend that drops
+  // any array (warnings / content.sections / facts.*) rather than white-screen.
+  it('does not crash when the backend omits run.warnings', () => {
+    const bad = { ...lineage, run: { ...lineage.run, warnings: undefined } } as unknown as RecipeLineage;
+    expect(() => wrap(<LineageTrace lineage={bad} slug="buns" />)).not.toThrow();
+  });
+
+  it('does not crash when the backend omits run.content.sections', () => {
+    const bad = { ...lineage, run: { ...lineage.run, content: { title: 'Buns' } } } as unknown as RecipeLineage;
+    expect(() => wrap(<LineageTrace lineage={bad} slug="buns" />)).not.toThrow();
+  });
+
+  it('does not crash when the backend omits facts arrays', () => {
+    const bad = { ...lineage, run: { ...lineage.run, facts: { title: 'Buns' } } } as unknown as RecipeLineage;
+    expect(() => wrap(<LineageTrace lineage={bad} slug="buns" />)).not.toThrow();
+  });
+
+  // The actual ephemeral-env crash: transcribe/parse calls persisted with empty
+  // request/response objects, so LlmCallView hit `request.messages` === undefined.
+  it('does not crash when an llm-call stores empty request/response objects', () => {
+    const bad = {
+      ...lineage,
+      run: {
+        ...lineage.run,
+        llm_calls: [{ purpose: 'parse', model: 'claude-haiku-4-5', request: {}, response: {} }],
+      },
+    } as unknown as RecipeLineage;
+    expect(() => wrap(<LineageTrace lineage={bad} slug="buns" />)).not.toThrow();
+  });
 });

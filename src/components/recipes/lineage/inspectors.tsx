@@ -38,7 +38,7 @@ const Lines: React.FC<{ items: string[]; ordered?: boolean }> = ({ items, ordere
   const { color, typography } = theme.tokens;
   return (
     <ol style={{ margin: 0, padding: 0, listStyle: 'none', display: 'grid', gap: 4 }}>
-      {items.map((line, i) => (
+      {(items ?? []).map((line, i) => (
         <li key={i} style={{ display: 'grid', gridTemplateColumns: '22px 1fr', gap: 8,
           fontFamily: typography.mono, fontSize: 12, color: color.text.primary, lineHeight: 1.5 }}>
           <span style={{ textAlign: 'right', color: color.text.disabled, fontSize: 10.5 }}>
@@ -64,6 +64,10 @@ const H4: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 /** PARSE: extracted facts — ingredients, steps, signals, suggested labels. */
 export const ExtractedFactsInspector: React.FC<{ facts: LineageExtractedFacts }> = ({ facts }) => {
   const { color, typography, radius } = useTheme().tokens;
+  const ingredients = facts.ingredients ?? [];
+  const steps = facts.steps ?? [];
+  const sectionSignals = facts.section_signals ?? [];
+  const labels = facts.labels ?? [];
   const chip = (text: string, i: number) => (
     <span key={i} style={{ fontFamily: typography.mono, fontSize: 11, color: color.categorical[1],
       background: `color-mix(in srgb, ${color.categorical[1]} 15%, transparent)`,
@@ -73,25 +77,25 @@ export const ExtractedFactsInspector: React.FC<{ facts: LineageExtractedFacts }>
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
       <div>
-        <H4>Ingredients · {facts.ingredients.length}</H4>
-        <Lines items={facts.ingredients} ordered />
+        <H4>Ingredients · {ingredients.length}</H4>
+        <Lines items={ingredients} ordered />
       </div>
       <div>
-        <H4>Steps · {facts.steps.length}</H4>
-        <Lines items={facts.steps} ordered />
-        {facts.section_signals.length > 0 && (
+        <H4>Steps · {steps.length}</H4>
+        <Lines items={steps} ordered />
+        {sectionSignals.length > 0 && (
           <div style={{ marginTop: 16 }}>
-            <H4>Section signals · {facts.section_signals.length}</H4>
+            <H4>Section signals · {sectionSignals.length}</H4>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {facts.section_signals.map(chip)}
+              {sectionSignals.map(chip)}
             </div>
           </div>
         )}
-        {facts.labels.length > 0 && (
+        {labels.length > 0 && (
           <div style={{ marginTop: 16 }}>
-            <H4>Suggested labels · {facts.labels.length}</H4>
+            <H4>Suggested labels · {labels.length}</H4>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              {facts.labels.map(chip)}
+              {labels.map(chip)}
             </div>
           </div>
         )}
@@ -106,7 +110,7 @@ export const RecipeContentInspector: React.FC<{ content: RecipeContent }> = ({ c
   const normalize = color.categorical[3];
   return (
     <div style={{ display: 'grid', gap: 12 }}>
-      {content.sections.map((s, i) => (
+      {(content.sections ?? []).map((s, i) => (
         <div key={i} style={{ border: `1px solid ${color.border.subtle}`, borderRadius: radius.md,
           background: color.surface.base, overflow: 'hidden' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 14px',
