@@ -3,6 +3,8 @@ export { IconButton } from './IconButton';
 export { Card } from './Card';
 export { Chip } from './Chip';
 export type { ChipProps } from './Chip';
+export { CopyButton } from './CopyButton';
+export type { CopyButtonProps } from './CopyButton';
 export { TextInput } from './TextInput';
 export { Menu, MenuItem } from './Menu';
 export { Dialog } from './Dialog';
