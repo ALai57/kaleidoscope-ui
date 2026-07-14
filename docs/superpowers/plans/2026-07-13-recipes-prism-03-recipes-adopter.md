@@ -13,8 +13,9 @@
 - Repo root: `kaleidoscope-ui`. Depends on Plan 1 (backend `recipe-url` on PUT) and Plan 2 (primitives) merged.
 - Server state → TanStack Query; UI state → local `useState`. API only through `src/api/recipes.ts` (CLAUDE.md).
 - Auth only through `useAuth()`. Writer actions (New/Manage/kebab) render only when `isAuthenticated`.
-- The app must be under the Prism preset for tokens to render dark. `RecipesPage` selects it on mount via `useSelectPreset('prism')` (see Task 5) — do not hardcode colors.
+- **Local Prism scope (decision 2026-07-14):** Recipes renders Prism dark via a *local* MUI `ThemeProvider` wrapping only the Recipes subtree — NOT by switching the app-global preset. Do not call `useSelectPreset('prism')` (that mutates the persisted store and reskins every other page). Do not hardcode colors — read `theme.tokens.*` under the local provider.
 - `recipe_url` is the address; `id` is identity. After a rename the query cache key changes — invalidate `['recipes']`.
+- **A11y deferred (decision 2026-07-14):** Dialog focus-trap/restore and Menu keyboard-nav (flagged by Plan 2's final review) are a follow-up, NOT part of this plan. Build the mouse-first flow as specified.
 - `npm run ci` green before the final commit.
 
 ---
@@ -596,17 +597,105 @@ git commit -m "feat(recipes): Prism RecipeCard with kebab overflow menu"
 
 ---
 
-### Task 6: Rebuild `RecipesPage` — compose cards, wire dialogs, select Prism
+### Task 6: Local Prism theme provider + rebuild `RecipesPage`
 
 **Files:**
-- Modify: `src/pages/RecipesPage.tsx` (replace the MUI card grid with `RecipeCard`s; mount the two dialogs; keep `ManageLabelsDialog` for now)
+- Modify: `src/theme/index.ts` (add `makePrismTheme()`)
+- Create: `src/components/prism/PrismThemeProvider.tsx`, `src/components/prism/PrismThemeProvider.test.tsx`
+- Modify: `src/components/prism/index.ts` (export `PrismThemeProvider`)
+- Modify: `src/pages/RecipesPage.tsx` (wrap in `PrismThemeProvider`; replace the MUI card grid with `RecipeCard`s; mount the two dialogs; keep `ManageLabelsDialog` for now)
 - Modify: `src/pages/RecipesPage.test.tsx` (extend with rename + delete flows)
 
 **Interfaces:**
-- Consumes: `RecipeCard`, `RenameRecipeUrlDialog`, `DeleteRecipeDialog`, Prism `Button`/`Chip`/`TextInput`, `useSelectPreset`.
-- Produces: the list page renders Prism cards; kebab → rename/delete dialogs mutate and invalidate `['recipes']`.
+- Consumes: `RecipeCard`, `RenameRecipeUrlDialog`, `DeleteRecipeDialog`, Prism `Button`/`Chip`/`TextInput`, `PrismThemeProvider`; `makeTokens`/`PRESETS`/`paletteFromTokens`/`typographyFromTokens` (theme internals).
+- Produces: `makePrismTheme(): Theme` — a self-contained MUI theme pinned to the Prism preset in DARK (both color schemes carry the Prism dark tokens, so the subtree renders Prism regardless of the app's active mode); `PrismThemeProvider` wraps children in it; the list page renders Prism cards inside it; kebab → rename/delete dialogs mutate and invalidate `['recipes']`.
 
-- [ ] **Step 1: Write the failing tests**
+- [ ] **Step 1a: Add `makePrismTheme()` — write the failing test**
+
+`paletteFromTokens` and `typographyFromTokens` are module-private in `src/theme/index.ts`; `makePrismTheme` lives in the same file so it can reuse them. Add `PRESETS` to the existing `import { ... } from './tokens'`.
+
+Add to `src/theme/index.test.ts`:
+
+```ts
+import { makePrismTheme } from './index';
+
+describe('makePrismTheme', () => {
+  it('is pinned to the Prism dark instrument-panel surfaces', () => {
+    const t = makePrismTheme();
+    expect(t.tokens.color.surface.base).toBe('#0A0E15');
+    expect(t.tokens.color.categorical.slice(0, 5)).toEqual(
+      ['#26A0BC', '#9085E9', '#C98500', '#2E9E5B', '#D55181']
+    );
+  });
+});
+```
+
+- [ ] **Step 1b: Run it (RED)** — `npm test -- src/theme/index.test.ts` → FAIL (`makePrismTheme` not exported).
+
+- [ ] **Step 1c: Implement `makePrismTheme()` in `src/theme/index.ts`**
+
+```ts
+/** A self-contained MUI theme pinned to the Prism preset in DARK, for scoping
+ *  the Prism look to one subtree (e.g. the Recipes route) WITHOUT switching the
+ *  app-global preset/mode. Both color schemes carry the Prism dark token set, so
+ *  the subtree renders Prism dark regardless of the app's active color mode. */
+export function makePrismTheme(): Theme {
+  const darkTokens = makeTokens(PRESETS.prism.seed, 'dark', 'prism');
+  return createTheme({
+    colorSchemes: {
+      light: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
+      dark: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
+    },
+    shape: { borderRadius: PRESETS.prism.radius.md },
+    spacing: darkTokens.space.sm,
+    typography: typographyFromTokens(darkTokens),
+    tokens: darkTokens,
+  });
+}
+```
+
+- [ ] **Step 1d: Run it (GREEN)** — `npm test -- src/theme/index.test.ts` → PASS.
+
+- [ ] **Step 1e: Create `PrismThemeProvider` + test**
+
+`src/components/prism/PrismThemeProvider.tsx`:
+
+```tsx
+import * as React from 'react';
+import { ThemeProvider } from '@mui/material/styles';
+import { makePrismTheme } from '../../theme';
+
+// Static — the Prism theme never changes, build it once.
+const prismTheme = makePrismTheme();
+
+/** Scopes the Prism (dark) look to its subtree via a local MUI ThemeProvider,
+ *  leaving the app-global theme/preset untouched. */
+export const PrismThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <ThemeProvider theme={prismTheme}>{children}</ThemeProvider>
+);
+```
+
+`src/components/prism/PrismThemeProvider.test.tsx` — assert a child reads Prism dark tokens through it:
+
+```tsx
+import { it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { useTheme } from '@mui/material/styles';
+import { PrismThemeProvider } from './PrismThemeProvider';
+
+const Probe: React.FC = () => <span>{useTheme().tokens.color.surface.base}</span>;
+
+it('provides the Prism dark surface tokens to its subtree', () => {
+  render(<PrismThemeProvider><Probe /></PrismThemeProvider>);
+  expect(screen.getByText('#0A0E15')).toBeInTheDocument();
+});
+```
+
+(Note: this test renders `PrismThemeProvider` itself, so use plain RTL `render`, not the `testUtils` render — the latter would wrap in the default-preset ThemeProvider, but the nested `PrismThemeProvider` still wins for its subtree; either works, plain RTL is simplest.)
+
+Add `export { PrismThemeProvider } from './PrismThemeProvider';` to `src/components/prism/index.ts`. Run `npm test -- src/components/prism/PrismThemeProvider.test.tsx` → PASS.
+
+- [ ] **Step 2: Write the failing RecipesPage tests**
 
 Extend `src/pages/RecipesPage.test.tsx`. Add MSW handlers for PUT/DELETE and a test:
 
@@ -644,34 +733,55 @@ it('deletes a recipe from the card kebab menu', async () => {
 
 Update the existing "shows writer actions" assertions if the New-recipe control changes from an MUI `link` role — keep it a router `<Link>` styled as a Prism button so `getByRole('link', { name: /New recipe/i })` still passes.
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [ ] **Step 3: Run tests to verify they fail**
 
 Run: `npm test -- src/pages/RecipesPage.test.tsx`
 Expected: FAIL — no kebab/menu/dialogs yet.
 
-- [ ] **Step 3: Rebuild the page body**
+- [ ] **Step 4: Rebuild the page body**
 
-In `src/pages/RecipesPage.tsx`: keep the data hooks (`getRecipes`, `getLabels`, filters, debounce) and `ManageLabelsDialog`. Select the Prism preset on mount, replace the header/search/filter/grid with Prism primitives, and add dialog state. Key additions:
+In `src/pages/RecipesPage.tsx`: keep the data hooks (`getRecipes`, `getLabels`, filters, debounce) and `ManageLabelsDialog`. Wrap the whole page output in `PrismThemeProvider` (local Prism scope — do NOT switch the app-global preset), replace the header/search/filter/grid with Prism primitives, and add dialog state. Key additions:
 
 ```tsx
-import { useSelectPreset } from '../theme/useSelectPreset';
-import { Button as PButton, Chip as PChip, TextInput as PInput } from '../components/prism';
+import { useTheme } from '@mui/material/styles';
+import { Button as PButton, Chip as PChip, TextInput as PInput, PrismThemeProvider } from '../components/prism';
 import { RecipeCard } from '../components/recipes/RecipeCard';
 import { RenameRecipeUrlDialog } from '../components/recipes/RenameRecipeUrlDialog';
 import { DeleteRecipeDialog } from '../components/recipes/DeleteRecipeDialog';
 import type { Recipe } from '../types/recipe';
 ```
 
-Inside the component:
+Inside the component (no `useSelectPreset` — the Prism look comes from the local provider wrap below):
 
 ```tsx
-  const selectPreset = useSelectPreset();
-  useEffect(() => { selectPreset('prism'); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
   const queryClient = useQueryClient();
   const [renameTarget, setRenameTarget] = useState<Recipe | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Recipe | null>(null);
   const invalidateRecipes = () => void queryClient.invalidateQueries({ queryKey: ['recipes'] });
+```
+
+Wrap the returned JSX so Prism scopes to this page only. The outer element is `PrismThemeProvider`; inside it, a root element paints the Prism plane full-height. Because the page background must read a Prism token, put the background on an inner component that is *under* the provider (a child of `PrismThemeProvider`), e.g. a small `PrismPageRoot` styled `div` in this file, or an inline `useTheme()` read in a child — NOT the `RecipesPage` component body itself (that runs above the provider and would read the app theme). Structure:
+
+```tsx
+  return (
+    <PrismThemeProvider>
+      <PrismPageRoot>
+        <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
+        {/* header, toolbar, grid, dialogs … */}
+      </PrismPageRoot>
+    </PrismThemeProvider>
+  );
+```
+
+where, at the bottom of the file:
+
+```tsx
+import { styled } from '@mui/material/styles';
+const PrismPageRoot = styled('div')(({ theme }) => ({
+  minHeight: '100vh',
+  background: theme.tokens.color.surface.base,
+  color: theme.tokens.color.text.primary,
+}));
 ```
 
 Render the grid with `RecipeCard`:
@@ -712,16 +822,18 @@ Mount the dialogs before the closing fragment:
 
 Replace the MUI `TextField` ingredient search with Prism `PInput` (keep `aria-label="Search ingredient"` so the existing filter test passes), the MUI label `Chip`s with Prism `PChip` (keep `qualifiedLabelName` text so the label-filter test passes), and the MUI `Button`s with Prism `PButton` (New recipe stays a router `<Link>` — render `<PButton as={RouterLink} to="/recipes/new">` or wrap the link so its accessible role stays `link`). Remove now-unused MUI imports (`Card`, `CardActionArea`, `CardContent`, `Chip`, `TextField`, `Button`, `Box`, `Stack` as appropriate) to keep lint clean.
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [ ] **Step 5: Run tests to verify they pass**
 
 Run: `npm test -- src/pages/RecipesPage.test.tsx`
-Expected: PASS (all four tests: list, ingredient filter, label filter, rename, delete).
+Expected: PASS (all tests: list, ingredient filter, label filter, rename, delete). Note the existing `RecipesPage.test.tsx` renders via the `testUtils` provider (default preset); the page's own `PrismThemeProvider` wrap takes over for its subtree, so token-driven primitives still render and the tests (which assert text/roles, not colors) pass unchanged.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/pages/RecipesPage.tsx src/pages/RecipesPage.test.tsx
-git commit -m "feat(recipes): rebuild RecipesPage in Prism with rename + delete"
+git add src/theme/index.ts src/theme/index.test.ts \
+        src/components/prism/PrismThemeProvider.tsx src/components/prism/PrismThemeProvider.test.tsx \
+        src/components/prism/index.ts src/pages/RecipesPage.tsx src/pages/RecipesPage.test.tsx
+git commit -m "feat(recipes): rebuild RecipesPage in local Prism with rename + delete"
 ```
 
 ---
@@ -747,4 +859,5 @@ Use the `superpowers:finishing-a-development-branch` skill to open the PR.
 - **Type consistency:** `updateRecipe`/`deleteRecipe` signatures match `src/api/recipes.ts`; dialog props (`recipe/open/onClose/onRenamed|onDeleted/token`) are consistent across Tasks 3–6; `RecipeCard` action props (`onOpen/onRename/onDelete`) match how Task 6 wires them.
 - **Cache correctness:** rename changes the slug (the route + query identity), so `onRenamed` invalidates `['recipes']` and navigates to the new address; delete invalidates `['recipes']`.
 - **A11y preserved:** existing tests rely on `getByLabelText('Search ingredient')`, `getByRole('link', {name:/New recipe/})`, and label chip text — Task 6 keeps all three.
-- **Deferred (not in scope):** the full nav-rail + topbar chrome from the artifact, and migrating `ManageLabelsDialog` to Prism primitives — follow-up once more primitives (e.g. a select) exist. Flag to the user if they want the chrome now.
+- **Local Prism scope:** Recipes renders Prism dark via `PrismThemeProvider` (a local MUI `ThemeProvider` around the page, theme = `makePrismTheme()` with both schemes pinned to Prism dark tokens). The app-global preset/mode is untouched, so other routes keep each tenant's theme. `makePrismTheme` reuses the existing `paletteFromTokens`/`typographyFromTokens` adapters.
+- **Deferred (not in scope):** (a) Dialog focus-trap/restore + Menu keyboard-nav — a11y follow-up flagged by Plan 2's review; (b) the full nav-rail + topbar chrome from the artifact; (c) migrating `ManageLabelsDialog` to Prism primitives. Flag to the user if they want any of these now.
