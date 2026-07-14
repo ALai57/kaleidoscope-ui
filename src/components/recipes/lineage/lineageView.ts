@@ -33,7 +33,12 @@ export function stageHues(categorical: readonly string[]): Record<StageKey, stri
 
 /** The failing stage on a non-success run, inferred from which artifact is
  *  missing: facts null ⇒ PARSE failed; content null (facts present) ⇒ NORMALIZE
- *  failed. Stages before it are ok; stages after are not-reached. */
+ *  failed. Stages before it are ok; stages after are not-reached.
+ *
+ *  NOTE: An ACQUIRE-stage failure is unrepresentable by this heuristic — facts == null
+ *  is always attributed to PARSE. In practice, a recipe page only exists for a run that
+ *  produced content, so such a run is effectively always outcome: "success". A future
+ *  refinement could prefer the backend's error_detail.reason when it maps to a stage. */
 function failedStage(lineage: RecipeLineage): StageKey {
   const { facts, content } = lineage.run;
   if (facts == null) return 'parse';

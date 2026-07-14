@@ -63,12 +63,12 @@ const H4: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 /** PARSE: extracted facts — ingredients, steps, signals, suggested labels. */
 export const ExtractedFactsInspector: React.FC<{ facts: LineageExtractedFacts }> = ({ facts }) => {
-  const { color, typography } = useTheme().tokens;
+  const { color, typography, radius } = useTheme().tokens;
   const chip = (text: string, i: number) => (
     <span key={i} style={{ fontFamily: typography.mono, fontSize: 11, color: color.categorical[1],
       background: `color-mix(in srgb, ${color.categorical[1]} 15%, transparent)`,
       border: `1px solid color-mix(in srgb, ${color.categorical[1]} 35%, transparent)`,
-      borderRadius: 999, padding: '2px 10px' }}>{text}</span>
+      borderRadius: radius.pill, padding: '2px 10px' }}>{text}</span>
   );
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>

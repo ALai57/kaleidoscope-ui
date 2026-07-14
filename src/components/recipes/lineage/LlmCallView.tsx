@@ -47,7 +47,7 @@ export const LlmCallView: React.FC<{ call: LlmCall }> = ({ call }) => {
           {call.purpose}
         </span>
         <span style={{ fontSize: 11, color: color.text.secondary, background: color.surface.raised,
-          border: `1px solid ${border.subtle}`, borderRadius: 999, padding: '2px 10px' }}>
+          border: `1px solid ${border.subtle}`, borderRadius: radius.pill, padding: '2px 10px' }}>
           {call.model}
         </span>
         {usage && (
