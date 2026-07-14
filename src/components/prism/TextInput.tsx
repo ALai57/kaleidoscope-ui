@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles';
+import { alpha } from '../../theme/alpha';
 
 export const TextInput = styled('input')(({ theme }) => {
   const { color, radius, typography } = theme.tokens;
@@ -16,7 +17,7 @@ export const TextInput = styled('input')(({ theme }) => {
     '&:focus': {
       outline: 'none',
       borderColor: color.brand.primary,
-      boxShadow: `0 0 0 3px ${color.brand.primary}24`,
+      boxShadow: `0 0 0 3px ${alpha(color.brand.primary, 0.14)}`,
     },
   };
 });

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
+import { alpha } from '../../theme/alpha';
 
 const Root = styled('button', {
   shouldForwardProp: (p) => p !== 'pressed',
@@ -12,7 +13,7 @@ const Root = styled('button', {
     fontFamily: typography.mono,
     fontSize: 11.5,
     color: pressed ? color.brand.primary : color.text.secondary,
-    background: pressed ? `${color.brand.primary}24` : color.surface.raised,
+    background: pressed ? alpha(color.brand.primary, 0.14) : color.surface.raised,
     border: `1px solid ${pressed ? color.brand.primary : color.border.subtle}`,
     borderRadius: 999,
     padding: '5px 12px',
@@ -24,7 +25,7 @@ const Root = styled('button', {
   };
 });
 
-const Dot = styled('span')<{ c: string }>(({ c }) => ({
+const Dot = styled('span', { shouldForwardProp: (p) => p !== 'c' })<{ c: string }>(({ c }) => ({
   width: 8,
   height: 8,
   borderRadius: 2,

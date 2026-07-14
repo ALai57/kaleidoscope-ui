@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
+import { alpha } from '../../theme/alpha';
 
 const Panel = styled('div')(({ theme }) => {
   const { color, radius, elevation } = theme.tokens;
@@ -37,7 +38,7 @@ const Item = styled('button', {
     cursor: 'pointer',
     transition: 'background .15s, color .15s',
     '&:hover': danger
-      ? { background: `${color.status.error}24`, color: color.status.error }
+      ? { background: alpha(color.status.error, 0.14), color: color.status.error }
       : { background: color.surface.sunken },
     '&:focus-visible': { outline: `2px solid ${color.brand.primary}`, outlineOffset: -2 },
   };

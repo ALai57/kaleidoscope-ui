@@ -1,4 +1,5 @@
 import { styled } from '@mui/material/styles';
+import { alpha } from '../../theme/alpha';
 
 type Variant = 'primary' | 'ghost' | 'danger' | 'subtle';
 
@@ -34,7 +35,7 @@ export const Button = styled('button', {
       color: color.surface.base,
       '&:hover': {
         transform: 'translateY(-2px)',
-        boxShadow: `0 4px 18px ${color.brand.primary}59`,
+        boxShadow: `0 4px 18px ${alpha(color.brand.primary, 0.35)}`,
       },
     },
     ghost: {
@@ -50,7 +51,10 @@ export const Button = styled('button', {
     danger: {
       background: color.status.error,
       color: color.surface.base,
-      '&:hover': { transform: 'translateY(-2px)', boxShadow: `0 4px 16px ${color.status.error}59` },
+      '&:hover': {
+        transform: 'translateY(-2px)',
+        boxShadow: `0 4px 16px ${alpha(color.status.error, 0.35)}`,
+      },
     },
     subtle: {
       background: 'transparent',

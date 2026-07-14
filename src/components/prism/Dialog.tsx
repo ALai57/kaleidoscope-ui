@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
+import { alpha } from '../../theme/alpha';
 
 const Overlay = styled('div')({
   position: 'fixed',
@@ -40,7 +41,7 @@ const IconWrap = styled('div', { shouldForwardProp: (p) => p !== 'tone' })<{ ton
       placeItems: 'center',
       flexShrink: 0,
       color: c,
-      background: `${c}24`,
+      background: alpha(c, 0.14),
     };
   }
 );
