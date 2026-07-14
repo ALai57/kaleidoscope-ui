@@ -16,6 +16,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { GridToolbarContainer } from '@mui/x-data-grid';
 import type { GridColDef } from '@mui/x-data-grid';
+import { PrismThemeProvider } from '../components/prism';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { Table } from '../components/layout/Table';
@@ -321,29 +322,40 @@ const ArticleManagerPage: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box id="primary-content" sx={{ p: 3 }}>
-        {isLoading && <LoadingScreen />}
-
-        {!isLoading && (
-          <Table
-            rows={branches.map(toBranchRow)}
-            columns={columns}
-            maxWidth={1200}
-            rowHeight={44}
-            Toolbar={ArticleToolbar}
-          />
+      <PrismThemeProvider>
+        <Box id="primary-content" sx={{ flex: 1, bgcolor: 'background.default', p: 3 }}>
+          <Box
+            component="p"
+            sx={(t) => ({
+              m: 0,
+              mb: 2,
+              fontFamily: t.tokens?.typography.mono ?? 'monospace',
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: 'primary.main',
+            })}
+          >
+            ARTICLES
+          </Box>
+          {isLoading && <LoadingScreen />}
+          {!isLoading && (
+            <Table
+              rows={branches.map(toBranchRow)}
+              columns={columns}
+              maxWidth={1200}
+              rowHeight={44}
+              Toolbar={ArticleToolbar}
+            />
+          )}
+        </Box>
+        {visibilityRow && (
+          <VisibilityModal row={visibilityRow} token={token} onClose={() => setVisibilityRow(null)} />
         )}
-      </Box>
-
-      {visibilityRow && (
-        <VisibilityModal
-          row={visibilityRow}
-          token={token}
-          onClose={() => setVisibilityRow(null)}
-        />
-      )}
+      </PrismThemeProvider>
     </Box>
   );
 };

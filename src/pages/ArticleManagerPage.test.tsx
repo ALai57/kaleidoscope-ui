@@ -83,4 +83,9 @@ describe('ArticleManagerPage', () => {
       expect(screen.getByText('2 branches')).toBeTruthy();
     });
   });
+
+  it('renders the Prism eyebrow', async () => {
+    render(<ArticleManagerPage />, { wrapper: Wrapper });
+    expect(await screen.findByText('ARTICLES')).toBeTruthy();
+  });
 });
