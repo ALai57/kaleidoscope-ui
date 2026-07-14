@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTheme } from '@mui/material/styles';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -55,6 +56,7 @@ interface ScoreRunCardProps {
 }
 
 export const ScoreRunCard: React.FC<ScoreRunCardProps> = ({ scoreRun, defaultExpanded = false }) => {
+  const theme = useTheme();
   const [expanded, setExpanded] = useState(defaultExpanded);
   const overallPct = (scoreRun.overall / 10) * 100;
   const scorerLabel = scoreRun.definition.scorer_type.replace('_', ' ');
@@ -64,7 +66,7 @@ export const ScoreRunCard: React.FC<ScoreRunCardProps> = ({ scoreRun, defaultExp
       expanded={expanded}
       onChange={(_, isExpanded) => setExpanded(isExpanded)}
       variant="outlined"
-      sx={{ '&:before': { display: 'none' }, borderRadius: '8px !important', mb: 1 }}
+      sx={{ '&:before': { display: 'none' }, borderRadius: `${theme.shape.borderRadius}px !important`, mb: 1 }}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%', pr: 1 }}>
