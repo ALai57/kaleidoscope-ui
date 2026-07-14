@@ -11,7 +11,7 @@ import type { RecipeContent } from '../../../types/recipe';
 /** ACQUIRE: the raw scrape body. Lazily fetched with include-raw only when open. */
 export const RawScrapeInspector: React.FC<{
   slug: string;
-  token?: string;
+  token?: string | undefined;
   open: boolean;
   bytes: number;
 }> = ({ slug, token, open, bytes }) => {
