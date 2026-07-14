@@ -82,6 +82,7 @@ export interface CreateRecipePayload {
 
 export interface UpdateRecipePayload {
   content?: RecipeContent;
+  recipe_url?: string; // rename the address (slug); identity (id) is unchanged
   source_url?: string | null;
   label_ids?: string[];
   public_visibility?: boolean;
