@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ImageBrowser } from './ImageBrowser';
+import { PrismThemeProvider } from '../prism';
 
 const meta: Meta<typeof ImageBrowser> = {
   title: 'Images/ImageBrowser',
@@ -52,4 +53,14 @@ export const SelectMode: Story = {
       selectPhoto: (src) => console.log('Selected:', src),
     },
   },
+};
+
+export const Prism: Story = {
+  render: () => (
+    <PrismThemeProvider>
+      <div style={{ padding: 16 }}>
+        <ImageBrowser images={mockImages} mode="edit" />
+      </div>
+    </PrismThemeProvider>
+  ),
 };

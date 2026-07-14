@@ -68,10 +68,10 @@ const ImageManagerPage: React.FC = () => {
   });
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <PrismThemeProvider>
-        <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', p: '10px' }}>
+        <Box sx={{ flex: 1, bgcolor: 'background.default', p: '10px' }}>
           <Box sx={{ mb: 2 }}>
             <Box
               component="p"
