@@ -1,13 +1,12 @@
+/// <reference types="node" />
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname } from 'node:path';
+// Aliased (not `URL`): Vite statically rewrites literal `new URL(..., import.meta.url)`
+// call sites into a dev-server asset URL, which breaks a Node `fs` read in tests.
+import { URL as NodeURL } from 'node:url';
 import { render, screen } from '@testing-library/react';
 import { PrismThemeProvider } from '../prism';
 import { ScoreRunCard } from './ScoreRunCard';
 import type { ScoreRun } from '../../types/project';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const scoreRun: ScoreRun = {
   id: 'test-score-run',
@@ -19,7 +18,7 @@ const scoreRun: ScoreRun = {
 } as ScoreRun;
 
 it('does not hardcode a pixel radius (reads it from the theme)', () => {
-  const source = readFileSync(`${__dirname}/ScoreRunCard.tsx`, 'utf8');
+  const source = readFileSync(new NodeURL('./ScoreRunCard.tsx', import.meta.url), 'utf8');
   expect(source).not.toMatch(/borderRadius:\s*'8px/);
 });
 
