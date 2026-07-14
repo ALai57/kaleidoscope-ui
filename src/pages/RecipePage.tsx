@@ -11,7 +11,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RecipeSections } from '../components/recipes/RecipeSections';
+import { PrismThemeProvider } from '../components/prism';
+import { ImportLineageStrip } from '../components/recipes/lineage/ImportLineageStrip';
 import { useAuth } from '../auth/useAuth';
+import { isSiteAdmin } from '../auth/authHelpers';
 import { getRecipe, qualifiedLabelName } from '../api/recipes';
 
 function metaLine(recipe: {
@@ -82,6 +85,12 @@ const RecipePage: React.FC = () => {
                   <Chip key={l.id} label={qualifiedLabelName(l)} size="small" />
                 ))}
               </Stack>
+            )}
+
+            {isSiteAdmin(userProfile) && recipe.scrape_processing_run_id && (
+              <PrismThemeProvider>
+                <ImportLineageStrip slug={slug} token={token} />
+              </PrismThemeProvider>
             )}
 
             <RecipeSections content={recipe.content} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, afterEach, afterAll, vi } from 'vitest';
 import { render as rtlRender, screen } from '@testing-library/react';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -9,15 +9,23 @@ import { ThemeProvider } from '@mui/material/styles';
 import { makeTheme, BASE_THEME } from '../theme';
 import RecipePage from './RecipePage';
 
-vi.mock('../auth/useAuth', () => ({
-  useAuth: () => ({
+const authState = vi.hoisted(() => ({
+  current: {
     isAuthenticated: false,
-    token: undefined,
-    userProfile: null,
-    login: vi.fn(),
-    logout: vi.fn(),
-  }),
+    token: undefined as string | undefined,
+    userProfile: null as unknown,
+    login: () => {},
+    logout: () => {},
+  },
 }));
+vi.mock('../auth/useAuth', () => ({ useAuth: () => authState.current }));
+
+// The admin role for the current host: jsdom's default window.location.hostname
+// is 'localhost', and isSiteAdmin() derives the required role from it via
+// getAdminHost() (see src/auth/authHelpers.ts).
+const ADMIN_ROLE = 'localhost:admin';
+const adminProfile = { realm_access: { roles: [ADMIN_ROLE] } };
+const nonAdminProfile = { realm_access: { roles: ['localhost:writer'] } };
 
 const server = setupServer(
   http.get('/recipes/layer-cake', () =>
@@ -37,6 +45,55 @@ const server = setupServer(
       created_at: '2026-01-01T00:00:00Z',
       modified_at: '2026-01-01T00:00:00Z',
     })
+  ),
+  http.get('/recipes/scraped-buns', () =>
+    HttpResponse.json({
+      id: 'r2',
+      recipe_url: 'scraped-buns',
+      hostname: 'andrewslai.com',
+      content: {
+        title: 'Scraped Buns',
+        sections: [{ name: 'Dough', ingredients: ['flour'], steps: ['mix'] }],
+      },
+      labels: [],
+      public_visibility: true,
+      created_at: '2026-01-01T00:00:00Z',
+      modified_at: '2026-01-01T00:00:00Z',
+      scrape_processing_run_id: 'run1',
+    })
+  ),
+  http.get('*/recipes/:slug/lineage', () =>
+    HttpResponse.json({
+      'recipe-url': 'scraped-buns',
+      'recipe-id': 'r2',
+      run: {
+        id: 'run1',
+        'pipeline-version': '6133819',
+        outcome: 'success',
+        'error-detail': null,
+        techniques: { acquire: 'direct', parse: 'json-ld', normalize: 'llm-grouping' },
+        facts: { title: 'Scraped Buns', ingredients: ['flour'], steps: ['mix'], 'section-signals': [], labels: [] },
+        content: { title: 'Scraped Buns', sections: [{ name: 'Dough', ingredients: ['flour'], steps: ['mix'] }] },
+        'llm-calls': [
+          {
+            purpose: 'normalize',
+            model: 'claude-haiku-4-5',
+            request: { model: 'claude-haiku-4-5', system: 's', messages: [] },
+            response: { content: [], usage: { input_tokens: 1043, output_tokens: 218 } },
+          },
+        ],
+        warnings: [],
+        'created-at': new Date().toISOString(),
+      },
+      raw: {
+        'source-kind': 'url',
+        'http-status': 200,
+        'fetch-tier': 'direct',
+        'content-bytes': 49408,
+        'raw-content': null,
+        'created-at': new Date().toISOString(),
+      },
+    })
   )
 );
 
@@ -44,12 +101,31 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-function renderPage(): void {
+beforeEach(() => {
+  authState.current = {
+    isAuthenticated: false,
+    token: undefined,
+    userProfile: null,
+    login: () => {},
+    logout: () => {},
+  };
+});
+afterEach(() => {
+  authState.current = {
+    isAuthenticated: false,
+    token: undefined,
+    userProfile: null,
+    login: () => {},
+    logout: () => {},
+  };
+});
+
+function renderPage(slug: string): void {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   rtlRender(
     <ThemeProvider theme={makeTheme(BASE_THEME)}>
       <QueryClientProvider client={qc}>
-        <MemoryRouter initialEntries={['/recipes/layer-cake']}>
+        <MemoryRouter initialEntries={[`/recipes/${slug}`]}>
           <Routes>
             <Route path="/recipes/:slug" element={<RecipePage />} />
           </Routes>
@@ -61,10 +137,32 @@ function renderPage(): void {
 
 describe('RecipePage', () => {
   it('renders each section with its ingredients and steps', async () => {
-    renderPage();
+    renderPage('layer-cake');
     expect(await screen.findByRole('heading', { name: 'Cake' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Frosting' })).toBeInTheDocument();
     expect(screen.getByText('2 cups flour')).toBeInTheDocument();
     expect(screen.getByText('Whip')).toBeInTheDocument();
+  });
+
+  describe('import-lineage strip gating', () => {
+    it('shows the strip for a site admin viewing a recipe with a scrape run', async () => {
+      authState.current.userProfile = adminProfile;
+      renderPage('scraped-buns');
+      expect(await screen.findByText(/import lineage/i)).toBeInTheDocument();
+    });
+
+    it('hides the strip for a non-admin even when the recipe has a scrape run', async () => {
+      authState.current.userProfile = nonAdminProfile;
+      renderPage('scraped-buns');
+      await screen.findByRole('heading', { name: 'Dough' });
+      expect(screen.queryByText(/import lineage/i)).not.toBeInTheDocument();
+    });
+
+    it('hides the strip for an admin viewing a manually-created recipe (no run id)', async () => {
+      authState.current.userProfile = adminProfile;
+      renderPage('layer-cake');
+      await screen.findByRole('heading', { name: 'Cake' });
+      expect(screen.queryByText(/import lineage/i)).not.toBeInTheDocument();
+    });
   });
 });

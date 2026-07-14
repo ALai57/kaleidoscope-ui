@@ -24,7 +24,7 @@ const Field: React.FC<{ k: string; children: React.ReactNode; muted?: boolean }>
 
 const fmt = (n: number) => n.toLocaleString('en-US');
 
-export const LineageTrace: React.FC<{ lineage: RecipeLineage; slug: string; token?: string }> = ({
+export const LineageTrace: React.FC<{ lineage: RecipeLineage; slug: string; token?: string | undefined }> = ({
   lineage, slug, token,
 }) => {
   const { color, typography } = useTheme().tokens;
