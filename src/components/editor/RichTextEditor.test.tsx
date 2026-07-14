@@ -58,6 +58,13 @@ describe('RichTextEditor', () => {
     expect(screen.queryByRole('toolbar')).toBeNull();
   });
 
+  it('renders read-only with no toolbar (reader path — protects ArticlePage)', async () => {
+    await act(async () => {
+      render(<RichTextEditor editable={false} initialContent="<p>Hello reader</p>" />);
+    });
+    expect(screen.queryByRole('toolbar')).toBeNull();
+  });
+
   it('calls onChange when content changes', async () => {
     const onChange = vi.fn();
     await act(async () => {

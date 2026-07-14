@@ -75,6 +75,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       )}
       <Box
         sx={{
+          color: 'text.primary',
           minHeight: editable ? '200px' : undefined,
           p: editable ? 1.5 : 0,
           '& .ProseMirror': {
