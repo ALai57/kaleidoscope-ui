@@ -128,4 +128,9 @@ describe('ArticleEditorPage', () => {
       expect(saveCalled).toBe(true);
     });
   });
+
+  it('renders the Prism editor eyebrow', async () => {
+    render(<ArticleEditorPage />, { wrapper: Wrapper });
+    expect(await screen.findByText('EDITOR')).toBeTruthy();
+  });
 });

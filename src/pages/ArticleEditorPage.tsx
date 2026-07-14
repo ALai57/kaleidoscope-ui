@@ -16,6 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { PrismThemeProvider } from '../components/prism';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RichTextEditor } from '../components/editor/RichTextEditor';
@@ -214,7 +215,8 @@ const ArticleEditorPage: React.FC = () => {
     },
   });
 
-  const author = [userProfile?.firstName, userProfile?.lastName].filter(Boolean).join(' ') || undefined;
+  const author =
+    [userProfile?.firstName, userProfile?.lastName].filter(Boolean).join(' ') || undefined;
 
   const createMutation = useMutation({
     mutationFn: () =>
@@ -241,122 +243,147 @@ const ArticleEditorPage: React.FC = () => {
   const isLoading = branchesLoading || versionsLoading;
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h4" gutterBottom>
-          Article Editor
-        </Typography>
+      <PrismThemeProvider>
+        <Box sx={{ flex: 1, bgcolor: 'background.default', p: 2 }}>
+          <Box
+            component="p"
+            sx={(t) => ({
+              m: 0,
+              fontFamily: t.tokens?.typography.mono ?? 'monospace',
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              color: 'primary.main',
+            })}
+          >
+            EDITOR
+          </Box>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={(t) => ({
+              mt: 0.5,
+              fontFamily: t.tokens?.typography.mono ?? 'monospace',
+              fontWeight: 700,
+              letterSpacing: '-0.01em',
+            })}
+          >
+            Article Editor
+          </Typography>
 
-        {/* ── New article mode ── */}
-        {!slug && (
-          <>
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-              <TextField
-                size="small"
-                label="Article title"
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                sx={{ minWidth: 300 }}
-              />
-              <Button
-                variant="contained"
-                onClick={() => createMutation.mutate()}
-                disabled={!newTitle || createMutation.isPending}
-              >
-                {createMutation.isPending ? 'Creating…' : 'Create'}
-              </Button>
-            </Stack>
-            <Divider sx={{ mb: 2 }} />
-            <RichTextEditor
-              key="new"
-              initialContent=""
-              onChange={handleEditorChange}
-              editable
-              images={images}
-              {...(token !== undefined ? { authToken: token } : {})}
-            />
-          </>
-        )}
-
-        {isLoading && slug && <LoadingScreen />}
-
-        {!branchesLoading && slug && (
-          <>
-            {/* Branch selector */}
-            <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-              <FormControl size="small" sx={{ minWidth: 200 }}>
-                <InputLabel>Branch</InputLabel>
-                <Select
-                  value={selectedBranch?.branch_id ?? ''}
-                  label="Branch"
-                  onChange={(e) => setEditorBranchId(e.target.value)}
-                  data-testid="branch-selector"
+          {/* ── New article mode ── */}
+          {!slug && (
+            <>
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                <TextField
+                  size="small"
+                  label="Article title"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  sx={{ minWidth: 300 }}
+                />
+                <Button
+                  variant="contained"
+                  onClick={() => createMutation.mutate()}
+                  disabled={!newTitle || createMutation.isPending}
                 >
-                  {articleBranches.map((branch) => (
-                    <MenuItem key={branch.branch_id} value={branch.branch_id}>
-                      {branch.article_url} / {branch.branch_name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <Button
-                variant="contained"
-                onClick={() => saveMutation.mutate()}
-                disabled={saveMutation.isPending || !selectedBranch}
-                data-testid="save-button"
-              >
-                {saveMutation.isPending ? 'Saving…' : 'Save'}
-              </Button>
-
-              <Button
-                variant="outlined"
-                color="success"
-                onClick={() => publishMutation.mutate()}
-                disabled={publishMutation.isPending || !selectedBranch}
-                data-testid="publish-button"
-              >
-                {publishMutation.isPending ? 'Publishing…' : 'Publish'}
-              </Button>
-
-              <Button
-                variant="outlined"
-                onClick={() => setAudienceModalOpen(true)}
-                disabled={!selectedBranch?.article_id}
-                data-testid="audiences-button"
-              >
-                Audiences
-              </Button>
-            </Stack>
-
-            {selectedBranch?.article_id !== undefined && (
-              <AudienceManager
-                articleId={selectedBranch.article_id}
-                token={token}
-                open={audienceModalOpen}
-                onClose={() => setAudienceModalOpen(false)}
-              />
-            )}
-
-            <Divider sx={{ mb: 2 }} />
-
-            {/* Editor */}
-            {versionsLoading ? (
-              <LoadingScreen />
-            ) : (
+                  {createMutation.isPending ? 'Creating…' : 'Create'}
+                </Button>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
               <RichTextEditor
-                key={latestVersion?.version_id ?? 'empty'}
-                initialContent={latestVersion?.content ?? ''}
+                key="new"
+                initialContent=""
                 onChange={handleEditorChange}
                 editable
                 images={images}
                 {...(token !== undefined ? { authToken: token } : {})}
               />
-            )}
-          </>
-        )}
-      </Box>
+            </>
+          )}
+
+          {isLoading && slug && <LoadingScreen />}
+
+          {!branchesLoading && slug && (
+            <>
+              {/* Branch selector */}
+              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                <FormControl size="small" sx={{ minWidth: 200 }}>
+                  <InputLabel>Branch</InputLabel>
+                  <Select
+                    value={selectedBranch?.branch_id ?? ''}
+                    label="Branch"
+                    onChange={(e) => setEditorBranchId(e.target.value)}
+                    data-testid="branch-selector"
+                  >
+                    {articleBranches.map((branch) => (
+                      <MenuItem key={branch.branch_id} value={branch.branch_id}>
+                        {branch.article_url} / {branch.branch_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <Button
+                  variant="contained"
+                  onClick={() => saveMutation.mutate()}
+                  disabled={saveMutation.isPending || !selectedBranch}
+                  data-testid="save-button"
+                >
+                  {saveMutation.isPending ? 'Saving…' : 'Save'}
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  color="success"
+                  onClick={() => publishMutation.mutate()}
+                  disabled={publishMutation.isPending || !selectedBranch}
+                  data-testid="publish-button"
+                >
+                  {publishMutation.isPending ? 'Publishing…' : 'Publish'}
+                </Button>
+
+                <Button
+                  variant="outlined"
+                  onClick={() => setAudienceModalOpen(true)}
+                  disabled={!selectedBranch?.article_id}
+                  data-testid="audiences-button"
+                >
+                  Audiences
+                </Button>
+              </Stack>
+
+              {selectedBranch?.article_id !== undefined && (
+                <AudienceManager
+                  articleId={selectedBranch.article_id}
+                  token={token}
+                  open={audienceModalOpen}
+                  onClose={() => setAudienceModalOpen(false)}
+                />
+              )}
+
+              <Divider sx={{ mb: 2 }} />
+
+              {/* Editor */}
+              {versionsLoading ? (
+                <LoadingScreen />
+              ) : (
+                <RichTextEditor
+                  key={latestVersion?.version_id ?? 'empty'}
+                  initialContent={latestVersion?.content ?? ''}
+                  onChange={handleEditorChange}
+                  editable
+                  images={images}
+                  {...(token !== undefined ? { authToken: token } : {})}
+                />
+              )}
+            </>
+          )}
+        </Box>
+      </PrismThemeProvider>
     </Box>
   );
 };
