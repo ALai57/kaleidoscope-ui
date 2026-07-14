@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ImageThumbnail } from './ImageThumbnail';
 
 class MockIntersectionObserver {
@@ -37,5 +37,17 @@ describe('ImageThumbnail', () => {
   it('accepts authToken prop', () => {
     render(<ImageThumbnail image={mockImage} authToken="test-token" />);
     expect(true).toBe(true);
+  });
+
+  it('shows the filename and dimensions in the overlay', () => {
+    render(<ImageThumbnail image={mockImage} name="sunset.jpg" />);
+    expect(screen.getByText('sunset.jpg')).toBeTruthy();
+    expect(screen.getByText('100×100')).toBeTruthy(); // mockImage is 100×100
+  });
+
+  it('omits the dimensions when the version lacks width/height', () => {
+    render(<ImageThumbnail image={{ src: 'x' }} name="doc.png" />);
+    expect(screen.getByText('doc.png')).toBeTruthy();
+    expect(screen.queryByText(/×/)).toBeNull();
   });
 });
