@@ -1,5 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
+import { PrismThemeProvider } from '../prism';
 import { AdminNavRail } from './AdminNavRail';
 import { AdminTopBar } from './AdminTopBar';
 import type { AdminNavItem } from './AdminNavRail';
@@ -32,18 +33,20 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   login,
   children,
 }) => (
-  <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-    <AdminNavRail
-      {...(navItems ? { items: navItems } : {})}
-      user={user}
-      isAuthenticated={isAuthenticated}
-      login={login}
-    />
-    <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-      <AdminTopBar title={title} actions={actions} />
-      <Box component="main" sx={{ flex: 1, p: 3 }}>
-        {children}
+  <PrismThemeProvider>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
+      <AdminNavRail
+        {...(navItems ? { items: navItems } : {})}
+        user={user}
+        isAuthenticated={isAuthenticated}
+        login={login}
+      />
+      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <AdminTopBar title={title} actions={actions} />
+        <Box component="main" sx={{ flex: 1, p: 3 }}>
+          {children}
+        </Box>
       </Box>
     </Box>
-  </Box>
+  </PrismThemeProvider>
 );

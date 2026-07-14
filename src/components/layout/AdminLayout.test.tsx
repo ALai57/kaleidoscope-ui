@@ -2,9 +2,10 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { AdminLayout } from './AdminLayout';
 import { makeTheme, BASE_THEME } from '../../theme';
+import { render as testRender } from '../../test/testUtils';
 
 const theme = makeTheme(BASE_THEME, 'prism');
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -12,6 +13,12 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <ThemeProvider theme={theme}>{children}</ThemeProvider>
   </MemoryRouter>
 );
+
+// Reads the *ambient* theme mode at its position in the tree.
+const ModeProbe = () => {
+  const theme = useTheme();
+  return <span data-testid="admin-mode">{theme.palette.mode}</span>;
+};
 
 describe('AdminLayout', () => {
   it('renders the top-bar title, the rail nav, and the content', () => {
@@ -25,5 +32,15 @@ describe('AdminLayout', () => {
     expect(screen.getByRole('link', { name: 'Workflows' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'New Project' })).toBeInTheDocument();
     expect(screen.getByText('page content')).toBeInTheDocument();
+  });
+
+  it('renders its subtree under the Prism (dark) theme, overriding the ambient light app theme', () => {
+    // testUtils.render provides the light app theme + a Router.
+    testRender(
+      <AdminLayout title="Workflows">
+        <ModeProbe />
+      </AdminLayout>,
+    );
+    expect(screen.getByTestId('admin-mode')).toHaveTextContent('dark');
   });
 });

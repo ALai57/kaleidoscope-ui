@@ -117,6 +117,7 @@ export function makeTheme(params: ThemeParams, presetId: PresetId = 'default'): 
 export function makePrismTheme(): Theme {
   const darkTokens = makeTokens(PRESETS.prism.seed, 'dark', 'prism');
   return createTheme({
+    palette: paletteFromTokens(darkTokens),
     colorSchemes: {
       light: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
       dark: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
