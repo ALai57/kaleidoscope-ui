@@ -3,6 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Table } from './Table';
 import { GridColDef } from '@mui/x-data-grid';
+import { PrismThemeProvider } from '../prism';
 
 const columns: GridColDef[] = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -39,5 +40,14 @@ describe('Table', () => {
       <Table rows={rows} columns={columns} maxWidth={800} />,
     );
     expect(container).toBeDefined();
+  });
+
+  it('renders rows under the Prism theme (regression)', () => {
+    render(
+      <PrismThemeProvider>
+        <Table rows={rows} columns={columns} />
+      </PrismThemeProvider>,
+    );
+    expect(screen.getByText('Alice Smith')).toBeTruthy();
   });
 });
