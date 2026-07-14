@@ -40,6 +40,9 @@ export interface Recipe {
   public_visibility: boolean;
   created_at: string;
   modified_at: string;
+  // Present when the recipe was created from a scrape; gates the import-lineage
+  // strip. Absent/null on a manually-created recipe.
+  scrape_processing_run_id?: string | null;
 }
 
 export interface RecipeDraft {

@@ -9,6 +9,7 @@ import {
   deleteRecipe,
   importRecipeFromUrl,
   importRecipeFromPhoto,
+  getRecipeLineage,
   getLabels,
   createLabel,
   createLabelGroup,
@@ -189,6 +190,50 @@ describe('recipes api', () => {
   it('addRecipeAudience sends recipe_id and group_id', async () => {
     const aud = (await addRecipeAudience('r1', 'grp1')) as { recipe_id: string; group_id: string };
     expect(aud).toMatchObject({ recipe_id: 'r1', group_id: 'grp1' });
+  });
+});
+
+describe('getRecipeLineage', () => {
+  it('fetches the lean lineage by default (no include-raw query param)', async () => {
+    let captured = '';
+    server.use(
+      http.get('*/recipes/:slug/lineage', ({ request }) => {
+        captured = new URL(request.url).search;
+        return HttpResponse.json({
+          'recipe-url': 'chana-masala',
+          'recipe-id': 'r1',
+          run: { id: 'run1', 'pipeline-version': 'abc', outcome: 'success',
+                 techniques: { parse: 'json-ld' }, 'llm-calls': [], warnings: [],
+                 'created-at': '2026-07-13T09:42:07Z' },
+          raw: { 'source-kind': 'url', 'http-status': 200, 'content-bytes': 48,
+                 'raw-content': null, 'created-at': '2026-07-13T09:42:07Z' },
+        });
+      }),
+    );
+    const lineage = await getRecipeLineage('chana-masala', false);
+    expect(captured).toBe('');
+    expect(lineage.recipe_url).toBe('chana-masala');
+    expect(lineage.run.outcome).toBe('success');
+    expect(lineage.raw.content_bytes).toBe(48);
+  });
+
+  it('adds include-raw=true when requested', async () => {
+    let captured = '';
+    server.use(
+      http.get('*/recipes/:slug/lineage', ({ request }) => {
+        captured = new URL(request.url).search;
+        return HttpResponse.json({
+          'recipe-url': 'chana-masala', 'recipe-id': 'r1',
+          run: { id: 'run1', 'pipeline-version': 'abc', outcome: 'success',
+                 techniques: {}, 'llm-calls': [], warnings: [], 'created-at': 'x' },
+          raw: { 'source-kind': 'url', 'content-bytes': 5, 'raw-content': '<html>',
+                 'created-at': 'x' },
+        });
+      }),
+    );
+    const lineage = await getRecipeLineage('chana-masala', true);
+    expect(captured).toBe('?include-raw=true');
+    expect(lineage.raw.raw_content).toBe('<html>');
   });
 });
 

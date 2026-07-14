@@ -9,6 +9,7 @@ import type {
   CreateRecipePayload,
   UpdateRecipePayload,
 } from '../types/recipe';
+import type { RecipeLineage } from '../types/lineage';
 
 export interface RecipeFilters {
   ingredient?: string;
@@ -59,6 +60,17 @@ export function importRecipeFromUrl(url: string, token?: string): Promise<Recipe
     body: { url },
     token,
   });
+}
+
+/** Writer-only import lineage for a recipe. `includeRaw` opts into the large raw
+ *  HTML/transcript body (default off keeps the response lean). */
+export function getRecipeLineage(
+  slug: string,
+  includeRaw: boolean,
+  token?: string
+): Promise<RecipeLineage> {
+  const qs = includeRaw ? '?include-raw=true' : '';
+  return request<RecipeLineage>(`/recipes/${slug}/lineage${qs}`, { token });
 }
 
 // Multipart upload; one part per image (keyed by index, not filename).
