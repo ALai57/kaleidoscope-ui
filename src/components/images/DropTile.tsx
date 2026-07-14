@@ -18,11 +18,24 @@ export const DropTile: React.FC<DropTileProps> = ({ onAdd, isUploading = false }
   const settle = tokens?.motion.easing.springSettle ?? 'ease';
   const durBase = tokens?.motion.duration.base ?? 250;
   const radius = theme.shape.borderRadius;
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   return (
     <Box
       component="label"
       data-testid="drop-tile"
+      role="button"
+      aria-label="Add photo"
+      tabIndex={isUploading ? -1 : 0}
+      aria-disabled={isUploading || undefined}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          if (!isUploading) {
+            inputRef.current?.click();
+          }
+        }
+      }}
       sx={{
         aspectRatio: '1 / 1',
         width: '100%',
@@ -65,7 +78,15 @@ export const DropTile: React.FC<DropTileProps> = ({ onAdd, isUploading = false }
       >
         {isUploading ? 'Uploading…' : 'Add photo'}
       </Box>
-      <input type="file" accept="image/*" hidden multiple disabled={isUploading} onChange={onAdd} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        hidden
+        multiple
+        disabled={isUploading}
+        onChange={onAdd}
+      />
     </Box>
   );
 };

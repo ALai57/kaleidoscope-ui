@@ -102,6 +102,7 @@ export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({
             transform: 'translateY(6px)',
             transition: `opacity ${durBase}ms, transform ${durBase}ms ${settle}`,
             pointerEvents: 'none',
+            '@media (prefers-reduced-motion: reduce)': { transform: 'none', transition: 'none' },
           }}
         >
           <Box
