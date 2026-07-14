@@ -1,10 +1,8 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, type Theme } from '@mui/material/styles';
 import { alpha } from '../../theme/alpha';
 
-const Root = styled('button', {
-  shouldForwardProp: (p) => p !== 'pressed',
-})<{ pressed?: boolean | undefined }>(({ theme, pressed }) => {
+const chipStyle = (theme: Theme, pressed?: boolean) => {
   const { color, motion, typography } = theme.tokens;
   return {
     display: 'inline-flex',
@@ -23,7 +21,15 @@ const Root = styled('button', {
     '&:focus-visible': { outline: `2px solid ${color.brand.primary}`, outlineOffset: 2 },
     '@media (prefers-reduced-motion: reduce)': { transition: 'none', '&:hover': { transform: 'none' } },
   };
-});
+};
+
+const ButtonRoot = styled('button', { shouldForwardProp: (p) => p !== 'pressed' })<{
+  pressed?: boolean | undefined;
+}>(({ theme, pressed }) => chipStyle(theme, pressed));
+
+const SpanRoot = styled('span', { shouldForwardProp: (p) => p !== 'pressed' })<{
+  pressed?: boolean | undefined;
+}>(({ theme, pressed }) => chipStyle(theme, pressed));
 
 const Dot = styled('span', { shouldForwardProp: (p) => p !== 'c' })<{ c: string }>(({ c }) => ({
   width: 8,
@@ -39,14 +45,16 @@ export interface ChipProps extends React.ComponentProps<'button'> {
   as?: 'button' | 'span';
 }
 
-export const Chip: React.FC<ChipProps> = ({ dotColor, pressed, as = 'button', children, ...rest }) => (
-  <Root
-    as={as}
-    pressed={pressed}
-    aria-pressed={as === 'button' ? Boolean(pressed) : undefined}
-    {...rest}
-  >
-    {dotColor && <Dot c={dotColor} />}
-    {children}
-  </Root>
-);
+export const Chip: React.FC<ChipProps> = ({ dotColor, pressed, as = 'button', children, ...rest }) => {
+  const Root = as === 'span' ? SpanRoot : ButtonRoot;
+  return (
+    <Root
+      pressed={pressed}
+      aria-pressed={as === 'button' ? Boolean(pressed) : undefined}
+      {...rest}
+    >
+      {dotColor && <Dot c={dotColor} />}
+      {children}
+    </Root>
+  );
+};

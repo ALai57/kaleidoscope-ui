@@ -6,3 +6,4 @@ export type { ChipProps } from './Chip';
 export { TextInput } from './TextInput';
 export { Menu, MenuItem } from './Menu';
 export { Dialog } from './Dialog';
+export { PrismThemeProvider } from './PrismThemeProvider';

@@ -129,6 +129,21 @@ describe('recipes api', () => {
     expect(updated.public_visibility).toBe(false);
   });
 
+  it('updateRecipe sends a renamed recipe_url as kebab-case recipe-url', async () => {
+    let received: unknown;
+    server.use(
+      http.put('/recipes/chana-masala', async ({ request }) => {
+        received = await request.json();
+        return HttpResponse.json({ id: 'r1', recipe_url: 'chana-masala-v2', hostname: 'h',
+          content: { title: 'Chana Masala', sections: [] }, public_visibility: true,
+          created_at: '', modified_at: '' });
+      })
+    );
+    const out = await updateRecipe('chana-masala', { recipe_url: 'chana-masala-v2' }, 'tok');
+    expect(received).toEqual({ 'recipe-url': 'chana-masala-v2' });
+    expect(out.recipe_url).toBe('chana-masala-v2');
+  });
+
   it('deleteRecipe resolves on 204', async () => {
     await expect(deleteRecipe('chana-masala')).resolves.toBeUndefined();
   });

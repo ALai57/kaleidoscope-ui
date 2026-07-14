@@ -79,4 +79,48 @@ describe('RecipesPage', () => {
     fireEvent.click(chips[0] as HTMLElement);
     await waitFor(() => expect(lastRecipesUrl).toContain('label-id=l1'));
   });
+
+  it('renames a recipe URL from the card kebab menu', async () => {
+    let putBody: unknown;
+    server.use(
+      http.put('/recipes/chana-masala', async ({ request }) => {
+        putBody = await request.json();
+        return HttpResponse.json({
+          id: 'r1',
+          recipe_url: 'chana-v2',
+          hostname: 'andrewslai.com',
+          content: { title: 'Chana Masala', sections: [] },
+          public_visibility: true,
+          created_at: '',
+          modified_at: '',
+        });
+      })
+    );
+    renderPage();
+    await screen.findByText('Chana Masala');
+    fireEvent.click(screen.getByRole('button', { name: /recipe actions/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /rename url/i }));
+    fireEvent.change(screen.getByLabelText(/Recipe URL/i), { target: { value: 'chana-v2' } });
+    fireEvent.click(screen.getByRole('button', { name: /Save URL/i }));
+    await waitFor(() => expect(putBody).toEqual({ 'recipe-url': 'chana-v2' }));
+  });
+
+  it('deletes a recipe from the card kebab menu', async () => {
+    let deleted = false;
+    server.use(
+      http.delete('/recipes/chana-masala', () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      })
+    );
+    renderPage();
+    await screen.findByText('Chana Masala');
+    fireEvent.click(screen.getByRole('button', { name: /recipe actions/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /delete/i }));
+    fireEvent.change(screen.getByLabelText(/type the recipe name/i), {
+      target: { value: 'Chana Masala' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: /Delete recipe/i }));
+    await waitFor(() => expect(deleted).toBe(true));
+  });
 });
