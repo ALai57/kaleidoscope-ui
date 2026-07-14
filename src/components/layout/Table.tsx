@@ -26,7 +26,14 @@ const gridSx: SxProps<Theme> = {
   },
   '& .MuiDataGrid-columnSeparator': { display: 'none' },
   '& .MuiDataGrid-cell': { borderColor: 'divider', fontVariantNumeric: 'tabular-nums' },
+  // Drop the default (mouse-click) focus outline, but keep a visible keyboard
+  // focus ring for a11y — a token accent ring on :focus-visible.
   '& .MuiDataGrid-cell:focus, & .MuiDataGrid-cell:focus-within': { outline: 'none' },
+  '& .MuiDataGrid-cell:focus-visible': {
+    outline: '2px solid',
+    outlineColor: 'primary.main',
+    outlineOffset: '-2px',
+  },
   '& .MuiDataGrid-row:hover': { backgroundColor: 'action.hover' },
   '& .MuiDataGrid-footerContainer': { borderColor: 'divider' },
 };
