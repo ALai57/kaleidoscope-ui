@@ -33,7 +33,7 @@ export const RenameRecipeUrlDialog: React.FC<Props> = ({ recipe, open, onClose, 
 
   const rename = useMutation({
     mutationFn: () => updateRecipe(recipe!.recipe_url, { recipe_url: slug }, token),
-    onSuccess: () => onRenamed(slug),
+    onSuccess: (updated) => onRenamed(updated.recipe_url),
     onError: (e) => setError(e instanceof ApiError && e.status === 409
       ? extractError(e.message)
       : 'Could not rename the URL. Please try again.'),
