@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BASE_THEME, hsl, makePalette, makeTheme } from './index';
+import { BASE_THEME, hsl, makePalette, makeTheme, makePrismTheme } from './index';
 import type { Tokens } from './index';
 
 type Scheme = { tokens: Tokens };
@@ -77,5 +77,25 @@ describe('makeTheme', () => {
     expect(light.tokens.mode).toBe('light');
     expect(dark.tokens.mode).toBe('dark');
     expect(light.tokens.color.surface.base).not.toBe(dark.tokens.color.surface.base);
+  });
+});
+
+describe('makePrismTheme', () => {
+  it('is pinned to the Prism dark instrument-panel surfaces', () => {
+    const t = makePrismTheme();
+    expect(t.tokens.color.surface.base).toBe('#0A0E15');
+    expect(t.tokens.color.categorical.slice(0, 5)).toEqual([
+      '#26A0BC',
+      '#9085E9',
+      '#C98500',
+      '#2E9E5B',
+      '#D55181',
+    ]);
+  });
+
+  it('carries the Prism dark tokens in BOTH color schemes', () => {
+    const { light, dark } = schemes(makePrismTheme());
+    expect(light.tokens.color.surface.base).toBe('#0A0E15');
+    expect(dark.tokens.color.surface.base).toBe('#0A0E15');
   });
 });

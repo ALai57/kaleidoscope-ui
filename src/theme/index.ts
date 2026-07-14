@@ -5,7 +5,7 @@ import type {
   TypographyVariantsOptions,
 } from '@mui/material/styles';
 import type { ThemeParams, PresetId } from '../types/theme';
-import { makeTokens, makeBrand, DEFAULT_SEED } from './tokens';
+import { makeTokens, makeBrand, DEFAULT_SEED, PRESETS } from './tokens';
 import type { Tokens } from './tokens';
 import { onColor } from './contrast';
 
@@ -107,5 +107,23 @@ export function makeTheme(params: ThemeParams, presetId: PresetId = 'default'): 
     spacing: lightTokens.space.sm, // 8px base unit
     typography: typographyFromTokens(lightTokens),
     tokens: lightTokens,
+  });
+}
+
+/** A self-contained MUI theme pinned to the Prism preset in DARK, for scoping
+ *  the Prism look to one subtree (e.g. the Recipes route) WITHOUT switching the
+ *  app-global preset/mode. Both color schemes carry the Prism dark token set, so
+ *  the subtree renders Prism dark regardless of the app's active color mode. */
+export function makePrismTheme(): Theme {
+  const darkTokens = makeTokens(PRESETS.prism.seed, 'dark', 'prism');
+  return createTheme({
+    colorSchemes: {
+      light: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
+      dark: { palette: paletteFromTokens(darkTokens), tokens: darkTokens },
+    },
+    shape: { borderRadius: PRESETS.prism.radius.md },
+    spacing: darkTokens.space.sm,
+    typography: typographyFromTokens(darkTokens),
+    tokens: darkTokens,
   });
 }

@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActionArea from '@mui/material/CardActionArea';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import Container from '@mui/material/Container';
+import { styled } from '@mui/material/styles';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -16,9 +10,16 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import LabelIcon from '@mui/icons-material/Label';
+import {
+  Button as PButton,
+  Chip as PChip,
+  TextInput as PInput,
+  PrismThemeProvider,
+} from '../components/prism';
+import { RecipeCard } from '../components/recipes/RecipeCard';
+import { RenameRecipeUrlDialog } from '../components/recipes/RenameRecipeUrlDialog';
+import { DeleteRecipeDialog } from '../components/recipes/DeleteRecipeDialog';
 import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { useAuth } from '../auth/useAuth';
@@ -33,8 +34,7 @@ import {
   deleteLabelGroup,
   qualifiedLabelName,
 } from '../api/recipes';
-import { previewIngredients } from '../utils/recipe';
-import type { RecipeLabel } from '../types/recipe';
+import type { Recipe, RecipeLabel } from '../types/recipe';
 
 // ── Manage-labels dialog ─────────────────────────────────────────────────────
 const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?: string | undefined }> = ({
@@ -93,9 +93,9 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
             value={newGroup}
             onChange={(e) => setNewGroup(e.target.value)}
           />
-          <Button onClick={() => addGroup.mutate()} disabled={!newGroup.trim()}>
+          <PButton onClick={() => addGroup.mutate()} disabled={!newGroup.trim()}>
             Add
-          </Button>
+          </PButton>
         </Stack>
         <Stack spacing={0.5} sx={{ mb: 2 }}>
           {groups.map((g) => (
@@ -132,9 +132,9 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
               </option>
             ))}
           </TextField>
-          <Button onClick={() => addLabel.mutate()} disabled={!newLabel.trim()}>
+          <PButton onClick={() => addLabel.mutate()} disabled={!newLabel.trim()}>
             Add
-          </Button>
+          </PButton>
         </Stack>
         <Stack spacing={0.5}>
           {labels.map((l: RecipeLabel) => (
@@ -148,20 +148,35 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Done</Button>
+        <PButton onClick={onClose}>Done</PButton>
       </DialogActions>
     </Dialog>
   );
 };
 
+// The page background/foreground read Prism tokens, so this root MUST live under
+// `PrismThemeProvider` (it renders as a child of the provider, below). The
+// `RecipesPage` component body itself runs ABOVE the provider and must not read
+// Prism tokens directly.
+const PrismPageRoot = styled('div')(({ theme }) => ({
+  minHeight: '100vh',
+  background: theme.tokens.color.surface.base,
+  color: theme.tokens.color.text.primary,
+}));
+
 // ── List page ────────────────────────────────────────────────────────────────
 const RecipesPage: React.FC = () => {
   const { token, userProfile, isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [ingredient, setIngredient] = useState('');
   const [ingredientInput, setIngredientInput] = useState('');
   const [labelId, setLabelId] = useState<string>('');
   const [manageOpen, setManageOpen] = useState(false);
+  const [renameTarget, setRenameTarget] = useState<Recipe | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Recipe | null>(null);
+
+  const invalidateRecipes = (): void => void queryClient.invalidateQueries({ queryKey: ['recipes'] });
 
   const debouncedSetIngredient = useDebouncedCallback((v: string) => setIngredient(v), 300);
 
@@ -177,80 +192,109 @@ const RecipesPage: React.FC = () => {
   const { data: labels = [] } = useQuery({ queryKey: ['recipe-labels'], queryFn: () => getLabels(token) });
 
   return (
-    <>
-      <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
-      <Container maxWidth="md" sx={{ py: 4 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-          <Typography variant="h3">Recipes</Typography>
-          {isAuthenticated && (
-            <Stack direction="row" spacing={1}>
-              <Button startIcon={<LabelIcon />} onClick={() => setManageOpen(true)}>
-                Manage labels
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                component={RouterLink}
-                to="/recipes/new"
-              >
-                New recipe
-              </Button>
-            </Stack>
-          )}
-        </Stack>
-
-        <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap' }}>
-          <TextField
-            size="small"
-            label="Search ingredient"
-            value={ingredientInput}
-            onChange={(e) => {
-              setIngredientInput(e.target.value);
-              debouncedSetIngredient(e.target.value);
+    <PrismThemeProvider>
+      <PrismPageRoot>
+        <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
+        <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 16,
+              marginBottom: 20,
             }}
-          />
-        </Stack>
-        {labels.length > 0 && (
-          <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap' }}>
-            {labels.map((l) => (
-              <Chip
-                key={l.id}
-                label={qualifiedLabelName(l)}
-                color={labelId === l.id ? 'primary' : 'default'}
-                onClick={() => setLabelId(labelId === l.id ? '' : l.id)}
+          >
+            <Typography variant="h3">Recipes</Typography>
+            {isAuthenticated && (
+              <div style={{ display: 'flex', gap: 10 }}>
+                <PButton variant="ghost" onClick={() => setManageOpen(true)}>
+                  Manage labels
+                </PButton>
+                {/* Prism `Button` (MUI styled + custom shouldForwardProp) does not
+                    honor emotion's `as`, so keep New recipe a real router <Link>
+                    (role="link") wrapping the styled button for the Prism look. */}
+                <RouterLink to="/recipes/new" style={{ textDecoration: 'none' }}>
+                  <PButton>New recipe</PButton>
+                </RouterLink>
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginBottom: 16, maxWidth: 320 }}>
+            <PInput
+              aria-label="Search ingredient"
+              placeholder="Search ingredient"
+              value={ingredientInput}
+              onChange={(e) => {
+                setIngredientInput(e.target.value);
+                debouncedSetIngredient(e.target.value);
+              }}
+            />
+          </div>
+
+          {labels.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+              {labels.map((l) => (
+                <PChip
+                  key={l.id}
+                  pressed={labelId === l.id}
+                  onClick={() => setLabelId(labelId === l.id ? '' : l.id)}
+                >
+                  {qualifiedLabelName(l)}
+                </PChip>
+              ))}
+            </div>
+          )}
+
+          {isLoading && <LoadingScreen />}
+          {!isLoading && recipes.length === 0 && (
+            <Typography color="text.secondary">No recipes yet.</Typography>
+          )}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(288px, 1fr))',
+              gap: 16,
+            }}
+          >
+            {recipes.map((r) => (
+              <RecipeCard
+                key={r.id}
+                recipe={r}
+                canManage={isAuthenticated}
+                onOpen={() => navigate(`/recipes/${r.recipe_url}`)}
+                onRename={() => setRenameTarget(r)}
+                onDelete={() => setDeleteTarget(r)}
               />
             ))}
-          </Stack>
-        )}
+          </div>
+        </div>
 
-        {isLoading && <LoadingScreen />}
-        {!isLoading && recipes.length === 0 && (
-          <Typography color="text.secondary">No recipes yet.</Typography>
-        )}
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 2 }}>
-          {recipes.map((r) => (
-            <Card key={r.id}>
-              <CardActionArea onClick={() => navigate(`/recipes/${r.recipe_url}`)}>
-                <CardContent>
-                  <Typography variant="h6">{r.content.title}</Typography>
-                  <Typography variant="body2" color="text.secondary" noWrap>
-                    {previewIngredients(r.content)}
-                  </Typography>
-                  {r.labels && r.labels.length > 0 && (
-                    <Stack direction="row" spacing={0.5} sx={{ mt: 1, flexWrap: 'wrap' }}>
-                      {r.labels.map((l) => (
-                        <Chip key={l.id} label={qualifiedLabelName(l)} size="small" />
-                      ))}
-                    </Stack>
-                  )}
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
-        </Box>
-      </Container>
-      <ManageLabelsDialog open={manageOpen} onClose={() => setManageOpen(false)} token={token} />
-    </>
+        <ManageLabelsDialog open={manageOpen} onClose={() => setManageOpen(false)} token={token} />
+        <RenameRecipeUrlDialog
+          recipe={renameTarget}
+          open={renameTarget !== null}
+          onClose={() => setRenameTarget(null)}
+          onRenamed={(slug) => {
+            setRenameTarget(null);
+            invalidateRecipes();
+            navigate(`/recipes/${slug}`);
+          }}
+          token={token}
+        />
+        <DeleteRecipeDialog
+          recipe={deleteTarget}
+          open={deleteTarget !== null}
+          onClose={() => setDeleteTarget(null)}
+          onDeleted={() => {
+            setDeleteTarget(null);
+            invalidateRecipes();
+          }}
+          token={token}
+        />
+      </PrismPageRoot>
+    </PrismThemeProvider>
   );
 };
 
