@@ -1,11 +1,11 @@
 import React from 'react';
 import { Box, Button, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { alpha } from '@mui/material/styles';
 import { Image, ImageVersion } from '@/types/image';
 import { FullImageCard } from './FullImageCard';
 import { ImageThumbnail } from './ImageThumbnail';
+import { DropTile } from './DropTile';
 import { EditorPanel, EditPhotoPayload } from './EditorPanel';
 
 export interface PhotoManager {
@@ -32,21 +32,6 @@ const MAX_PANEL_WIDTH = 640;
 
 const defaultLogger = (e: React.ChangeEvent<HTMLInputElement>) =>
   console.log('Clicked!', e.target.files);
-
-const NewPhotoButton: React.FC<{
-  addPhoto: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  isUploading?: boolean;
-}> = ({ addPhoto, isUploading = false }) => (
-  <Button
-    variant="contained"
-    startIcon={<AddPhotoAlternateIcon sx={{ fontSize: 20 }} />}
-    component="label"
-    disabled={isUploading}
-  >
-    {isUploading ? 'Uploading…' : 'Add new photo'}
-    <input accept="image/*" type="file" hidden onChange={addPhoto} multiple disabled={isUploading} />
-  </Button>
-);
 
 const SelectButton: React.FC<{ selectPhoto: (src: string) => void; src: string }> = ({
   selectPhoto,
@@ -151,38 +136,43 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
     [panelWidth],
   );
 
-  // ── Toolbar ───────────────────────────────────────────────────────────────
-  const toolbar = (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-      {mode === 'edit' ? (
-        <NewPhotoButton addPhoto={addPhoto} isUploading={isUploading} />
-      ) : (
+  // ── Toolbar (select mode only — edit uses the in-grid DropTile) ──────────────
+  const toolbar =
+    mode === 'select' ? (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <SelectButton selectPhoto={selectPhoto} src={selectedVersion?.src ?? ''} />
-      )}
-    </Box>
-  );
+      </Box>
+    ) : null;
 
   // ── Empty state ─────────────────────────────────────────────────────────
   if (images.length === 0) {
     return (
       <Box>
         {toolbar}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: 300,
-            border: '1px dashed',
-            borderColor: 'divider',
-            borderRadius: 2,
-            color: 'text.secondary',
-          }}
-        >
-          <Typography variant="body1">No photos yet.</Typography>
-          <Typography variant="body2">Upload your first one above.</Typography>
-        </Box>
+        {mode === 'edit' ? (
+          <Box sx={{ maxWidth: 240, display: 'flex', flexDirection: 'column', gap: 1, p: 1 }}>
+            <DropTile onAdd={addPhoto} isUploading={isUploading} />
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+              No photos yet — add your first.
+            </Typography>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 300,
+              border: '1px dashed',
+              borderColor: 'divider',
+              borderRadius: 2,
+              color: 'text.secondary',
+            }}
+          >
+            <Typography variant="body1">No photos yet.</Typography>
+          </Box>
+        )}
       </Box>
     );
   }
@@ -203,10 +193,12 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
         overflowX: 'hidden',
       }}
     >
+      {mode === 'edit' && <DropTile onAdd={addPhoto} isUploading={isUploading} />}
       {images.map((image, index) => (
         <ImageThumbnail
           key={image.name ?? index}
           image={image.versions?.thumbnail ?? defaultImage}
+          name={image.name}
           authToken={authToken}
           selected={index === selectedImageIndex}
           onClick={() => selectTile(index)}

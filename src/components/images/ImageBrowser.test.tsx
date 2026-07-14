@@ -109,9 +109,18 @@ describe('ImageBrowser', () => {
     expect(screen.getByText('Insert image')).toBeTruthy();
   });
 
-  it('renders in edit mode with add photo button', () => {
+  it('renders the drop-tile in edit mode', () => {
     render(<ImageBrowser images={mockImages} mode="edit" />);
-    expect(screen.getByText('Add new photo')).toBeTruthy();
+    expect(screen.getByTestId('drop-tile')).toBeTruthy();
+    expect(screen.getByText('Add photo')).toBeTruthy();
+  });
+
+  it('does not render the drop-tile in select mode (picker stays edit-affordance-free)', () => {
+    render(
+      <ImageBrowser images={mockImages} mode="select" photoManager={{ selectPhoto: vi.fn() }} />,
+    );
+    expect(screen.queryByTestId('drop-tile')).toBeNull();
+    expect(screen.getByText('Insert image')).toBeTruthy();
   });
 
   it('renders one tile per image in the gallery', () => {
