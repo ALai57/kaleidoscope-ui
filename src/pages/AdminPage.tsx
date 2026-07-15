@@ -80,6 +80,19 @@ const AdminPage: React.FC = () => {
             <Box component="p" sx={eyebrowSx}>
               SESSION
             </Box>
+            <Typography
+              component="h1"
+              sx={(t) => ({
+                m: 0,
+                mt: 0.5,
+                fontFamily: t.tokens?.typography.mono ?? 'monospace',
+                fontWeight: 700,
+                fontSize: '1.6rem',
+                letterSpacing: '-0.01em',
+              })}
+            >
+              Admin
+            </Typography>
             <Box sx={{ mt: 3 }}>
               {!isLoading &&
                 (isAuthenticated ? (
