@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { componentId, resolvePhaseSteps, effectiveDuration, backPlanStart, timelineStats } from './cookTimeline';
+import { componentId, resolvePhaseSteps, effectiveDuration, backPlanStart, timelineStats, pickLaneColors } from './cookTimeline';
 import type { RecipeSection } from '../types/recipe';
 import type { TimelineComponent, TimelinePhase, Timeline } from '../types/recipe';
 
@@ -88,5 +88,17 @@ describe('timelineStats', () => {
   it('counts hands-off windows as gaps in active coverage', () => {
     // active intervals: [0,6], [30,40], [46,50] -> free gaps [6,30] and [40,46] = 2
     expect(timelineStats(tl).passiveWindows).toBe(2);
+  });
+});
+
+describe('pickLaneColors', () => {
+  it('assigns palette colors by index', () => {
+    expect(pickLaneColors(3, ['#a', '#b', '#c', '#d'])).toEqual(['#a', '#b', '#c']);
+  });
+  it('cycles when there are more lanes than palette entries', () => {
+    expect(pickLaneColors(4, ['#a', '#b'])).toEqual(['#a', '#b', '#a', '#b']);
+  });
+  it('returns [] for a zero count', () => {
+    expect(pickLaneColors(0, ['#a'])).toEqual([]);
   });
 });

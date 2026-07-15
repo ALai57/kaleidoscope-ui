@@ -94,3 +94,9 @@ export function timelineStats(timeline: Timeline): TimelineStats {
     passiveWindows,
   };
 }
+
+/** One color per lane, cycling the categorical palette if a recipe has more
+ *  components than palette entries. */
+export function pickLaneColors(count: number, palette: readonly string[]): string[] {
+  return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
+}
