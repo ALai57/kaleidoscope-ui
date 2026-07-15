@@ -5,10 +5,15 @@ import CardActionArea from '@mui/material/CardActionArea';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useTheme, alpha } from '@mui/material/styles';
+import { useQuery } from '@tanstack/react-query';
 import { NavBar } from '../components/layout/NavBar';
 import { SurfaceCard } from '../components/common/SurfaceCard';
+import { StatTile } from '../components/common/StatTile';
 import { PrismThemeProvider } from '../components/prism';
 import { useAuth } from '../auth/useAuth';
+import { getBranches } from '../api/articles';
+import { getImageMetadata } from '../api/images';
+import { getProjects } from '../api/projects';
 
 // ── Manager capabilities ───────────────────────────────────────────────────
 
@@ -133,6 +138,33 @@ const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => {
   );
 };
 
+// ── Live stats strip ────────────────────────────────────────────────────────
+
+const HubStats: React.FC<{ token: string | undefined }> = ({ token }) => {
+  const articles = useQuery({ queryKey: ['branches'], queryFn: () => getBranches(token) });
+  const images = useQuery({ queryKey: ['images'], queryFn: () => getImageMetadata(token) });
+  const projects = useQuery({ queryKey: ['projects'], queryFn: () => getProjects(token) });
+
+  // While a count is loading, show an em-dash rather than a premature 0.
+  const tiles = [
+    { label: 'Articles', query: articles },
+    { label: 'Images', query: images },
+    { label: 'Projects', query: projects },
+  ];
+
+  return (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
+      {tiles.map(({ label, query }) => (
+        <StatTile
+          key={label}
+          label={label}
+          value={query.isLoading ? '—' : String((query.data ?? []).length)}
+        />
+      ))}
+    </Box>
+  );
+};
+
 // ── Eyebrow header ──────────────────────────────────────────────────────────
 
 const HubHeader: React.FC = () => (
@@ -170,7 +202,7 @@ const HubHeader: React.FC = () => (
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ManagerPage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useAuth();
+  const { isAuthenticated, token, userProfile, login, logout } = useAuth();
 
   const user = userProfile
     ? {
@@ -187,6 +219,7 @@ const ManagerPage: React.FC = () => {
         <Box id="primary-content" sx={{ flex: 1, bgcolor: 'background.default', py: 4 }}>
           <Container>
             <HubHeader />
+            <HubStats token={token} />
             <Box
               sx={{
                 display: 'grid',
