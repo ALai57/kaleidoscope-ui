@@ -25,6 +25,7 @@ static/js/test/*
 .idea/
 *.iml
 .shadow-cljs/
+.claude/
 
 # EMACS garbage
 *#*#*
