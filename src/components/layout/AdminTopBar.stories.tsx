@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import { AdminTopBar } from './AdminTopBar';

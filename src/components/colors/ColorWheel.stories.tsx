@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ColorWheel } from './ColorWheel';
 
 const meta: Meta<typeof ColorWheel> = {

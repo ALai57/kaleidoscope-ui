@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import Box from '@mui/material/Box';
 import { AdvisorReviewCard } from './AdvisorReviewCard';
 import type { AdvisorScoreOutput } from '../../types/workflow';

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import { SectionHeading } from './SectionHeading';

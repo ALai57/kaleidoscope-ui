@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Table } from './Table';
 import { GridColDef } from '@mui/x-data-grid';
 import { PrismThemeProvider } from '../prism';

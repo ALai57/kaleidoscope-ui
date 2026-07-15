@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import Box from '@mui/material/Box';
 import { MemoryRouter } from 'react-router-dom';
 import { AdminNavRail } from './AdminNavRail';

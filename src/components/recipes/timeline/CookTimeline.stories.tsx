@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { PrismThemeProvider } from '../../prism';
 import { CookTimeline } from './CookTimeline';
 import { salmonTimeline, salmonContent } from '../../../test/fixtures/salmonTimeline';
