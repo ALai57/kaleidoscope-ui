@@ -42,6 +42,7 @@ import { RoundsTimeline } from './RoundsTimeline';
 import type { Agent } from '../../types/agent';
 import type { RunMode, ScrutinyLevel, WorkflowRun, WorkflowRecommendation, ProjectBrief } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
+import { LiveDot } from '../common/LiveDot';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -451,7 +452,11 @@ const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
         </Typography>
 
         {/* Timestamp */}
-        <Typography variant="caption" color="text.secondary" sx={{ flexShrink: 0 }}>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ flexShrink: 0, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+        >
           {formatRelativeTime(timestamp)}
         </Typography>
 
@@ -495,7 +500,10 @@ const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
           <Typography
             variant="caption"
             color="text.disabled"
-            sx={{ fontSize: '0.68rem', ml: 0.25 }}
+            sx={{
+              fontSize: '0.68rem', ml: 0.25,
+              fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace',
+            }}
           >
             {isLoopRun
               ? `${roundCount} ${roundCount === 1 ? 'round' : 'rounds'}`
@@ -553,6 +561,10 @@ const StartRunControls: React.FC<StartRunControlsProps> = ({
         onClick={onStart}
         disabled={starting}
         startIcon={starting ? <CircularProgress size={14} /> : <PlayCircleOutlineIcon />}
+        sx={{
+          fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace',
+          '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+        }}
       >
         {label}
       </Button>
@@ -641,8 +653,12 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
       {activeRun && (
         <Box sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-            <CircularProgress size={14} thickness={5} />
-            <Typography variant="overline" color="primary.main" sx={{ lineHeight: 1 }}>
+            <LiveDot size={9} color="primary.main" />
+            <Typography
+              variant="overline"
+              color="primary.main"
+              sx={{ lineHeight: 1, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+            >
               Run #{runNumberMap.get(activeRun.id)} — in progress
             </Typography>
             <StatusChip
@@ -710,6 +726,10 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
                 onClick={() => startMutation.mutate(undefined)}
                 disabled={startMutation.isPending}
                 startIcon={startMutation.isPending ? <CircularProgress size={14} /> : <PlayCircleOutlineIcon />}
+                sx={{
+                  fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace',
+                  '&:hover': { borderColor: 'primary.main', color: 'primary.main' },
+                }}
               >
                 Start new run
               </Button>
