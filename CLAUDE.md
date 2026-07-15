@@ -13,7 +13,7 @@ it does not run the API.
 
 ## Stack
 
-- **React 18 + TypeScript 6 + Vite 8** — SPA, ES modules, `@` aliased to `src/`.
+- **React 19 + TypeScript 6 + Vite 8** — SPA, ES modules, `@` aliased to `src/`.
 - **MUI 6** (`@mui/material`, icons, x-data-grid) for UI; **Emotion** for styling.
 - **Auth0** (`@auth0/auth0-react`) — shares the backend's dev tenant (`dev-722l4eivlaenj2h1`).
 - **TanStack Query** for server state; **Zustand** for client/UI state. Don't hand-roll either.
