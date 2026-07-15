@@ -16,7 +16,7 @@ export const CatalogCard: React.FC<Props> = ({ rec, interestId, token }) => {
   const { tokens } = useTheme();
   const [open, setOpen] = React.useState(false);
   const updateStatus = useUpdateRecStatus(interestId, token);
-  const originColor = tokens.color.categorical[originColorKey(rec.origin)];
+  const originColor = tokens.color.categorical[originColorKey(rec.origin)]!;
 
   const setStatus = (status: RecommendationStatus): void => {
     setOpen(false);

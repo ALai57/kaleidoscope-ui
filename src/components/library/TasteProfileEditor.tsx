@@ -23,8 +23,8 @@ export const TasteProfileEditor: React.FC<Props> = ({ interest, token, onSaved }
   const [sourceDraft, setSourceDraft] = React.useState('');
   const update = useUpdateInterest(token);
 
-  const purple = tokens.color.categorical[1];
-  const amber = tokens.color.categorical[2];
+  const purple = tokens.color.categorical[1]!;
+  const amber = tokens.color.categorical[2]!;
 
   const addSource = (): void => {
     const s = sourceDraft.trim();

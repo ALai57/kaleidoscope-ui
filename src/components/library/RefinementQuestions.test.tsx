@@ -15,8 +15,8 @@ describe('RefinementQuestions', () => {
     );
     const fields = screen.getAllByRole('textbox');
     expect(fields).toHaveLength(2);
-    await userEvent.type(fields[0], 'post-1959');
-    await userEvent.type(fields[1], 'history');
+    await userEvent.type(fields[0]!, 'post-1959');
+    await userEvent.type(fields[1]!, 'history');
     await userEvent.click(screen.getByRole('button', { name: /continue/i }));
     expect(onSubmit).toHaveBeenCalledWith(['post-1959', 'history']);
   });

@@ -23,8 +23,8 @@ export const AcquisitionsPipeline: React.FC<Props> = ({ interestId, token }) => 
   const [view, setView] = React.useState<View>({ name: 'idle' });
   const curateM = useCurate(token);
   const respond = useRespondToStep(token);
-  const purple = tokens.color.categorical[1];
-  const amber = tokens.color.categorical[2];
+  const purple = tokens.color.categorical[1]!;
+  const amber = tokens.color.categorical[2]!;
 
   const apply = (result: CurationResult): void => {
     if (result.status === 'awaiting_input') {

@@ -34,7 +34,7 @@ describe('useInterests', () => {
   it('fetches the interest list', async () => {
     const { result } = renderHook(() => useInterests(undefined), { wrapper: wrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.[0].intent).toBe('Jazz');
+    expect(result.current.data?.[0]?.intent).toBe('Jazz');
   });
 });
 
@@ -42,7 +42,7 @@ describe('useShelf', () => {
   it('fetches the shelf for an interest', async () => {
     const { result } = renderHook(() => useShelf('i1', { status: 'shelved' }, undefined), { wrapper: wrapper() });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data?.[0].id).toBe('r1');
+    expect(result.current.data?.[0]?.id).toBe('r1');
   });
 
   it('is disabled when interest id is empty', () => {

@@ -59,9 +59,9 @@ afterAll(() => server.close());
 describe('interests API client', () => {
   it('getInterests returns snake_case interests', async () => {
     const [i] = await getInterests();
-    expect(i.user_id).toBe('reader@example.com');
-    expect(i.taste_profile.novelty_ratio).toBe(0.5);
-    expect(i.project_id).toBe('p1');
+    expect(i!.user_id).toBe('reader@example.com');
+    expect(i!.taste_profile.novelty_ratio).toBe(0.5);
+    expect(i!.project_id).toBe('p1');
   });
 
   it('createInterest sends the intent + taste_profile (converted to kebab on the wire)', async () => {
@@ -81,7 +81,7 @@ describe('interests API client', () => {
 
   it('getShelf builds status + kind query params', async () => {
     const shelf = await getShelf('i1', { status: 'shelved', kind: 'article' });
-    expect(shelf[0].est_time).toBe('18 min');
+    expect(shelf[0]!.est_time).toBe('18 min');
     expect(lastUrl).toContain('status=shelved');
     expect(lastUrl).toContain('kind=article');
   });

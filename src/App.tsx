@@ -28,6 +28,7 @@ const WorkflowsPage = React.lazy(() => import('./pages/WorkflowsPage'));
 const WorkflowEditorPage = React.lazy(() => import('./pages/WorkflowEditorPage'));
 const AgentTeamPage = React.lazy(() => import('./pages/AgentTeamPage'));
 const WorkspaceRootsPage = React.lazy(() => import('./pages/projects/WorkspaceRootsPage'));
+const LibraryPage = React.lazy(() => import('./pages/library/LibraryPage'));
 
 const ArchivePage = React.lazy(() =>
   import('./pages/ArticlePage').then((m) => ({ default: m.ArchiveView }))
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       { path: '/workflows/:id', element: <WorkflowEditorPage /> },
       { path: '/agents', element: <AgentTeamPage /> },
       { path: '/workspace-roots', element: <WorkspaceRootsPage /> },
+      { path: '/library', element: <LibraryPage view="shelf" /> },
+      { path: '/library/:interestId', element: <LibraryPage view="shelf" /> },
+      { path: '/library/:interestId/acquisitions', element: <LibraryPage view="acquisitions" /> },
+      { path: '/library/:interestId/taste', element: <LibraryPage view="taste" /> },
     ],
   },
 ]);
