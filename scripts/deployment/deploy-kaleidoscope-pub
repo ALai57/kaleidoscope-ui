@@ -8,7 +8,6 @@ echo "Deploying frontend to kaleidoscope.pub bucket..."
 
 aws s3 sync resources/kaleidoscope.pub/static s3://kaleidoscope.pub/static \
     --delete \
-    --exclude "*/cljs-runtime/*" \
     --exclude "*/shareable_stories/*" # --dryrun
 
 popd

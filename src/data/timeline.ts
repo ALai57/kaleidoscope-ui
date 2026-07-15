@@ -1,4 +1,4 @@
-// Career / education timeline entries — ported from home.cljs
+// Career / education timeline entries
 
 /**
  * Which band of the résumé an entry belongs to. The Experience page renders one

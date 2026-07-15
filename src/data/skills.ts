@@ -1,4 +1,4 @@
-// Skills data — ported from home.cljs
+// Skills data
 
 export interface SkillIcon {
   tooltipText: string;

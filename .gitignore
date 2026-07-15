@@ -4,14 +4,9 @@ storybook-static/
 dist/
 resources/andrewslai.com/static/dist/
 coverage/
-.nrepl-port
-.rebel_readline_history
-figwheel_server.log
 .env*.local
 .env.production
 .env.ephemeral
-*.lein-repl-history
-.lein-failures
 log.txt
 node_modules
 build-reports
@@ -19,20 +14,16 @@ resources/kaleidoscope.pub/static/js/compiled/
 resources/kaleidoscope.client/static/js/compiled/
 resources/public/
 resources/static/
-static/js/test/*
 /public/
 
 .idea/
 *.iml
-.shadow-cljs/
 .claude/
 
 # EMACS garbage
 *#*#*
 
-src/kaleidoscope/ui/components/js/*
 resources/media/*
-.clj-kondo/.cache/*
 resources/*/media
 .DS_Store
 .mise.toml
