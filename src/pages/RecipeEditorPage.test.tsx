@@ -259,4 +259,47 @@ describe('RecipeEditorPage', () => {
     // photo import leaves the Source URL blank
     expect(screen.getByLabelText('Source URL')).toHaveValue('');
   });
+
+  it('regenerates the timeline after a successful save', async () => {
+    let timelineCalled = false;
+    server.use(
+      http.put('/recipes/wip-chilaquiles', () => HttpResponse.json(EXISTING_RECIPE)),
+      http.post('/recipes/wip-chilaquiles/timeline', () => {
+        timelineCalled = true;
+        return HttpResponse.json({
+          timeline: {
+            version: 1,
+            generator_version: 1,
+            generated_at: 'now',
+            total_minutes: 5,
+            overrides: [],
+            components: [],
+          },
+        });
+      })
+    );
+    renderEditWithCache();
+
+    await waitFor(() => expect(screen.getByLabelText('Title')).toHaveValue('WIP Chilaquiles'));
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => expect(screen.getByText('Recipe detail')).toBeInTheDocument());
+    await waitFor(() => expect(timelineCalled).toBe(true));
+  });
+
+  it('still navigates and shows no save error when timeline regeneration fails', async () => {
+    server.use(
+      http.put('/recipes/wip-chilaquiles', () => HttpResponse.json(EXISTING_RECIPE)),
+      http.post('/recipes/wip-chilaquiles/timeline', () =>
+        HttpResponse.json({ reason: 'generation-failed' }, { status: 502 })
+      )
+    );
+    renderEditWithCache();
+
+    await waitFor(() => expect(screen.getByLabelText('Title')).toHaveValue('WIP Chilaquiles'));
+    fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() => expect(screen.getByText('Recipe detail')).toBeInTheDocument());
+    expect(screen.queryByText(/could not save the recipe/i)).not.toBeInTheDocument();
+  });
 });

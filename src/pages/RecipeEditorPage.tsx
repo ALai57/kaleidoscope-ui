@@ -33,6 +33,7 @@ import {
   getLabels,
   createLabel,
   addRecipeAudience,
+  regenerateTimeline,
 } from '../api/recipes';
 import { getGroups } from '../api/groups';
 import type { RecipeContent, AcquiredDraft } from '../types/recipe';
@@ -172,6 +173,11 @@ const RecipeEditorPage: React.FC = () => {
     },
     onSuccess: (saved) => {
       void queryClient.invalidateQueries({ queryKey: ['recipes'] });
+      // Fire-and-forget: a save never fails because the LLM did. Issued through
+      // the app-level queryClient so the invalidate lands after we navigate away.
+      void regenerateTimeline(saved.recipe_url, token)
+        .then(() => queryClient.invalidateQueries({ queryKey: ['recipe', saved.recipe_url] }))
+        .catch(() => {});
       navigate(`/recipes/${saved.recipe_url}`);
     },
   });
