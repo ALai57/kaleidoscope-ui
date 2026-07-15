@@ -717,7 +717,10 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
                     endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
                   }}
                   placeholder="Optional"
-                  sx={{ width: 160 }}
+                  sx={{
+                    width: 160,
+                    '& .MuiInputLabel-root': { fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' },
+                  }}
                 />
               </Tooltip>
               <Button

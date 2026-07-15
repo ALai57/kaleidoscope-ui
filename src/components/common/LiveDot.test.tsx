@@ -25,4 +25,9 @@ describe('LiveDot', () => {
     );
     expect(screen.getByText('Running')).toBeTruthy();
   });
+
+  it('renders a static (non-pulsing) dot at a custom size', () => {
+    render(<LiveDot pulse={false} size={12} />);
+    expect(screen.getByTestId('live-dot')).toBeTruthy();
+  });
 });
