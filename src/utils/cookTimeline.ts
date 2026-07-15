@@ -50,7 +50,8 @@ function fmtClock(mins: number): string {
 export function backPlanStart(serveTimeHHMM: string, totalMinutes: number): string {
   const parts = serveTimeHHMM.split(':');
   if (parts.length !== 2) return '';
-  const [h, m] = parts.map(Number);
+  const h = Number(parts[0]);
+  const m = Number(parts[1]);
   if (Number.isNaN(h) || Number.isNaN(m)) return '';
   return fmtClock(h * 60 + m - totalMinutes);
 }
@@ -98,5 +99,6 @@ export function timelineStats(timeline: Timeline): TimelineStats {
 /** One color per lane, cycling the categorical palette if a recipe has more
  *  components than palette entries. */
 export function pickLaneColors(count: number, palette: readonly string[]): string[] {
-  return Array.from({ length: count }, (_, i) => palette[i % palette.length]);
+  if (palette.length === 0) return [];
+  return Array.from({ length: count }, (_, i) => palette[i % palette.length]!);
 }
