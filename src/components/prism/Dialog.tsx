@@ -54,8 +54,6 @@ const Title = styled('div')(({ theme }) => ({
 const Body = styled('div')({ padding: '16px 22px 4px' });
 const Actions = styled('div')({ display: 'flex', justifyContent: 'flex-end', gap: 10, padding: '18px 22px 22px' });
 
-let dialogSeq = 0;
-
 export const Dialog: React.FC<{
   open: boolean;
   onClose: () => void;
@@ -65,7 +63,7 @@ export const Dialog: React.FC<{
   children: React.ReactNode;
   actions: React.ReactNode;
 }> = ({ open, onClose, title, icon, tone = 'accent', children, actions }) => {
-  const titleId = React.useRef(`prism-dialog-${dialogSeq++}`).current;
+  const titleId = React.useId();
   React.useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
