@@ -50,4 +50,13 @@ describe('RoundCard', () => {
     );
     expect(screen.getByText('Waiting for your input')).toBeInTheDocument();
   });
+
+  it('shows a LiveDot while a round is analyzing (in progress, no judge)', () => {
+    render(
+      <RoundCard round={{ round_number: 1, status: 'in_progress', started_at: 'now' }} />,
+      { wrapper: Wrapper }
+    );
+    expect(screen.getByTestId('live-dot')).toBeTruthy();
+    expect(screen.getByText(/Analyzing/)).toBeTruthy();
+  });
 });

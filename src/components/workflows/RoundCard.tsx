@@ -5,11 +5,11 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
 import Collapse from '@mui/material/Collapse';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -23,6 +23,7 @@ import type { Agent } from '../../types/agent';
 import type { ScoreSnapshotEntry, TradeOff, Recommendation, WorkflowRoundDetail } from '../../types/workflow';
 import { StatusChip } from '../common/StatusChip';
 import { EntityCard } from '../common/EntityCard';
+import { LiveDot } from '../common/LiveDot';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
@@ -150,7 +151,7 @@ const ScoreRow: React.FC<ScoreRowProps> = ({
               bgcolor: persona.color,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '0.8rem', flexShrink: 0,
-              boxShadow: active ? `0 0 0 2px ${persona.color}` : 'none',
+              boxShadow: active ? `0 0 0 2px ${alpha(persona.color, 0.9)}` : 'none',
               transition: 'box-shadow 0.15s',
             }}
           >
@@ -195,7 +196,7 @@ const ScoreRow: React.FC<ScoreRowProps> = ({
               pl: 1.25, py: 0.75,
               borderLeft: 2,
               borderColor: persona.color,
-              bgcolor: `${persona.color}0d`,
+              bgcolor: alpha(persona.color, 0.05),
               borderRadius: '0 4px 4px 0',
             }}
           >
@@ -284,6 +285,7 @@ interface RoundCardProps {
 export const RoundCard: React.FC<RoundCardProps> = ({
   round, thresholds, agents = [], awaitingInput = false,
 }) => {
+  const theme = useTheme();
   const [activeScorerKey, setActiveScorerKey] = useState<string | null>(null);
   const [reasoningExpanded, setReasoningExpanded] = useState(false);
 
@@ -316,25 +318,28 @@ export const RoundCard: React.FC<RoundCardProps> = ({
     : 'divider';
 
   const headerBg =
-    awaitingInput ? 'warning.50'
-    : action === 'clarify' ? 'warning.50'
-    : isInProgress && !hasJudge ? 'primary.50'
+    awaitingInput ? alpha(theme.palette.warning.main, 0.14)
+    : action === 'clarify' ? alpha(theme.palette.warning.main, 0.14)
+    : isInProgress && !hasJudge ? alpha(theme.palette.primary.main, 0.14)
     : 'action.hover';
 
   // The header's left zone: the round label plus an inline analyzing/paused
   // indicator. The decision chip is the header's right-side action.
   const headerContent = (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      <Typography variant="overline" sx={{ lineHeight: 1, color: 'text.secondary', flexShrink: 0 }}>
+      <Typography
+        variant="overline"
+        sx={{
+          lineHeight: 1, color: 'text.secondary', flexShrink: 0,
+          fontFamily: theme.tokens?.typography.mono ?? 'monospace',
+        }}
+      >
         Round {round.round_number}{maxRounds !== undefined ? ` of ${maxRounds}` : ''}
       </Typography>
 
-      {/* Analyzing spinner — only when no judge yet and not paused for input */}
+      {/* Analyzing indicator — only when no judge yet and not paused for input */}
       {isInProgress && !hasJudge && !awaitingInput && (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <CircularProgress size={12} />
-          <Typography variant="caption" color="primary.main">Analyzing…</Typography>
-        </Box>
+        <LiveDot label="Analyzing…" color="primary.main" />
       )}
 
       {/* Paused-for-input indicator */}
