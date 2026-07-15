@@ -34,6 +34,10 @@ export default defineConfig({
     outDir: 'resources/kaleidoscope.client/static/dist',
     emptyOutDir: true,
     copyPublicDir: false,
+    // 'hidden' emits .map files without a sourceMappingURL comment, so they are
+    // never referenced publicly. The deploy script uploads them to Bugsnag and
+    // then strips them before syncing to S3.
+    sourcemap: 'hidden',
   },
   test: {
     environment: 'jsdom',

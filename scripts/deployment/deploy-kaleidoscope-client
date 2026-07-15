@@ -1,14 +1,47 @@
 #!/bin/bash
+set -euo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
 pushd "$SCRIPT_DIR/../../"
 
+DIST_DIR="resources/kaleidoscope.client/static/dist"
+
 echo "Incrementing package version..."
 npm version patch
 
+# Build AFTER the version bump so __APP_VERSION__ (baked in from package.json)
+# matches the version we report to Bugsnag and upload source maps against.
+echo "Building frontend..."
+npm run build
+
+# Upload source maps to Bugsnag, then strip them so they are never published.
+# The notifier key doubles as the source-map upload key; skip if it isn't set.
+if [ -f .env.production ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./.env.production
+  set +a
+fi
+
+if [ -n "${VITE_BUGSNAG_API_KEY:-}" ]; then
+  echo "Uploading source maps to Bugsnag..."
+  # The same bundle is served from every tenant origin at https://<host>/assets/*,
+  # so the wildcard base URL matches all of them.
+  npx bugsnag-source-maps upload-browser \
+    --api-key "$VITE_BUGSNAG_API_KEY" \
+    --detect-app-version \
+    --directory "$DIST_DIR/assets" \
+    --base-url "https://*/assets/"
+else
+  echo "VITE_BUGSNAG_API_KEY not set — skipping source-map upload."
+fi
+
+echo "Stripping source maps before publishing..."
+find "$DIST_DIR" -name '*.map' -delete
+
 echo "Deploying frontend to kaleidoscope bucket..."
-aws s3 sync resources/kaleidoscope.client/static/dist/assets s3://kaleidoscope.client/assets --delete
-aws s3 cp resources/kaleidoscope.client/static/dist/index.html s3://kaleidoscope.client/index.html
+aws s3 sync "$DIST_DIR/assets" s3://kaleidoscope.client/assets --delete
+aws s3 cp "$DIST_DIR/index.html" s3://kaleidoscope.client/index.html
 
 popd
