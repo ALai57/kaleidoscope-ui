@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Snackbar } from './Snackbar';
+import { PrismThemeProvider } from '../prism';
 
 const meta: Meta<typeof Snackbar> = {
   title: 'Layout/Snackbar',
@@ -34,4 +35,20 @@ export const Error: Story = {
     level: 'error',
     open: true,
   },
+};
+
+// Token-driven: the same Snackbar under a Prism-dark ancestor.
+export const PrismDark: Story = {
+  args: {
+    message: 'Photo uploaded successfully',
+    level: 'success',
+    open: true,
+  },
+  decorators: [
+    (Story) => (
+      <PrismThemeProvider>
+        <Story />
+      </PrismThemeProvider>
+    ),
+  ],
 };

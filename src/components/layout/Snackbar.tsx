@@ -1,6 +1,7 @@
 import React from 'react';
 import MuiSnackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import { useTheme } from '@mui/material/styles';
 
 export interface SnackbarProps {
   message?: React.ReactNode;
@@ -29,13 +30,26 @@ export const Snackbar: React.FC<SnackbarProps> = ({
     [onClose],
   );
 
+  const theme = useTheme();
+  const mono = theme.tokens?.typography.mono ?? 'monospace';
+
   return (
     <MuiSnackbar
       open={showing}
       autoHideDuration={autoHideDuration}
       onClose={handleClose}
     >
-      <Alert severity={level} onClose={handleClose}>
+      <Alert
+        severity={level}
+        onClose={handleClose}
+        sx={{
+          fontFamily: mono,
+          fontSize: '0.8rem',
+          letterSpacing: '0.02em',
+          alignItems: 'center',
+          borderRadius: `${theme.shape.borderRadius}px`,
+        }}
+      >
         {message}
       </Alert>
     </MuiSnackbar>
