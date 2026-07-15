@@ -18,7 +18,7 @@ it does not run the API.
 - **Auth0** (`@auth0/auth0-react`) — shares the backend's dev tenant (`dev-722l4eivlaenj2h1`).
 - **TanStack Query** for server state; **Zustand** for client/UI state. Don't hand-roll either.
 - **React Router 7** for routing.
-- **TipTap** + **Slate** rich-text editors (article editor).
+- **TipTap** rich-text editor (article editor).
 - **Bugsnag** for error reporting.
 - **Storybook 8**, **Vitest** (unit), **Playwright** (e2e), **MSW** (API mocking).
 - Theming via `@adobe/leonardo-contrast-colors` — see `src/theme/`.
