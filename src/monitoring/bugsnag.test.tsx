@@ -66,4 +66,15 @@ describe('bugsnag monitoring', () => {
     expect(screen.getByTestId('real-boundary')).toBeInTheDocument();
     expect(screen.getByText('child content')).toBeInTheDocument();
   });
+
+  it('uses VITE_RELEASE_STAGE for the release stage when it is set', async () => {
+    vi.stubEnv('VITE_BUGSNAG_API_KEY', 'test-key');
+    vi.stubEnv('VITE_RELEASE_STAGE', 'ephemeral');
+    const mod = await import('./bugsnag');
+    mod.startBugsnag();
+
+    expect(startMock).toHaveBeenCalledWith(
+      expect.objectContaining({ releaseStage: 'ephemeral' })
+    );
+  });
 });

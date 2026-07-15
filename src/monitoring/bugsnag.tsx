@@ -29,7 +29,9 @@ export function startBugsnag(): void {
   Bugsnag.start({
     apiKey,
     plugins: [new BugsnagPluginReact()],
-    releaseStage: import.meta.env.MODE,
+    // Prefer the explicit per-environment stage from the loaded .env file;
+    // fall back to Vite's build mode when it isn't set.
+    releaseStage: import.meta.env.VITE_RELEASE_STAGE || import.meta.env.MODE,
     appVersion: __APP_VERSION__,
   });
 
