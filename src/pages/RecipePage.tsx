@@ -13,6 +13,7 @@ import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RecipeSections } from '../components/recipes/RecipeSections';
 import { PrismThemeProvider } from '../components/prism';
 import { ImportLineageStrip } from '../components/recipes/lineage/ImportLineageStrip';
+import { CookTimeline } from '../components/recipes/timeline';
 import { useAuth } from '../auth/useAuth';
 import { isSiteAdmin } from '../auth/authHelpers';
 import { getRecipe, qualifiedLabelName } from '../api/recipes';
@@ -94,6 +95,17 @@ const RecipePage: React.FC = () => {
             )}
 
             <RecipeSections content={recipe.content} />
+
+            {recipe.timeline && (
+              <PrismThemeProvider>
+                <CookTimeline timeline={recipe.timeline} sections={recipe.content.sections} />
+              </PrismThemeProvider>
+            )}
+            {!recipe.timeline && isAuthenticated && (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
+                Save this recipe to generate a cook timeline.
+              </Typography>
+            )}
           </>
         )}
       </Container>

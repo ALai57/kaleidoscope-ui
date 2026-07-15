@@ -62,6 +62,37 @@ const server = setupServer(
       scrape_processing_run_id: 'run1',
     })
   ),
+  http.get('/recipes/timed-dish', () =>
+    HttpResponse.json({
+      id: 'r9',
+      recipe_url: 'timed-dish',
+      hostname: 'andrewslai.com',
+      content: {
+        title: 'Timed Dish',
+        sections: [{ name: 'Salmon', ingredients: [], steps: ['Whisk miso, mirin', 'Sear it'] }],
+      },
+      labels: [],
+      public_visibility: true,
+      created_at: '2026-01-01T00:00:00Z',
+      modified_at: '2026-01-01T00:00:00Z',
+      timeline: {
+        version: 1,
+        generator_version: 1,
+        generated_at: 'now',
+        total_minutes: 10,
+        overrides: [],
+        components: [
+          {
+            name: 'Salmon',
+            steps_hash: 'x',
+            phases: [
+              { id: 'Salmon/Prep', label: 'Prep', kind: 'active', steps: [0, 1], estimate: 10, deps: [], start: 0 },
+            ],
+          },
+        ],
+      },
+    })
+  ),
   http.get('*/recipes/:slug/lineage', () =>
     HttpResponse.json({
       'recipe-url': 'scraped-buns',
@@ -163,6 +194,36 @@ describe('RecipePage', () => {
       renderPage('layer-cake');
       await screen.findByRole('heading', { name: 'Cake' });
       expect(screen.queryByText(/import lineage/i)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('cook timeline', () => {
+    it('renders the cook timeline when the recipe has one', async () => {
+      renderPage('timed-dish');
+      expect(await screen.findByText('Cook Timeline')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Salmon · Prep/ })).toBeInTheDocument();
+    });
+
+    it('does not render the timeline for a recipe without one', async () => {
+      renderPage('layer-cake');
+      await screen.findByRole('heading', { name: 'Cake' });
+      expect(screen.queryByText('Cook Timeline')).not.toBeInTheDocument();
+    });
+
+    it('does not show the writer hint for an anonymous reader', async () => {
+      renderPage('layer-cake');
+      await screen.findByRole('heading', { name: 'Cake' });
+      expect(
+        screen.queryByText('Save this recipe to generate a cook timeline.')
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows a writer hint for an authenticated user viewing a recipe without a timeline', async () => {
+      authState.current.isAuthenticated = true;
+      renderPage('layer-cake');
+      expect(
+        await screen.findByText('Save this recipe to generate a cook timeline.')
+      ).toBeInTheDocument();
     });
   });
 });
