@@ -4,10 +4,8 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import Divider from '@mui/material/Divider';
 import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import {
   getWorkflowRunRounds,
   advanceRun,
@@ -19,8 +17,33 @@ import { updateProjectLocalPaths } from '../../api/projects';
 import { RoundCard } from './RoundCard';
 import { RoundActionBar } from './RoundActionBar';
 import { CodeContextPathInput } from './CodeContextPathInput';
+import { LiveDot } from '../common/LiveDot';
 import type { Agent } from '../../types/agent';
 import type { WorkflowRun, PendingInputsCodeContextPath } from '../../types/workflow';
+
+// A single row of the round spine: a hairline rail with a node (accent LiveDot
+// for the active round, a small success dot for completed ones) to the left,
+// and the round's content (RoundCard + any trailing sections) to the right.
+const TimelineRow: React.FC<{ active?: boolean; children: React.ReactNode }> = ({
+  active = false,
+  children,
+}) => (
+  <Box sx={{ display: 'grid', gridTemplateColumns: '24px 1fr', columnGap: 1 }}>
+    <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+      {/* hairline spine */}
+      <Box sx={{ position: 'absolute', top: 0, bottom: 0, width: '1px', bgcolor: 'divider' }} />
+      {/* node */}
+      <Box sx={{ position: 'relative', mt: 1.25 }}>
+        {active ? (
+          <LiveDot size={10} color="primary.main" />
+        ) : (
+          <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
+        )}
+      </Box>
+    </Box>
+    <Box sx={{ minWidth: 0 }}>{children}</Box>
+  </Box>
+);
 
 interface RoundsTimelineProps {
   projectId: string;
@@ -172,24 +195,32 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
       {olderRounds.length > 0 && (
         <Box sx={{ mb: 1 }}>
           {olderRounds.map((round) => (
-            <RoundCard key={round.round_number} round={round} thresholds={run.config?.thresholds} agents={agents} />
+            <TimelineRow key={round.round_number}>
+              <RoundCard round={round} thresholds={run.config?.thresholds} agents={agents} />
+            </TimelineRow>
           ))}
           {latestRound && (
-            <Divider sx={{ my: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <CheckCircleIcon sx={{ fontSize: 12, color: 'success.main' }} />
-                <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1, fontSize: '0.65rem' }}>
-                  {olderRounds.length} earlier {olderRounds.length === 1 ? 'round' : 'rounds'}
-                </Typography>
-              </Box>
-            </Divider>
+            <Typography
+              variant="overline"
+              color="text.secondary"
+              sx={(theme) => ({
+                display: 'block',
+                pl: '32px',
+                py: 0.5,
+                lineHeight: 1,
+                fontSize: '0.65rem',
+                fontFamily: theme.tokens?.typography.mono ?? 'monospace',
+              })}
+            >
+              {olderRounds.length} earlier {olderRounds.length === 1 ? 'round' : 'rounds'}
+            </Typography>
           )}
         </Box>
       )}
 
       {/* Current round */}
       {latestRound && (
-        <Box>
+        <TimelineRow active={roundInProgress}>
           <RoundCard
             round={latestRound}
             thresholds={run.config?.thresholds}
@@ -247,7 +278,7 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
               noRespondTarget={!awaitingStep || !!pendingCodeContext}
             />
           )}
-        </Box>
+        </TimelineRow>
       )}
 
       <Snackbar
