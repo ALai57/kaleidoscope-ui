@@ -10,8 +10,12 @@ import { normalizeThemeConfig } from './theme/config';
 import { useThemeStore } from './store/themeStore';
 import { getThemes } from './api/themes';
 import { LoadingScreen } from './components/layout/LoadingScreen';
+import { ErrorScreen } from './components/layout/ErrorScreen';
 import { DarkModeToggle } from './components/layout/DarkModeToggle';
+import { startBugsnag, BugsnagErrorBoundary } from './monitoring/bugsnag';
 import App from './App';
+
+startBugsnag();
 
 const queryClient = new QueryClient();
 
@@ -78,14 +82,16 @@ const ThemedApp: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 ReactDOM.createRoot(document.getElementById('app')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider authConfig={authConfig}>
-        <ThemedApp>
-          <Suspense fallback={<LoadingScreen />}>
-            <App />
-          </Suspense>
-        </ThemedApp>
-      </AuthProvider>
-    </QueryClientProvider>
+    <BugsnagErrorBoundary FallbackComponent={ErrorScreen}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider authConfig={authConfig}>
+          <ThemedApp>
+            <Suspense fallback={<LoadingScreen />}>
+              <App />
+            </Suspense>
+          </ThemedApp>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BugsnagErrorBoundary>
   </React.StrictMode>
 );
