@@ -6,19 +6,16 @@ import { setupServer } from 'msw/node';
 import { OnboardingDialog } from './OnboardingDialog';
 import { renderWithProviders } from './testHelpers';
 
-let curateCalls = 0;
 const server = setupServer(
   http.post('/interests', () => HttpResponse.json({ id: 'i9', intent: 'Jazz', 'taste-profile': {}, 'user-id': 'u', 'created-at': 'x', 'updated-at': 'x' })),
-  http.post('/interests/i9/curate', () => {
-    curateCalls += 1;
+  http.post('/interests/i9/curate', () =>
     // First curate asks for refinement; used by the clarify test.
-    return HttpResponse.json({ status: 'awaiting_input', 'run-id': 'run1', 'step-run-id': 'step1', questions: ['Which era?'] });
-  }),
+    HttpResponse.json({ status: 'awaiting_input', 'run-id': 'run1', 'step-run-id': 'step1', questions: ['Which era?'] })),
   http.post('/interests/i9/curation-runs/run1/steps/step1/respond', () =>
     HttpResponse.json({ status: 'completed', 'run-id': 'run1', summary: { total: 6, trusted: 3, novel: 3 }, shelved: [] })),
 );
 beforeAll(() => server.listen());
-afterEach(() => { server.resetHandlers(); curateCalls = 0; });
+afterEach(() => { server.resetHandlers(); });
 afterAll(() => server.close());
 
 describe('OnboardingDialog', () => {
