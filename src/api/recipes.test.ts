@@ -18,7 +18,7 @@ import {
   qualifiedLabelName,
 } from './recipes';
 import { ApiError } from './client';
-import type { Recipe, Timeline } from '../types/recipe';
+import type { Recipe } from '../types/recipe';
 
 const mockRecipe: Recipe = {
   id: 'r1',
