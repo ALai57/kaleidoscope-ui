@@ -37,6 +37,17 @@ describe('resolvePhaseSteps', () => {
     const orphan: TimelineComponent = { name: 'Ghost', steps_hash: 'x', phases: [] };
     expect(resolvePhaseSteps(phase, orphan, sections)).toEqual([]);
   });
+  it('resolves a duplicate-named component to the FIRST matching section (backend id-collision semantics)', () => {
+    const dupSections: RecipeSection[] = [
+      { name: 'Sauce', ingredients: [], steps: ['First sauce step'] },
+      { name: 'Sauce', ingredients: [], steps: ['Second sauce step'] },
+    ];
+    const comp: TimelineComponent = { name: 'Sauce', steps_hash: 'x', phases: [] };
+    const dupPhase: TimelinePhase = {
+      id: 'Sauce/Make', label: 'Make', kind: 'active', steps: [0], estimate: 5, deps: [],
+    };
+    expect(resolvePhaseSteps(dupPhase, comp, dupSections)).toEqual(['First sauce step']);
+  });
 });
 
 describe('effectiveDuration', () => {
