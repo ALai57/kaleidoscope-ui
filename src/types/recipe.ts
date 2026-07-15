@@ -43,6 +43,8 @@ export interface Recipe {
   // Present when the recipe was created from a scrape; gates the import-lineage
   // strip. Absent/null on a manually-created recipe.
   scrape_processing_run_id?: string | null;
+  // Derived cook timeline (nullable until generated). See cook-timeline plan.
+  timeline?: Timeline | null;
 }
 
 export interface RecipeDraft {
@@ -89,4 +91,36 @@ export interface UpdateRecipePayload {
   source_url?: string | null;
   label_ids?: string[];
   public_visibility?: boolean;
+}
+
+export type TimelineKind = 'active' | 'passive';
+
+export interface TimelinePhase {
+  id: string; // "{component-id}/{label}"
+  label: string; // unique within its component
+  kind: TimelineKind;
+  steps: number[]; // indices into THIS component's section steps
+  estimate: number; // LLM minutes
+  deps: string[]; // phase ids this phase waits on
+  start?: number | null; // packer output — minutes from t0
+}
+
+export interface TimelineComponent {
+  name: string; // component-id / lane label
+  steps_hash: string;
+  phases: TimelinePhase[];
+}
+
+export interface TimelineOverride {
+  phase: string; // a TimelinePhase.id
+  minutes: number;
+}
+
+export interface Timeline {
+  version: number;
+  generator_version: number;
+  generated_at: string;
+  total_minutes: number;
+  overrides: TimelineOverride[];
+  components: TimelineComponent[];
 }
