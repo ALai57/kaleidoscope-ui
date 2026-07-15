@@ -8,6 +8,7 @@ import type {
   RecipeDraft,
   CreateRecipePayload,
   UpdateRecipePayload,
+  Timeline,
 } from '../types/recipe';
 import type { RecipeLineage } from '../types/lineage';
 
@@ -71,6 +72,15 @@ export function getRecipeLineage(
 ): Promise<RecipeLineage> {
   const qs = includeRaw ? '?include-raw=true' : '';
   return request<RecipeLineage>(`/recipes/${slug}/lineage${qs}`, { token });
+}
+
+/** Regenerate + persist a recipe's cook timeline from current content
+ *  (writer-only; LLM only when steps changed). Non-writers get 404. */
+export function regenerateTimeline(slug: string, token?: string): Promise<Timeline> {
+  return request<{ timeline: Timeline }>(`/recipes/${slug}/timeline`, {
+    method: 'POST',
+    token,
+  }).then((r) => r.timeline);
 }
 
 // Multipart upload; one part per image (keyed by index, not filename).

@@ -10,6 +10,7 @@ import {
   importRecipeFromUrl,
   importRecipeFromPhoto,
   getRecipeLineage,
+  regenerateTimeline,
   getLabels,
   createLabel,
   createLabelGroup,
@@ -17,7 +18,7 @@ import {
   qualifiedLabelName,
 } from './recipes';
 import { ApiError } from './client';
-import type { Recipe } from '../types/recipe';
+import type { Recipe, Timeline } from '../types/recipe';
 
 const mockRecipe: Recipe = {
   id: 'r1',
@@ -243,5 +244,26 @@ describe('qualifiedLabelName', () => {
       'ethnicity/indian'
     );
     expect(qualifiedLabelName({ id: '2', name: 'baking' })).toBe('baking');
+  });
+});
+
+describe('regenerateTimeline', () => {
+  it('POSTs to the timeline route and unwraps { timeline }', async () => {
+    let method = '';
+    server.use(
+      http.post('/recipes/miso-salmon/timeline', ({ request }) => {
+        method = request.method;
+        return HttpResponse.json({
+          timeline: {
+            version: 1, generator_version: 1, generated_at: 'now', total_minutes: 12,
+            overrides: [], components: [],
+          },
+        });
+      })
+    );
+    const tl = await regenerateTimeline('miso-salmon', 'tok');
+    expect(method).toBe('POST');
+    expect(tl.total_minutes).toBe(12);
+    expect(tl.components).toEqual([]);
   });
 });
