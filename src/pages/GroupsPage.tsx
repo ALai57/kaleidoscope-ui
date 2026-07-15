@@ -164,7 +164,12 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
             Members
           </Typography>
           {memberCount === 0 ? (
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                mb: 1
+              }}>
               No members yet — add one below.
             </Typography>
           ) : (
@@ -192,7 +197,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
                   <ListItemText
                     primary={m.alias ?? m.email}
                     secondary={m.alias ? m.email : undefined}
-                    secondaryTypographyProps={{ sx: { fontFamily: mono, fontSize: '0.72rem' } }}
+                    slotProps={{ secondary: { sx: { fontFamily: mono, fontSize: '0.72rem' } } }}
                   />
                 </ListItem>
               ))}
@@ -212,7 +217,9 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1}
-            alignItems={{ sm: 'flex-start' }}
+            sx={{
+              alignItems: { sm: 'flex-start' }
+            }}
           >
             <TextField
               size="small"
@@ -266,7 +273,6 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
           </Button>
         </AccordionDetails>
       </Accordion>
-
       <ConfirmDialog
         open={confirmDeleteGroup}
         title="Delete Group"
@@ -277,7 +283,6 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
         }}
         onCancel={() => setConfirmDeleteGroup(false)}
       />
-
       <ConfirmDialog
         open={confirmDeleteMemberId !== null}
         title="Remove Member"
@@ -423,7 +428,13 @@ const GroupsPage: React.FC = () => {
             {!isLoading && (
               <>
                 {/* Count chip + search filter */}
-                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{
+                    alignItems: "center",
+                    mb: 2
+                  }}>
                   <Chip
                     label={`${groups.length} ${groups.length === 1 ? 'group' : 'groups'}`}
                     size="small"
@@ -436,12 +447,14 @@ const GroupsPage: React.FC = () => {
                       value={searchFilter}
                       onChange={(e) => setSearchFilter(e.target.value)}
                       sx={{ flex: 1 }}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <SearchIcon fontSize="small" />
-                          </InputAdornment>
-                        ),
+                      slotProps={{
+                        input: {
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <SearchIcon fontSize="small" />
+                            </InputAdornment>
+                          ),
+                        },
                       }}
                     />
                   )}
@@ -460,7 +473,9 @@ const GroupsPage: React.FC = () => {
 
                 {/* No search results */}
                 {groups.length > 0 && filteredGroups.length === 0 && (
-                  <Typography color="text.secondary">
+                  <Typography sx={{
+                    color: "text.secondary"
+                  }}>
                     No groups match &ldquo;{searchFilter}&rdquo;
                   </Typography>
                 )}
@@ -482,7 +497,6 @@ const GroupsPage: React.FC = () => {
           </Box>
         </Box>
       </PrismThemeProvider>
-
       {/* Feedback snackbar — intentionally OUTSIDE the Prism wrap (separate P3 row) */}
       <Snackbar
         open={snackbar !== null}

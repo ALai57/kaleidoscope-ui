@@ -52,7 +52,12 @@ const RecipePage: React.FC = () => {
         {!isLoading && !recipe && <Typography>Recipe not found.</Typography>}
         {recipe && (
           <>
-            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Stack
+              direction="row"
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "flex-start"
+              }}>
               <Typography variant="h3" gutterBottom>
                 {recipe.content.title}
               </Typography>
@@ -68,7 +73,9 @@ const RecipePage: React.FC = () => {
               )}
             </Stack>
 
-            <Typography variant="subtitle1" color="text.secondary">
+            <Typography variant="subtitle1" sx={{
+              color: "text.secondary"
+            }}>
               {metaLine(recipe)}
             </Typography>
             {recipe.source_url && (
@@ -102,7 +109,12 @@ const RecipePage: React.FC = () => {
               </PrismThemeProvider>
             )}
             {!recipe.timeline && isAuthenticated && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 4 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  mt: 4
+                }}>
                 Save this recipe to generate a cook timeline.
               </Typography>
             )}

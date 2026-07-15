@@ -73,32 +73,47 @@ export const SkillsSection: React.FC<SkillsSectionProps> = ({ sections = SKILLS 
 
   return (
     <>
-    {sections.map((section) => (
-      <Grid key={section.title} item xs={11} sm={11} md={5} lg={5} xl={4}>
-        <SurfaceCard sx={{ margin: { xs: '5px', sm: '5px' } }}>
-          <Stack direction="column" width="100%" sx={{ p: 2 }}>
-            <Typography
-              component="h3"
-              sx={{ mb: 2, fontFamily: headingFamily, fontWeight: 700, fontSize: '1.1rem', lineHeight: 1.3 }}
-            >
-              {section.title}
-            </Typography>
-            {section.groups.map((group, groupIdx) => (
-              <Stack
-                key={groupIdx}
-                direction="row"
-                flexWrap="wrap"
-                sx={{ gap: { xs: '2px', sm: '4px', md: '6px' }, mb: 1 }}
+      {sections.map((section) => (
+        <Grid
+          key={section.title}
+          size={{
+            xs: 11,
+            sm: 11,
+            md: 5,
+            lg: 5,
+            xl: 4
+          }}>
+          <SurfaceCard sx={{ margin: { xs: '5px', sm: '5px' } }}>
+            <Stack
+              direction="column"
+              sx={{
+                width: "100%",
+                p: 2
+              }}>
+              <Typography
+                component="h3"
+                sx={{ mb: 2, fontFamily: headingFamily, fontWeight: 700, fontSize: '1.1rem', lineHeight: 1.3 }}
               >
-                {group.icons.map((icon) => (
-                  <SkillIcon key={icon.tooltipText} tooltipText={icon.tooltipText} src={icon.src} />
-                ))}
-              </Stack>
-            ))}
-          </Stack>
-        </SurfaceCard>
-      </Grid>
-    ))}
+                {section.title}
+              </Typography>
+              {section.groups.map((group, groupIdx) => (
+                <Stack
+                  key={groupIdx}
+                  direction="row"
+                  sx={{
+                    flexWrap: "wrap",
+                    gap: { xs: '2px', sm: '4px', md: '6px' },
+                    mb: 1
+                  }}>
+                  {group.icons.map((icon) => (
+                    <SkillIcon key={icon.tooltipText} tooltipText={icon.tooltipText} src={icon.src} />
+                  ))}
+                </Stack>
+              ))}
+            </Stack>
+          </SurfaceCard>
+        </Grid>
+      ))}
     </>
   );
 };

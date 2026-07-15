@@ -13,8 +13,8 @@ import Typography from '@mui/material/Typography';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutlined';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { alpha, useTheme } from '@mui/material/styles';
 import { getAgentPersona } from '../../types/agent';
@@ -138,7 +138,14 @@ const ResponseForm: React.FC<ResponseFormProps> = ({ stepRun, responding, onResp
   return (
     <Box sx={{ mt: 2 }}>
       <Divider sx={{ mb: 2 }} />
-      <Typography variant="caption" color="warning.main" fontWeight={600} sx={{ mb: 1, display: 'block' }}>
+      <Typography
+        variant="caption"
+        sx={{
+          color: "warning.main",
+          fontWeight: 600,
+          mb: 1,
+          display: 'block'
+        }}>
         Your input is needed to continue
       </Typography>
       <TextField
@@ -211,9 +218,10 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
 
   if (steps.length === 0) {
     return (
-      <Typography variant="body2" color="text.secondary">
-        No steps in this run.
-      </Typography>
+      <Typography variant="body2" sx={{
+        color: "text.secondary"
+      }}>No steps in this run.
+              </Typography>
     );
   }
 
@@ -345,9 +353,10 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
             {isStreaming && (
               <Typography
                 variant="caption"
-                color="primary.main"
-                sx={{ fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-              >
+                sx={{
+                  color: "primary.main",
+                  fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+                }}>
                 Running…
               </Typography>
             )}
@@ -357,9 +366,10 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
             {step.status === 'skipped' && (
               <Typography
                 variant="caption"
-                color="text.disabled"
-                sx={{ fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-              >
+                sx={{
+                  color: "text.disabled",
+                  fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+                }}>
                 Skipped
               </Typography>
             )}
@@ -386,7 +396,6 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
             </Tooltip>
           </Box>
         </AccordionSummary>
-
         {(hasOutput || isAwaitingInput) && (
           <AccordionDetails sx={{ pt: 0 }}>
             <Box sx={{ p: 1.5, maxHeight: isAwaitingInput ? 'none' : 400, overflowY: 'auto' }}>
@@ -437,7 +446,12 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  fontWeight: 500
+                }}>
                 Older iterations
               </Typography>
               <Chip
@@ -454,9 +468,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
                   <Typography
                     variant="overline"
-                    color="text.secondary"
-                    sx={{ lineHeight: 1, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-                  >
+                    sx={{
+                      color: "text.secondary",
+                      lineHeight: 1,
+                      fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+                    }}>
                     Round {idx + 1}
                   </Typography>
                   <CheckCircleIcon sx={{ fontSize: 14, color: 'success.main' }} />
@@ -467,7 +483,6 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
           </AccordionDetails>
         </Accordion>
       )}
-
       {/* Current (most recent) round */}
       {currentGroup && (
         <Box sx={{ mb: roundGroups.length > 1 || (seqGroup && seqGroup.steps.length > 0) ? 1.5 : 0 }}>
@@ -475,9 +490,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
               <Typography
                 variant="overline"
-                color="text.secondary"
-                sx={{ lineHeight: 1, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-              >
+                sx={{
+                  color: "text.secondary",
+                  lineHeight: 1,
+                  fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+                }}>
                 Round {currentRoundIdx + 1}
               </Typography>
             </Box>
@@ -485,7 +502,6 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
           {currentGroup.steps.map(renderStep)}
         </Box>
       )}
-
       {/* Sequential steps (Generate Tasks, etc.) */}
       {seqGroup && seqGroup.steps.length > 0 && (
         <Box sx={{ mt: roundGroups.length > 0 ? 0 : 0 }}>
@@ -493,9 +509,10 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
             <Divider sx={{ mb: 1.5 }}>
               <Typography
                 variant="overline"
-                color="text.secondary"
-                sx={{ fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-              >
+                sx={{
+                  color: "text.secondary",
+                  fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+                }}>
                 Next steps
               </Typography>
             </Divider>

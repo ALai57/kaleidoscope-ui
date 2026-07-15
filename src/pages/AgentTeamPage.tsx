@@ -74,7 +74,13 @@ const NewAgentDialog: React.FC<NewAgentDialogProps> = ({ open, onClose, onSubmit
         />
 
         {/* Emoji picker */}
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mb: 0.75
+          }}>
           Avatar
         </Typography>
         <Box
@@ -237,7 +243,12 @@ const AgentTeamPage: React.FC = () => {
       login={login}
     >
       <Box sx={{ maxWidth: 900, mx: 'auto', pb: 5 }}>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mb: 3
+          }}>
           Define the agents that evaluate and advise on your projects. Each agent has its own
           persona and system prompt.
         </Typography>
@@ -257,12 +268,25 @@ const AgentTeamPage: React.FC = () => {
         {/* Default agents */}
         {!isLoading && defaultAgents.length > 0 && (
           <Box sx={{ mb: 4 }}>
-            <Typography variant="overline" color="text.disabled" sx={{ letterSpacing: 1.2, display: 'block', mb: 1.5 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: "text.disabled",
+                letterSpacing: 1.2,
+                display: 'block',
+                mb: 1.5
+              }}>
               Built-in agents
             </Typography>
             <Grid container spacing={2}>
               {defaultAgents.map((agent) => (
-                <Grid key={agent.id} item xs={12} sm={6} md={4}>
+                <Grid
+                  key={agent.id}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4
+                  }}>
                   <AgentCard agent={agent} onEdit={setEditingAgent} />
                 </Grid>
               ))}
@@ -273,12 +297,25 @@ const AgentTeamPage: React.FC = () => {
         {/* Custom agents */}
         {!isLoading && customAgents.length > 0 && (
           <Box>
-            <Typography variant="overline" color="text.disabled" sx={{ letterSpacing: 1.2, display: 'block', mb: 1.5 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: "text.disabled",
+                letterSpacing: 1.2,
+                display: 'block',
+                mb: 1.5
+              }}>
               Custom agents
             </Typography>
             <Grid container spacing={2}>
               {customAgents.map((agent) => (
-                <Grid key={agent.id} item xs={12} sm={6} md={4}>
+                <Grid
+                  key={agent.id}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4
+                  }}>
                   <AgentCard agent={agent} onEdit={setEditingAgent} />
                 </Grid>
               ))}
@@ -298,7 +335,12 @@ const AgentTeamPage: React.FC = () => {
               borderStyle: 'dashed',
             }}
           >
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "text.secondary",
+                mb: 2
+              }}>
               No agents yet.
             </Typography>
             <Button variant="outlined" startIcon={<AddIcon />} onClick={() => setNewDialogOpen(true)}>
@@ -307,7 +349,6 @@ const AgentTeamPage: React.FC = () => {
           </Box>
         )}
       </Box>
-
       {/* Edit dialog */}
       <AgentEditorDialog
         open={!!editingAgent}
@@ -318,7 +359,6 @@ const AgentTeamPage: React.FC = () => {
         }}
         saving={updateMutation.isPending}
       />
-
       {/* New agent dialog */}
       <NewAgentDialog
         open={newDialogOpen}

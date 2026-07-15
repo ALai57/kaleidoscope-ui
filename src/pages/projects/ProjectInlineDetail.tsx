@@ -17,7 +17,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Popover from '@mui/material/Popover';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlined';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
@@ -126,7 +126,13 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
         <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.1, mb: 0.25 }}>
           {persona.shortName}
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mb: 1.5
+          }}>
           {persona.label}
         </Typography>
         <StatusChip
@@ -136,10 +142,11 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
           sx={{ fontWeight: 700, fontSize: '0.75rem' }}
         />
       </Box>
-
       <Box sx={{ px: 2, py: 1.75 }}>
         {run.dimensions.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             No dimensions scored.
           </Typography>
         ) : (
@@ -179,7 +186,14 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
                 </Box>
                 <LinearProgress variant="determinate" value={pct} color={color} sx={{ height: 4, borderRadius: 2 }} />
                 {dim.rationale && (
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.45 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "text.secondary",
+                      display: 'block',
+                      mt: 0.5,
+                      lineHeight: 1.45
+                    }}>
                     {dim.rationale}
                   </Typography>
                 )}
@@ -365,18 +379,24 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           {/* Save state indicator */}
           {saveState === 'pending' && (
-            <Typography variant="caption" color="text.disabled">Unsaved changes</Typography>
+            <Typography variant="caption" sx={{
+              color: "text.disabled"
+            }}>Unsaved changes</Typography>
           )}
           {saveState === 'saving' && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <CircularProgress size={12} />
-              <Typography variant="caption" color="text.secondary">Saving…</Typography>
+              <Typography variant="caption" sx={{
+                color: "text.secondary"
+              }}>Saving…</Typography>
             </Box>
           )}
           {saveState === 'saved' && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <CheckIcon sx={{ fontSize: 14, color: 'success.main' }} />
-              <Typography variant="caption" color="success.main">Saved</Typography>
+              <Typography variant="caption" sx={{
+                color: "success.main"
+              }}>Saved</Typography>
             </Box>
           )}
 
@@ -407,7 +427,6 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
           </Button>
         </Box>
       </Box>
-
       {/* ── Title ── */}
       {project && (
         <motion.div
@@ -420,7 +439,6 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
           </Typography>
         </motion.div>
       )}
-
       {/* ── Editor (text flows in from left, suggesting it came from the card) ── */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
@@ -453,7 +471,12 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
             }}
           >
             {scores.length === 0 ? (
-              <Typography variant="caption" color="text.disabled" sx={{ mr: 0.5 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.disabled",
+                  mr: 0.5
+                }}>
                 No scores yet
               </Typography>
             ) : (
@@ -500,7 +523,6 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
           </Box>
         </Box>
       </motion.div>
-
       {/* ── Tabs ── */}
       <Divider sx={{ mt: 2.5, mb: 0 }} />
       <Tabs value={tab} onChange={(_, v) => setTab(v as number)} sx={{ mt: 1 }}>
@@ -508,7 +530,6 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
         <Tab label="Workflow" icon={<AccountTreeIcon />} iconPosition="start" />
         <Tab label="Tasks" icon={<ChecklistIcon />} iconPosition="start" />
       </Tabs>
-
       {tab === 0 && (
         <Box sx={{ pt: 2 }}>
           <ScoreHistory history={scoreHistory} />
@@ -524,7 +545,6 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
           <TasksTab projectId={projectId} token={token} />
         </Box>
       )}
-
       {/* Delete confirmation dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Delete "{project?.title}"?</DialogTitle>
@@ -546,7 +566,6 @@ export const ProjectInlineDetail: React.FC<ProjectInlineDetailProps> = ({ projec
           </Button>
         </DialogActions>
       </Dialog>
-
       {/* Score popover */}
       {(() => {
         const activeRun = scores.find((r) => r.id === activeScoreId) ?? null;

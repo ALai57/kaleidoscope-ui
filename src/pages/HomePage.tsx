@@ -39,7 +39,7 @@ interface FeatureCardProps {
 const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, to, icon }) => (
   // EntityCard/SurfaceCard are plain FCs (no RouterLink `to` in their props), so
   // the whole card is wrapped in a RouterLink rather than rendered `as` one.
-  <RouterLink
+  (<RouterLink
     to={to}
     className="feature-card"
     style={{ textDecoration: 'none', display: 'block', height: '100%' }}
@@ -91,11 +91,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, to, icon 
       }
       sx={{ height: '100%', color: 'text.primary' }}
     >
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" sx={{
+        color: "text.secondary"
+      }}>
         {description}
       </Typography>
     </EntityCard>
-  </RouterLink>
+  </RouterLink>)
 );
 
 // ── Page ───────────────────────────────────────────────────────────────────
@@ -134,7 +136,6 @@ const HomePage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       {/* Hero — a seed-derived accent wash over the page surface (no hardcoded
           white/gradient), so it re-colors with the active preset + mode. */}
       <Box
@@ -149,8 +150,14 @@ const HomePage: React.FC = () => {
         })}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={7}>
+          <Grid container spacing={4} sx={{
+            alignItems: "center"
+          }}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 7
+              }}>
               <Typography
                 sx={{
                   fontFamily: mono,
@@ -170,7 +177,13 @@ const HomePage: React.FC = () => {
               >
                 Andrew Lai
               </Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 520 }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: "text.secondary",
+                  mb: 4,
+                  maxWidth: 520
+                }}>
                 I build software, manage engineering teams, and write about the things I&#39;m
                 learning and figuring out along the way.
               </Typography>
@@ -183,7 +196,12 @@ const HomePage: React.FC = () => {
                 </Button>
               </Box>
             </Grid>
-            <Grid item xs={12} md={5} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Grid
+              sx={{ display: 'flex', justifyContent: 'center' }}
+              size={{
+                xs: 12,
+                md: 5
+              }}>
               <Box
                 component="img"
                 alt="Andrew Lai"
@@ -203,11 +221,14 @@ const HomePage: React.FC = () => {
           </Grid>
         </Container>
       </Box>
-
       {/* Feature cards */}
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <FeatureCard
               title="About Me"
               description="Personal bio, interests, and what I'm up to outside of work."
@@ -215,7 +236,11 @@ const HomePage: React.FC = () => {
               icon={<PersonIcon />}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <FeatureCard
               title="Experience"
               description="Professional background, skills, and full career history."
@@ -223,7 +248,11 @@ const HomePage: React.FC = () => {
               icon={<WorkIcon />}
             />
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <FeatureCard
               title="Writing"
               description="Articles on software, engineering leadership, and ideas."
@@ -233,12 +262,10 @@ const HomePage: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
-
       {/* Recent writing */}
       <Container maxWidth="lg" sx={{ pb: 6 }}>
         <PortfolioSection recentArticles={articles} />
       </Container>
-
       <Footer />
     </Box>
   );

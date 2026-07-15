@@ -24,7 +24,9 @@ export const ErrorScreen: React.FC<ErrorScreenProps> = ({ clearError }) => (
     }}
   >
     <Typography variant="h5">Something went wrong</Typography>
-    <Typography color="text.secondary">
+    <Typography sx={{
+      color: "text.secondary"
+    }}>
       An unexpected error occurred and has been reported. Please try again.
     </Typography>
     <Button variant="contained" onClick={clearError}>

@@ -63,7 +63,13 @@ const PortfolioCardItem: React.FC<{ card: PortfolioCard }> = ({ card }) => {
       )}
       <Box sx={{ p: 2, flexGrow: 1 }}>
         {card.date && (
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              display: 'block',
+              mb: 0.5
+            }}>
             {new Date(card.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
@@ -75,12 +81,20 @@ const PortfolioCardItem: React.FC<{ card: PortfolioCard }> = ({ card }) => {
           {card.title}
         </Typography>
         {card.description && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {card.description}
           </Typography>
         )}
         {card.tags && card.tags.length > 0 && (
-          <Stack direction="row" spacing={0.5} flexWrap="wrap" sx={{ mt: 1 }}>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            sx={{
+              flexWrap: "wrap",
+              mt: 1
+            }}>
             {card.tags.map((tag) => (
               <Chip key={tag} label={tag} size="small" />
             ))}
@@ -124,7 +138,13 @@ export const PortfolioSection: React.FC<PortfolioSectionProps> = ({
       />
       <Grid container spacing={2}>
         {cards.map((card) => (
-          <Grid key={card.id} item xs={12} sm={6} md={4}>
+          <Grid
+            key={card.id}
+            size={{
+              xs: 12,
+              sm: 6,
+              md: 4
+            }}>
             <PortfolioCardItem card={card} />
           </Grid>
         ))}

@@ -13,8 +13,8 @@ import { alpha, useTheme } from '@mui/material/styles';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlined';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
@@ -95,9 +95,13 @@ const DimensionList: React.FC<{ entry: ScoreSnapshotEntry }> = ({ entry }) => (
         {dim.rationale && (
           <Typography
             variant="caption"
-            color="text.secondary"
-            sx={{ display: 'block', fontSize: '0.68rem', lineHeight: 1.45, mt: 0.15 }}
-          >
+            sx={{
+              color: "text.secondary",
+              display: 'block',
+              fontSize: '0.68rem',
+              lineHeight: 1.45,
+              mt: 0.15
+            }}>
             {dim.rationale}
           </Typography>
         )}
@@ -180,12 +184,18 @@ const ScoreRow: React.FC<ScoreRowProps> = ({
 
         {/* Threshold label */}
         {threshold !== undefined && (
-          <Typography variant="caption" color="text.disabled" sx={{ minWidth: 44, textAlign: 'right', fontSize: '0.65rem' }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.disabled",
+              minWidth: 44,
+              textAlign: 'right',
+              fontSize: '0.65rem'
+            }}>
             need {threshold}
           </Typography>
         )}
       </Box>
-
       {/* Per-scorer dimension panel */}
       {hasDetails && (
         <Collapse in={active} timeout={180}>
@@ -219,7 +229,14 @@ const TradeOffList: React.FC<{ tradeOffs: TradeOff[] }> = ({ tradeOffs }) => (
           <Typography variant="caption" sx={{ fontWeight: 600, display: 'block', lineHeight: 1.3 }}>
             {t.name}
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.67rem', lineHeight: 1.4 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              display: 'block',
+              fontSize: '0.67rem',
+              lineHeight: 1.4
+            }}>
             {t.description}
           </Typography>
           <Typography
@@ -262,7 +279,14 @@ const RecommendationList: React.FC<{ recommendations: Recommendation[] }> = ({ r
                   sx={{ height: 14, fontSize: '0.6rem', fontWeight: 700, px: 0 }} />
               )}
             </Box>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', fontSize: '0.67rem', lineHeight: 1.4 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block',
+                fontSize: '0.67rem',
+                lineHeight: 1.4
+              }}>
               {r.rationale}
             </Typography>
           </Box>
@@ -346,7 +370,12 @@ export const RoundCard: React.FC<RoundCardProps> = ({
       {awaitingInput && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <PauseCircleOutlineIcon sx={{ fontSize: 14, color: 'warning.main' }} />
-          <Typography variant="caption" color="warning.main" sx={{ fontWeight: 600 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "warning.main",
+              fontWeight: 600
+            }}>
             Waiting for your input
           </Typography>
         </Box>
@@ -416,7 +445,14 @@ export const RoundCard: React.FC<RoundCardProps> = ({
 
           {/* Non-clarify: plain summary text */}
           {judge.decision.action !== 'clarify' && judge.summary && (
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.5, mb: 1 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block',
+                lineHeight: 1.5,
+                mb: 1
+              }}>
               {judge.summary}
             </Typography>
           )}
@@ -458,7 +494,12 @@ export const RoundCard: React.FC<RoundCardProps> = ({
                 expandIcon={<ExpandMoreIcon sx={{ fontSize: 14 }} />}
                 sx={{ px: 0, py: 0, minHeight: 'unset', '& .MuiAccordionSummary-content': { my: 0.25 } }}
               >
-                <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontStyle: 'italic'
+                  }}>
                   Analysis &amp; recommendations
                 </Typography>
               </AccordionSummary>
@@ -498,12 +539,23 @@ export const RoundCard: React.FC<RoundCardProps> = ({
                 expandIcon={<ExpandMoreIcon sx={{ fontSize: 14 }} />}
                 sx={{ px: 0, py: 0, minHeight: 'unset', '& .MuiAccordionSummary-content': { my: 0.25 } }}
               >
-                <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontStyle: 'italic'
+                  }}>
                   Reasoning
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 0, pt: 0 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.55, display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    lineHeight: 1.55,
+                    display: 'block'
+                  }}>
                   {judge.rationale}
                 </Typography>
               </AccordionDetails>

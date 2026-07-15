@@ -55,22 +55,28 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
       <TimelineOppositeContent sx={{ flex: 0.3 }}>
         <Typography
           component="div"
-          color="text.secondary"
-          sx={{ fontFamily: mono, fontWeight: 700, fontSize: '1.1rem', lineHeight: 1.2, letterSpacing: '0.02em' }}
-        >
+          sx={{
+            color: "text.secondary",
+            fontFamily: mono,
+            fontWeight: 700,
+            fontSize: '1.1rem',
+            lineHeight: 1.2,
+            letterSpacing: '0.02em'
+          }}>
           {until ?? year}
         </Typography>
         {since && (
           <Typography
             variant="body2"
-            color="text.secondary"
-            sx={{ fontFamily: mono, letterSpacing: '0.04em' }}
-          >
+            sx={{
+              color: "text.secondary",
+              fontFamily: mono,
+              letterSpacing: '0.04em'
+            }}>
             {`Since: ${since}`}
           </Typography>
         )}
       </TimelineOppositeContent>
-
       {/* Middle — dot + connector (token palette, no hardcoded black) */}
       <TimelineSeparator>
         <TimelineDot
@@ -86,7 +92,6 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
         </TimelineDot>
         <TimelineConnector sx={{ height: `${connectorHeight}px`, bgcolor: 'divider' }} />
       </TimelineSeparator>
-
       {/* Right column — content on the shared card surface */}
       <TimelineContent sx={{ py: 0, pr: 0 }}>
         <SurfaceCard
@@ -141,7 +146,13 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
           <Divider sx={{ my: 1 }} />
 
           {body.map((paragraph, i) => (
-            <Typography key={i} variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            <Typography
+              key={i}
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                mb: 1
+              }}>
               {paragraph}
             </Typography>
           ))}
@@ -149,7 +160,14 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
           {bullets && bullets.length > 0 && (
             <Box component="ul" sx={{ mt: 0.5, mb: 0, pl: 2.5 }}>
               {bullets.map((bullet, i) => (
-                <Typography key={i} component="li" variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                <Typography
+                  key={i}
+                  component="li"
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    mb: 0.5
+                  }}>
                   {bullet}
                 </Typography>
               ))}

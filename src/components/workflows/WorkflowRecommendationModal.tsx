@@ -57,9 +57,7 @@ export const WorkflowRecommendationModal: React.FC<WorkflowRecommendationModalPr
           />
         </Box>
       </DialogTitle>
-
       <Divider />
-
       <DialogContent sx={{ pt: 2 }}>
         {/* Workflow name */}
         <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5 }}>
@@ -68,7 +66,12 @@ export const WorkflowRecommendationModal: React.FC<WorkflowRecommendationModalPr
 
         {/* Rationale */}
         {top.rationale && (
-          <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              lineHeight: 1.6
+            }}>
             {top.rationale}
           </Typography>
         )}
@@ -84,19 +87,29 @@ export const WorkflowRecommendationModal: React.FC<WorkflowRecommendationModalPr
             borderColor: 'primary.100',
           }}
         >
-          <Typography variant="caption" color="primary.main" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "primary.main",
+              fontWeight: 600,
+              display: 'block',
+              mb: 0.5
+            }}>
             What happens next
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              lineHeight: 1.6
+            }}>
             Advisors will score your idea, a judge will review the scores and suggest improvements,
             and the cycle repeats — round by round — until the idea is sharp enough to execute.
             You can stop at any time.
           </Typography>
         </Box>
       </DialogContent>
-
       <Divider />
-
       <DialogActions sx={{ px: 2, py: 1.5, gap: 1 }}>
         <Button
           size="small"

@@ -133,8 +133,21 @@ export const Timeline: React.FC<TimelineProps> = ({ entries = TIMELINE_ENTRIES }
     setOpenGroups((s) => ({ ...s, [cat]: !isOpen(cat) }));
 
   return (
-    <Grid container display="flex" justifyContent="center">
-      <Grid item xs={12} sm={12} md={11} lg={10} xl={8} sx={{ padding: '0px' }}>
+    <Grid
+      container
+      sx={{
+        display: "flex",
+        justifyContent: "center"
+      }}>
+      <Grid
+        sx={{ padding: '0px' }}
+        size={{
+          xs: 12,
+          sm: 12,
+          md: 11,
+          lg: 10,
+          xl: 8
+        }}>
         {groups.map((group, groupIdx) => {
           const collapsible = COLLAPSED_BY_DEFAULT.has(group.category);
           const open = isOpen(group.category);

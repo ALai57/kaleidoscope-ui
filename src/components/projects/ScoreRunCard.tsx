@@ -40,9 +40,11 @@ const DimensionRow: React.FC<DimensionRowProps> = ({ name, value, rationale }) =
       {rationale && (
         <Typography
           variant="caption"
-          color="text.secondary"
-          sx={{ display: 'block', mt: 0.5 }}
-        >
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mt: 0.5
+          }}>
           {rationale}
         </Typography>
       )}
@@ -77,7 +79,12 @@ export const ScoreRunCard: React.FC<ScoreRunCardProps> = ({ scoreRun, defaultExp
             <Stack direction="row" spacing={1} sx={{ mt: 0.5 }}>
               <Chip label={`v${scoreRun.version}`} size="small" variant="outlined" />
               <Chip label={scorerLabel} size="small" variant="outlined" color="primary" />
-              <Typography variant="caption" color="text.disabled" sx={{ alignSelf: 'center' }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.disabled",
+                  alignSelf: 'center'
+                }}>
                 {new Date(scoreRun.scored_at).toLocaleDateString()}
               </Typography>
             </Stack>
@@ -98,16 +105,19 @@ export const ScoreRunCard: React.FC<ScoreRunCardProps> = ({ scoreRun, defaultExp
             >
               {scoreRun.overall.toFixed(1)}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               / 10
             </Typography>
           </Box>
         </Box>
       </AccordionSummary>
-
       <AccordionDetails>
         {scoreRun.dimensions.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             No dimensions scored.
           </Typography>
         ) : (

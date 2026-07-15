@@ -7,7 +7,7 @@ import InputBase from '@mui/material/InputBase';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { getAgentPersona } from '../../types/agent';
@@ -177,7 +177,12 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, ag
               {/* Agent selector */}
               <Box sx={{ mx: 1.5, borderTop: 1, borderColor: 'divider' }} />
               <Box sx={{ px: 1.5, py: 0.75, display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="caption" color="text.disabled" sx={{ flexShrink: 0 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.disabled",
+                    flexShrink: 0
+                  }}>
                   Agent
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5 }}>
@@ -212,7 +217,12 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, ag
                   })}
                 </Box>
                 {/* Selected agent name */}
-                <Typography variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    ml: 0.5
+                  }}>
                   {getAgentPersona(step.agent_type ?? 'coach', agents).name}
                 </Typography>
               </Box>
@@ -220,7 +230,6 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, ag
           </Box>
         </Box>
       ))}
-
       {/* Empty state */}
       {steps.length === 0 && (
         <Box
@@ -239,7 +248,6 @@ const WorkflowStepList: React.FC<WorkflowStepListProps> = ({ steps, onChange, ag
           <Typography variant="caption">Add the first step to define this workflow</Typography>
         </Box>
       )}
-
       <Button
         size="small"
         startIcon={<AddIcon />}

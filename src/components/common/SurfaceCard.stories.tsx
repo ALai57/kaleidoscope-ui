@@ -26,7 +26,9 @@ const SampleContent = () => (
       </Typography>
       <StatusChip status="executing" label="executing" variant="filled" sx={{ textTransform: 'capitalize' }} />
     </Box>
-    <Typography variant="body2" color="text.secondary">
+    <Typography variant="body2" sx={{
+      color: "text.secondary"
+    }}>
       Any content composes inside the shared surface.
     </Typography>
   </Box>

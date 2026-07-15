@@ -30,6 +30,6 @@ describe('NotificationCard', () => {
   it('renders an error icon by default', () => {
     const { container } = render(<NotificationCard title="Oops" />);
     // MUI icons have data-testid attributes
-    expect(container.querySelector('[data-testid="ErrorOutlineIcon"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="ErrorOutlinedIcon"]')).toBeTruthy();
   });
 });

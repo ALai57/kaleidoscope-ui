@@ -99,7 +99,13 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
         </Stack>
         <Stack spacing={0.5} sx={{ mb: 2 }}>
           {groups.map((g) => (
-            <Stack key={g.id} direction="row" alignItems="center" justifyContent="space-between">
+            <Stack
+              key={g.id}
+              direction="row"
+              sx={{
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}>
               <Typography>{g.name}</Typography>
               <IconButton size="small" aria-label={`delete group ${g.name}`} onClick={() => removeGroup.mutate(g.id)}>
                 <DeleteIcon fontSize="small" />
@@ -120,7 +126,7 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
             size="small"
             select
             label="Group"
-            SelectProps={{ native: true }}
+            slotProps={{ select: { native: true } }}
             value={newLabelGroup}
             onChange={(e) => setNewLabelGroup(e.target.value)}
             sx={{ minWidth: 140 }}
@@ -138,7 +144,13 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
         </Stack>
         <Stack spacing={0.5}>
           {labels.map((l: RecipeLabel) => (
-            <Stack key={l.id} direction="row" alignItems="center" justifyContent="space-between">
+            <Stack
+              key={l.id}
+              direction="row"
+              sx={{
+                alignItems: "center",
+                justifyContent: "space-between"
+              }}>
               <Typography>{qualifiedLabelName(l)}</Typography>
               <IconButton size="small" aria-label={`delete label ${l.name}`} onClick={() => removeLabel.mutate(l.id)}>
                 <DeleteIcon fontSize="small" />
@@ -249,7 +261,9 @@ const RecipesPage: React.FC = () => {
 
           {isLoading && <LoadingScreen />}
           {!isLoading && recipes.length === 0 && (
-            <Typography color="text.secondary">No recipes yet.</Typography>
+            <Typography sx={{
+              color: "text.secondary"
+            }}>No recipes yet.</Typography>
           )}
           <div
             style={{

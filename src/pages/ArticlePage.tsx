@@ -55,7 +55,9 @@ const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
             <Typography variant="h3" gutterBottom>
               {article.article_title}
             </Typography>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+            <Typography variant="subtitle2" gutterBottom sx={{
+              color: "text.secondary"
+            }}>
               {article.author && `By ${article.author}`}
               {article.author && article.created_at && ' · '}
               {article.created_at && new Date(article.created_at).toLocaleDateString()}
@@ -127,7 +129,6 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
           flexShrink: 0,
         }}
       />
-
       {/* Title + meta */}
       <Box sx={{ flexGrow: 1, minWidth: 0 }}>
         <Typography
@@ -139,25 +140,29 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
         {article.summary && (
           <Typography
             variant="body2"
-            color="text.secondary"
             sx={{
+              color: "text.secondary",
               mt: 0.25,
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
+              overflow: 'hidden'
+            }}>
             {article.summary}
           </Typography>
         )}
         {article.author && (
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, display: 'block' }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              mt: 0.25,
+              display: 'block'
+            }}>
             {article.author}
           </Typography>
         )}
       </Box>
-
       {/* Tag chip + date (right column) */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flexShrink: 0, gap: 0.5 }}>
         {article.article_tags && (
@@ -175,9 +180,12 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
         )}
         <Typography
           variant="caption"
-          color="text.secondary"
-          sx={{ whiteSpace: 'nowrap', minWidth: 90, textAlign: 'right' }}
-        >
+          sx={{
+            color: "text.secondary",
+            whiteSpace: 'nowrap',
+            minWidth: 90,
+            textAlign: 'right'
+          }}>
           {date}
         </Typography>
       </Box>
@@ -234,7 +242,12 @@ const ArchiveView: React.FC = () => {
         <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
           Archive
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mb: 3
+          }}>
           {isLoading ? 'Loading…' : `${filtered.length} article${filtered.length !== 1 ? 's' : ''}`}
         </Typography>
 
@@ -246,18 +259,32 @@ const ArchiveView: React.FC = () => {
             onChange={(e) => setSearch(e.target.value)}
             size="small"
             fullWidth
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              },
             }}
           />
 
-          <Stack direction="row" spacing={1} flexWrap="wrap" alignItems="center">
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              flexWrap: "wrap",
+              alignItems: "center"
+            }}>
             {/* Tag filters */}
-            <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ flexGrow: 1 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                flexWrap: "wrap",
+                flexGrow: 1
+              }}>
               <Chip
                 label="All"
                 onClick={() => setActiveTag(null)}
@@ -297,7 +324,12 @@ const ArchiveView: React.FC = () => {
 
         {/* Article list */}
         {!isLoading && filtered.length === 0 && (
-          <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
+          <Typography
+            sx={{
+              color: "text.secondary",
+              py: 4,
+              textAlign: 'center'
+            }}>
             No articles found.
           </Typography>
         )}

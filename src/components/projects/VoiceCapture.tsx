@@ -101,16 +101,16 @@ export const VoiceCapture: React.FC<VoiceCaptureProps> = ({ onAudioCaptured, dis
           </IconButton>
         </span>
       </Tooltip>
-
       {isRecording && (
         <Typography variant="caption" color="error" sx={{ fontWeight: 600 }}>
           {String(Math.floor(duration / 60)).padStart(2, '0')}:
           {String(duration % 60).padStart(2, '0')}
         </Typography>
       )}
-
       {isUploading && (
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{
+          color: "text.secondary"
+        }}>
           Transcribing…
         </Typography>
       )}

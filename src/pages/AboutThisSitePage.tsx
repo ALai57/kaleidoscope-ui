@@ -66,10 +66,16 @@ const AboutThisSitePage: React.FC = () => {
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <br />
-
       {/* Intro text */}
       <Grid {...GRID_CENTER}>
-        <Grid item xs={12} sm={11} md={10} lg={8} xl={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 11,
+            md: 10,
+            lg: 8,
+            xl: 6
+          }}>
           <Stack direction="column" sx={{ p: 2 }}>
             <Typography variant="body1">
               {'This website is hosted on the '}
@@ -91,13 +97,24 @@ const AboutThisSitePage: React.FC = () => {
           </Stack>
         </Grid>
       </Grid>
-
       {/* Tech cards row */}
       <Grid {...GRID_CENTER} spacing={1} sx={{ px: 2 }}>
         {/* Built With */}
-        <Grid item xs={11} sm={11} md={5} lg={5} xl={4}>
+        <Grid
+          size={{
+            xs: 11,
+            sm: 11,
+            md: 5,
+            lg: 5,
+            xl: 4
+          }}>
           <Paper elevation={8} sx={{ margin: { xs: '5px', sm: '5px' } }}>
-            <Stack direction="column" width="100%" sx={{ p: 2 }}>
+            <Stack
+              direction="column"
+              sx={{
+                width: "100%",
+                p: 2
+              }}>
               <Typography variant="h4">Built With</Typography>
               <br />
 
@@ -125,9 +142,21 @@ const AboutThisSitePage: React.FC = () => {
         </Grid>
 
         {/* Deployed With */}
-        <Grid item xs={11} sm={11} md={5} lg={5} xl={4}>
+        <Grid
+          size={{
+            xs: 11,
+            sm: 11,
+            md: 5,
+            lg: 5,
+            xl: 4
+          }}>
           <Paper elevation={8} sx={{ margin: { xs: '5px', sm: '5px' } }}>
-            <Stack direction="column" width="100%" sx={{ p: 2 }}>
+            <Stack
+              direction="column"
+              sx={{
+                width: "100%",
+                p: 2
+              }}>
               <Typography variant="h4">Deployed with</Typography>
               <br />
 

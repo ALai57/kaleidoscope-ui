@@ -63,7 +63,6 @@ const SkillNode: React.FC<SkillNodeProps> = ({ skill, depth, onToggle }) => {
           }}
         />
       )}
-
       <Box
         sx={{
           display: 'flex',
@@ -96,13 +95,14 @@ const SkillNode: React.FC<SkillNodeProps> = ({ skill, depth, onToggle }) => {
             <Chip label={config.label} size="small" color={config.color} variant="outlined" />
           </Box>
           {skill.description && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {skill.description}
             </Typography>
           )}
         </Box>
       </Box>
-
       {hasChildren && (
         <Box sx={{ pl: 4, borderLeft: '2px solid', borderColor: 'divider', ml: 2 }}>
           {(skill.children ?? []).map((child) => (
@@ -122,9 +122,10 @@ interface SkillTreeProps {
 export const SkillTree: React.FC<SkillTreeProps> = ({ skills, onToggle }) => {
   if (skills.length === 0) {
     return (
-      <Typography variant="body2" color="text.secondary">
-        No skills generated yet. Click "Generate Skills" to identify the skill tree for this project.
-      </Typography>
+      <Typography variant="body2" sx={{
+        color: "text.secondary"
+      }}>No skills generated yet. Click "Generate Skills" to identify the skill tree for this project.
+              </Typography>
     );
   }
 

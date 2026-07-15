@@ -79,9 +79,10 @@ export const ScrutinySelector: React.FC<ScrutinySelectorProps> = ({ value, onCha
                 <Typography
                   component="span"
                   variant="caption"
-                  color="text.secondary"
-                  sx={{ ml: 0.75 }}
-                >
+                  sx={{
+                    color: "text.secondary",
+                    ml: 0.75
+                  }}>
                   — {opt.description}
                 </Typography>
               </Box>

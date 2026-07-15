@@ -57,7 +57,6 @@ const ProjectDevelopPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Box sx={{ p: 3, maxWidth: 900, mx: 'auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Back + heading */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
@@ -87,7 +86,12 @@ const ProjectDevelopPage: React.FC = () => {
         </Tabs>
 
         {selectedAgent && (
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              mb: 2
+            }}>
             {selectedAgent.description}
           </Typography>
         )}

@@ -59,11 +59,15 @@ const WorkflowCard: React.FC<WorkflowCardProps> = ({ workflow, onEdit, onArchive
       }
     >
       {workflow.description && (
-        <Typography variant="body2" color="text.secondary" noWrap>
+        <Typography variant="body2" noWrap sx={{
+          color: "text.secondary"
+        }}>
           {workflow.description}
         </Typography>
       )}
-      <Typography variant="caption" color="text.disabled">
+      <Typography variant="caption" sx={{
+        color: "text.disabled"
+      }}>
         {stepCount} step{stepCount !== 1 ? 's' : ''}
       </Typography>
     </EntityCard>

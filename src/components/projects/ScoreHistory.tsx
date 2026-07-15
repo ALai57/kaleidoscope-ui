@@ -26,9 +26,10 @@ export const ScoreHistory: React.FC<ScoreHistoryProps> = ({ history }) => {
 
   if (history.length === 0) {
     return (
-      <Typography variant="body2" color="text.secondary">
-        No scoring history yet.
-      </Typography>
+      <Typography variant="body2" sx={{
+        color: "text.secondary"
+      }}>No scoring history yet.
+              </Typography>
     );
   }
 
@@ -55,7 +56,6 @@ export const ScoreHistory: React.FC<ScoreHistoryProps> = ({ history }) => {
           })}
         </Select>
       </Box>
-
       <Box sx={{ position: 'relative', pl: 3 }}>
         {/* Timeline vertical line */}
         <Box
@@ -88,7 +88,9 @@ export const ScoreHistory: React.FC<ScoreHistoryProps> = ({ history }) => {
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
               <Chip label={`v${run.version}`} size="small" color={idx === 0 ? 'primary' : 'default'} />
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{
+                color: "text.secondary"
+              }}>
                 {new Date(run.scored_at).toLocaleString()}
               </Typography>
               <StatusChip
@@ -100,7 +102,12 @@ export const ScoreHistory: React.FC<ScoreHistoryProps> = ({ history }) => {
 
             {run.dimensions.map((dim) => (
               <Box key={dim.dimension_name} sx={{ display: 'flex', gap: 1, ml: 1, mb: 0.25 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ minWidth: 120 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    minWidth: 120
+                  }}>
                   {dim.dimension_name}
                 </Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600 }}>

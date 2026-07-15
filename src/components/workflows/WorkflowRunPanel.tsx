@@ -16,7 +16,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HistoryIcon from '@mui/icons-material/History';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutlined';
 import {
   advanceRun,
   skipStep,
@@ -454,9 +454,11 @@ const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
         {/* Timestamp */}
         <Typography
           variant="caption"
-          color="text.secondary"
-          sx={{ flexShrink: 0, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-        >
+          sx={{
+            color: "text.secondary",
+            flexShrink: 0,
+            fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+          }}>
           {formatRelativeTime(timestamp)}
         </Typography>
 
@@ -464,12 +466,15 @@ const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
         {lastJudgeSummary && (
           <Typography
             variant="caption"
-            color="text.disabled"
             sx={{
-              flex: 1, overflow: 'hidden', textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap', fontSize: '0.68rem', minWidth: 0,
-            }}
-          >
+              color: "text.disabled",
+              flex: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: '0.68rem',
+              minWidth: 0
+            }}>
             — {lastJudgeSummary}
           </Typography>
         )}
@@ -499,19 +504,18 @@ const RunHistoryRow: React.FC<RunHistoryRowProps> = ({
           )}
           <Typography
             variant="caption"
-            color="text.disabled"
             sx={{
-              fontSize: '0.68rem', ml: 0.25,
-              fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace',
-            }}
-          >
+              color: "text.disabled",
+              fontSize: '0.68rem',
+              ml: 0.25,
+              fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+            }}>
             {isLoopRun
               ? `${roundCount} ${roundCount === 1 ? 'round' : 'rounds'}`
               : `${completedSteps}/${run.steps.length} steps`}
           </Typography>
         </Box>
       </AccordionSummary>
-
       <AccordionDetails sx={{ px: 1.5, pt: 1.25, pb: 1.5, borderTop: 1, borderColor: 'divider' }}>
         <WorkflowRunPanel projectId={projectId} run={run} token={token} />
       </AccordionDetails>
@@ -545,9 +549,11 @@ const StartRunControls: React.FC<StartRunControlsProps> = ({
           type="number"
           value={targetScoreInput}
           onChange={(e) => onTargetScoreChange(e.target.value)}
-          inputProps={{ min: 0, max: 10, step: 0.5 }}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+          slotProps={{
+            htmlInput: { min: 0, max: 10, step: 0.5 },
+            input: {
+              endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+            },
           }}
           placeholder="Optional"
           sx={{ width: 180 }}
@@ -656,9 +662,11 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
             <LiveDot size={9} color="primary.main" />
             <Typography
               variant="overline"
-              color="primary.main"
-              sx={{ lineHeight: 1, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
-            >
+              sx={{
+                color: "primary.main",
+                lineHeight: 1,
+                fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace'
+              }}>
               Run #{runNumberMap.get(activeRun.id)} — in progress
             </Typography>
             <StatusChip
@@ -680,7 +688,6 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
           <WorkflowRunPanel projectId={projectId} run={activeRun} token={token} />
         </Box>
       )}
-
       {/* ── Start new run (when no active run) ──────────────────────────── */}
       {!activeRun && (
         <Box sx={{ mb: historyRuns.length > 0 ? 2 : 0 }}>
@@ -698,7 +705,7 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
 
           {historyRuns.length > 0 ? (
             /* Has prior runs — compact "start new run" strip */
-            <Box
+            (<Box
               sx={{
                 display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap',
                 p: 1.5, border: 1, borderColor: 'divider', borderRadius: 1, bgcolor: 'action.hover',
@@ -712,9 +719,11 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
                   type="number"
                   value={targetScoreInput}
                   onChange={(e) => setTargetScoreInput(e.target.value)}
-                  inputProps={{ min: 0, max: 10, step: 0.5 }}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+                  slotProps={{
+                    htmlInput: { min: 0, max: 10, step: 0.5 },
+                    input: {
+                      endAdornment: <InputAdornment position="end">/ 10</InputAdornment>,
+                    },
                   }}
                   placeholder="Optional"
                   sx={{
@@ -736,10 +745,10 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
               >
                 Start new run
               </Button>
-            </Box>
+            </Box>)
           ) : (
             /* No runs yet — full start controls */
-            <StartRunControls
+            (<StartRunControls
               scrutiny={scrutiny}
               onScrutinyChange={setScrutiny}
               targetScoreInput={targetScoreInput}
@@ -747,17 +756,21 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
               onStart={() => startMutation.mutate(undefined)}
               starting={!!startMutation.isPending}
               label="Start run"
-            />
+            />)
           )}
         </Box>
       )}
-
       {/* ── Run history ──────────────────────────────────────────────────── */}
       {historyRuns.length > 0 && (
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, mb: 1 }}>
             <HistoryIcon sx={{ fontSize: 15, color: 'text.secondary' }} />
-            <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: "text.secondary",
+                lineHeight: 1
+              }}>
               Run history ({historyRuns.length})
             </Typography>
           </Box>
@@ -774,7 +787,6 @@ export const WorkflowTab: React.FC<WorkflowTabProps> = ({ projectId, token }) =>
           ))}
         </Box>
       )}
-
       {/* ── Empty state ──────────────────────────────────────────────────── */}
       {!activeRun && historyRuns.length === 0 && !startMutation.isPending && (
         <Box sx={{ mt: 2 }}>

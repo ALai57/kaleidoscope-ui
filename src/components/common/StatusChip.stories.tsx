@@ -22,7 +22,9 @@ export const Playground: Story = {
 /** Every tone with its default label. */
 export const AllTones: Story = {
   render: (args) => (
-    <Stack direction="row" spacing={1} flexWrap="wrap">
+    <Stack direction="row" spacing={1} sx={{
+      flexWrap: "wrap"
+    }}>
       <StatusChip {...args} status="success" />
       <StatusChip {...args} status="warning" />
       <StatusChip {...args} status="error" />
@@ -36,7 +38,9 @@ export const AllTones: Story = {
 /** Domain statuses resolve to the right tone (e.g. completed → success). */
 export const DomainStatuses: Story = {
   render: (args) => (
-    <Stack direction="row" spacing={1} flexWrap="wrap">
+    <Stack direction="row" spacing={1} sx={{
+      flexWrap: "wrap"
+    }}>
       <StatusChip {...args} status="completed" />
       <StatusChip {...args} status="failed" />
       <StatusChip {...args} status="awaiting_input" />
@@ -56,7 +60,9 @@ export const Filled: Story = {
  */
 export const WithDot: Story = {
   render: (args) => (
-    <Stack direction="row" spacing={1} flexWrap="wrap">
+    <Stack direction="row" spacing={1} sx={{
+      flexWrap: "wrap"
+    }}>
       <StatusChip {...args} dot status="running" />
       <StatusChip {...args} dot status="completed" />
       <StatusChip {...args} dot status="failed" />

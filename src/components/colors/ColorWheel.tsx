@@ -330,11 +330,13 @@ const ColorControl: React.FC<ColorControlProps> = ({
     className="color-control"
     sx={{ maxWidth: `${maxWidth}px`, position: 'relative', paddingRight: '10px' }}
   >
-    <Grid container spacing={2} alignItems="center">
-      <Grid item xs={9} className="slider-container">
+    <Grid container spacing={2} sx={{
+      alignItems: "center"
+    }}>
+      <Grid className="slider-container" size={9}>
         {sliderEl}
       </Grid>
-      <Grid item xs={3}>
+      <Grid size={3}>
         <Input
           className="slider-input"
           value={value}
@@ -466,9 +468,7 @@ export const ColorWheel: React.FC<ColorWheelProps> = ({
           theta={palette.theta}
         />
       </Stack>
-
       <br />
-
       <Stack direction="column" spacing={3}>
         {/* Hue control */}
         <ColorControl
@@ -553,8 +553,10 @@ export const ColorWheel: React.FC<ColorWheelProps> = ({
         {/* Angle control */}
         <Box sx={{ maxWidth: `${wheelDiameter}px` }}>
           <Typography>Secondary angle</Typography>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs>
+          <Grid container spacing={2} sx={{
+            alignItems: "center"
+          }}>
+            <Grid size="grow">
               <MuiSlider
                 value={palette.angle}
                 min={0}
@@ -565,7 +567,7 @@ export const ColorWheel: React.FC<ColorWheelProps> = ({
                 }}
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <Input
                 value={palette.angle}
                 onChange={(e) => updatePalette({ angle: Number(e.target.value) })}

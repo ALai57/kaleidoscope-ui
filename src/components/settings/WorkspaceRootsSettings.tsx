@@ -16,7 +16,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { getWorkspaceRoots, addWorkspaceRoot, deleteWorkspaceRoot } from '../../api/workspaceRoots';
 
@@ -53,7 +53,12 @@ const AddRootDialog: React.FC<AddRootDialogProps> = ({ open, onClose, onAdd, add
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Add workspace root</DialogTitle>
       <DialogContent>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mb: 2
+          }}>
           Register a directory where your codebases live. The Engineering Reviewer will look for
           matching subdirectories when reviewing a project.
         </Typography>
@@ -134,7 +139,9 @@ export const WorkspaceRootsSettings: React.FC<WorkspaceRootsSettingsProps> = ({ 
           <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
             Workspace roots
           </Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{
+            color: "text.secondary"
+          }}>
             Directories where your codebases live. Used by the Engineering Reviewer to find relevant
             code automatically.
           </Typography>
@@ -145,9 +152,7 @@ export const WorkspaceRootsSettings: React.FC<WorkspaceRootsSettingsProps> = ({ 
           </IconButton>
         </Tooltip>
       </Box>
-
       <Divider />
-
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
           <CircularProgress size={20} />
@@ -164,7 +169,9 @@ export const WorkspaceRootsSettings: React.FC<WorkspaceRootsSettingsProps> = ({ 
           }}
         >
           <FolderOpenIcon sx={{ fontSize: 32, opacity: 0.4 }} />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             No workspace roots registered yet.
           </Typography>
           <Button
@@ -216,7 +223,6 @@ export const WorkspaceRootsSettings: React.FC<WorkspaceRootsSettingsProps> = ({ 
           ))}
         </List>
       )}
-
       <AddRootDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}

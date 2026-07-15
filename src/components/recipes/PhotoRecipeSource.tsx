@@ -79,7 +79,9 @@ export const PhotoRecipeSource: React.FC<Props> = ({ onDraft }) => {
         }}
       >
         <Typography variant="body2">Drag photos here, or click to browse</Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{
+          color: "text.secondary"
+        }}>
           JPEG, PNG, WebP or GIF · up to 5 images
         </Typography>
         <input
@@ -112,7 +114,6 @@ export const PhotoRecipeSource: React.FC<Props> = ({ onDraft }) => {
           </Box>
         )}
       </Box>
-
       {previews.length > 0 && (
         <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap', gap: 1 }}>
           {files.map((file, i) => (
@@ -138,19 +139,22 @@ export const PhotoRecipeSource: React.FC<Props> = ({ onDraft }) => {
           ))}
         </Stack>
       )}
-
       {oversizeCount > 0 && (
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mt: 0.5
+          }}>
           {oversizeCount} photo{oversizeCount > 1 ? 's' : ''} will be resized before upload.
         </Typography>
       )}
-
       {rejections.map((r, i) => (
         <Alert key={i} severity="warning" sx={{ mt: 1 }}>
           {r.file.name}: {r.reason}
         </Alert>
       ))}
-
       <Button
         variant="outlined"
         sx={{ mt: 1 }}
@@ -159,7 +163,6 @@ export const PhotoRecipeSource: React.FC<Props> = ({ onDraft }) => {
       >
         {mutation.isPending ? 'Reading…' : `Import (${files.length})`}
       </Button>
-
       {mutation.isError && (
         <Alert severity="error" sx={{ mt: 1 }}>
           {errorMessage}

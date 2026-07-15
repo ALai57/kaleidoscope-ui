@@ -86,7 +86,12 @@ const WorkflowsPage: React.FC = () => {
       login={login}
     >
       <Box sx={{ maxWidth: 900, mx: 'auto' }}>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mb: 3
+          }}>
           Reusable step sequences applied to projects.
         </Typography>
 
@@ -148,7 +153,12 @@ const WorkflowsPage: React.FC = () => {
               borderStyle: 'dashed',
             }}
           >
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "text.secondary",
+                mb: 2
+              }}>
               No workflows yet. Create one to get started.
             </Typography>
             <Button

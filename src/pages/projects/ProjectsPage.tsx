@@ -189,10 +189,17 @@ const ProjectsPage: React.FC = () => {
 
         {!isLoading && projects.length === 0 && (
           <Box sx={{ textAlign: 'center', p: 8 }}>
-            <Typography variant="h6" color="text.secondary" gutterBottom>
+            <Typography variant="h6" gutterBottom sx={{
+              color: "text.secondary"
+            }}>
               No projects yet
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                mb: 3
+              }}>
               Create your first project to get started. It will be automatically scored for
               intent and architectural clarity.
             </Typography>
@@ -209,24 +216,30 @@ const ProjectsPage: React.FC = () => {
           // AnimatePresence is kept ONLY for the editor panel — wrapping the
           // card area in AnimatePresence caused exit-opacity to fight layoutId
           // and produced a double-reposition on cards that aren't in column 1.
-          <LayoutGroup>
+          (<LayoutGroup>
             <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: isSplitView ? 3 : 0 }}>
 
               {/* ── Card area (no AnimatePresence — let layoutId own the motion) ── */}
               <Box sx={{ width: isSplitView ? 280 : '100%', flexShrink: 0 }}>
                 {isSplitView ? (
                   /* Sidebar: the selected card drifts here via layoutId */
-                  <motion.div
+                  (<motion.div
                     layoutId={`project-card-${selectedProjectId}`}
                     transition={CARD_SPRING}
                   >
                     <ProjectCard project={selectedProject!} />
-                  </motion.div>
+                  </motion.div>)
                 ) : viewMode === 'list' ? (
                   /* Grid */
-                  <Grid container spacing={2}>
+                  (<Grid container spacing={2}>
                     {projects.map((project) => (
-                      <Grid key={project.id} item xs={12} sm={6} md={4}>
+                      <Grid
+                        key={project.id}
+                        size={{
+                          xs: 12,
+                          sm: 6,
+                          md: 4
+                        }}>
                         <motion.div
                           layoutId={`project-card-${project.id}`}
                           transition={CARD_SPRING}
@@ -238,10 +251,10 @@ const ProjectsPage: React.FC = () => {
                         </motion.div>
                       </Grid>
                     ))}
-                  </Grid>
+                  </Grid>)
                 ) : (
                   /* Graph */
-                  <ProjectGraph projects={projects} width={1140} height={600} />
+                  (<ProjectGraph projects={projects} width={1140} height={600} />)
                 )}
               </Box>
 
@@ -280,11 +293,10 @@ const ProjectsPage: React.FC = () => {
               </AnimatePresence>
 
             </Box>
-          </LayoutGroup>
+          </LayoutGroup>)
         )}
         </Box>
       </AdminLayout>
-
       <NewProjectDialog
         open={newDialogOpen}
         onClose={() => setNewDialogOpen(false)}

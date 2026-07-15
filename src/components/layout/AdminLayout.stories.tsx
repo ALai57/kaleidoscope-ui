@@ -32,7 +32,9 @@ export const Default: Story = {
       </Button>
     ),
     children: (
-      <Typography variant="body1" color="text.secondary">
+      <Typography variant="body1" sx={{
+        color: "text.secondary"
+      }}>
         Page content sits here, to the right of the rail and under the top bar.
       </Typography>
     ),

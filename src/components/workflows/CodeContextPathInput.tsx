@@ -125,7 +125,6 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
 
         <StatusChip status="warning" label="Needs your input" variant="filled" />
       </Box>
-
       {/* Body */}
       <Box sx={{ px: 1.5, py: 1.5 }}>
         <Typography variant="body2" sx={{ mb: 1.5, fontWeight: 500 }}>
@@ -166,18 +165,21 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
           getOptionLabel={(option) =>
             typeof option === 'string' ? option : option.path
           }
-          isOptionEqualToValue={(option, value) => option.path === value.path}
-          renderTags={(tagValues, getTagProps) =>
-            tagValues.map((option, index) => {
-              const { key, ...tagProps } = getTagProps({ index });
+          isOptionEqualToValue={(option, value) =>
+            typeof option !== 'string' && typeof value !== 'string' && option.path === value.path
+          }
+          renderValue={(value, getItemProps) =>
+            value.map((option, index) => {
+              const { key, ...itemProps } = getItemProps({ index });
+              const path = typeof option === 'string' ? option : option.path;
               return (
-                <Tooltip key={key} title={option.path} placement="top">
+                <Tooltip key={key} title={path} placement="top">
                   <Chip
-                    {...tagProps}
+                    {...itemProps}
                     icon={<FolderOpenIcon sx={{ fontSize: 14 }} />}
                     label={
                       <Typography component="span" sx={{ fontFamily: 'monospace', fontSize: '0.72rem' }}>
-                        {pathBasename(option.path)}
+                        {pathBasename(path)}
                       </Typography>
                     }
                     size="small"
@@ -196,7 +198,13 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
                     {option.isCustom ? `Add "${option.path}"` : option.path}
                   </Typography>
                   {option.reason && (
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.3 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: "text.secondary",
+                        display: 'block',
+                        lineHeight: 1.3
+                      }}>
                       {option.reason}
                     </Typography>
                   )}
@@ -213,7 +221,14 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
           )}
         />
 
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1.5, mb: 1.5 }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: "center",
+            mt: 1.5,
+            mb: 1.5
+          }}>
           <Button
             variant="contained"
             size="small"
@@ -247,7 +262,9 @@ export const CodeContextPathInput: React.FC<CodeContextPathInputProps> = ({
             />
           }
           label={
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               Remember {selectedPaths.length > 1 ? 'these paths' : 'this path'} for this project
             </Typography>
           }

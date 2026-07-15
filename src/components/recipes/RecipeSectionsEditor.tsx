@@ -76,7 +76,14 @@ export const RecipeSectionsEditor: React.FC<RecipeSectionsEditorProps> = ({
           {label}
         </Typography>
         {list.map((value, ri) => (
-          <Stack key={ri} direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+          <Stack
+            key={ri}
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: "center",
+              mb: 1
+            }}>
             <TextField
               fullWidth
               size="small"
@@ -121,7 +128,13 @@ export const RecipeSectionsEditor: React.FC<RecipeSectionsEditorProps> = ({
           sx={multi ? { p: 2, border: 1, borderColor: 'divider', borderRadius: 1 } : {}}
         >
           {multi && (
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+                mb: 1
+              }}>
               <TextField
                 fullWidth
                 size="small"

@@ -56,9 +56,10 @@ export const Table: React.FC<TableProps> = ({
         },
       }}
       rowHeight={rowHeight}
+      pageSizeOptions={[10, 25, 50]}
       disableRowSelectionOnClick
       sx={gridSx}
-      {...(Toolbar ? { slots: { toolbar: Toolbar } } : {})}
+      {...(Toolbar ? { slots: { toolbar: Toolbar }, showToolbar: true } : {})}
     />
   </Box>
 );

@@ -27,7 +27,7 @@ import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlined';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -152,7 +152,13 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
         </Typography>
 
         {/* Role label */}
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mb: 1.5
+          }}>
           {persona.label}
         </Typography>
 
@@ -164,11 +170,12 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
           sx={{ fontWeight: 700, fontSize: '0.75rem' }}
         />
       </Box>
-
       {/* ── Dimensions ── */}
       <Box sx={{ px: 2, py: 1.75 }}>
         {run.dimensions.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             No dimensions scored.
           </Typography>
         ) : (
@@ -227,9 +234,12 @@ const ScorePopoverContent: React.FC<ScorePopoverContentProps> = ({
                 {dim.rationale && (
                   <Typography
                     variant="caption"
-                    color="text.secondary"
-                    sx={{ display: 'block', mt: 0.5, lineHeight: 1.45 }}
-                  >
+                    sx={{
+                      color: "text.secondary",
+                      display: 'block',
+                      mt: 0.5,
+                      lineHeight: 1.45
+                    }}>
                     {dim.rationale}
                   </Typography>
                 )}
@@ -513,7 +523,6 @@ const ProjectDetailPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Box sx={{ p: 3, maxWidth: 1100, mx: 'auto' }}>
         {/* ── Title + status ── */}
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 1 }}>
@@ -606,14 +615,18 @@ const ProjectDetailPage: React.FC = () => {
           {/* Save state indicator */}
           <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 0.5 }}>
             {saveState === 'pending' && (
-              <Typography variant="caption" color="text.disabled">
+              <Typography variant="caption" sx={{
+                color: "text.disabled"
+              }}>
                 Unsaved changes
               </Typography>
             )}
             {saveState === 'saving' && (
               <>
                 <CircularProgress size={12} />
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   Saving…
                 </Typography>
               </>
@@ -621,7 +634,9 @@ const ProjectDetailPage: React.FC = () => {
             {saveState === 'saved' && (
               <>
                 <CheckIcon sx={{ fontSize: 14, color: 'success.main' }} />
-                <Typography variant="caption" color="success.main">
+                <Typography variant="caption" sx={{
+                  color: "success.main"
+                }}>
                   Saved
                 </Typography>
               </>
@@ -657,7 +672,12 @@ const ProjectDetailPage: React.FC = () => {
             }}
           >
             {scores.length === 0 ? (
-              <Typography variant="caption" color="text.disabled" sx={{ mr: 0.5 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.disabled",
+                  mr: 0.5
+                }}>
                 No scores yet
               </Typography>
             ) : (
@@ -780,7 +800,9 @@ const ProjectDetailPage: React.FC = () => {
           </Box>
 
           {notes.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               No notes yet.
             </Typography>
           ) : (
@@ -796,7 +818,9 @@ const ProjectDetailPage: React.FC = () => {
                     variant="outlined"
                     color={note.source === 'voice' ? 'secondary' : 'default'}
                   />
-                  <Typography variant="caption" color="text.disabled">
+                  <Typography variant="caption" sx={{
+                    color: "text.disabled"
+                  }}>
                     {new Date(note.created_at).toLocaleString()}
                   </Typography>
                 </Box>
@@ -821,7 +845,6 @@ const ProjectDetailPage: React.FC = () => {
           <TasksTab projectId={id!} token={token} />
         </TabPanel>
       </Box>
-
       {/* Strengthen this idea — recommendation modal */}
       {recData && recData.length > 0 && (
         <WorkflowRecommendationModal
@@ -832,7 +855,6 @@ const ProjectDetailPage: React.FC = () => {
           starting={startingRun}
         />
       )}
-
       {/* Delete confirmation dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
         <DialogTitle>Delete "{project.title}"?</DialogTitle>

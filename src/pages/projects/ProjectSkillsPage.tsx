@@ -67,7 +67,6 @@ const ProjectSkillsPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Box sx={{ p: 3, maxWidth: 900, mx: 'auto' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Button
@@ -86,10 +85,14 @@ const ProjectSkillsPage: React.FC = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           {totalCount > 0 && (
             <Stack direction="row" spacing={2}>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {masteredCount}/{totalCount} mastered
               </Typography>
-              <Typography variant="body2" color="primary.main">
+              <Typography variant="body2" sx={{
+                color: "primary.main"
+              }}>
                 {learningCount} in progress
               </Typography>
             </Stack>

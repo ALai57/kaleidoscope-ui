@@ -25,7 +25,13 @@ const ScoreSparkline: React.FC<ScoreSparklineProps> = ({ scores }) => {
             title={`${run.definition.name}: ${run.overall.toFixed(1)}/10 (v${run.version})`}
           >
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 48 }}>
-              <Typography variant="caption" color="text.secondary" noWrap sx={{ fontSize: '0.65rem' }}>
+              <Typography
+                variant="caption"
+                noWrap
+                sx={{
+                  color: "text.secondary",
+                  fontSize: '0.65rem'
+                }}>
                 {run.definition.name.split(' ')[0]}
               </Typography>
               <Box
@@ -97,22 +103,27 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onSelect }) =
           {project.description && (
             <Typography
               variant="body2"
-              color="text.secondary"
               sx={{
+                color: "text.secondary",
                 overflow: 'hidden',
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
-                mb: 1,
-              }}
-            >
+                mb: 1
+              }}>
               {project.description}
             </Typography>
           )}
 
           <ScoreSparkline scores={scores} />
 
-          <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 1 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.disabled",
+              display: 'block',
+              mt: 1
+            }}>
             {new Date(project.created_at).toLocaleDateString()}
           </Typography>
         </CardContent>

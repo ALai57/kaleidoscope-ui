@@ -72,14 +72,17 @@ const WorkflowActionBar: React.FC<WorkflowActionBarProps> = ({
           </span>
         </Tooltip>
       )}
-
       {/* Awaiting input hint — replaces Advance/Skip */}
       {isAwaitingInput && (
-        <Typography variant="caption" color="warning.main" sx={{ fontStyle: 'italic' }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "warning.main",
+            fontStyle: 'italic'
+          }}>
           Respond to the step above to continue
         </Typography>
       )}
-
       {/* Skip — only for pending steps, not awaiting_input (skip lives inline in the stepper) */}
       {!isAwaitingInput && currentStepRun && currentStepRun.status === 'pending' && (
         <Tooltip title="Skip this step">
@@ -96,7 +99,6 @@ const WorkflowActionBar: React.FC<WorkflowActionBarProps> = ({
           </span>
         </Tooltip>
       )}
-
       {/* Custom action */}
       <Tooltip title="Run a custom ad-hoc action">
         <span>
@@ -111,7 +113,6 @@ const WorkflowActionBar: React.FC<WorkflowActionBarProps> = ({
           </Button>
         </span>
       </Tooltip>
-
       {/* Mode toggle */}
       <Box sx={{ ml: 'auto' }}>
         <ToggleButtonGroup

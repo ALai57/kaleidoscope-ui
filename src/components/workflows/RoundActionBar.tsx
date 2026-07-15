@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlined';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 
 interface RoundActionBarProps {
@@ -112,17 +112,27 @@ export const RoundActionBar: React.FC<RoundActionBarProps> = ({
         </Tooltip>
 
         {roundInProgress && (
-          <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              fontStyle: 'italic'
+            }}>
             Wait for the round to finish to take action
           </Typography>
         )}
       </Box>
-
       {/* Context input (collapsed by default) */}
       <Collapse in={contextOpen}>
         <Box sx={{ mt: 1.25 }}>
           <Divider sx={{ mb: 1 }} />
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              display: 'block',
+              mb: 0.75
+            }}>
             Add context or clarification — this will be fed into the next refinement round.
           </Typography>
           <TextField

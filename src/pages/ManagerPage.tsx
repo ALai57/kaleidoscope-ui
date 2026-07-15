@@ -130,7 +130,12 @@ const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => {
         >
           {capability.name}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mt: 0.5
+          }}>
           {capability.description}
         </Typography>
       </CardActionArea>

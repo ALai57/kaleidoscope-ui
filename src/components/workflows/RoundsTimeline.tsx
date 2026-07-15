@@ -149,7 +149,12 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
     return (
       <Box>
         {rounds.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" sx={{ py: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              py: 1
+            }}>
             No round data recorded for this run.
           </Typography>
         ) : (
@@ -181,7 +186,9 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
       <Box sx={{ py: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <CircularProgress size={16} />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             Starting first round…
           </Typography>
         </Box>
@@ -202,22 +209,21 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
           {latestRound && (
             <Typography
               variant="overline"
-              color="text.secondary"
-              sx={(theme) => ({
+              sx={[{
+                color: "text.secondary"
+              }, (theme) => ({
                 display: 'block',
                 pl: '32px',
                 py: 0.5,
                 lineHeight: 1,
                 fontSize: '0.65rem',
                 fontFamily: theme.tokens?.typography.mono ?? 'monospace',
-              })}
-            >
+              })]}>
               {olderRounds.length} earlier {olderRounds.length === 1 ? 'round' : 'rounds'}
             </Typography>
           )}
         </Box>
       )}
-
       {/* Current round */}
       {latestRound && (
         <TimelineRow active={roundInProgress}>
@@ -280,7 +286,6 @@ export const RoundsTimeline: React.FC<RoundsTimelineProps> = ({ projectId, run, 
           )}
         </TimelineRow>
       )}
-
       <Snackbar
         open={respondSnackbar}
         autoHideDuration={3000}

@@ -90,7 +90,9 @@ export const ImageCard: React.FC<ImageCardProps> = ({
               <Typography gutterBottom variant="h5" component="div">
                 {image.title}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {image.body}
               </Typography>
             </CardContent>

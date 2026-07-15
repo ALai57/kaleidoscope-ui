@@ -30,8 +30,10 @@ export const Slider: React.FC<SliderProps> = ({
   return (
     <Box sx={{ maxWidth: '200px' }}>
       {title && <Typography>{title}</Typography>}
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs>
+      <Grid container spacing={2} sx={{
+        alignItems: "center"
+      }}>
+        <Grid size="grow">
           <MuiSlider
             value={value}
             min={min}
@@ -42,7 +44,7 @@ export const Slider: React.FC<SliderProps> = ({
             }}
           />
         </Grid>
-        <Grid item>
+        <Grid>
           <Input
             value={value}
             onChange={(event) => {

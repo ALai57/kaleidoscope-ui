@@ -130,14 +130,15 @@ const ScoreDefinitionsPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Box sx={{ p: 3, maxWidth: 900, mx: 'auto' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 700 }}>
               Score Definitions
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               Define how projects are evaluated. Defaults are seeded automatically.
             </Typography>
           </Box>
@@ -181,14 +182,21 @@ const ScoreDefinitionsPage: React.FC = () => {
                       <Chip label="Default" size="small" color="secondary" variant="outlined" />
                     )}
                   </Box>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "text.secondary",
+                      mb: 1
+                    }}>
                     {def.description}
                   </Typography>
 
                   {def.dimensions && def.dimensions.length > 0 && (
                     <>
                       <Divider sx={{ my: 1 }} />
-                      <Stack direction="row" spacing={1} flexWrap="wrap">
+                      <Stack direction="row" spacing={1} sx={{
+                        flexWrap: "wrap"
+                      }}>
                         {def.dimensions.map((dim) => (
                           <Tooltip key={dim.id} title={dim.criteria}>
                             <Chip label={dim.name} size="small" variant="outlined" />
@@ -230,7 +238,6 @@ const ScoreDefinitionsPage: React.FC = () => {
           ))}
         </Stack>
       </Box>
-
       {/* Create / Edit form */}
       {formOpen && (
         <ScoreDefinitionForm
@@ -241,7 +248,6 @@ const ScoreDefinitionsPage: React.FC = () => {
           isSubmitting={createMutation.isPending || updateMutation.isPending}
         />
       )}
-
       {/* Delete confirmation */}
       {deleting && (
         <DeleteDialog

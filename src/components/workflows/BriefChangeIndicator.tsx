@@ -58,7 +58,13 @@ export const BriefChangeIndicator: React.FC<BriefChangeIndicatorProps> = ({
         ) : (
           <PersonIcon sx={{ fontSize: 14, color: 'text.secondary', flexShrink: 0 }} />
         )}
-        <Typography variant="caption" color="text.secondary" sx={{ flex: 1, fontStyle: 'italic' }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            flex: 1,
+            fontStyle: 'italic'
+          }}>
           {label}
         </Typography>
         <Button
@@ -70,7 +76,6 @@ export const BriefChangeIndicator: React.FC<BriefChangeIndicatorProps> = ({
           See what changed
         </Button>
       </Box>
-
       <BriefDiffDialog
         open={diffOpen}
         onClose={() => setDiffOpen(false)}

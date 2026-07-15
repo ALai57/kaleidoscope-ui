@@ -17,7 +17,9 @@ export const Research: Story = { args: { taskType: 'research' } };
 /** All well-known task types. */
 export const AllTypes: Story = {
   render: (args) => (
-    <Stack direction="row" spacing={1} flexWrap="wrap">
+    <Stack direction="row" spacing={1} sx={{
+      flexWrap: "wrap"
+    }}>
       {['action', 'research', 'purchase', 'review', 'development', 'investigate'].map((t) => (
         <TaskTypeChip {...args} key={t} taskType={t} />
       ))}

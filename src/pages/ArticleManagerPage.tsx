@@ -106,9 +106,17 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
             <Divider sx={{ my: 2 }} />
             <Typography variant="subtitle2" gutterBottom>Current audiences</Typography>
             {uniqueAudiences.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">No audiences — article is private.</Typography>
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>No audiences — article is private.</Typography>
             ) : (
-              <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 1 }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  flexWrap: "wrap",
+                  mb: 1
+                }}>
                 {uniqueAudiences.map((a) => {
                   const group = groups.find((g: Group) => g.group_id === a.group_id);
                   const duplicates = audiences.filter((x) => x.group_id === a.group_id);
@@ -127,7 +135,9 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
             {availableGroups.length > 0 && (
               <>
                 <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>Add audience</Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap">
+                <Stack direction="row" spacing={1} sx={{
+                  flexWrap: "wrap"
+                }}>
                   {availableGroups.map((g: Group) => (
                     <Chip
                       key={g.group_id}

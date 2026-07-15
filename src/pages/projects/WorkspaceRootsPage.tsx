@@ -20,7 +20,12 @@ const WorkspaceRootsPage: React.FC = () => {
   return (
     <AdminLayout title="Workspace Roots" user={user} isAuthenticated={isAuthenticated} login={login}>
       <Box sx={{ maxWidth: 700, mx: 'auto', pb: 5 }}>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mb: 3
+          }}>
           Register directories where your codebases live. The Engineering Reviewer uses these to
           find and read relevant code when evaluating a project.
         </Typography>

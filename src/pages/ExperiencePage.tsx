@@ -26,14 +26,23 @@ const ExperiencePage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Box sx={{ flex: 1 }}>
         <Container maxWidth="lg" sx={{ py: 6 }}>
           {/* Hero — page title, intro, and quick-facts read as one unit: prose on
               the left, a compact fact rail on the right (stacked on mobile). */}
           <SectionHeading title="Experience" level="h1" sx={{ mb: 4 }} />
-          <Grid container spacing={4} alignItems="flex-start" sx={{ mb: 10 }}>
-            <Grid item xs={12} md={7}>
+          <Grid
+            container
+            spacing={4}
+            sx={{
+              alignItems: "flex-start",
+              mb: 10
+            }}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 7
+              }}>
               <Typography variant="body1" sx={{ mb: 2 }}>
                 As a professional, I&#39;m driven by the love of solving technical problems, working
                 with excellent teams, building and learning.
@@ -44,7 +53,11 @@ const ExperiencePage: React.FC = () => {
                 {", where I'm working on a platform that enables healthcare marketers to advertise in a privacy-first, HIPAA-compliant way."}
               </Typography>
             </Grid>
-            <Grid item xs={12} md={5}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 5
+              }}>
               <FactList
                 facts={[
                   { label: 'Current role', value: 'Eng. Manager' },
@@ -56,7 +69,13 @@ const ExperiencePage: React.FC = () => {
           </Grid>
 
           <SectionHeading title="Skills" level="h3" sx={{ mb: 3 }} />
-          <Grid container spacing={2} justifyContent="center" sx={{ mb: 10 }}>
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              justifyContent: "center",
+              mb: 10
+            }}>
             <SkillsSection />
           </Grid>
 
@@ -64,7 +83,6 @@ const ExperiencePage: React.FC = () => {
           <Timeline />
         </Container>
       </Box>
-
       <Footer />
     </Box>
   );

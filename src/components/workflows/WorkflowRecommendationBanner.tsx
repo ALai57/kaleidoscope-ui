@@ -72,7 +72,14 @@ const WorkflowRecommendationBanner: React.FC<WorkflowRecommendationBannerProps> 
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            <Typography variant="caption" color="primary.main" sx={{ fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.6 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "primary.main",
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: 0.6
+              }}>
               Suggested workflow
             </Typography>
             <Chip
@@ -86,7 +93,14 @@ const WorkflowRecommendationBanner: React.FC<WorkflowRecommendationBannerProps> 
             {top.name}
           </Typography>
           {top.rationale && (
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25, lineHeight: 1.5 }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block',
+                mt: 0.25,
+                lineHeight: 1.5
+              }}>
               {top.rationale}
             </Typography>
           )}
@@ -96,7 +110,6 @@ const WorkflowRecommendationBanner: React.FC<WorkflowRecommendationBannerProps> 
           <CloseIcon sx={{ fontSize: 14 }} />
         </IconButton>
       </Box>
-
       {/* Steps */}
       <Divider sx={{ borderColor: 'primary.100' }} />
       <Box sx={{ px: 2, py: 1.25 }}>
@@ -122,7 +135,12 @@ const WorkflowRecommendationBanner: React.FC<WorkflowRecommendationBannerProps> 
                 >
                   {i + 1}
                 </Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    lineHeight: 1.6
+                  }}>
                   {step.name}
                 </Typography>
               </Box>
@@ -130,7 +148,6 @@ const WorkflowRecommendationBanner: React.FC<WorkflowRecommendationBannerProps> 
           </Box>
         ) : null}
       </Box>
-
       {/* Action footer */}
       <Divider sx={{ borderColor: 'primary.100' }} />
       <Box sx={{ px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 1 }}>

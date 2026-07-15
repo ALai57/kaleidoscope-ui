@@ -83,7 +83,7 @@ export function LabelPicker({
 
   return (
     <>
-      <Autocomplete
+      <Autocomplete<Option, true, false, false>
         multiple
         options={labels as Option[]}
         value={selected as Option[]}
@@ -115,12 +115,12 @@ export function LabelPicker({
           const nextLabels = enforceOnePerGroup(selected, newValue as RecipeLabel[]);
           onChange(nextLabels.map((l) => l.id));
         }}
-        renderTags={(tagValue, getTagProps) =>
-          tagValue.map((option, index) => {
-            const tagProps = getTagProps({ index });
+        renderValue={(value, getItemProps) =>
+          value.map((option, index) => {
+            const { key: _key, ...itemProps } = getItemProps({ index });
             return (
               <Chip
-                {...tagProps}
+                {...itemProps}
                 key={isCreate(option) ? 'create' : option.id}
                 label={isCreate(option) ? option.inputValue : qualifiedLabelName(option)}
                 title={isCreate(option) ? option.inputValue : qualifiedLabelName(option)}

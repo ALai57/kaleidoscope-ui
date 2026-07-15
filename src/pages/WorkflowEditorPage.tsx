@@ -143,7 +143,6 @@ const WorkflowEditorPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Box sx={{ maxWidth: 720, mx: 'auto', px: 3, pt: 3, pb: 8 }}>
 
         {/* ── Breadcrumb ── */}
@@ -156,8 +155,16 @@ const WorkflowEditorPage: React.FC = () => {
           >
             Workflows
           </Button>
-          <Typography variant="body2" color="text.disabled">/</Typography>
-          <Typography variant="body2" color="text.secondary" noWrap sx={{ maxWidth: 260 }}>
+          <Typography variant="body2" sx={{
+            color: "text.disabled"
+          }}>/</Typography>
+          <Typography
+            variant="body2"
+            noWrap
+            sx={{
+              color: "text.secondary",
+              maxWidth: 260
+            }}>
             {isNew ? 'New workflow' : (name || workflow?.name || '…')}
           </Typography>
         </Box>
@@ -239,7 +246,14 @@ const WorkflowEditorPage: React.FC = () => {
 
           {/* Steps section */}
           <Box sx={{ px: 3, pt: 2.5, pb: 3 }}>
-            <Typography variant="overline" color="text.disabled" sx={{ letterSpacing: 1.2, display: 'block', mb: 2 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                color: "text.disabled",
+                letterSpacing: 1.2,
+                display: 'block',
+                mb: 2
+              }}>
               Steps
             </Typography>
 
@@ -276,7 +290,6 @@ const WorkflowEditorPage: React.FC = () => {
           </Box>
         </Box>
       </Box>
-
       {/* Saved confirmation */}
       <Snackbar
         open={savedSnack}

@@ -78,11 +78,19 @@ const AudienceManager: React.FC<AudienceManagerProps> = ({ articleId, token, ope
           Current audiences
         </Typography>
         {audiences.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             No audiences — article is private.
           </Typography>
         ) : (
-          <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              flexWrap: "wrap",
+              mb: 2
+            }}>
             {audiences.map((audience) => {
               const group = groups.find((g: Group) => g.group_id === audience.group_id);
               return (
@@ -103,7 +111,9 @@ const AudienceManager: React.FC<AudienceManagerProps> = ({ articleId, token, ope
             <Typography variant="subtitle2" gutterBottom>
               Add audience
             </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap">
+            <Stack direction="row" spacing={1} sx={{
+              flexWrap: "wrap"
+            }}>
               {availableGroups.map((group: Group) => (
                 <Chip
                   key={group.group_id}
@@ -277,7 +287,13 @@ const ArticleEditorPage: React.FC = () => {
           {/* ── New article mode ── */}
           {!slug && (
             <>
-              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: "center",
+                  mb: 2
+                }}>
                 <TextField
                   size="small"
                   label="Article title"
@@ -310,7 +326,13 @@ const ArticleEditorPage: React.FC = () => {
           {!branchesLoading && slug && (
             <>
               {/* Branch selector */}
-              <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: "center",
+                  mb: 2
+                }}>
                 <FormControl size="small" sx={{ minWidth: 200 }}>
                   <InputLabel>Branch</InputLabel>
                   <Select

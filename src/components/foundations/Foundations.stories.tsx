@@ -43,7 +43,12 @@ const Swatch = ({ name, value }: { name: string; value: string }) => {
         <Typography variant="caption" sx={{ display: 'block', fontWeight: 600 }}>
           {name}
         </Typography>
-        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.62rem' }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            fontSize: '0.62rem'
+          }}>
           {value}
         </Typography>
       </Box>
@@ -56,7 +61,9 @@ const Group = ({ title, entries }: { title: string; entries: [string, string][] 
     <Typography variant="h6" sx={{ mb: 1 }}>
       {title}
     </Typography>
-    <Stack direction="row" spacing={1.5} flexWrap="wrap" useFlexGap>
+    <Stack direction="row" spacing={1.5} useFlexGap sx={{
+      flexWrap: "wrap"
+    }}>
       {entries.map(([name, value]) => (
         <Swatch key={name} name={name} value={value} />
       ))}
@@ -89,13 +96,21 @@ export const Typography_: Story = {
           const s = tokens.typography.scale[step];
           return (
             <Box key={step} sx={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ width: 64, flexShrink: 0 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  width: 64,
+                  flexShrink: 0
+                }}>
                 {step}
               </Typography>
               <Box sx={{ fontSize: s.fontSize, fontWeight: s.fontWeight, lineHeight: s.lineHeight }}>
                 The quick brown fox
               </Box>
-              <Typography variant="caption" color="text.disabled">
+              <Typography variant="caption" sx={{
+                color: "text.disabled"
+              }}>
                 {s.fontSize} · {s.fontWeight}
               </Typography>
             </Box>
@@ -119,7 +134,9 @@ export const SpacingAndRadius: Story = {
               {name}
             </Typography>
             <Box sx={{ height: 12, width: px, bgcolor: 'primary.main', borderRadius: 0.5 }} />
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {px}px
             </Typography>
           </Box>

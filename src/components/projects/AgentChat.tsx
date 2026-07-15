@@ -129,13 +129,14 @@ export const AgentChat: React.FC<AgentChatProps> = ({ projectId, agent }) => {
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
           {AGENT_LABELS[agent]}
         </Typography>
-        <Typography variant="caption" color="text.secondary">
+        <Typography variant="caption" sx={{
+          color: "text.secondary"
+        }}>
           {agent === 'coach' && 'Helps you clarify and develop your project idea'}
           {agent === 'pm' && 'Evaluates product intent and user value'}
           {agent === 'engineering_lead' && 'Reviews technical design and architecture'}
         </Typography>
       </Box>
-
       <Box sx={{ flex: 1, overflowY: 'auto', p: 2 }}>
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
@@ -145,7 +146,9 @@ export const AgentChat: React.FC<AgentChatProps> = ({ projectId, agent }) => {
 
         {!isLoading && history.length === 0 && streamingContent === null && (
           <Box sx={{ textAlign: 'center', p: 4 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               Start the conversation by describing your project or asking a question.
             </Typography>
           </Box>
@@ -163,9 +166,7 @@ export const AgentChat: React.FC<AgentChatProps> = ({ projectId, agent }) => {
 
         <div ref={messagesEndRef} />
       </Box>
-
       <Divider />
-
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end' }}>
           <TextField

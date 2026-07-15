@@ -152,7 +152,12 @@ export const ImageBrowser: React.FC<ImageBrowserProps> = ({
         {mode === 'edit' ? (
           <Box sx={{ maxWidth: 240, display: 'flex', flexDirection: 'column', gap: 1, p: 1 }}>
             <DropTile onAdd={addPhoto} isUploading={isUploading} />
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                textAlign: 'center'
+              }}>
               No photos yet — add your first.
             </Typography>
           </Box>

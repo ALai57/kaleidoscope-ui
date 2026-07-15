@@ -138,7 +138,9 @@ export const ProjectGraph: React.FC<ProjectGraphProps> = ({
           borderRadius: 2,
         }}
       >
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{
+          color: "text.secondary"
+        }}>
           No projects to display.
         </Typography>
       </Box>

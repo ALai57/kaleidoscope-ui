@@ -52,10 +52,13 @@ export const Footer: React.FC = () => {
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={{ xs: 2, sm: 0 }}
-          justifyContent="space-between"
-          alignItems={{ xs: 'flex-start', sm: 'center' }}
-        >
-          <Stack direction="row" spacing={3} flexWrap="wrap">
+          sx={{
+            justifyContent: "space-between",
+            alignItems: { xs: 'flex-start', sm: 'center' }
+          }}>
+          <Stack direction="row" spacing={3} sx={{
+            flexWrap: "wrap"
+          }}>
             {NAV_LINKS.map(({ label, to }) => (
               <MuiLink key={to} component={RouterLink} to={to} underline="none" sx={linkSx}>
                 {label}

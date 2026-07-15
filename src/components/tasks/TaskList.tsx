@@ -53,9 +53,13 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   if (tasks.length === 0) {
     return (
-      <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-        No tasks yet. Tasks will be generated automatically when a workflow runs.
-      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          py: 2
+        }}>No tasks yet. Tasks will be generated automatically when a workflow runs.
+              </Typography>
     );
   }
 
@@ -66,9 +70,14 @@ export const TaskList: React.FC<TaskListProps> = ({
           <Box>
             <Typography
               variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', mb: 0.75, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}
-            >
+              sx={{
+                color: "text.secondary",
+                display: 'block',
+                mb: 0.75,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5
+              }}>
               What to do next
             </Typography>
             {localPending.map((task, index) => (
@@ -91,9 +100,14 @@ export const TaskList: React.FC<TaskListProps> = ({
             {localPending.length > 0 && <Divider sx={{ mb: 1.5 }} />}
             <Typography
               variant="caption"
-              color="text.secondary"
-              sx={{ display: 'block', mb: 0.75, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}
-            >
+              sx={{
+                color: "text.secondary",
+                display: 'block',
+                mb: 0.75,
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: 0.5
+              }}>
               Completed
             </Typography>
             {completed.map((task, index) => (

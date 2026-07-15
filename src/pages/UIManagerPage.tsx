@@ -99,7 +99,7 @@ const UIManagerPage: React.FC = () => {
             <Switch
               checked={mode === 'dark'}
               onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-              inputProps={{ 'aria-label': 'toggle dark mode' }}
+              slotProps={{ input: { 'aria-label': 'toggle dark mode' } }}
             />
           }
           label="Dark mode"
@@ -108,11 +108,12 @@ const UIManagerPage: React.FC = () => {
 
         {/* Color picker */}
         <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ mb: 3 }}
-        >
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            mb: 3
+          }}>
           <ColorPicker
             initialColor={currentColor}
             onChange={(color) => {
@@ -125,7 +126,12 @@ const UIManagerPage: React.FC = () => {
         </Box>
 
         {/* Save button */}
-        <Box display="flex" alignItems="center" justifyContent="center">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
           <Button
             text={saveThemeMutation.isPending ? 'Saving…' : 'Save theme'}
             onClick={handleSave}
@@ -134,7 +140,12 @@ const UIManagerPage: React.FC = () => {
         </Box>
 
         {saveThemeMutation.isSuccess && (
-          <Typography color="success.main" sx={{ mt: 1, textAlign: 'center' }}>
+          <Typography
+            sx={{
+              color: "success.main",
+              mt: 1,
+              textAlign: 'center'
+            }}>
             Theme saved!
           </Typography>
         )}

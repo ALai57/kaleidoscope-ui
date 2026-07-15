@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlined';
 import ReplayIcon from '@mui/icons-material/Replay';
 import { EntityCard } from '../common/EntityCard';
 import type {
@@ -24,7 +24,12 @@ const RefineBody: React.FC<{ decision: { action: 'refine'; agent_to_refine: stri
     <Typography variant="body2" sx={{ mb: 1 }}>
       {decision.summary}
     </Typography>
-    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+    <Typography
+      variant="caption"
+      sx={{
+        color: "text.secondary",
+        display: 'block'
+      }}>
       {decision.rationale}
     </Typography>
   </Box>
@@ -64,9 +69,16 @@ const ClarifyBody: React.FC<ClarifyBodyProps> = ({ decision, submitted, onRespon
           {decision.summary}
         </Typography>
         <Divider sx={{ my: 1.5 }} />
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           <ReplayIcon sx={{ fontSize: 16, color: 'primary.main' }} />
-          <Typography variant="caption" color="primary.main" fontWeight={600}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "primary.main",
+              fontWeight: 600
+            }}>
             Answers submitted — team is reviewing again…
           </Typography>
         </Stack>
@@ -79,16 +91,26 @@ const ClarifyBody: React.FC<ClarifyBodyProps> = ({ decision, submitted, onRespon
       <Typography variant="body2" sx={{ mb: 1 }}>
         {decision.summary}
       </Typography>
-      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
+      <Typography
+        variant="caption"
+        sx={{
+          color: "text.secondary",
+          display: 'block',
+          mb: 2
+        }}>
         {decision.rationale}
       </Typography>
-
       <Divider sx={{ mb: 2 }} />
-
-      <Typography variant="caption" color="warning.main" fontWeight={600} sx={{ mb: 1.5, display: 'block' }}>
+      <Typography
+        variant="caption"
+        sx={{
+          color: "warning.main",
+          fontWeight: 600,
+          mb: 1.5,
+          display: 'block'
+        }}>
         Your input is needed to continue
       </Typography>
-
       <Stack spacing={2}>
         {decision.questions.map((question, idx) => (
           <Box key={idx}>
@@ -108,7 +130,6 @@ const ClarifyBody: React.FC<ClarifyBodyProps> = ({ decision, submitted, onRespon
           </Box>
         ))}
       </Stack>
-
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 2 }}>
         <Button
           variant="contained"
@@ -146,7 +167,13 @@ const ProceedBody: React.FC<ProceedBodyProps> = ({ decision, taskGenRunning }) =
     <Typography variant="body2" sx={{ mb: 1 }}>
       {decision.summary}
     </Typography>
-    <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+    <Typography
+      variant="caption"
+      sx={{
+        color: "text.secondary",
+        display: 'block',
+        mb: 1.5
+      }}>
       {decision.rationale}
     </Typography>
 
@@ -163,14 +190,18 @@ const ProceedBody: React.FC<ProceedBodyProps> = ({ decision, taskGenRunning }) =
       {taskGenRunning ? (
         <>
           <CircularProgress size={14} />
-          <Typography variant="caption" color="primary.main">
+          <Typography variant="caption" sx={{
+            color: "primary.main"
+          }}>
             Generating task list…
           </Typography>
         </>
       ) : (
         <>
           <CheckCircleIcon sx={{ fontSize: 16, color: 'success.main' }} />
-          <Typography variant="caption" color="success.main">
+          <Typography variant="caption" sx={{
+            color: "success.main"
+          }}>
             Task list generated
           </Typography>
         </>
@@ -237,14 +268,24 @@ export const TeamLeadCard: React.FC<TeamLeadCardProps> = ({
           : 'divider';
 
   const headerAction = isRunning ? (
-    <Stack direction="row" spacing={0.5} alignItems="center">
+    <Stack direction="row" spacing={0.5} sx={{
+      alignItems: "center"
+    }}>
       <CircularProgress size={14} />
-      <Typography variant="caption" color="primary.main">
+      <Typography variant="caption" sx={{
+        color: "primary.main"
+      }}>
         Reviewing…
       </Typography>
     </Stack>
   ) : action ? (
-    <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color: ACTION_COLOR[action] }}>
+    <Stack
+      direction="row"
+      spacing={0.5}
+      sx={{
+        alignItems: "center",
+        color: ACTION_COLOR[action]
+      }}>
       {ACTION_ICON[action]}
       <Typography variant="caption" sx={{ color: ACTION_COLOR[action], fontWeight: 600 }}>
         {ACTION_LABEL[action]}

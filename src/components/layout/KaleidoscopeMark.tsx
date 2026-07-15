@@ -38,12 +38,13 @@ export const KaleidoscopeMark: React.FC<KaleidoscopeMarkProps> = ({ size = 30, c
     <Box
       component="svg"
       className={className}
-      width={size}
-      height={size}
       viewBox="0 0 30 30"
       aria-hidden="true"
-      sx={{ flexShrink: 0 }}
-    >
+      sx={{
+        width: size,
+        height: size,
+        flexShrink: 0
+      }}>
       {WEDGE_PATHS.map((d, i) => (
         <path key={d} d={d} fill={wedgeColors[i % wedgeColors.length]} />
       ))}

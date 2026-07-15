@@ -113,7 +113,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       >
         <DragIndicatorIcon fontSize="small" />
       </Box>
-
       {/* Checkbox */}
       <Checkbox
         size="small"
@@ -121,7 +120,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         onChange={() => onToggleStatus(task)}
         sx={{ p: 0.5, flexShrink: 0 }}
       />
-
       {/* Task content */}
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap' }}>
@@ -148,17 +146,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         {task.description && (
           <Typography
             variant="caption"
-            color="text.secondary"
-            sx={{ display: 'block', mt: 0.25 }}
-          >
+            sx={{
+              color: "text.secondary",
+              display: 'block',
+              mt: 0.25
+            }}>
             {task.description}
           </Typography>
         )}
       </Box>
-
       {/* Task type badge */}
       <TaskTypeChip taskType={task.task_type} />
-
       {/* Effort chip for non-investigate tasks */}
       {task.estimated_minutes != null && task.task_type !== 'investigate' && (
         <Chip
@@ -168,7 +166,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           sx={{ fontSize: '0.7rem', flexShrink: 0 }}
         />
       )}
-
       {/* Delete */}
       <IconButton
         size="small"

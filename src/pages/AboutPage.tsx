@@ -29,12 +29,17 @@ const AboutPage: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
       <Container maxWidth="md" sx={{ flex: 1, py: 6 }}>
         <SectionHeading title="About" level="h3" sx={{ mb: 4 }} />
 
-        <Grid container spacing={4} alignItems="flex-start">
-          <Grid item xs={12} sm={8}>
+        <Grid container spacing={4} sx={{
+          alignItems: "flex-start"
+        }}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 8
+            }}>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {'Welcome to my website! On this site, I write about '}
               <Link href="/archive">
@@ -47,13 +52,19 @@ const AboutPage: React.FC = () => {
               recipes, practicing Spanish, playing board games, or spending time outdoors. I&#39;ll
               also occasionally dance Tango socially, but it&#39;s been a while!
             </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            <Stack direction="row" spacing={1} useFlexGap sx={{
+              flexWrap: "wrap"
+            }}>
               {INTERESTS.map((interest) => (
                 <Chip key={interest} label={interest} size="small" variant="outlined" />
               ))}
             </Stack>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 4
+            }}>
             <Box
               component="img"
               alt="Andrew Lai"
@@ -76,7 +87,6 @@ const AboutPage: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
-
       <Footer />
     </Box>
   );

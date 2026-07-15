@@ -106,13 +106,18 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
           Edit {agent.name}
         </Box>
       </DialogTitle>
-
       {/* dividers keeps content from sliding under the sticky title when scrolling */}
       <DialogContent dividers>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
         {/* ── Emoji picker ── */}
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mb: 0.75
+          }}>
           Avatar
         </Typography>
         <Box
@@ -158,7 +163,13 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
         </Box>
 
         {/* ── Color picker ── */}
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.75 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mb: 0.75
+          }}>
           Color
         </Typography>
         <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', mb: 2.5 }}>
@@ -216,7 +227,6 @@ const AgentEditorDialog: React.FC<AgentEditorDialogProps> = ({
           helperText="Sent verbatim as the agent's system prompt before each step."
         />
       </DialogContent>
-
       <DialogActions>
         <Button onClick={onClose} disabled={!!saving}>Cancel</Button>
         <Button

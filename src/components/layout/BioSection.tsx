@@ -17,9 +17,15 @@ export const BioSection: React.FC<BioSectionProps> = ({ view }) => {
   switch (view) {
     case 'personal':
       return (
-        <Grid item {...BREAKPOINTS}>
-          <Grid container spacing={3} alignItems="flex-start">
-            <Grid item xs={12} sm={7}>
+        <Grid size={BREAKPOINTS}>
+          <Grid container spacing={3} sx={{
+            alignItems: "flex-start"
+          }}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 7
+              }}>
               <Typography variant="body1" sx={{ mb: 2 }}>
                 {'Welcome to my website! On this site, I write about '}
                 <Link href="/archive" variant="body1">
@@ -33,7 +39,11 @@ export const BioSection: React.FC<BioSectionProps> = ({ view }) => {
                 also occasionally dance Tango socially, but it&#39;s been a while!
               </Typography>
             </Grid>
-            <Grid item xs={12} sm={5}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 5
+              }}>
               <Box
                 component="img"
                 alt="Andrew Lai"
@@ -56,7 +66,7 @@ export const BioSection: React.FC<BioSectionProps> = ({ view }) => {
 
     case 'professional':
       return (
-        <Grid item {...BREAKPOINTS}>
+        <Grid size={BREAKPOINTS}>
           <Divider sx={{ mb: 2 }} />
           <Typography variant="h4" sx={{ mb: 2 }}>Software Engineering Leader</Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>

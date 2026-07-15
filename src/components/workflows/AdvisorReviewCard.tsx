@@ -91,13 +91,21 @@ const DimensionRow: React.FC<DimensionRowProps> = ({ name, value, status, ration
             {value.toFixed(1)} / 10
           </Typography>
         ) : (
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{
+            color: "text.secondary"
+          }}>
             {STATUS_LABELS[status]}
           </Typography>
         )}
       </Box>
       {rationale && status !== 'clear' && (
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+        <Typography
+          variant="caption"
+          sx={{
+            color: "text.secondary",
+            display: 'block',
+            mt: 0.25
+          }}>
           {rationale}
         </Typography>
       )}
@@ -155,16 +163,24 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
   );
 
   const headerAction = isRunning ? (
-    <Stack direction="row" spacing={0.5} alignItems="center">
+    <Stack direction="row" spacing={0.5} sx={{
+      alignItems: "center"
+    }}>
       <CircularProgress size={14} />
-      <Typography variant="caption" color="primary.main">
+      <Typography variant="caption" sx={{
+        color: "primary.main"
+      }}>
         Reviewing…
       </Typography>
     </Stack>
   ) : isFailed ? (
-    <Stack direction="row" spacing={0.5} alignItems="center">
+    <Stack direction="row" spacing={0.5} sx={{
+      alignItems: "center"
+    }}>
       <ErrorIcon color="error" sx={{ fontSize: 16 }} />
-      <Typography variant="caption" color="error.main">
+      <Typography variant="caption" sx={{
+        color: "error.main"
+      }}>
         Could not complete review
       </Typography>
     </Stack>
@@ -200,7 +216,9 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
       {!isRunning && (
         <>
           {isFailed && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {scoreOutput?.reason
                 ? `Reason: ${scoreOutput.reason}`
                 : 'The review could not be completed. This domain will be treated as uncertain.'}
@@ -225,7 +243,9 @@ export const AdvisorReviewCard: React.FC<AdvisorReviewCardProps> = ({
           )}
 
           {!isFailed && scoreOutput && scoreOutput.dimensions.length === 0 && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               No dimension breakdown available.
             </Typography>
           )}

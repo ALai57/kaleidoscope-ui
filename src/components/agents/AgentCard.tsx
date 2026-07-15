@@ -45,15 +45,14 @@ const AgentCard: React.FC<AgentCardProps> = ({ agent, onEdit }) => (
     {agent.system_prompt && (
       <Typography
         variant="caption"
-        color="text.secondary"
         sx={{
+          color: "text.secondary",
           display: '-webkit-box',
           WebkitLineClamp: 2,
           WebkitBoxOrient: 'vertical',
           overflow: 'hidden',
-          lineHeight: 1.45,
-        }}
-      >
+          lineHeight: 1.45
+        }}>
         {agent.system_prompt}
       </Typography>
     )}

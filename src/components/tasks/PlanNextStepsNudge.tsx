@@ -68,23 +68,40 @@ export const PlanNextStepsNudge: React.FC<PlanNextStepsNudgeProps> = ({ projectI
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
         <AutoAwesomeIcon sx={{ color: 'primary.main', mt: 0.25, flexShrink: 0 }} />
         <Box sx={{ flex: 1 }}>
-          <Typography variant="body2" fontWeight={600} sx={{ mb: 0.5 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 600,
+              mb: 0.5
+            }}>
             You're making great progress
           </Typography>
           {isGenerating ? (
             <Box>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  mb: 1
+                }}>
                 Planning your next steps…
               </Typography>
               {streamingText && (
-                <Typography variant="caption" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                    fontStyle: 'italic'
+                  }}>
                   {streamingText}
                 </Typography>
               )}
               <CircularProgress size={16} sx={{ ml: 1, verticalAlign: 'middle' }} />
             </Box>
           ) : (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               Ready to plan your next steps? ({status.pending_count} task
               {status.pending_count !== 1 ? 's' : ''} remaining)
             </Typography>

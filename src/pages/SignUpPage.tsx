@@ -46,8 +46,13 @@ const DomainSelector: React.FC<DomainSelectorProps> = ({
 
   return (
     <Paper elevation={10}>
-      <Grid container alignItems="center" sx={{ p: '10px' }}>
-        <Grid item xs={6}>
+      <Grid
+        container
+        sx={{
+          alignItems: "center",
+          p: '10px'
+        }}>
+        <Grid size={6}>
           <TextField
             size="small"
             variant="outlined"
@@ -57,7 +62,7 @@ const DomainSelector: React.FC<DomainSelectorProps> = ({
             onChange={(e) => setDomain(e.target.value)}
           />
         </Grid>
-        <Grid item xs={6} sx={{ pb: '10px' }}>
+        <Grid sx={{ pb: '10px' }} size={6}>
           <Button
             variant="contained"
             onClick={() => onCheck(domain)}
@@ -69,10 +74,14 @@ const DomainSelector: React.FC<DomainSelectorProps> = ({
           </Button>
         </Grid>
       </Grid>
-
       {domainAvailability !== null && (
-        <Grid container alignItems="center" sx={{ p: '10px' }}>
-          <Grid item xs={2}>
+        <Grid
+          container
+          sx={{
+            alignItems: "center",
+            p: '10px'
+          }}>
+          <Grid size={2}>
             {domainAvailability.available ? (
               <Tooltip title={`Domain \`${domainAvailability.domain}\` is available`}>
                 <CheckBoxIcon sx={{ color: 'green', fontSize: 60 }} />
@@ -83,7 +92,7 @@ const DomainSelector: React.FC<DomainSelectorProps> = ({
               </Tooltip>
             )}
           </Grid>
-          <Grid item xs={2}>
+          <Grid size={2}>
             <Button
               variant="contained"
               disabled={!domainAvailability.available}
@@ -259,9 +268,21 @@ const SignUpPage: React.FC = () => {
   return (
     <Box sx={{ height: '100%', width: '100%', position: 'absolute' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-
-      <Grid container alignItems="center" justifyContent="center" sx={{ p: 3 }}>
-        <Grid item xs={12} sm={10} md={8} lg={6} xl={4}>
+      <Grid
+        container
+        sx={{
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3
+        }}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 10,
+            md: 8,
+            lg: 6,
+            xl: 4
+          }}>
           <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map(({ label, caption, content }) => (
               <Step key={label}>

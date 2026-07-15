@@ -131,7 +131,12 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           <Box sx={{ minWidth: 0, flexGrow: 1 }}>
             {titleNode}
             {subtitle != null && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  mt: 0.25
+                }}>
                 {subtitle}
               </Typography>
             )}
@@ -139,10 +144,8 @@ export const EntityCard: React.FC<EntityCardProps> = ({
           {headerRight && <Box sx={{ flexShrink: 0 }}>{headerRight}</Box>}
         </Box>
       )}
-
       {/* Body */}
       {hasBody && <Box sx={isPanel ? { px: 1.5, py: 1 } : { mt: 1.5 }}>{children}</Box>}
-
       {/* Footer actions */}
       {hasActions && (
         <>
