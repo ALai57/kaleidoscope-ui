@@ -16,6 +16,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { alpha, useTheme } from '@mui/material/styles';
 import { getAgentPersona } from '../../types/agent';
 import type { Agent } from '../../types/agent';
 import type { AdvisorScoreOutput, JudgeDecisionOutput, PendingInputsCodeContextPath, StepRun, StepRunStatus } from '../../types/workflow';
@@ -24,6 +25,7 @@ import { AdvisorReviewCard } from './AdvisorReviewCard';
 import { CodeContextPathInput } from './CodeContextPathInput';
 import { TeamLeadCard } from './TeamLeadCard';
 import { StatusChip } from '../common/StatusChip';
+import { LiveDot } from '../common/LiveDot';
 
 // ── Content normalisation ─────────────────────────────────────────────────
 
@@ -113,7 +115,7 @@ const StatusIcon: React.FC<{ status: StepRunStatus }> = ({ status }) => {
     case 'skipped':
       return <RemoveCircleOutlineIcon color="disabled" sx={{ fontSize: 20 }} />;
     case 'running':
-      return <CircularProgress size={18} />;
+      return <LiveDot size={10} color="primary.main" />;
     case 'awaiting_input':
       return <PauseCircleOutlineIcon color="warning" sx={{ fontSize: 20 }} />;
     default:
@@ -205,6 +207,7 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
   onRememberPath,
 }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
+  const theme = useTheme();
 
   if (steps.length === 0) {
     return (
@@ -340,7 +343,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
               <Chip label="Custom" size="small" variant="outlined" color="secondary" />
             )}
             {isStreaming && (
-              <Typography variant="caption" color="primary.main">
+              <Typography
+                variant="caption"
+                color="primary.main"
+                sx={{ fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+              >
                 Running…
               </Typography>
             )}
@@ -348,7 +355,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
               <StatusChip status="warning" label="Needs your input" variant="filled" />
             )}
             {step.status === 'skipped' && (
-              <Typography variant="caption" color="text.disabled">
+              <Typography
+                variant="caption"
+                color="text.disabled"
+                sx={{ fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+              >
                 Skipped
               </Typography>
             )}
@@ -364,6 +375,10 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
                   justifyContent: 'center',
                   fontSize: '0.8rem',
                   flexShrink: 0,
+                  boxShadow: isStreaming
+                    ? `0 0 0 2px ${alpha(theme.palette.primary.main, 0.5)}`
+                    : 'none',
+                  transition: 'box-shadow 0.2s',
                 }}
               >
                 {persona.avatar}
@@ -437,7 +452,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
             {olderGroups.map((group, idx) => (
               <Box key={group.roundId} sx={{ mb: idx < olderGroups.length - 1 ? 1.5 : 0 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-                  <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1 }}>
+                  <Typography
+                    variant="overline"
+                    color="text.secondary"
+                    sx={{ lineHeight: 1, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+                  >
                     Round {idx + 1}
                   </Typography>
                   <CheckCircleIcon sx={{ fontSize: 14, color: 'success.main' }} />
@@ -454,7 +473,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
         <Box sx={{ mb: roundGroups.length > 1 || (seqGroup && seqGroup.steps.length > 0) ? 1.5 : 0 }}>
           {roundGroups.length > 1 && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.75 }}>
-              <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1 }}>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{ lineHeight: 1, fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+              >
                 Round {currentRoundIdx + 1}
               </Typography>
             </Box>
@@ -468,7 +491,11 @@ const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
         <Box sx={{ mt: roundGroups.length > 0 ? 0 : 0 }}>
           {roundGroups.length > 0 && (
             <Divider sx={{ mb: 1.5 }}>
-              <Typography variant="overline" color="text.secondary">
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{ fontFamily: (t) => t.tokens?.typography.mono ?? 'monospace' }}
+              >
                 Next steps
               </Typography>
             </Divider>
