@@ -23,6 +23,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { useTheme, alpha } from '@mui/material/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -84,6 +85,8 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
   const [newAlias, setNewAlias] = useState('');
   const [confirmDeleteGroup, setConfirmDeleteGroup] = useState(false);
   const [confirmDeleteMemberId, setConfirmDeleteMemberId] = useState<string | null>(null);
+  const theme = useTheme();
+  const mono = theme.tokens?.typography.mono ?? 'monospace';
 
   const addMemberMutation = useMutation({
     mutationFn: () =>
@@ -129,18 +132,35 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
 
   return (
     <>
-      <Accordion>
+      <Accordion
+        disableGutters
+        elevation={0}
+        sx={{
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: (t) => `${t.shape.borderRadius}px`,
+          bgcolor: 'background.paper',
+          '&:before': { display: 'none' },
+          overflow: 'hidden',
+        }}
+      >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography sx={{ flexGrow: 1 }}>{group.display_name}</Typography>
+          <Typography sx={{ flexGrow: 1, fontFamily: mono, fontWeight: 600, letterSpacing: '0.02em' }}>
+            {group.display_name}
+          </Typography>
           <Chip
             label={memberCount === 1 ? '1 member' : `${memberCount} members`}
             size="small"
-            sx={{ mr: 1, alignSelf: 'center' }}
+            sx={{ mr: 1, alignSelf: 'center', fontFamily: mono }}
           />
         </AccordionSummary>
         <AccordionDetails>
           {/* Member list */}
-          <Typography variant="subtitle2" gutterBottom>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            sx={{ fontFamily: mono, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.secondary' }}
+          >
             Members
           </Typography>
           {memberCount === 0 ? (
@@ -152,6 +172,11 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
               {(group.memberships ?? []).map((m: Membership) => (
                 <ListItem
                   key={m.membership_id}
+                  sx={{
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    '&:last-of-type': { borderBottom: 0 },
+                  }}
                   secondaryAction={
                     <Tooltip title="Remove member">
                       <IconButton
@@ -167,6 +192,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
                   <ListItemText
                     primary={m.alias ?? m.email}
                     secondary={m.alias ? m.email : undefined}
+                    secondaryTypographyProps={{ sx: { fontFamily: mono, fontSize: '0.72rem' } }}
                   />
                 </ListItem>
               ))}
@@ -176,7 +202,11 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
           <Divider sx={{ my: 1.5 }} />
 
           {/* Add member form */}
-          <Typography variant="subtitle2" gutterBottom>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            sx={{ fontFamily: mono, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.secondary' }}
+          >
             Add Member
           </Typography>
           <Stack
@@ -210,6 +240,11 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
                 onClick={handleAddMember}
                 disabled={!newEmail || addMemberMutation.isPending}
                 aria-label="Add member"
+                sx={{
+                  border: 1,
+                  borderColor: (t) => alpha(t.palette.primary.main, 0.4),
+                  borderRadius: 1,
+                }}
               >
                 <PersonAddIcon />
               </IconButton>
