@@ -15,7 +15,9 @@ it('shows total, hands-on, and free minutes', () => {
   expect(screen.getByText('Total elapsed')).toBeInTheDocument();
   expect(screen.getByText('50')).toBeInTheDocument(); // total
   expect(screen.getByText('Hands-on')).toBeInTheDocument();
+  expect(screen.getByText('36')).toBeInTheDocument(); // hands-on
   expect(screen.getByText("You're free")).toBeInTheDocument();
+  expect(screen.getByText('14')).toBeInTheDocument(); // you're free
 });
 
 it('back-plans a start clock from the serve time and updates on change', async () => {
