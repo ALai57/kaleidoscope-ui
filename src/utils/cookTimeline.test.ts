@@ -13,6 +13,9 @@ describe('componentId', () => {
     expect(componentId({ name: null }, 2)).toBe('Section 3');
     expect(componentId({}, 3)).toBe('Section 4');
   });
+  it('preserves a non-blank name verbatim, including surrounding whitespace (matches backend)', () => {
+    expect(componentId({ name: ' Salmon ' }, 0)).toBe(' Salmon ');
+  });
 });
 
 describe('resolvePhaseSteps', () => {

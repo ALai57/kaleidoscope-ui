@@ -5,12 +5,12 @@ import type {
   TimelinePhase,
 } from '../types/recipe';
 
-/** A component's stable id (lane label): its trimmed name, else a 1-based
- *  ordinal. Mirrors the backend `component-id` so phase.steps can be joined
- *  back to `content.sections`. */
+/** A component's stable id (lane label): its name (verbatim, preserving
+ *  whitespace), else a 1-based ordinal. Mirrors the backend `component-id`
+ *  so phase.steps can be joined back to `content.sections`. */
 export function componentId(section: { name?: string | null }, index: number): string {
-  const name = section.name?.trim();
-  return name ? name : `Section ${index + 1}`;
+  const name = section.name;
+  return name && name.trim() ? name : `Section ${index + 1}`;
 }
 
 /** The step strings a phase covers: find the section whose id matches the
