@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import { useTheme, alpha } from '@mui/material/styles';
 import { NavBar } from '../components/layout/NavBar';
+import { SurfaceCard } from '../components/common/SurfaceCard';
+import { PrismThemeProvider } from '../components/prism';
 import { useAuth } from '../auth/useAuth';
 
 // ── Manager capabilities ───────────────────────────────────────────────────
@@ -65,35 +65,105 @@ const CAPABILITIES: Capability[] = [
   },
 ];
 
-// ── Manager card ───────────────────────────────────────────────────────────
+// ── Capability card ─────────────────────────────────────────────────────────
 
-const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => (
-  <Box
-    sx={{
-      display: 'flex',
-      '& > :not(style)': { m: 1, width: 256, height: 256 },
-    }}
-  >
-    <Card elevation={10}>
+const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => {
+  const theme = useTheme();
+  const mono = theme.tokens?.typography.mono ?? 'monospace';
+  const dur = theme.tokens?.motion.duration.base ?? 250;
+  const ease = theme.tokens?.motion.easing.springSettle ?? 'ease';
+
+  return (
+    <SurfaceCard
+      interactive
+      sx={{
+        height: '100%',
+        transition: `box-shadow 0.2s ${ease}, transform ${dur}ms ${ease}`,
+        // Only translate when the user hasn't asked to reduce motion, so
+        // reduced-motion users get no movement at all (not just no easing).
+        '@media (prefers-reduced-motion: no-preference)': {
+          '&:hover': { transform: 'translateY(-2px)' },
+        },
+      }}
+    >
       <CardActionArea
         component={Link}
         to={capability.to}
         aria-label={capability.name}
+        sx={{
+          height: '100%',
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+        }}
       >
-        <CardMedia
-          component="img"
-          src={capability.src}
-          alt={capability.alt}
-          sx={{ width: '100%', height: '142px', objectFit: 'contain', bgcolor: 'primary.main', p: 2 }}
-        />
-        <CardContent>
-          <Typography variant="h5">{capability.name}</Typography>
-          <Typography variant="body2" color="text.secondary">
-            {capability.description}
-          </Typography>
-        </CardContent>
+        <Box
+          sx={{
+            width: 44,
+            height: 44,
+            mb: 1.5,
+            borderRadius: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            bgcolor: (t) => alpha(t.palette.primary.main, 0.12),
+            border: 1,
+            borderColor: (t) => alpha(t.palette.primary.main, 0.3),
+          }}
+        >
+          <Box
+            component="img"
+            src={capability.src}
+            alt={capability.alt}
+            sx={{ width: 24, height: 24, objectFit: 'contain' }}
+          />
+        </Box>
+        <Typography
+          component="div"
+          sx={{ fontFamily: mono, fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.02em' }}
+        >
+          {capability.name}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+          {capability.description}
+        </Typography>
       </CardActionArea>
-    </Card>
+    </SurfaceCard>
+  );
+};
+
+// ── Eyebrow header ──────────────────────────────────────────────────────────
+
+const HubHeader: React.FC = () => (
+  <Box sx={{ mb: 3 }}>
+    <Box
+      component="p"
+      sx={(t) => ({
+        m: 0,
+        fontFamily: t.tokens?.typography.mono ?? 'monospace',
+        fontSize: '11px',
+        fontWeight: 600,
+        letterSpacing: '0.22em',
+        textTransform: 'uppercase',
+        color: 'primary.main',
+      })}
+    >
+      CONTROL
+    </Box>
+    <Typography
+      component="h1"
+      sx={(t) => ({
+        m: 0,
+        mt: 0.5,
+        fontFamily: t.tokens?.typography.mono ?? 'monospace',
+        fontWeight: 700,
+        fontSize: '1.6rem',
+        letterSpacing: '-0.01em',
+      })}
+    >
+      Manager
+    </Typography>
   </Box>
 );
 
@@ -111,25 +181,26 @@ const ManagerPage: React.FC = () => {
     : undefined;
 
   return (
-    <Box id="primary-content" sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <br />
-      <br />
-
-      <Container>
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            flexDirection: 'row',
-            justifyContent: 'center',
-          }}
-        >
-          {CAPABILITIES.map((capability) => (
-            <ManagerCard key={capability.name} capability={capability} />
-          ))}
+      <PrismThemeProvider>
+        <Box id="primary-content" sx={{ flex: 1, bgcolor: 'background.default', py: 4 }}>
+          <Container>
+            <HubHeader />
+            <Box
+              sx={{
+                display: 'grid',
+                gap: 2,
+                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+              }}
+            >
+              {CAPABILITIES.map((capability) => (
+                <ManagerCard key={capability.name} capability={capability} />
+              ))}
+            </Box>
+          </Container>
         </Box>
-      </Container>
+      </PrismThemeProvider>
     </Box>
   );
 };
