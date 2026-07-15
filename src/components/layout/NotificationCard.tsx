@@ -1,9 +1,11 @@
 import React from 'react';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { useTheme } from '@mui/material/styles';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { SurfaceCard } from '../common/SurfaceCard';
 
 export interface NotificationCardProps {
   level?: 'error' | 'warn' | 'info';
@@ -11,13 +13,22 @@ export interface NotificationCardProps {
   message?: string;
 }
 
-const LevelIcon: React.FC<{ level: string }> = ({ level }) => {
+// Level → MUI palette tone (each has a `.main`, so it resolves in light + dark).
+const LEVEL_TONE: Record<NonNullable<NotificationCardProps['level']>, 'error' | 'warning' | 'info'> = {
+  error: 'error',
+  warn: 'warning',
+  info: 'info',
+};
+
+const LevelIcon: React.FC<{ level: NotificationCardProps['level'] }> = ({ level }) => {
   switch (level) {
     case 'warn':
-      return <WarningAmberIcon style={{ color: 'orange' }} />;
+      return <WarningAmberIcon fontSize="small" color="inherit" />;
+    case 'info':
+      return <InfoOutlinedIcon fontSize="small" color="inherit" />;
     case 'error':
     default:
-      return <ErrorOutlineIcon style={{ color: 'red' }} />;
+      return <ErrorOutlineIcon fontSize="small" color="inherit" />;
   }
 };
 
@@ -25,23 +36,27 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   level = 'error',
   title,
   message,
-}) => (
-  <Card className="text-white bg-light mb-3 article-card">
-    <LevelIcon level={level} />
-    <CardContent>
-      <Typography
-        gutterBottom
-        variant="h5"
-        component="div"
-        color="text.primary"
-      >
-        {title}
-      </Typography>
-    </CardContent>
-    <CardContent>
-      <Typography variant="body2" color="text.primary">
-        {message}
-      </Typography>
-    </CardContent>
-  </Card>
-);
+}) => {
+  const theme = useTheme();
+  const mono = theme.tokens?.typography.mono ?? 'monospace';
+  const tone = LEVEL_TONE[level] ?? 'error';
+
+  return (
+    <SurfaceCard sx={{ p: 2, mb: 3, borderLeft: 3, borderLeftColor: `${tone}.main` }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: `${tone}.main` }}>
+        <LevelIcon level={level} />
+        <Typography
+          component="div"
+          sx={{ fontFamily: mono, fontWeight: 700, letterSpacing: '0.03em', color: `${tone}.main` }}
+        >
+          {title}
+        </Typography>
+      </Box>
+      {message && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          {message}
+        </Typography>
+      )}
+    </SurfaceCard>
+  );
+};
