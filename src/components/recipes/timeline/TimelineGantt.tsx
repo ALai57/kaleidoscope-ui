@@ -2,6 +2,7 @@ import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import type { Timeline, TimelinePhase } from '../../../types/recipe';
 import { effectiveDuration } from '../../../utils/cookTimeline';
+import { alpha } from '../../../theme/alpha';
 import { PX_PER_MIN, RULER_H, ROW_H, ROW_GAP, GUTTER } from './constants';
 
 const Scroller = styled('div')({ overflowX: 'auto', overflowY: 'hidden' });
@@ -46,8 +47,7 @@ const Bar = styled('button')<{ kind: 'active' | 'passive'; selected: boolean; c:
         }
       : {
           background: 'transparent', border: `1.5px dashed ${c}`, color: c,
-          // eslint-disable-next-line no-restricted-syntax -- decorative hatch texture over a transparent passive bar, not a themed surface color
-          backgroundImage: 'repeating-linear-gradient(135deg, transparent, transparent 6px, rgba(255,255,255,.05) 6px, rgba(255,255,255,.05) 7px)',
+          backgroundImage: `repeating-linear-gradient(135deg, transparent, transparent 6px, ${alpha(theme.tokens.color.text.primary, 0.05)} 6px, ${alpha(theme.tokens.color.text.primary, 0.05)} 7px)`,
         }),
     '&:hover': { transform: 'translateY(-2px)', boxShadow: theme.tokens.elevation.md, zIndex: 6 },
     '&:focus-visible': { outline: `2px solid ${theme.tokens.color.brand.primary}` },
@@ -59,7 +59,7 @@ const Links = styled('svg')({
   position: 'absolute', left: GUTTER, top: 0, right: 0, bottom: 0, pointerEvents: 'none', overflow: 'visible',
 });
 
-interface Placed { phase: TimelinePhase; laneIndex: number; component: string; color: string; }
+interface Placed { phase: TimelinePhase; laneIndex: number; }
 
 export interface TimelineGanttProps {
   timeline: Timeline;
@@ -80,12 +80,7 @@ export const TimelineGantt: React.FC<TimelineGanttProps> = ({
   const fallbackColor = laneColors[0] ?? theme.tokens.color.brand.primary;
 
   const placed: Placed[] = timeline.components.flatMap((c, laneIndex) =>
-    c.phases.map((phase) => ({
-      phase,
-      laneIndex,
-      component: c.name,
-      color: laneColors[laneIndex] ?? fallbackColor,
-    }))
+    c.phases.map((phase) => ({ phase, laneIndex }))
   );
   const byId = new Map(placed.map((p) => [p.phase.id, p]));
   const laneCenterY = (i: number) => RULER_H + ROW_GAP + i * (ROW_H + ROW_GAP) + ROW_H / 2;
@@ -135,6 +130,7 @@ export const TimelineGantt: React.FC<TimelineGanttProps> = ({
                   <Bar
                     key={phase.id}
                     kind={phase.kind}
+                    data-kind={phase.kind}
                     selected={selectedId === phase.id}
                     c={laneColors[laneIndex] ?? fallbackColor}
                     style={{ left: start * PX_PER_MIN, width: dur * PX_PER_MIN - 2 }}
