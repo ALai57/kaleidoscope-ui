@@ -1,7 +1,7 @@
 {
   "name": "kaleidoscope-ui",
   "description": "Front end app UI for Kaleidoscope",
-  "version": "1.0.73",
+  "version": "1.0.74",
   "engines": {
     "node": ">=20"
   },
