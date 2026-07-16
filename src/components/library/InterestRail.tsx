@@ -7,7 +7,7 @@ import type { Interest } from '../../types/interest';
 interface Props {
   interests: Interest[];
   activeId: string | undefined;
-  onAdd: () => void;
+  onAdd?: (() => void) | undefined;
 }
 
 export const InterestRail: React.FC<Props> = ({ interests, activeId, onAdd }) => {
@@ -34,9 +34,11 @@ export const InterestRail: React.FC<Props> = ({ interests, activeId, onAdd }) =>
           {i.intent}
         </Link>
       ))}
-      <div style={{ marginTop: 12 }}>
-        <Button variant="subtle" onClick={onAdd} aria-label="add interest">+ Add interest</Button>
-      </div>
+      {onAdd && (
+        <div style={{ marginTop: 12 }}>
+          <Button variant="subtle" onClick={onAdd} aria-label="add interest">+ Add interest</Button>
+        </div>
+      )}
     </nav>
   );
 };

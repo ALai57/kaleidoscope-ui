@@ -17,7 +17,7 @@ import { CheckInDialog } from '../../components/library/CheckInDialog';
 
 export type LibraryView = 'shelf' | 'acquisitions' | 'taste';
 
-const LibraryPageInner: React.FC<{ view: LibraryView }> = ({ view }) => {
+const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ view, canEdit }) => {
   const { tokens } = useTheme();
   const { token } = useAuth();
   const navigate = useNavigate();
@@ -27,47 +27,52 @@ const LibraryPageInner: React.FC<{ view: LibraryView }> = ({ view }) => {
   const [modal, setModal] = React.useState<'none' | 'new' | 'checkin'>('none');
 
   const id = interestId ?? '';
+  // Non-writers can never land on a writer-only view.
+  const effectiveView: LibraryView = canEdit ? view : 'shelf';
 
   return (
     <Box sx={{ display: 'flex', gap: 3, p: 3, minHeight: '70vh' }}>
       <InterestRail
         interests={interests.data ?? []}
         activeId={interestId}
-        onAdd={() => setModal('new')}
+        onAdd={canEdit ? () => setModal('new') : undefined}
       />
 
       <Box sx={{ flex: 1 }}>
-        {id && (
+        {id && canEdit && (
           <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-            <Link to={`/library/${id}`} style={tabStyle(tokens, view === 'shelf')}>Shelves</Link>
-            <Link to={`/library/${id}/acquisitions`} style={tabStyle(tokens, view === 'acquisitions')}>Acquisitions</Link>
-            <Link to={`/library/${id}/taste`} style={tabStyle(tokens, view === 'taste')}>Taste profile</Link>
+            <Link to={`/library/${id}`} style={tabStyle(tokens, effectiveView === 'shelf')}>Shelves</Link>
+            <Link to={`/library/${id}/acquisitions`} style={tabStyle(tokens, effectiveView === 'acquisitions')}>Acquisitions</Link>
+            <Link to={`/library/${id}/taste`} style={tabStyle(tokens, effectiveView === 'taste')}>Taste profile</Link>
             <div style={{ marginLeft: 'auto' }}>
               <Button variant="subtle" onClick={() => setModal('checkin')}>Check-in</Button>
             </div>
           </div>
         )}
 
-        {!id && (
+        {!id && canEdit && (
           <p style={{ color: tokens.color.text.secondary }}>
             Select an interest, or add one to start a shelf.
           </p>
         )}
 
-        {id && view === 'shelf' && <ShelfView interestId={id} token={token} />}
-        {id && view === 'acquisitions' && <AcquisitionsPipeline interestId={id} token={token} />}
-        {id && view === 'taste' && interest.data && (
+        {/* Writers pick an interest before browsing its shelf; non-writers always see a shelf. */}
+        {(id || !canEdit) && effectiveView === 'shelf' && <ShelfView interestId={id} token={token} />}
+        {id && canEdit && effectiveView === 'acquisitions' && <AcquisitionsPipeline interestId={id} token={token} />}
+        {id && canEdit && effectiveView === 'taste' && interest.data && (
           <TasteProfileEditor interest={interest.data} token={token} />
         )}
       </Box>
 
-      <OnboardingDialog
-        open={modal === 'new'}
-        onClose={() => setModal('none')}
-        token={token}
-        onCreated={(newId) => { setModal('none'); navigate(`/library/${newId}/acquisitions`); }}
-      />
-      {interest.data && (
+      {canEdit && (
+        <OnboardingDialog
+          open={modal === 'new'}
+          onClose={() => setModal('none')}
+          token={token}
+          onCreated={(newId) => { setModal('none'); navigate(`/library/${newId}/acquisitions`); }}
+        />
+      )}
+      {canEdit && interest.data && (
         <CheckInDialog
           open={modal === 'checkin'}
           onClose={() => setModal('none')}
@@ -88,22 +93,14 @@ const LibraryPage: React.FC<{ view: LibraryView }> = ({ view }) => {
 
   if (isLoading) return <LoadingScreen />;
 
-  const userIsWriter = isWriter(userProfile);
+  const canEdit = isWriter(userProfile);
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <PrismThemeProvider>
         <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
-          {userIsWriter ? (
-            <LibraryPageInner view={view} />
-          ) : (
-            <Box sx={{ p: 4 }}>
-              {isAuthenticated
-                ? 'Your account does not have writer access to the library.'
-                : 'Sign in as a writer to use your library.'}
-            </Box>
-          )}
+          <LibraryPageInner view={view} canEdit={canEdit} />
         </Box>
       </PrismThemeProvider>
     </Box>
