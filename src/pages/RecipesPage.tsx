@@ -11,12 +11,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {
-  Button as PButton,
-  Chip as PChip,
-  TextInput as PInput,
-  PrismThemeProvider,
-} from '../components/prism';
+import { Button as PButton, Chip as PChip, TextInput as PInput } from '../components/prism';
 import { RecipeCard } from '../components/recipes/RecipeCard';
 import { RenameRecipeUrlDialog } from '../components/recipes/RenameRecipeUrlDialog';
 import { DeleteRecipeDialog } from '../components/recipes/DeleteRecipeDialog';
@@ -36,17 +31,20 @@ import {
 import type { Recipe, RecipeLabel } from '../types/recipe';
 
 // ── Manage-labels dialog ─────────────────────────────────────────────────────
-const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?: string | undefined }> = ({
-  open,
-  onClose,
-  token,
-}) => {
+const ManageLabelsDialog: React.FC<{
+  open: boolean;
+  onClose: () => void;
+  token?: string | undefined;
+}> = ({ open, onClose, token }) => {
   const queryClient = useQueryClient();
   const [newGroup, setNewGroup] = useState('');
   const [newLabel, setNewLabel] = useState('');
   const [newLabelGroup, setNewLabelGroup] = useState<string>('');
 
-  const { data: labels = [] } = useQuery({ queryKey: ['recipe-labels'], queryFn: () => getLabels(token) });
+  const { data: labels = [] } = useQuery({
+    queryKey: ['recipe-labels'],
+    queryFn: () => getLabels(token),
+  });
   const { data: groups = [] } = useQuery({
     queryKey: ['recipe-label-groups'],
     queryFn: () => getLabelGroups(token),
@@ -102,11 +100,16 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
               key={g.id}
               direction="row"
               sx={{
-                alignItems: "center",
-                justifyContent: "space-between"
-              }}>
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <Typography>{g.name}</Typography>
-              <IconButton size="small" aria-label={`delete group ${g.name}`} onClick={() => removeGroup.mutate(g.id)}>
+              <IconButton
+                size="small"
+                aria-label={`delete group ${g.name}`}
+                onClick={() => removeGroup.mutate(g.id)}
+              >
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Stack>
@@ -147,11 +150,16 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
               key={l.id}
               direction="row"
               sx={{
-                alignItems: "center",
-                justifyContent: "space-between"
-              }}>
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
               <Typography>{qualifiedLabelName(l)}</Typography>
-              <IconButton size="small" aria-label={`delete label ${l.name}`} onClick={() => removeLabel.mutate(l.id)}>
+              <IconButton
+                size="small"
+                aria-label={`delete label ${l.name}`}
+                onClick={() => removeLabel.mutate(l.id)}
+              >
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Stack>
@@ -165,10 +173,10 @@ const ManageLabelsDialog: React.FC<{ open: boolean; onClose: () => void; token?:
   );
 };
 
-// The page background/foreground read Prism tokens, so this root MUST live under
-// `PrismThemeProvider` (it renders as a child of the provider, below). The
-// `RecipesPage` component body itself runs ABOVE the provider and must not read
-// Prism tokens directly.
+// Page root: reads the app theme's tokens (mode-reactive surface/text), so the
+// Recipes page follows the active preset + light/dark selector like the rest of
+// the public garden. (It was previously pinned to Prism dark via
+// PrismThemeProvider; that wrapper was removed so the page obeys the selector.)
 const PrismPageRoot = styled('div')(({ theme }) => ({
   minHeight: '100vh',
   background: theme.tokens.color.surface.base,
@@ -187,7 +195,8 @@ const RecipesPage: React.FC = () => {
   const [renameTarget, setRenameTarget] = useState<Recipe | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Recipe | null>(null);
 
-  const invalidateRecipes = (): void => void queryClient.invalidateQueries({ queryKey: ['recipes'] });
+  const invalidateRecipes = (): void =>
+    void queryClient.invalidateQueries({ queryKey: ['recipes'] });
 
   const debouncedSetIngredient = useDebouncedCallback((v: string) => setIngredient(v), 300);
 
@@ -200,113 +209,118 @@ const RecipesPage: React.FC = () => {
     queryKey: ['recipes', filters],
     queryFn: () => getRecipes(filters, token),
   });
-  const { data: labels = [] } = useQuery({ queryKey: ['recipe-labels'], queryFn: () => getLabels(token) });
+  const { data: labels = [] } = useQuery({
+    queryKey: ['recipe-labels'],
+    queryFn: () => getLabels(token),
+  });
 
   return (
-    <PrismThemeProvider>
-      <PrismPageRoot>
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 16,
-              marginBottom: 20,
-            }}
-          >
-            <Typography variant="h3">Recipes</Typography>
-            {isAuthenticated && (
-              <div style={{ display: 'flex', gap: 10 }}>
-                <PButton variant="ghost" onClick={() => setManageOpen(true)}>
-                  Manage labels
-                </PButton>
-                {/* Prism `Button` (MUI styled + custom shouldForwardProp) does not
+    <PrismPageRoot>
+      <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 16,
+            marginBottom: 20,
+          }}
+        >
+          <Typography variant="h3">Recipes</Typography>
+          {isAuthenticated && (
+            <div style={{ display: 'flex', gap: 10 }}>
+              <PButton variant="ghost" onClick={() => setManageOpen(true)}>
+                Manage labels
+              </PButton>
+              {/* Prism `Button` (MUI styled + custom shouldForwardProp) does not
                     honor emotion's `as`, so keep New recipe a real router <Link>
                     (role="link") wrapping the styled button for the Prism look. */}
-                <RouterLink to="/recipes/new" style={{ textDecoration: 'none' }}>
-                  <PButton>New recipe</PButton>
-                </RouterLink>
-              </div>
-            )}
-          </div>
-
-          <div style={{ marginBottom: 16, maxWidth: 320 }}>
-            <PInput
-              aria-label="Search ingredient"
-              placeholder="Search ingredient"
-              value={ingredientInput}
-              onChange={(e) => {
-                setIngredientInput(e.target.value);
-                debouncedSetIngredient(e.target.value);
-              }}
-            />
-          </div>
-
-          {labels.length > 0 && (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
-              {labels.map((l) => (
-                <PChip
-                  key={l.id}
-                  pressed={labelId === l.id}
-                  onClick={() => setLabelId(labelId === l.id ? '' : l.id)}
-                >
-                  {qualifiedLabelName(l)}
-                </PChip>
-              ))}
+              <RouterLink to="/recipes/new" style={{ textDecoration: 'none' }}>
+                <PButton>New recipe</PButton>
+              </RouterLink>
             </div>
           )}
-
-          {isLoading && <LoadingScreen />}
-          {!isLoading && recipes.length === 0 && (
-            <Typography sx={{
-              color: "text.secondary"
-            }}>No recipes yet.</Typography>
-          )}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(288px, 1fr))',
-              gap: 16,
-            }}
-          >
-            {recipes.map((r) => (
-              <RecipeCard
-                key={r.id}
-                recipe={r}
-                canManage={isAuthenticated}
-                onOpen={() => navigate(`/recipes/${r.recipe_url}`)}
-                onRename={() => setRenameTarget(r)}
-                onDelete={() => setDeleteTarget(r)}
-              />
-            ))}
-          </div>
         </div>
 
-        <ManageLabelsDialog open={manageOpen} onClose={() => setManageOpen(false)} token={token} />
-        <RenameRecipeUrlDialog
-          recipe={renameTarget}
-          open={renameTarget !== null}
-          onClose={() => setRenameTarget(null)}
-          onRenamed={(slug) => {
-            setRenameTarget(null);
-            invalidateRecipes();
-            navigate(`/recipes/${slug}`);
+        <div style={{ marginBottom: 16, maxWidth: 320 }}>
+          <PInput
+            aria-label="Search ingredient"
+            placeholder="Search ingredient"
+            value={ingredientInput}
+            onChange={(e) => {
+              setIngredientInput(e.target.value);
+              debouncedSetIngredient(e.target.value);
+            }}
+          />
+        </div>
+
+        {labels.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+            {labels.map((l) => (
+              <PChip
+                key={l.id}
+                pressed={labelId === l.id}
+                onClick={() => setLabelId(labelId === l.id ? '' : l.id)}
+              >
+                {qualifiedLabelName(l)}
+              </PChip>
+            ))}
+          </div>
+        )}
+
+        {isLoading && <LoadingScreen />}
+        {!isLoading && recipes.length === 0 && (
+          <Typography
+            sx={{
+              color: 'text.secondary',
+            }}
+          >
+            No recipes yet.
+          </Typography>
+        )}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(288px, 1fr))',
+            gap: 16,
           }}
-          token={token}
-        />
-        <DeleteRecipeDialog
-          recipe={deleteTarget}
-          open={deleteTarget !== null}
-          onClose={() => setDeleteTarget(null)}
-          onDeleted={() => {
-            setDeleteTarget(null);
-            invalidateRecipes();
-          }}
-          token={token}
-        />
-      </PrismPageRoot>
-    </PrismThemeProvider>
+        >
+          {recipes.map((r) => (
+            <RecipeCard
+              key={r.id}
+              recipe={r}
+              canManage={isAuthenticated}
+              onOpen={() => navigate(`/recipes/${r.recipe_url}`)}
+              onRename={() => setRenameTarget(r)}
+              onDelete={() => setDeleteTarget(r)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <ManageLabelsDialog open={manageOpen} onClose={() => setManageOpen(false)} token={token} />
+      <RenameRecipeUrlDialog
+        recipe={renameTarget}
+        open={renameTarget !== null}
+        onClose={() => setRenameTarget(null)}
+        onRenamed={(slug) => {
+          setRenameTarget(null);
+          invalidateRecipes();
+          navigate(`/recipes/${slug}`);
+        }}
+        token={token}
+      />
+      <DeleteRecipeDialog
+        recipe={deleteTarget}
+        open={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onDeleted={() => {
+          setDeleteTarget(null);
+          invalidateRecipes();
+        }}
+        token={token}
+      />
+    </PrismPageRoot>
   );
 };
 

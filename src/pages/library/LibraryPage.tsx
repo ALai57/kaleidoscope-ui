@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import { LoadingScreen } from '../../components/layout/LoadingScreen';
-import { PrismThemeProvider, Button } from '../../components/prism';
+import { Button } from '../../components/prism';
 import { useAuth } from '../../auth/useAuth';
 import { isWriter } from '../../auth/authHelpers';
 import { useInterests, useInterest } from '../../components/library/hooks';
@@ -40,23 +40,40 @@ const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ v
       <Box sx={{ flex: 1 }}>
         {id && canEdit && (
           <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-            <Link to={`/library/${id}`} style={tabStyle(tokens, effectiveView === 'shelf')}>Shelves</Link>
-            <Link to={`/library/${id}/acquisitions`} style={tabStyle(tokens, effectiveView === 'acquisitions')}>Acquisitions</Link>
-            <Link to={`/library/${id}/taste`} style={tabStyle(tokens, effectiveView === 'taste')}>Taste profile</Link>
+            <Link to={`/library/${id}`} style={tabStyle(tokens, effectiveView === 'shelf')}>
+              Shelves
+            </Link>
+            <Link
+              to={`/library/${id}/acquisitions`}
+              style={tabStyle(tokens, effectiveView === 'acquisitions')}
+            >
+              Acquisitions
+            </Link>
+            <Link to={`/library/${id}/taste`} style={tabStyle(tokens, effectiveView === 'taste')}>
+              Taste profile
+            </Link>
             <div style={{ marginLeft: 'auto' }}>
-              <Button variant="subtle" onClick={() => setModal('checkin')}>Check-in</Button>
+              <Button variant="subtle" onClick={() => setModal('checkin')}>
+                Check-in
+              </Button>
             </div>
           </div>
         )}
 
         {!id && (
           <p style={{ color: tokens.color.text.secondary }}>
-            {canEdit ? 'Select an interest, or add one to start a shelf.' : 'Select a shelf to browse.'}
+            {canEdit
+              ? 'Select an interest, or add one to start a shelf.'
+              : 'Select a shelf to browse.'}
           </p>
         )}
 
-        {id && effectiveView === 'shelf' && <ShelfView interestId={id} token={token} canEdit={canEdit} />}
-        {id && canEdit && effectiveView === 'acquisitions' && <AcquisitionsPipeline interestId={id} token={token} />}
+        {id && effectiveView === 'shelf' && (
+          <ShelfView interestId={id} token={token} canEdit={canEdit} />
+        )}
+        {id && canEdit && effectiveView === 'acquisitions' && (
+          <AcquisitionsPipeline interestId={id} token={token} />
+        )}
         {id && canEdit && effectiveView === 'taste' && interest.data && (
           <TasteProfileEditor interest={interest.data} token={token} />
         )}
@@ -67,7 +84,10 @@ const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ v
           open={modal === 'new'}
           onClose={() => setModal('none')}
           token={token}
-          onCreated={(newId) => { setModal('none'); navigate(`/library/${newId}/acquisitions`); }}
+          onCreated={(newId) => {
+            setModal('none');
+            navigate(`/library/${newId}/acquisitions`);
+          }}
         />
       )}
       {canEdit && interest.data && (
@@ -91,22 +111,26 @@ const LibraryPage: React.FC<{ view: LibraryView }> = ({ view }) => {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <PrismThemeProvider>
-        <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
-          <LibraryPageInner view={view} canEdit={canEdit} />
-        </Box>
-      </PrismThemeProvider>
+      <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
+        <LibraryPageInner view={view} canEdit={canEdit} />
+      </Box>
     </Box>
   );
 };
 
 function tabStyle(
-  tokens: { color: { brand: { primary: string }; text: { secondary: string } }; typography: { mono: string } },
+  tokens: {
+    color: { brand: { primary: string }; text: { secondary: string } };
+    typography: { mono: string };
+  },
   active: boolean
 ): React.CSSProperties {
   return {
-    fontFamily: tokens.typography.mono, fontSize: 12.5, letterSpacing: '0.05em',
-    textDecoration: 'none', paddingBottom: 4,
+    fontFamily: tokens.typography.mono,
+    fontSize: 12.5,
+    letterSpacing: '0.05em',
+    textDecoration: 'none',
+    paddingBottom: 4,
     color: active ? tokens.color.brand.primary : tokens.color.text.secondary,
     borderBottom: active ? `2px solid ${tokens.color.brand.primary}` : '2px solid transparent',
   };

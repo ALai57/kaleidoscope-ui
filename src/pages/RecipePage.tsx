@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RecipeSections } from '../components/recipes/RecipeSections';
-import { PrismThemeProvider } from '../components/prism';
 import { ImportLineageStrip } from '../components/recipes/lineage/ImportLineageStrip';
 import { CookTimeline } from '../components/recipes/timeline';
 import { useAuth } from '../auth/useAuth';
@@ -53,9 +52,10 @@ const RecipePage: React.FC = () => {
             <Stack
               direction="row"
               sx={{
-                justifyContent: "space-between",
-                alignItems: "flex-start"
-              }}>
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+              }}
+            >
               <Typography variant="h3" gutterBottom>
                 {recipe.content.title}
               </Typography>
@@ -71,9 +71,12 @@ const RecipePage: React.FC = () => {
               )}
             </Stack>
 
-            <Typography variant="subtitle1" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                color: 'text.secondary',
+              }}
+            >
               {metaLine(recipe)}
             </Typography>
             {recipe.source_url && (
@@ -94,25 +97,22 @@ const RecipePage: React.FC = () => {
             )}
 
             {isSiteAdmin(userProfile) && recipe.scrape_processing_run_id && (
-              <PrismThemeProvider>
-                <ImportLineageStrip slug={slug} token={token} />
-              </PrismThemeProvider>
+              <ImportLineageStrip slug={slug} token={token} />
             )}
 
             <RecipeSections content={recipe.content} />
 
             {recipe.timeline && (
-              <PrismThemeProvider>
-                <CookTimeline timeline={recipe.timeline} sections={recipe.content.sections} />
-              </PrismThemeProvider>
+              <CookTimeline timeline={recipe.timeline} sections={recipe.content.sections} />
             )}
             {!recipe.timeline && isAuthenticated && (
               <Typography
                 variant="body2"
                 sx={{
-                  color: "text.secondary",
-                  mt: 4
-                }}>
+                  color: 'text.secondary',
+                  mt: 4,
+                }}
+              >
                 Save this recipe to generate a cook timeline.
               </Typography>
             )}

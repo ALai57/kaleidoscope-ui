@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render as rtlRender, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { makeTheme, BASE_THEME } from '@/theme';
 import LibraryPage from './LibraryPage';
 
@@ -10,9 +10,14 @@ const mockAuth = { isAuthenticated: false, isLoading: false, token: undefined,
   userProfile: null as unknown, login: vi.fn(), logout: vi.fn() };
 vi.mock('@/auth/useAuth', () => ({ useAuth: () => mockAuth }));
 
-// Stub the heavy shelf so the test targets gating, not data.
+// Stub the heavy shelf so the test targets gating, not data. It also exposes the
+// ambient color mode so we can assert the page follows the app theme (rather than
+// being pinned dark by a PrismThemeProvider).
 vi.mock('@/components/library/ShelfView', () => ({
-  ShelfView: () => <div data-testid="shelf">shelf</div>,
+  ShelfView: () => {
+    const { palette } = useTheme();
+    return <div data-testid="shelf" data-mode={palette.mode}>shelf</div>;
+  },
 }));
 vi.mock('@/components/library/AcquisitionsPipeline', () => ({
   AcquisitionsPipeline: () => <div data-testid="acquisitions">acquisitions</div>,
@@ -61,5 +66,12 @@ describe('LibraryPage gating', () => {
     renderAt('/library/reading/acquisitions');
     expect(screen.getByTestId('shelf')).toBeTruthy();
     expect(screen.queryByTestId('acquisitions')).toBeNull();
+  });
+
+  it('renders under the ambient app theme (obeys light/dark), not a pinned dark theme', () => {
+    // The wrapper theme is the light default; the shelf must see 'light'. Before
+    // the PrismThemeProvider was removed this read 'dark' (forced).
+    renderAt('/library/reading');
+    expect(screen.getByTestId('shelf').getAttribute('data-mode')).toBe('light');
   });
 });

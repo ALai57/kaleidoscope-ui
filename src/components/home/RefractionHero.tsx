@@ -67,7 +67,7 @@ const RefractionHero: React.FC = () => {
         <circle cx="120" cy="238" r="25" fill="url(#rh-src)" />
         {/* eslint-disable-next-line no-restricted-syntax -- fixed dark on-color for the monogram over the bright accent disc; surface tokens invert per preset, so a literal is correct here */}
         <text x="120" y="245" textAnchor="middle" fontFamily={mono} fontSize="20" fontWeight="600" fill="#0A0E15">A</text>
-        <text x="120" y="314" textAnchor="middle" fontFamily={mono} fontSize="10.5" letterSpacing="0.14em" fill={ink3}>A SINGLE LIGHT · ME</text>
+        <text x="120" y="314" textAnchor="middle" fontFamily={mono} fontSize="10.5" letterSpacing="0.14em" fill={ink3}>ANDREW S LAI</text>
 
         {/* beam + prism */}
         <line x1="146" y1="238" x2="446" y2="238" stroke={accent} strokeWidth="5" strokeLinecap="round">
