@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
+import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
@@ -22,6 +23,8 @@ export interface AdminNavItem {
   label: string;
   to: string;
   icon: React.ReactNode;
+  /** Grouping key; a hairline divider is drawn where adjacent groups differ. */
+  group?: string;
 }
 
 /**
@@ -30,19 +33,16 @@ export interface AdminNavItem {
  * cross-link (grouped content → AI/projects → system config).
  */
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
-  // Content / CMS
-  { label: 'Manager', to: '/manager', icon: <SpaceDashboardIcon fontSize="small" /> },
-  { label: 'Articles', to: '/articles', icon: <ArticleIcon fontSize="small" /> },
-  { label: 'Images', to: '/images', icon: <PhotoLibraryIcon fontSize="small" /> },
-  // AI workflows / projects
-  { label: 'Projects', to: '/projects', icon: <WorkspacesIcon fontSize="small" /> },
-  { label: 'Workflows', to: '/workflows', icon: <AccountTreeIcon fontSize="small" /> },
-  { label: 'Agents', to: '/agents', icon: <GroupsIcon fontSize="small" /> },
-  { label: 'Workspace Roots', to: '/workspace-roots', icon: <FolderOpenIcon fontSize="small" /> },
-  { label: 'Score Definitions', to: '/score-definitions', icon: <RuleIcon fontSize="small" /> },
-  // System config
-  { label: 'Groups', to: '/groups', icon: <ManageAccountsIcon fontSize="small" /> },
-  { label: 'UI Manager', to: '/ui', icon: <PaletteIcon fontSize="small" /> },
+  { label: 'Manager', to: '/manager', icon: <SpaceDashboardIcon fontSize="small" />, group: 'content' },
+  { label: 'Articles', to: '/articles', icon: <ArticleIcon fontSize="small" />, group: 'content' },
+  { label: 'Images', to: '/images', icon: <PhotoLibraryIcon fontSize="small" />, group: 'content' },
+  { label: 'Projects', to: '/projects', icon: <WorkspacesIcon fontSize="small" />, group: 'build' },
+  { label: 'Workflows', to: '/workflows', icon: <AccountTreeIcon fontSize="small" />, group: 'build' },
+  { label: 'Agents', to: '/agents', icon: <GroupsIcon fontSize="small" />, group: 'build' },
+  { label: 'Workspace Roots', to: '/workspace-roots', icon: <FolderOpenIcon fontSize="small" />, group: 'build' },
+  { label: 'Score Definitions', to: '/score-definitions', icon: <RuleIcon fontSize="small" />, group: 'build' },
+  { label: 'Groups', to: '/groups', icon: <ManageAccountsIcon fontSize="small" />, group: 'system' },
+  { label: 'UI Manager', to: '/ui', icon: <PaletteIcon fontSize="small" />, group: 'system' },
 ];
 
 export interface AdminNavRailProps {
@@ -176,11 +176,13 @@ export const AdminNavRail: React.FC<AdminNavRailProps> = ({
       {/* Section links — scroll internally if the list outgrows a short viewport,
           keeping the brand and auth footer pinned. */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 1, flex: 1, minHeight: 0, overflowY: 'auto' }}>
-        {items.map((item) => {
+        {items.map((item, i) => {
           const active = isActive(pathname, item.to);
+          const prev = items[i - 1];
+          // Hairline between adjacent groups (never before the first item).
+          const showDivider = i > 0 && item.group !== undefined && prev?.group !== item.group;
           const link = (
             <Box
-              key={item.to}
               component={Link}
               to={item.to}
               aria-current={active ? 'page' : undefined}
@@ -194,9 +196,12 @@ export const AdminNavRail: React.FC<AdminNavRailProps> = ({
           );
           // On the collapsed (icon-only) rail, a tooltip carries the label.
           return (
-            <Tooltip key={item.to} title={item.label} placement="right" disableHoverListener={false}>
-              {link}
-            </Tooltip>
+            <React.Fragment key={item.to}>
+              {showDivider && <Divider sx={{ my: 0.5, borderColor: 'divider' }} />}
+              <Tooltip title={item.label} placement="right" disableHoverListener={false}>
+                {link}
+              </Tooltip>
+            </React.Fragment>
           );
         })}
       </Box>

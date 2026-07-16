@@ -39,6 +39,12 @@ describe('AdminNavRail', () => {
     expect(screen.getByRole('link', { name: 'Articles' })).toHaveAttribute('aria-current', 'page');
   });
 
+  it('draws a divider between each adjacent section group', () => {
+    renderAt('/projects');
+    // content → build → system == two group boundaries == two dividers.
+    expect(screen.getAllByRole('separator')).toHaveLength(2);
+  });
+
   it('marks the active section from the current route', () => {
     renderAt('/workflows');
     expect(screen.getByRole('link', { name: 'Workflows' })).toHaveAttribute('aria-current', 'page');
