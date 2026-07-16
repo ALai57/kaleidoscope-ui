@@ -8,6 +8,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { makeTheme, BASE_THEME } from '../theme';
 import RecipePage from './RecipePage';
+import * as wakeLockHook from '../hooks/useWakeLock';
 
 const authState = vi.hoisted(() => ({
   current: {
@@ -224,6 +225,22 @@ describe('RecipePage', () => {
       expect(
         await screen.findByText('Save this recipe to generate a cook timeline.')
       ).toBeInTheDocument();
+    });
+  });
+
+  describe('wake lock button', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('shows the keep-screen-on button in the header', async () => {
+      vi.spyOn(wakeLockHook, 'useWakeLock').mockReturnValue({
+        isSupported: true,
+        isActive: false,
+        toggle: vi.fn(),
+      });
+      renderPage('layer-cake');
+      expect(await screen.findByRole('button', { name: /keep screen on/i })).toBeInTheDocument();
     });
   });
 });
