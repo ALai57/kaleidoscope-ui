@@ -14,6 +14,7 @@ import { GARDEN_FACETS, facetColor } from './gardenFacets';
  *
  * Visual reference (final polish): the approved prototype Artifact.
  */
+// eslint-disable-next-line no-restricted-syntax -- bare-MUI fallback spectrum, used only when theme.tokens is undefined (facetColor prefers tokens.color.categorical)
 const FALLBACKS = ['#45D6E8', '#9C90F0', '#E0A73C']; // writing / reading / recipes
 
 const RefractionHero: React.FC = () => {
@@ -53,15 +54,18 @@ const RefractionHero: React.FC = () => {
         sx={{ width: '100%', maxWidth: 1000, height: 'auto' }}
       >
         <defs>
+          {/* eslint-disable no-restricted-syntax -- decorative source-glow gradient stops; static illustrative hues with no token equivalent, SVG paint can't read JS theme tokens */}
           <radialGradient id="rh-src" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#dff6fb" />
             <stop offset="55%" stopColor={accent} />
             <stop offset="100%" stopColor="#0b3a44" />
           </radialGradient>
+          {/* eslint-enable no-restricted-syntax */}
         </defs>
 
         {/* source = me */}
         <circle cx="120" cy="238" r="25" fill="url(#rh-src)" />
+        {/* eslint-disable-next-line no-restricted-syntax -- fixed dark on-color for the monogram over the bright accent disc; surface tokens invert per preset, so a literal is correct here */}
         <text x="120" y="245" textAnchor="middle" fontFamily={mono} fontSize="20" fontWeight="600" fill="#0A0E15">A</text>
         <text x="120" y="314" textAnchor="middle" fontFamily={mono} fontSize="10.5" letterSpacing="0.14em" fill={ink3}>A SINGLE LIGHT · ME</text>
 
@@ -73,7 +77,7 @@ const RefractionHero: React.FC = () => {
         <text x="466" y="340" textAnchor="middle" fontFamily={mono} fontSize="10.5" letterSpacing="0.14em" fill={ink3}>THE PRISM</text>
 
         {GARDEN_FACETS.map((f, i) => {
-          const c = facetColor(tokens, f.colorIndex, FALLBACKS[i] ?? FALLBACKS[0] ?? '#45D6E8');
+          const c = facetColor(tokens, f.colorIndex, FALLBACKS[i] ?? FALLBACKS[0]!);
           const y = rowY[i] ?? 80;
           const cy = y + 40;
           return (
