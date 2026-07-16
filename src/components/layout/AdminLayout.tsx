@@ -4,7 +4,7 @@ import { PrismThemeProvider } from '../prism';
 import { AdminNavRail } from './AdminNavRail';
 import { AdminTopBar } from './AdminTopBar';
 import type { AdminNavItem } from './AdminNavRail';
-import type { NavBarUser } from './NavBar';
+import type { NavBarUser } from './navTypes';
 
 export interface AdminLayoutProps {
   /** Section title for the top bar. */

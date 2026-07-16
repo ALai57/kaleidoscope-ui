@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
-import type { NavBarUser } from './NavBar';
+import type { NavBarUser } from './navTypes';
 import { isSiteAdmin, isWriter } from '@/auth/authHelpers';
 import { GARDEN_FACETS, facetColor, isFacetActive } from '@/components/home/gardenFacets';
 

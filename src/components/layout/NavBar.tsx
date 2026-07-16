@@ -12,12 +12,7 @@ import type { SxProps, Theme } from '@mui/material/styles';
 import { Link, useLocation } from 'react-router-dom';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
 import {isSiteAdmin, isWriter} from "@/auth/authHelpers";
-
-export interface NavBarUser {
-  firstName?: string | undefined;
-  lastName?: string | undefined;
-  realm_access?: { roles: string[] } | undefined;
-}
+import type { NavBarUser } from './navTypes';
 
 export interface NavBarProps {
   user?: NavBarUser | undefined;

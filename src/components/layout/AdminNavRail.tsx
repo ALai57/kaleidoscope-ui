@@ -10,7 +10,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import GroupsIcon from '@mui/icons-material/Groups';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
-import type { NavBarUser } from './NavBar';
+import type { NavBarUser } from './navTypes';
 
 export interface AdminNavItem {
   label: string;
