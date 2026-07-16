@@ -7,8 +7,6 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import { NavBar } from '../components/layout/NavBar';
-import { useAuth } from '../auth/useAuth';
 
 // ── Icon component ─────────────────────────────────────────────────────────
 
@@ -52,19 +50,8 @@ const GRID_CENTER = {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AboutThisSitePage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useAuth();
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
-
   return (
     <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <br />
       {/* Intro text */}
       <Grid {...GRID_CENTER}>

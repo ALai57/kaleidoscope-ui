@@ -17,7 +17,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { NavBar } from '../components/layout/NavBar';
 import { useAuth } from '../auth/useAuth';
 import { getDomainAvailability, newPaymentSecret } from '../api/payments';
 import type { DomainAvailability, PaymentIntent } from '../api/payments';
@@ -192,17 +191,9 @@ const PaymentWidget: React.FC<PaymentWidgetProps> = ({ domainAvailability, payme
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const SignUpPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [domainToCheck, setDomainToCheck] = useState<string | null>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   // Domain availability query
   const { data: domainAvailability = null, isFetching: isCheckingDomain } = useQuery({
@@ -267,7 +258,6 @@ const SignUpPage: React.FC = () => {
 
   return (
     <Box sx={{ height: '100%', width: '100%', position: 'absolute' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Grid
         container
         sx={{

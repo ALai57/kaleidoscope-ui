@@ -58,6 +58,8 @@ const router = createBrowserRouter([
           { path: '/library/:interestId', element: <LibraryPage view="shelf" /> },
           { path: '/library/:interestId/acquisitions', element: <LibraryPage view="acquisitions" /> },
           { path: '/library/:interestId/taste', element: <LibraryPage view="taste" /> },
+          { path: '/about-this-site', element: <AboutThisSitePage /> },
+          { path: '/sign-up', element: <SignUpPage /> },
         ],
       },
 
@@ -70,9 +72,7 @@ const router = createBrowserRouter([
       { path: '/images', element: <ImageManagerPage /> },
       { path: '/ui', element: <UIManagerPage /> },
       { path: '/groups', element: <GroupsPage /> },
-      { path: '/sign-up', element: <SignUpPage /> },
       { path: '/admin', element: <AdminPage /> },
-      { path: '/about-this-site', element: <AboutThisSitePage /> },
       { path: '/manager', element: <ManagerPage /> },
       { path: '/projects', element: <ProjectsPage /> },
       { path: '/projects/:id/develop', element: <ProjectDevelopPage /> },
