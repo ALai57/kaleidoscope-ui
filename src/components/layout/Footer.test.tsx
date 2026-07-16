@@ -14,12 +14,12 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 describe('Footer', () => {
-  it('renders the nav links', () => {
+  it('renders only the About this site nav link', () => {
     render(<Footer />, { wrapper: Wrapper });
-    expect(screen.getByRole('link', { name: 'About' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Experience' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Writing' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'About this site' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'About' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Experience' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'Writing' })).not.toBeInTheDocument();
   });
 
   it('renders the current-year copyright', () => {

@@ -8,9 +8,6 @@ import { useTheme } from '@mui/material/styles';
 import { Link as RouterLink } from 'react-router-dom';
 
 const NAV_LINKS = [
-  { label: 'About', to: '/about' },
-  { label: 'Experience', to: '/experience' },
-  { label: 'Writing', to: '/archive' },
   { label: 'About this site', to: '/about-this-site' },
 ];
 
