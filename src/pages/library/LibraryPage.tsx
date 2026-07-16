@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import { NavBar } from '../../components/layout/NavBar';
 import { LoadingScreen } from '../../components/layout/LoadingScreen';
 import { PrismThemeProvider, Button } from '../../components/prism';
 import { useAuth } from '../../auth/useAuth';
@@ -84,11 +83,7 @@ const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ v
 };
 
 const LibraryPage: React.FC<{ view: LibraryView }> = ({ view }) => {
-  const { isAuthenticated, userProfile, isLoading, login, logout } = useAuth();
-
-  const user = userProfile
-    ? { firstName: userProfile.firstName ?? undefined, lastName: userProfile.lastName ?? undefined, realm_access: userProfile.realm_access }
-    : undefined;
+  const { userProfile, isLoading } = useAuth();
 
   if (isLoading) return <LoadingScreen />;
 
@@ -96,7 +91,6 @@ const LibraryPage: React.FC<{ view: LibraryView }> = ({ view }) => {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <PrismThemeProvider>
         <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
           <LibraryPageInner view={view} canEdit={canEdit} />

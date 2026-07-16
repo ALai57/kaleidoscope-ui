@@ -2,6 +2,7 @@ import React, { Suspense, useEffect } from 'react';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import { LoadingScreen } from './components/layout/LoadingScreen';
 import { ErrorPage } from './components/layout/ErrorPage';
+import { AppShell } from './components/layout/AppShell';
 
 const HomePage = React.lazy(() => import('./pages/HomePage'));
 const ProjectsPage = React.lazy(() => import('./pages/projects/ProjectsPage'));
@@ -39,16 +40,32 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     element: <Outlet />,
     children: [
+      // Landing — the hero is the navigation; no rail.
       { path: '/', element: <HomePage /> },
       { path: '/home', element: <HomePage /> },
-      { path: '/content/:slug', element: <ArticlePage /> },
-      { path: '/archive', element: <ArchivePage /> },
+
+      // Garden — persistent Prism SideRail via AppShell.
+      {
+        element: <AppShell />,
+        children: [
+          { path: '/content/:slug', element: <ArticlePage /> },
+          { path: '/archive', element: <ArchivePage /> },
+          { path: '/recipes', element: <RecipesPage /> },
+          { path: '/recipes/:slug', element: <RecipePage /> },
+          { path: '/about', element: <AboutPage /> },
+          { path: '/experience', element: <ExperiencePage /> },
+          { path: '/library', element: <LibraryPage view="shelf" /> },
+          { path: '/library/:interestId', element: <LibraryPage view="shelf" /> },
+          { path: '/library/:interestId/acquisitions', element: <LibraryPage view="acquisitions" /> },
+          { path: '/library/:interestId/taste', element: <LibraryPage view="taste" /> },
+        ],
+      },
+
+      // Legacy — still render their own top NavBar until the follow-up migration.
       { path: '/articles', element: <ArticleManagerPage /> },
       { path: '/articles/new', element: <ArticleEditorPage /> },
       { path: '/articles/:slug/edit', element: <ArticleEditorPage /> },
-      { path: '/recipes', element: <RecipesPage /> },
       { path: '/recipes/new', element: <RecipeEditorPage /> },
-      { path: '/recipes/:slug', element: <RecipePage /> },
       { path: '/recipes/:slug/edit', element: <RecipeEditorPage /> },
       { path: '/images', element: <ImageManagerPage /> },
       { path: '/ui', element: <UIManagerPage /> },
@@ -57,8 +74,6 @@ const router = createBrowserRouter([
       { path: '/admin', element: <AdminPage /> },
       { path: '/about-this-site', element: <AboutThisSitePage /> },
       { path: '/manager', element: <ManagerPage /> },
-      { path: '/about', element: <AboutPage /> },
-      { path: '/experience', element: <ExperiencePage /> },
       { path: '/projects', element: <ProjectsPage /> },
       { path: '/projects/:id/develop', element: <ProjectDevelopPage /> },
       { path: '/projects/:id/skills', element: <ProjectSkillsPage /> },
@@ -68,10 +83,6 @@ const router = createBrowserRouter([
       { path: '/workflows/:id', element: <WorkflowEditorPage /> },
       { path: '/agents', element: <AgentTeamPage /> },
       { path: '/workspace-roots', element: <WorkspaceRootsPage /> },
-      { path: '/library', element: <LibraryPage view="shelf" /> },
-      { path: '/library/:interestId', element: <LibraryPage view="shelf" /> },
-      { path: '/library/:interestId/acquisitions', element: <LibraryPage view="acquisitions" /> },
-      { path: '/library/:interestId/taste', element: <LibraryPage view="taste" /> },
     ],
   },
 ]);

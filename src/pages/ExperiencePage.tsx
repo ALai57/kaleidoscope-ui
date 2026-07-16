@@ -4,28 +4,15 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { NavBar } from '../components/layout/NavBar';
 import { SkillsSection } from '../components/layout/SkillsSection';
 import { Timeline } from '../components/layout/Timeline';
 import { Footer } from '../components/layout/Footer';
 import { SectionHeading } from '../components/common/SectionHeading';
 import { FactList } from '../components/common/FactList';
-import { useAuth } from '../auth/useAuth';
 
 const ExperiencePage: React.FC = () => {
-  const { isAuthenticated, userProfile, login, logout } = useAuth();
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
-
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Box sx={{ flex: 1 }}>
         <Container maxWidth="lg" sx={{ py: 6 }}>
           {/* Hero — page title, intro, and quick-facts read as one unit: prose on

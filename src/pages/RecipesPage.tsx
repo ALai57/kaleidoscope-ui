@@ -20,7 +20,6 @@ import {
 import { RecipeCard } from '../components/recipes/RecipeCard';
 import { RenameRecipeUrlDialog } from '../components/recipes/RenameRecipeUrlDialog';
 import { DeleteRecipeDialog } from '../components/recipes/DeleteRecipeDialog';
-import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { useAuth } from '../auth/useAuth';
 import { useDebouncedCallback } from '../hooks/useDebouncedCallback';
@@ -178,7 +177,7 @@ const PrismPageRoot = styled('div')(({ theme }) => ({
 
 // ── List page ────────────────────────────────────────────────────────────────
 const RecipesPage: React.FC = () => {
-  const { token, userProfile, isAuthenticated, login } = useAuth();
+  const { token, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [ingredient, setIngredient] = useState('');
@@ -206,7 +205,6 @@ const RecipesPage: React.FC = () => {
   return (
     <PrismThemeProvider>
       <PrismPageRoot>
-        <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
         <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px' }}>
           <div
             style={{

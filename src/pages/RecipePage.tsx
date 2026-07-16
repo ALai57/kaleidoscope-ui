@@ -8,7 +8,6 @@ import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
-import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RecipeSections } from '../components/recipes/RecipeSections';
 import { PrismThemeProvider } from '../components/prism';
@@ -37,7 +36,7 @@ function metaLine(recipe: {
 
 const RecipePage: React.FC = () => {
   const { slug = '' } = useParams();
-  const { token, userProfile, isAuthenticated, login } = useAuth();
+  const { token, userProfile, isAuthenticated } = useAuth();
 
   const { data: recipe, isLoading } = useQuery({
     queryKey: ['recipe', slug],
@@ -46,7 +45,6 @@ const RecipePage: React.FC = () => {
 
   return (
     <>
-      <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
       <Container maxWidth="md" sx={{ py: 4 }}>
         {isLoading && <LoadingScreen />}
         {!isLoading && !recipe && <Typography>Recipe not found.</Typography>}

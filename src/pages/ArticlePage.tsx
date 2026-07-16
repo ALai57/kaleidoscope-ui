@@ -12,7 +12,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTheme } from '@mui/material/styles';
-import { NavBar } from '../components/layout/NavBar';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RichTextEditor } from '../components/editor/RichTextEditor';
 import { useAuth } from '../auth/useAuth';
@@ -23,24 +22,15 @@ import { CATEGORICAL } from '../theme/tokens';
 // ── Single article view ────────────────────────────────────────────────────
 
 const ArticleView: React.FC<{ slug: string }> = ({ slug }) => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token } = useAuth();
 
   const { data: article, isLoading, isError } = useQuery({
     queryKey: ['article', slug],
     queryFn: () => getArticle(slug, token),
   });
 
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
-
   return (
     <>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Box sx={{ maxWidth: 900, mx: 'auto', px: 2, py: 4 }}>
         {isLoading && <LoadingScreen />}
 
@@ -196,7 +186,7 @@ const ArchiveRow: React.FC<{ article: Article }> = ({ article }) => {
 // ── Archive (all articles) view ────────────────────────────────────────────
 
 const ArchiveView: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token } = useAuth();
   const [search, setSearch] = useState('');
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
@@ -205,14 +195,6 @@ const ArchiveView: React.FC = () => {
     queryKey: ['articles'],
     queryFn: () => getArticles(token),
   });
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const allTags = useMemo(() => {
     const tags = new Set(articles.map((a: Article) => a.article_tags).filter(Boolean));
@@ -235,7 +217,6 @@ const ArchiveView: React.FC = () => {
 
   return (
     <>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Box id="primary-content" sx={{ maxWidth: 800, mx: 'auto', px: 2, py: 4 }}>
 
         {/* Header */}
