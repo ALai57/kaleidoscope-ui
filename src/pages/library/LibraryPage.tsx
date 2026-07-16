@@ -6,6 +6,7 @@ import { NavBar } from '../../components/layout/NavBar';
 import { LoadingScreen } from '../../components/layout/LoadingScreen';
 import { PrismThemeProvider, Button } from '../../components/prism';
 import { useAuth } from '../../auth/useAuth';
+import { isWriter } from '../../auth/authHelpers';
 import { useInterests, useInterest } from '../../components/library/hooks';
 import { InterestRail } from '../../components/library/InterestRail';
 import { ShelfView } from '../../components/library/ShelfView';
@@ -87,15 +88,21 @@ const LibraryPage: React.FC<{ view: LibraryView }> = ({ view }) => {
 
   if (isLoading) return <LoadingScreen />;
 
+  const userIsWriter = isWriter(userProfile);
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <PrismThemeProvider>
         <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
-          {isAuthenticated ? (
+          {userIsWriter ? (
             <LibraryPageInner view={view} />
           ) : (
-            <Box sx={{ p: 4 }}>Sign in as a writer to use your library.</Box>
+            <Box sx={{ p: 4 }}>
+              {isAuthenticated
+                ? 'Your account does not have writer access to the library.'
+                : 'Sign in as a writer to use your library.'}
+            </Box>
           )}
         </Box>
       </PrismThemeProvider>

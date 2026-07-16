@@ -9,12 +9,25 @@ import { setupServer } from 'msw/node';
 import LibraryPage from './LibraryPage';
 import { makeTestQueryClient } from '../../components/library/testHelpers';
 
+// The gate now uses isWriter(userProfile), which checks `<host>:writer` for the
+// current host — so the mock's role is built from the jsdom host. authState is
+// mutable so individual tests can exercise the writer / non-writer / signed-out
+// branches; it resets to an authenticated writer after each test.
+const { authState } = vi.hoisted(() => {
+  const writerRole = `${globalThis.window?.location?.hostname ?? 'localhost'}:writer`;
+  const writer = {
+    token: 't' as string | undefined,
+    isAuthenticated: true,
+    isLoading: false,
+    userProfile: { firstName: 'A', realm_access: { roles: [writerRole] } } as unknown,
+    login: () => {},
+    logout: () => {},
+  };
+  return { authState: { defaultWriter: writer, current: writer } };
+});
+
 vi.mock('../../auth/useAuth', () => ({
-  useAuth: () => ({
-    token: 't', isAuthenticated: true,
-    userProfile: { firstName: 'A', realm_access: { roles: ['writer'] } },
-    login: vi.fn(), logout: vi.fn(),
-  }),
+  useAuth: () => authState.current,
 }));
 
 const server = setupServer(
@@ -26,7 +39,7 @@ const server = setupServer(
   http.get('/interests/i1/recommendations', () => HttpResponse.json([])),
 );
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => { server.resetHandlers(); authState.current = authState.defaultWriter; });
 afterAll(() => server.close());
 
 function renderAt(path: string) {
@@ -61,5 +74,25 @@ describe('LibraryPage', () => {
   it('shows the acquisitions pipeline on the acquisitions route', async () => {
     renderAt('/library/i1/acquisitions');
     expect(await screen.findByRole('button', { name: /run acquisition/i })).toBeInTheDocument();
+  });
+
+  it('gates an authenticated non-writer out of the shell', async () => {
+    authState.current = {
+      ...authState.defaultWriter,
+      userProfile: { firstName: 'B', realm_access: { roles: [] } },
+    };
+    renderAt('/library/i1');
+    expect(await screen.findByText(/does not have writer access/i)).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Modern jazz history/ })).not.toBeInTheDocument();
+  });
+
+  it('prompts an unauthenticated visitor to sign in', async () => {
+    authState.current = {
+      ...authState.defaultWriter,
+      isAuthenticated: false,
+      userProfile: null,
+    };
+    renderAt('/library/i1');
+    expect(await screen.findByText(/sign in as a writer/i)).toBeInTheDocument();
   });
 });
