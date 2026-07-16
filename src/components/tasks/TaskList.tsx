@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Box from '@mui/material/Box';
@@ -26,14 +26,15 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   // Local pending list for optimistic drag reorder
   const [localPending, setLocalPending] = useState<ProjectTask[]>(pending);
-  const localPendingRef = useRef<ProjectTask[]>(pending);
 
-  // Sync local state when server data changes (e.g., after mutations)
-  useEffect(() => {
+  // Re-sync local state from server data when the tasks prop changes (e.g. after
+  // a mutation). Adjusting state during render on an identity change is React's
+  // recommended alternative to a setState-in-effect sync.
+  const [prevTasks, setPrevTasks] = useState(tasks);
+  if (tasks !== prevTasks) {
+    setPrevTasks(tasks);
     setLocalPending(pending);
-    localPendingRef.current = pending;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tasks]);
+  }
 
   const handleMove = useCallback((dragIndex: number, hoverIndex: number) => {
     setLocalPending((prev) => {
@@ -41,15 +42,14 @@ export const TaskList: React.FC<TaskListProps> = ({
       const removed = next.splice(dragIndex, 1)[0];
       if (removed === undefined) return prev;
       next.splice(hoverIndex, 0, removed);
-      localPendingRef.current = next;
       return next;
     });
   }, []);
 
   const handleMoveEnd = useCallback(() => {
-    const positions = localPendingRef.current.map((t, i) => ({ id: t.id, position: i }));
+    const positions = localPending.map((t, i) => ({ id: t.id, position: i }));
     onReorder(positions);
-  }, [onReorder]);
+  }, [localPending, onReorder]);
 
   if (tasks.length === 0) {
     return (
