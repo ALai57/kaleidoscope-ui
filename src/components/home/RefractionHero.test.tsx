@@ -1,8 +1,19 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import { render } from '@/test/testUtils';
 import RefractionHero from './RefractionHero';
+import { PULSE_CONFIG } from './gardenFacets';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
+// RefractionHero gates its pulses on prefers-reduced-motion; drive that query.
+vi.mock('@mui/material/useMediaQuery', () => ({ default: vi.fn(() => false) }));
+const mockUseMediaQuery = vi.mocked(useMediaQuery);
+
+beforeEach(() => {
+  mockUseMediaQuery.mockReturnValue(false); // motion allowed by default
+  PULSE_CONFIG.enabled = true; // restore the shared config between tests
+});
 
 describe('RefractionHero', () => {
   it('renders a link for each garden facet with its route', () => {
@@ -20,5 +31,31 @@ describe('RefractionHero', () => {
   it('labels the scene as a group for assistive tech', () => {
     render(<RefractionHero />);
     expect(screen.getByRole('group', { name: /prism/i })).toBeTruthy();
+  });
+
+  it('renders one incoming packet plus one per facet, all decorative', () => {
+    const { container } = render(<RefractionHero />);
+    const packets = container.querySelectorAll('[data-pulse]');
+    expect(packets).toHaveLength(4); // 1 incoming + 3 fan-out
+    expect(container.querySelector('[data-pulse="incoming"]')).toBeTruthy();
+    expect(container.querySelector('[data-pulse="writing"]')).toBeTruthy();
+    expect(container.querySelector('[data-pulse="reading"]')).toBeTruthy();
+    expect(container.querySelector('[data-pulse="recipes"]')).toBeTruthy();
+    packets.forEach((p) => expect(p.getAttribute('aria-hidden')).toBe('true'));
+  });
+
+  it('renders no pulses under prefers-reduced-motion, keeping the static scene', () => {
+    mockUseMediaQuery.mockReturnValue(true);
+    const { container } = render(<RefractionHero />);
+    expect(container.querySelectorAll('[data-pulse]')).toHaveLength(0);
+    // static scene and links still present
+    expect(screen.getByRole('link', { name: /Writing/ })).toBeTruthy();
+  });
+
+  it('renders no pulses when the animation is disabled in config', () => {
+    PULSE_CONFIG.enabled = false;
+    const { container } = render(<RefractionHero />);
+    expect(container.querySelectorAll('[data-pulse]')).toHaveLength(0);
+    expect(screen.getByRole('link', { name: /Recipes/ })).toBeTruthy();
   });
 });

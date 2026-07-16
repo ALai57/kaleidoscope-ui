@@ -3,19 +3,47 @@ import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { GARDEN_FACETS, facetColor } from './gardenFacets';
+import { GARDEN_FACETS, facetColor, PULSE_CONFIG, pulseTimeline } from './gardenFacets';
+import type { PulseSpan } from './gardenFacets';
 
 /**
  * The front-page hero: one beam of light ("me") refracted through a prism into
  * the three garden facets. Stylized SVG, never photoreal. Colors come from
  * `theme.tokens` so the spectrum recolors with the active preset. Hovering or
- * focusing a facet dims the others and lights the chosen one. Under reduced
- * motion the entrance/pulse animations are disabled.
+ * focusing a facet dims the others and lights the chosen one.
+ *
+ * Soft light pulses ride the beams: one packet travels source→prism, then the
+ * prism emits one down each fan-out ray to a facet, looping. Every knob (speed,
+ * size, brightness, glow, rhythm) lives in `PULSE_CONFIG` (see gardenFacets.ts).
+ * Under reduced motion — or with `PULSE_CONFIG.enabled` off — no pulses render.
  *
  * Visual reference (final polish): the approved prototype Artifact.
  */
 // eslint-disable-next-line no-restricted-syntax -- bare-MUI fallback spectrum, used only when theme.tokens is undefined (facetColor prefers tokens.color.categorical)
 const FALLBACKS = ['#45D6E8', '#9C90F0', '#E0A73C']; // writing / reading / recipes
+
+/**
+ * Turn a packet's timeline window into SMIL motion + opacity attributes over the
+ * shared cycle. The packet waits at the path start, glides start→end during its
+ * window fading up to `intensity` at the midpoint, then rests (dark, parked at the
+ * end) for the remainder of the loop — which is what keeps the chain phase-locked.
+ */
+function pulseSmil(span: PulseSpan, intensity: number) {
+  const s = span.startPct;
+  const e = span.endPct;
+  const mid = (s + e) / 2;
+  const n = (x: number): number => Number(x.toFixed(5));
+  const motionTimes = s > 0 ? [0, s, e, 1] : [0, e, 1];
+  const motionPoints = s > 0 ? [0, 0, 1, 1] : [0, 1, 1];
+  const opTimes = s > 0 ? [0, s, mid, e, 1] : [0, mid, e, 1];
+  const opValues = s > 0 ? [0, 0, intensity, 0, 0] : [0, intensity, 0, 0];
+  return {
+    keyTimes: motionTimes.map(n).join(';'),
+    keyPoints: motionPoints.map(n).join(';'),
+    opKeyTimes: opTimes.map(n).join(';'),
+    opValues: opValues.map(n).join(';'),
+  };
+}
 
 const RefractionHero: React.FC = () => {
   const theme = useTheme();
@@ -30,6 +58,28 @@ const RefractionHero: React.FC = () => {
 
   // Facet card y positions in the 1000x480 viewBox.
   const rowY = [80, 198, 316];
+
+  // Soft light pulses: one incoming packet (source→prism) plus one per facet
+  // (prism→facet), all on a single shared period so the chain stays phase-locked.
+  // Each packet rides the exact coordinates of its beam/ray below.
+  const timeline = pulseTimeline(PULSE_CONFIG, GARDEN_FACETS.length);
+  const dur = `${timeline.period}s`;
+  const showPulses = PULSE_CONFIG.enabled && !reduce;
+  const packets = showPulses
+    ? timeline.spans.map((span, idx) => {
+        if (span.key === 'incoming') {
+          return { span, d: 'M146 238 L446 238', color: accent };
+        }
+        const i = idx - 1;
+        const f = GARDEN_FACETS[i]!;
+        const cy = (rowY[i] ?? 80) + 40;
+        return {
+          span,
+          d: `M500 250 L712 ${cy}`,
+          color: facetColor(tokens, f.colorIndex, FALLBACKS[i] ?? FALLBACKS[0]!),
+        };
+      })
+    : [];
 
   return (
     <Box
@@ -61,6 +111,10 @@ const RefractionHero: React.FC = () => {
             <stop offset="100%" stopColor="#0b3a44" />
           </radialGradient>
           {/* eslint-enable no-restricted-syntax */}
+          {/* Soft bloom for the travelling light packets; stdDeviation is the `glow` knob. */}
+          <filter id="rh-glow" x="-200%" y="-200%" width="500%" height="500%" filterUnits="objectBoundingBox">
+            <feGaussianBlur stdDeviation={PULSE_CONFIG.glow} />
+          </filter>
         </defs>
 
         {/* source = me */}
@@ -99,6 +153,53 @@ const RefractionHero: React.FC = () => {
             </Box>
           );
         })}
+
+        {/* Travelling light packets (decorative). Rendered last so they glow over
+            the beams and prism. Colors/paths mirror the beams above; timing is
+            entirely data-driven from PULSE_CONFIG via pulseTimeline. */}
+        {packets.length > 0 && (
+          <g className="pulses" aria-hidden="true">
+            {packets.map(({ span, d, color }) => {
+              const gid = `rh-pulse-${span.key}`;
+              const smil = pulseSmil(span, PULSE_CONFIG.intensity);
+              return (
+                <g key={span.key}>
+                  <radialGradient id={gid} cx="50%" cy="50%" r="50%">
+                    {/* eslint-disable-next-line no-restricted-syntax -- white-hot packet core; a literal is correct here (SVG paint can't read JS tokens, and the packet body/edge use the token color) */}
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.95" />
+                    <stop offset="35%" stopColor={color} stopOpacity="0.9" />
+                    <stop offset="100%" stopColor={color} stopOpacity="0" />
+                  </radialGradient>
+                  <circle
+                    r={PULSE_CONFIG.size}
+                    fill={`url(#${gid})`}
+                    filter="url(#rh-glow)"
+                    opacity={0}
+                    data-pulse={span.key}
+                    aria-hidden="true"
+                  >
+                    <animateMotion
+                      dur={dur}
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                      path={d}
+                      keyPoints={smil.keyPoints}
+                      keyTimes={smil.keyTimes}
+                    />
+                    <animate
+                      attributeName="opacity"
+                      dur={dur}
+                      repeatCount="indefinite"
+                      calcMode="linear"
+                      values={smil.opValues}
+                      keyTimes={smil.opKeyTimes}
+                    />
+                  </circle>
+                </g>
+              );
+            })}
+          </g>
+        )}
       </Box>
     </Box>
   );
