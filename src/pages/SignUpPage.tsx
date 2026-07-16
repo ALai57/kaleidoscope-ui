@@ -257,7 +257,7 @@ const SignUpPage: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ height: '100%', width: '100%', position: 'absolute' }}>
+    <Box sx={{ minHeight: '100%', width: '100%' }}>
       <Grid
         container
         sx={{
