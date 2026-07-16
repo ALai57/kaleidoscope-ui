@@ -14,6 +14,9 @@ vi.mock('@/auth/useAuth', () => ({ useAuth: () => mockAuth }));
 vi.mock('@/components/library/ShelfView', () => ({
   ShelfView: () => <div data-testid="shelf">shelf</div>,
 }));
+vi.mock('@/components/library/AcquisitionsPipeline', () => ({
+  AcquisitionsPipeline: () => <div data-testid="acquisitions">acquisitions</div>,
+}));
 vi.mock('@/components/library/hooks', () => ({
   useInterests: () => ({ data: [] }),
   useInterest: () => ({ data: undefined }),
@@ -27,6 +30,7 @@ function renderAt(path: string) {
         <Routes>
           <Route path="/library" element={<LibraryPage view="shelf" />} />
           <Route path="/library/:interestId" element={<LibraryPage view="shelf" />} />
+          <Route path="/library/:interestId/acquisitions" element={<LibraryPage view="acquisitions" />} />
         </Routes>
       </MemoryRouter>
     </ThemeProvider>
@@ -51,5 +55,11 @@ describe('LibraryPage gating', () => {
     renderAt('/library/reading');
     expect(screen.queryByText('Acquisitions')).toBeNull();
     expect(screen.queryByText('Taste profile')).toBeNull();
+  });
+
+  it('forces a non-writer onto the shelf on the /acquisitions route (no writer panel)', () => {
+    renderAt('/library/reading/acquisitions');
+    expect(screen.getByTestId('shelf')).toBeTruthy();
+    expect(screen.queryByTestId('acquisitions')).toBeNull();
   });
 });

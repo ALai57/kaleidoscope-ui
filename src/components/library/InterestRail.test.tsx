@@ -23,4 +23,9 @@ describe('InterestRail', () => {
     await userEvent.click(screen.getByRole('button', { name: /add interest/i }));
     expect(onAdd).toHaveBeenCalled();
   });
+
+  it('hides the add button when onAdd is omitted (read-only, non-writer)', () => {
+    renderWithProviders(<InterestRail interests={interests} activeId="i1" />);
+    expect(screen.queryByRole('button', { name: /add interest/i })).toBeNull();
+  });
 });
