@@ -43,4 +43,15 @@ describe('AdminLayout', () => {
     );
     expect(screen.getByTestId('admin-mode')).toHaveTextContent('dark');
   });
+
+  it('renders under the live app theme when disablePrismTheme is set (theme workbench)', () => {
+    // With the opt-out, the subtree inherits the ambient (light) app theme
+    // instead of the fixed Prism dark one — so the UI Manager previews edits.
+    testRender(
+      <AdminLayout title="UI Manager" disablePrismTheme>
+        <ModeProbe />
+      </AdminLayout>,
+    );
+    expect(screen.getByTestId('admin-mode')).toHaveTextContent('light');
+  });
 });

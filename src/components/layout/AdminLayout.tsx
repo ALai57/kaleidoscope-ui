@@ -16,6 +16,13 @@ export interface AdminLayoutProps {
   user?: NavBarUser | undefined;
   isAuthenticated?: boolean | undefined;
   login?: (() => void) | undefined;
+  /**
+   * Skip the built-in Prism theming so the shell renders under the *live* app
+   * theme instead of the static Prism one. Used by the theme workbench (UI
+   * Manager) so edits to color/preset/mode preview in place; every other admin
+   * page keeps the fixed Prism chrome (the default).
+   */
+  disablePrismTheme?: boolean;
   children: React.ReactNode;
 }
 
@@ -31,9 +38,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   user,
   isAuthenticated,
   login,
+  disablePrismTheme = false,
   children,
-}) => (
-  <PrismThemeProvider>
+}) => {
+  const shell = (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <AdminNavRail
         {...(navItems ? { items: navItems } : {})}
@@ -48,5 +56,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         </Box>
       </Box>
     </Box>
-  </PrismThemeProvider>
-);
+  );
+
+  return disablePrismTheme ? shell : <PrismThemeProvider>{shell}</PrismThemeProvider>;
+};
