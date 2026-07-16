@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { NavBar } from './NavBar';
 import { makeTheme, BASE_THEME } from '../../theme';
+import { getWriterRole } from '../../auth/authHelpers';
 
 // Render under the real design-system theme so components read `theme.tokens`
 // (radius/motion/typography voice), the way they do in the app.
@@ -43,6 +44,22 @@ describe('NavBar', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
     expect(handleLogin).toHaveBeenCalled();
+  });
+
+  it('shows the Library link for writers', () => {
+    render(
+      <NavBar isAuthenticated user={{ firstName: 'Alice', realm_access: { roles: [getWriterRole()] } }} />,
+      { wrapper: Wrapper },
+    );
+    expect(screen.getByRole('link', { name: /library/i })).toHaveAttribute('href', '/library');
+  });
+
+  it('hides the Library link from authenticated non-writers', () => {
+    render(
+      <NavBar isAuthenticated user={{ firstName: 'Bob', realm_access: { roles: [] } }} />,
+      { wrapper: Wrapper },
+    );
+    expect(screen.queryByRole('link', { name: /library/i })).toBeNull();
   });
 
   // The dark-mode toggle is a global element (DarkModeToggle in main.tsx),

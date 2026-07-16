@@ -11,7 +11,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { Link, useLocation } from 'react-router-dom';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
-import {isSiteAdmin} from "@/auth/authHelpers";
+import {isSiteAdmin, isWriter} from "@/auth/authHelpers";
 
 export interface NavBarUser {
   firstName?: string | undefined;
@@ -40,6 +40,7 @@ export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, l
   const { pathname } = useLocation();
 
   const userIsSiteAdmin = isSiteAdmin(user);
+  const userIsWriter = isWriter(user);
 
   // Structural tokens (radius/motion/mono voice) drive the Prism look; each has
   // a non-color fallback so the bar still renders under a bare MUI theme.
@@ -152,8 +153,18 @@ export const NavBar: React.FC<NavBarProps> = ({ user, isAuthenticated = false, l
             ))}
           </Box>
 
-          {/* Right-side: admin + user */}
+          {/* Right-side: writer + admin + user */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 1 }}>
+            {userIsWriter && (
+              <Box
+                component={Link}
+                to="/library"
+                sx={{ ...linkSx(pathname.startsWith('/library')), display: { xs: 'none', sm: 'block' } }}
+              >
+                Library
+              </Box>
+            )}
+
             {userIsSiteAdmin && (
               <>
                 <Box
