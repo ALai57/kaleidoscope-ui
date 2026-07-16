@@ -157,10 +157,14 @@ its `[startPct, endPct]` window, and inside it travels `0% → 100%` while opaci
 Config values flow to CSS via the generated keyframes and inline style, so retuning `PULSE_CONFIG`
 changes the animation with no other edits.
 
-**Browser-support fallback:** if `offset-path` on SVG elements proves unreliable on a target browser,
-the same effect is achievable with SMIL `<animateMotion><mpath>` driven by the identical config
-(`dur`, `begin` offsets from `pulseTimeline`). CSS `offset-path` is the default; SMIL is the
-documented fallback. This is an implementation detail, not a scope change.
+**Chosen technique (implementation update):** SMIL was selected over CSS `offset-path`. Each packet is
+a `<circle>` with an `<animateMotion path=… keyPoints/keyTimes>` (motion) plus an
+`<animate attributeName="opacity">` (fade), both `dur={period}` `repeatCount="indefinite"`, with
+`keyTimes`/`values` computed from `pulseTimeline()`. This is pure SVG — no Emotion/MUI coupling
+(aligns with a possible MUI exit), no `offset-path`-on-SVG browser uncertainty, and directly
+observable/testable. CSS `offset-path` remains a valid alternative; the config knobs are identical
+either way. Verified in Chromium: all four packets travel their beams and reach peak `intensity`,
+and reduced motion renders none.
 
 ### 4.3 Reduced motion & master switch
 
