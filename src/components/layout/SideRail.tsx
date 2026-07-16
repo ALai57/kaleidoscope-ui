@@ -120,7 +120,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
         const active = isFacetActive(f, pathname);
         const color = facetColor(tokens, f.colorIndex, FALLBACKS[i] ?? FALLBACKS[0]!);
         return (
-          <Box key={f.key} component={Link} to={f.route} aria-current={active ? 'page' : 'false'} sx={itemSx(active, color)}>
+          <Box key={f.key} component={Link} to={f.route} aria-label={f.label} aria-current={active ? 'page' : 'false'} sx={itemSx(active, color)}>
             <Box component="span" sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: color, flex: 'none' }} />
             <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{f.label}</Box>
           </Box>
@@ -128,7 +128,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
       })}
 
       {/* About (essentials tier) */}
-      <Box component={Link} to="/about" aria-current={pathname === '/about' ? 'page' : 'false'} sx={itemSx(pathname === '/about', theme.palette.success.main)}>
+      <Box component={Link} to="/about" aria-label="About" aria-current={pathname === '/about' ? 'page' : 'false'} sx={itemSx(pathname === '/about', theme.palette.success.main)}>
         <Box component="span" sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main', flex: 'none' }} />
         <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>About</Box>
       </Box>
