@@ -9,7 +9,6 @@ echo "Deploying frontend to sahiltalkingcents bucket..."
 
 aws s3 sync resources/sahiltalkingcents.com/static s3://sahiltalkingcents.com/static \
     --delete \
-    --exclude "*/cljs-runtime/*" \
     --exclude "*/shareable_stories/*" # --dryrun
 
 popd

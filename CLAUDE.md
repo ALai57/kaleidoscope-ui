@@ -6,9 +6,6 @@ served everywhere; the backend (`../kaleidoscope`, a Clojure CMS) inspects the H
 decide which tenant's data and static assets to serve. This repo builds and deploys only the client;
 it does not run the API.
 
-> ⚠️ **`README.md` is stale** — it describes an old ClojureScript / re-frame / shadow-cljs app. That
-> stack is gone. Trust `package.json`, `vite.config.ts`, and this file, not the README.
-
 ---
 
 ## Stack
@@ -130,11 +127,10 @@ backend's AI-workflow and CMS data model — keep them in sync with `../kaleidos
 
 ## Sharp edges
 
-1. **`README.md` is out of date** (old ClojureScript app) — ignore it.
-3. **`vite build` empties the output dir** (`emptyOutDir`) and **does not copy `publicDir`**
+1. **`vite build` empties the output dir** (`emptyOutDir`) and **does not copy `publicDir`**
    (`copyPublicDir: false`) — per-tenant static assets are deployed by their own scripts, not the build.
-4. **`npm run deploy` mutates git** — it runs `npm version patch`, bumping and committing the version.
-5. **Install quirks**: `legacy-peer-deps=true` + `engine-strict=true` in `.npmrc`; use Node 22.
-6. The dev API proxy rewrites the `Host` header to `andrewslai.com.localhost` — other tenants aren't
+2. **`npm run deploy` mutates git** — it runs `npm version patch`, bumping and committing the version.
+3. **Install quirks**: `legacy-peer-deps=true` + `engine-strict=true` in `.npmrc`; use Node 22.
+4. The dev API proxy rewrites the `Host` header to `andrewslai.com.localhost` — other tenants aren't
    reachable via the default dev proxy without changing `vite.config.ts`.
 ```

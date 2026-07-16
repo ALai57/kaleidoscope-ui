@@ -105,14 +105,13 @@ export interface TypeStyle {
   lineHeight: number;
 }
 
-/** Returns an HSL color string. Ports `hsl` from color-wheel.cljs. */
+/** Returns an HSL color string. */
 export function hsl(h: number, s: number, l: number): string {
   return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
 /**
  * Computes primary, secondary, and tertiary brand colors from theme params.
- * Ports `make-theme` from theme.cljs.
  */
 export function makeBrand(params: ThemeParams): Tokens['color']['brand'] {
   const { hue, saturation, lightness, angle } = params;
