@@ -7,9 +7,10 @@ import { useShelf } from './hooks';
 interface Props {
   interestId: string;
   token: string | undefined;
+  canEdit?: boolean;
 }
 
-export const ShelfView: React.FC<Props> = ({ interestId, token }) => {
+export const ShelfView: React.FC<Props> = ({ interestId, token, canEdit = false }) => {
   const { tokens } = useTheme();
   const [kind, setKind] = React.useState<string | null>(null);
   // Unfiltered fetch drives the chip row so chips don't vanish when a filter is active.
@@ -49,7 +50,7 @@ export const ShelfView: React.FC<Props> = ({ interestId, token }) => {
           gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         }}>
           {items.map((rec) => (
-            <CatalogCard key={rec.id} rec={rec} interestId={interestId} token={token} />
+            <CatalogCard key={rec.id} rec={rec} interestId={interestId} token={token} canEdit={canEdit} />
           ))}
         </div>
       )}

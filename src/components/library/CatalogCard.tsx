@@ -10,9 +10,11 @@ interface Props {
   rec: Recommendation;
   interestId: string;
   token: string | undefined;
+  /** Writer-only: show the status-change actions menu. Off by default (secure). */
+  canEdit?: boolean;
 }
 
-export const CatalogCard: React.FC<Props> = ({ rec, interestId, token }) => {
+export const CatalogCard: React.FC<Props> = ({ rec, interestId, token, canEdit = false }) => {
   const { tokens } = useTheme();
   const [open, setOpen] = React.useState(false);
   const updateStatus = useUpdateRecStatus(interestId, token);
@@ -29,13 +31,15 @@ export const CatalogCard: React.FC<Props> = ({ rec, interestId, token }) => {
         <Chip as="span" dotColor={originColor} pressed={false}>
           {catalogCode(rec.kind)}
         </Chip>
-        <IconButton
-          aria-label="card actions"
-          aria-expanded={open}
-          onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
-        >
-          <MoreVertIcon fontSize="small" />
-        </IconButton>
+        {canEdit && (
+          <IconButton
+            aria-label="card actions"
+            aria-expanded={open}
+            onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }}
+          >
+            <MoreVertIcon fontSize="small" />
+          </IconButton>
+        )}
       </div>
 
       <a
@@ -71,11 +75,13 @@ export const CatalogCard: React.FC<Props> = ({ rec, interestId, token }) => {
         {originLabel(rec.origin)}
       </div>
 
-      <Menu open={open} onClose={() => setOpen(false)} aria-label="card actions menu">
-        <MenuItem onSelect={() => setStatus('shelved')}>Keep on shelf</MenuItem>
-        <MenuItem onSelect={() => setStatus('queued')}>Queue for later</MenuItem>
-        <MenuItem onSelect={() => setStatus('archived')}>Archive</MenuItem>
-      </Menu>
+      {canEdit && (
+        <Menu open={open} onClose={() => setOpen(false)} aria-label="card actions menu">
+          <MenuItem onSelect={() => setStatus('shelved')}>Keep on shelf</MenuItem>
+          <MenuItem onSelect={() => setStatus('queued')}>Queue for later</MenuItem>
+          <MenuItem onSelect={() => setStatus('archived')}>Archive</MenuItem>
+        </Menu>
+      )}
     </Card>
   );
 };

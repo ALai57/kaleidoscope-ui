@@ -55,7 +55,7 @@ const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ v
           </p>
         )}
 
-        {id && effectiveView === 'shelf' && <ShelfView interestId={id} token={token} />}
+        {id && effectiveView === 'shelf' && <ShelfView interestId={id} token={token} canEdit={canEdit} />}
         {id && canEdit && effectiveView === 'acquisitions' && <AcquisitionsPipeline interestId={id} token={token} />}
         {id && canEdit && effectiveView === 'taste' && interest.data && (
           <TasteProfileEditor interest={interest.data} token={token} />

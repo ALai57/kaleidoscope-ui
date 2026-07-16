@@ -41,7 +41,7 @@ describe('CatalogCard', () => {
   it('archives via the status menu', async () => {
     const client = makeTestQueryClient();
     const spy = vi.spyOn(client, 'invalidateQueries');
-    renderWithProviders(<CatalogCard rec={rec} interestId="i1" token={undefined} />, { client });
+    renderWithProviders(<CatalogCard rec={rec} interestId="i1" token={undefined} canEdit />, { client });
     await userEvent.click(screen.getByRole('button', { name: /card actions/i }));
     await userEvent.click(screen.getByRole('menuitem', { name: /archive/i }));
     await waitFor(() => expect(spy).toHaveBeenCalledWith({ queryKey: ['interests', 'i1', 'shelf'] }));
@@ -50,5 +50,15 @@ describe('CatalogCard', () => {
   it('links the title to the source url', () => {
     renderWithProviders(<CatalogCard rec={rec} interestId="i1" token={undefined} />);
     expect(screen.getByRole('link', { name: /Power & Silicon/ })).toHaveAttribute('href', 'https://x');
+  });
+
+  it('hides the writer-only card actions menu by default (public read-only shelf)', () => {
+    renderWithProviders(<CatalogCard rec={rec} interestId="i1" token={undefined} />);
+    expect(screen.queryByRole('button', { name: /card actions/i })).toBeNull();
+  });
+
+  it('shows the card actions menu when canEdit is true', () => {
+    renderWithProviders(<CatalogCard rec={rec} interestId="i1" token={undefined} canEdit />);
+    expect(screen.getByRole('button', { name: /card actions/i })).toBeInTheDocument();
   });
 });
