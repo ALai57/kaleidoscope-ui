@@ -7,6 +7,7 @@ coverage/
 .env*.local
 .env.production
 .env.ephemeral
+.env.development
 log.txt
 node_modules
 build-reports
