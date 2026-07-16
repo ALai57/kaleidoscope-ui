@@ -12,6 +12,7 @@ import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RecipeSections } from '../components/recipes/RecipeSections';
 import { ImportLineageStrip } from '../components/recipes/lineage/ImportLineageStrip';
 import { CookTimeline } from '../components/recipes/timeline';
+import { WakeLockButton } from '../components/recipes/WakeLockButton';
 import { useAuth } from '../auth/useAuth';
 import { isSiteAdmin } from '../auth/authHelpers';
 import { getRecipe, qualifiedLabelName } from '../api/recipes';
@@ -59,16 +60,19 @@ const RecipePage: React.FC = () => {
               <Typography variant="h3" gutterBottom>
                 {recipe.content.title}
               </Typography>
-              {isAuthenticated && (
-                <Button
-                  component={RouterLink}
-                  to={`/recipes/${recipe.recipe_url}/edit`}
-                  startIcon={<EditIcon />}
-                  size="small"
-                >
-                  Edit
-                </Button>
-              )}
+              <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+                <WakeLockButton />
+                {isAuthenticated && (
+                  <Button
+                    component={RouterLink}
+                    to={`/recipes/${recipe.recipe_url}/edit`}
+                    startIcon={<EditIcon />}
+                    size="small"
+                  >
+                    Edit
+                  </Button>
+                )}
+              </Stack>
             </Stack>
 
             <Typography
