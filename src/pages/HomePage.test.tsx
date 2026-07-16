@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -59,16 +59,15 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 // ── Tests ──────────────────────────────────────────────────────────────────
 
 describe('HomePage', () => {
-  it('renders the name heading', () => {
+  it('renders the refraction hero facet links', () => {
     render(<HomePage />, { wrapper: Wrapper });
-    expect(screen.getByText('Andrew Lai')).toBeTruthy();
-  });
-
-  it('renders the portfolio sections', () => {
-    render(<HomePage />, { wrapper: Wrapper });
-    expect(screen.getAllByText('About Me').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Experience').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('Writing').length).toBeGreaterThan(0);
+    // Scoped to the hero: the Footer also renders its own nav link labeled
+    // "Writing" (to /archive), which would otherwise collide with the hero's
+    // facet link of the same name.
+    const hero = within(screen.getByRole('group', { name: /prism refracting/i }));
+    expect(hero.getByRole('link', { name: /Writing/ }).getAttribute('href')).toBe('/archive');
+    expect(hero.getByRole('link', { name: /Reading/ }).getAttribute('href')).toBe('/library');
+    expect(hero.getByRole('link', { name: /Recipes/ }).getAttribute('href')).toBe('/recipes');
   });
 
   it('renders recent articles from API', async () => {
