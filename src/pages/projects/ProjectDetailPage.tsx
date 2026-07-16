@@ -35,7 +35,7 @@ import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import ChecklistIcon from '@mui/icons-material/Checklist';
 import HistoryIcon from '@mui/icons-material/History';
 import SchoolIcon from '@mui/icons-material/School';
-import { NavBar } from '../../components/layout/NavBar';
+import { AdminLayout } from '../../components/layout/AdminLayout';
 import { LoadingScreen } from '../../components/layout/LoadingScreen';
 import { EditorToolbar } from '../../components/editor/EditorToolbar';
 import { extensions } from '../../components/editor/extensions';
@@ -307,7 +307,7 @@ const EDITOR_CONTENT_SX = {
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
 
   const [tab, setTab] = useState(0);
@@ -521,9 +521,8 @@ const ProjectDetailPage: React.FC = () => {
   const scores = project.scores ?? [];
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ p: 3, maxWidth: 1100, mx: 'auto' }}>
+    <AdminLayout title="Project" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <Box sx={{ maxWidth: 1100, mx: 'auto' }}>
         {/* ── Title + status ── */}
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 1 }}>
           {editingTitle ? (
@@ -876,7 +875,7 @@ const ProjectDetailPage: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </AdminLayout>
   );
 };
 

@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
-import { NavBar } from '../../components/layout/NavBar';
+import { AdminLayout } from '../../components/layout/AdminLayout';
 import { SkillTree } from '../../components/projects/SkillTree';
 import { useAuth } from '../../auth/useAuth';
 import { getProject, getSkillTree, generateSkills, updateSkill } from '../../api/projects';
@@ -20,7 +20,7 @@ import type { SkillStatus } from '../../types/project';
 const ProjectSkillsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
 
   const user = userProfile
@@ -65,9 +65,8 @@ const ProjectSkillsPage: React.FC = () => {
   const totalCount = allSkills.length;
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ p: 3, maxWidth: 900, mx: 'auto' }}>
+    <AdminLayout title="Skills" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <Box sx={{ maxWidth: 900, mx: 'auto' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Button
             startIcon={<ArrowBackIcon />}
@@ -126,7 +125,7 @@ const ProjectSkillsPage: React.FC = () => {
           </Paper>
         )}
       </Box>
-    </Box>
+    </AdminLayout>
   );
 };
 

@@ -19,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import LockIcon from '@mui/icons-material/Lock';
-import { NavBar } from '../../components/layout/NavBar';
+import { AdminLayout } from '../../components/layout/AdminLayout';
 import { ScoreDefinitionForm } from '../../components/projects/ScoreDefinitionForm';
 import { useAuth } from '../../auth/useAuth';
 import {
@@ -68,7 +68,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({ definition, onClose, onConf
 );
 
 const ScoreDefinitionsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
 
   const [formOpen, setFormOpen] = useState(false);
@@ -128,28 +128,28 @@ const ScoreDefinitionsPage: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ p: 3, maxWidth: 900, mx: 'auto' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              Score Definitions
-            </Typography>
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
-              Define how projects are evaluated. Defaults are seeded automatically.
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => { setEditing(null); setFormOpen(true); }}
-          >
-            New Definition
-          </Button>
-        </Box>
+    <AdminLayout
+      title="Score Definitions"
+      user={user}
+      isAuthenticated={isAuthenticated}
+      login={login}
+      actions={
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => { setEditing(null); setFormOpen(true); }}
+        >
+          New Definition
+        </Button>
+      }
+    >
+      <Box sx={{ maxWidth: 900, mx: 'auto' }}>
+        <Typography variant="body2" sx={{
+          color: "text.secondary",
+          mb: 3
+        }}>
+          Define how projects are evaluated. Defaults are seeded automatically.
+        </Typography>
 
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', p: 8 }}>
@@ -257,7 +257,7 @@ const ScoreDefinitionsPage: React.FC = () => {
           isDeleting={deleteMutation.isPending}
         />
       )}
-    </Box>
+    </AdminLayout>
   );
 };
 

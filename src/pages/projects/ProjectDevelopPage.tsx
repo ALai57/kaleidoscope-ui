@@ -8,7 +8,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { NavBar } from '../../components/layout/NavBar';
+import { AdminLayout } from '../../components/layout/AdminLayout';
 import { AgentChat } from '../../components/projects/AgentChat';
 import { useAuth } from '../../auth/useAuth';
 import { getProject } from '../../api/projects';
@@ -35,7 +35,7 @@ const AGENTS: { type: AgentType; label: string; description: string }[] = [
 const ProjectDevelopPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const [agentTab, setAgentTab] = useState(0);
 
   const user = userProfile
@@ -55,9 +55,8 @@ const ProjectDevelopPage: React.FC = () => {
   const selectedAgent = AGENTS[agentTab];
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ p: 3, maxWidth: 900, mx: 'auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <AdminLayout title="Develop" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <Box sx={{ maxWidth: 900, mx: 'auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Back + heading */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Button
@@ -110,7 +109,7 @@ const ProjectDevelopPage: React.FC = () => {
           )}
         </Paper>
       </Box>
-    </Box>
+    </AdminLayout>
   );
 };
 

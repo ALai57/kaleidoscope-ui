@@ -12,7 +12,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import WorkflowStepList from '../components/workflows/WorkflowStepList';
 import { useAuth } from '../auth/useAuth';
@@ -35,7 +35,7 @@ const STATUS_OPTIONS: { value: WorkflowStatus; label: string; color: string }[] 
 const WorkflowEditorPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
 
   const isNew = !id;
@@ -141,9 +141,8 @@ const WorkflowEditorPage: React.FC = () => {
 
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ maxWidth: 720, mx: 'auto', px: 3, pt: 3, pb: 8 }}>
+    <AdminLayout title="Workflow Editor" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <Box sx={{ maxWidth: 720, mx: 'auto', pb: 8 }}>
 
         {/* ── Breadcrumb ── */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 3 }}>
@@ -303,7 +302,7 @@ const WorkflowEditorPage: React.FC = () => {
           </Box>
         }
       />
-    </Box>
+    </AdminLayout>
   );
 };
 
