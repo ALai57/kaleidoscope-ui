@@ -27,6 +27,18 @@ describe('AdminNavRail', () => {
     expect(screen.getByRole('link', { name: 'Workspace Roots' })).toBeInTheDocument();
   });
 
+  it('renders the writer/admin tool sections', () => {
+    renderAt('/articles');
+    for (const name of ['Manager', 'Articles', 'Images', 'Score Definitions', 'Groups', 'UI Manager']) {
+      expect(screen.getByRole('link', { name })).toBeInTheDocument();
+    }
+  });
+
+  it('keeps the Articles section active while editing an article', () => {
+    renderAt('/articles/my-post/edit');
+    expect(screen.getByRole('link', { name: 'Articles' })).toHaveAttribute('aria-current', 'page');
+  });
+
   it('marks the active section from the current route', () => {
     renderAt('/workflows');
     expect(screen.getByRole('link', { name: 'Workflows' })).toHaveAttribute('aria-current', 'page');

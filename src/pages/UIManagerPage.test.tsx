@@ -71,7 +71,9 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 describe('UIManagerPage', () => {
   it('renders heading', () => {
     render(<UIManagerPage />, { wrapper: Wrapper });
-    expect(screen.getByText('UI Manager')).toBeTruthy();
+    // Target the AdminTopBar <h1> specifically — "UI Manager" also appears as an
+    // AdminNavRail section link.
+    expect(screen.getByRole('heading', { name: 'UI Manager' })).toBeTruthy();
   });
 
   it('renders dark mode toggle', () => {

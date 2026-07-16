@@ -5,10 +5,16 @@ import Tooltip from '@mui/material/Tooltip';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps, Theme } from '@mui/material/styles';
 import { Link, useLocation } from 'react-router-dom';
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import ArticleIcon from '@mui/icons-material/Article';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import WorkspacesIcon from '@mui/icons-material/Workspaces';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import GroupsIcon from '@mui/icons-material/Groups';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import RuleIcon from '@mui/icons-material/Rule';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import PaletteIcon from '@mui/icons-material/Palette';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
 import type { NavBarUser } from './navTypes';
 
@@ -18,12 +24,25 @@ export interface AdminNavItem {
   icon: React.ReactNode;
 }
 
-/** The admin/mission-control sections. Single source for the rail nav. */
+/**
+ * The admin/mission-control sections. Single source for the rail nav — every
+ * page that renders through AdminLayout has a section here so the tools
+ * cross-link (grouped content → AI/projects → system config).
+ */
 export const ADMIN_NAV_ITEMS: AdminNavItem[] = [
+  // Content / CMS
+  { label: 'Manager', to: '/manager', icon: <SpaceDashboardIcon fontSize="small" /> },
+  { label: 'Articles', to: '/articles', icon: <ArticleIcon fontSize="small" /> },
+  { label: 'Images', to: '/images', icon: <PhotoLibraryIcon fontSize="small" /> },
+  // AI workflows / projects
   { label: 'Projects', to: '/projects', icon: <WorkspacesIcon fontSize="small" /> },
   { label: 'Workflows', to: '/workflows', icon: <AccountTreeIcon fontSize="small" /> },
   { label: 'Agents', to: '/agents', icon: <GroupsIcon fontSize="small" /> },
   { label: 'Workspace Roots', to: '/workspace-roots', icon: <FolderOpenIcon fontSize="small" /> },
+  { label: 'Score Definitions', to: '/score-definitions', icon: <RuleIcon fontSize="small" /> },
+  // System config
+  { label: 'Groups', to: '/groups', icon: <ManageAccountsIcon fontSize="small" /> },
+  { label: 'UI Manager', to: '/ui', icon: <PaletteIcon fontSize="small" /> },
 ];
 
 export interface AdminNavRailProps {
@@ -154,8 +173,9 @@ export const AdminNavRail: React.FC<AdminNavRailProps> = ({
         </Box>
       </Box>
 
-      {/* Section links */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 1 }}>
+      {/* Section links — scroll internally if the list outgrows a short viewport,
+          keeping the brand and auth footer pinned. */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mt: 1, flex: 1, minHeight: 0, overflowY: 'auto' }}>
         {items.map((item) => {
           const active = isActive(pathname, item.to);
           const link = (

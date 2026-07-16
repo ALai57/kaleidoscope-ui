@@ -64,7 +64,9 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 describe('GroupsPage', () => {
   it('renders heading', () => {
     render(<GroupsPage />, { wrapper: Wrapper });
-    expect(screen.getByText('Groups')).toBeTruthy();
+    // Target the AdminTopBar <h1> specifically — "Groups" also appears as an
+    // AdminNavRail section link.
+    expect(screen.getByRole('heading', { name: 'Groups' })).toBeTruthy();
   });
 
   it('renders groups list', async () => {
