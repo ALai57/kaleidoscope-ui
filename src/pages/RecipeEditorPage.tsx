@@ -13,7 +13,7 @@ import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { RecipeSections } from '../components/recipes/RecipeSections';
 import {
@@ -191,8 +191,12 @@ const RecipeEditorPage: React.FC = () => {
   if (isEdit && isLoading) return <LoadingScreen />;
 
   return (
-    <>
-      <NavBar user={userProfile ?? undefined} isAuthenticated={isAuthenticated} login={login} />
+    <AdminLayout
+      title="Recipe Editor"
+      user={userProfile ?? undefined}
+      isAuthenticated={isAuthenticated}
+      login={login}
+    >
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Typography variant="h3" gutterBottom>
           {isEdit ? 'Edit recipe' : 'New recipe'}
@@ -310,7 +314,7 @@ const RecipeEditorPage: React.FC = () => {
           {saveMutation.isError && <Alert severity="error">Could not save the recipe.</Alert>}
         </Stack>
       </Container>
-    </>
+    </AdminLayout>
   );
 };
 

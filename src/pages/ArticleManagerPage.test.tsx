@@ -84,8 +84,8 @@ describe('ArticleManagerPage', () => {
     });
   });
 
-  it('renders the Prism eyebrow', async () => {
+  it('renders the AdminLayout top-bar title', async () => {
     render(<ArticleManagerPage />, { wrapper: Wrapper });
-    expect(await screen.findByText('ARTICLES')).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Articles' })).toBeTruthy();
   });
 });

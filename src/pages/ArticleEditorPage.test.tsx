@@ -129,8 +129,8 @@ describe('ArticleEditorPage', () => {
     });
   });
 
-  it('renders the Prism editor eyebrow', async () => {
+  it('renders the AdminLayout top-bar title', async () => {
     render(<ArticleEditorPage />, { wrapper: Wrapper });
-    expect(await screen.findByText('EDITOR')).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Article Editor' })).toBeTruthy();
   });
 });
