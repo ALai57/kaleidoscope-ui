@@ -50,14 +50,13 @@ const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ v
           </div>
         )}
 
-        {!id && canEdit && (
+        {!id && (
           <p style={{ color: tokens.color.text.secondary }}>
-            Select an interest, or add one to start a shelf.
+            {canEdit ? 'Select an interest, or add one to start a shelf.' : 'Select a shelf to browse.'}
           </p>
         )}
 
-        {/* Writers pick an interest before browsing its shelf; non-writers always see a shelf. */}
-        {(id || !canEdit) && effectiveView === 'shelf' && <ShelfView interestId={id} token={token} />}
+        {id && effectiveView === 'shelf' && <ShelfView interestId={id} token={token} />}
         {id && canEdit && effectiveView === 'acquisitions' && <AcquisitionsPipeline interestId={id} token={token} />}
         {id && canEdit && effectiveView === 'taste' && interest.data && (
           <TasteProfileEditor interest={interest.data} token={token} />
