@@ -26,6 +26,16 @@ export function useWakeLock(): WakeLockState {
     if (!isSupported) return;
     try {
       const sentinel = await navigator.wakeLock.request('screen');
+      if (!isSupported || !intendedRef.current) {
+        // The user toggled off (or support vanished) while the request was
+        // in flight — don't strand a lock nothing points at.
+        try {
+          await sentinel.release();
+        } catch {
+          // Ignore — the lock is effectively gone either way.
+        }
+        return;
+      }
       sentinelRef.current = sentinel;
       sentinel.addEventListener('release', () => {
         sentinelRef.current = null;
@@ -33,7 +43,9 @@ export function useWakeLock(): WakeLockState {
       });
       setIsActive(true);
     } catch {
-      // Request can reject (denied, low battery, no user activation). Stay off.
+      // Request can reject (denied, low battery, no user activation). Stay off
+      // and reset intent so the next toggle retries instead of no-op'ing.
+      intendedRef.current = false;
       setIsActive(false);
     }
   }, [isSupported]);

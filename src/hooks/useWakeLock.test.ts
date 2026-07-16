@@ -104,4 +104,89 @@ describe('useWakeLock', () => {
     unmount();
     expect(sentinels[0]!.release).toHaveBeenCalled();
   });
+
+  it('retries acquisition on the next toggle after a failed request', async () => {
+    let callCount = 0;
+    const sentinels: Array<{
+      released: boolean;
+      release: ReturnType<typeof vi.fn<() => Promise<void>>>;
+    }> = [];
+    const request = vi.fn(async () => {
+      callCount += 1;
+      if (callCount === 1) {
+        throw new Error('denied');
+      }
+      const listeners: Listener[] = [];
+      const sentinel = {
+        released: false,
+        release: vi.fn(async () => {
+          sentinel.released = true;
+          listeners.forEach((l) => l());
+        }),
+        addEventListener: (_type: string, cb: Listener) => listeners.push(cb),
+        removeEventListener: vi.fn(),
+      };
+      sentinels.push(sentinel);
+      return sentinel;
+    });
+    Object.defineProperty(navigator, 'wakeLock', {
+      value: { request },
+      configurable: true,
+      writable: true,
+    });
+
+    const { result } = renderHook(() => useWakeLock());
+    await act(async () => result.current.toggle());
+    expect(result.current.isActive).toBe(false);
+
+    // Next press should retry acquisition rather than being treated as "turn off".
+    await act(async () => result.current.toggle());
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(result.current.isActive).toBe(true);
+  });
+
+  it('releases a lock that resolves after the user already toggled off (no stranded lock)', async () => {
+    let resolveRequest: ((sentinel: unknown) => void) | undefined;
+    const request = vi.fn(
+      () =>
+        new Promise((resolve) => {
+          resolveRequest = resolve;
+        }),
+    );
+    Object.defineProperty(navigator, 'wakeLock', {
+      value: { request },
+      configurable: true,
+      writable: true,
+    });
+
+    const { result } = renderHook(() => useWakeLock());
+
+    act(() => {
+      result.current.toggle(); // toggle on — request is pending
+    });
+    act(() => {
+      result.current.toggle(); // toggle off before the request resolves
+    });
+    expect(result.current.isActive).toBe(false);
+
+    const listeners: Listener[] = [];
+    const sentinel = {
+      released: false,
+      release: vi.fn(async () => {
+        sentinel.released = true;
+        listeners.forEach((l) => l());
+      }),
+      addEventListener: (_type: string, cb: Listener) => listeners.push(cb),
+      removeEventListener: vi.fn(),
+    };
+
+    await act(async () => {
+      resolveRequest?.(sentinel);
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(sentinel.release).toHaveBeenCalled();
+    expect(result.current.isActive).toBe(false);
+  });
 });
