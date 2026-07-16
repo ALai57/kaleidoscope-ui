@@ -29,6 +29,12 @@ describe('SideRail', () => {
     expect(screen.getByRole('link', { name: /About/ }).getAttribute('href')).toBe('/about');
   });
 
+  it('tags the home logo glyph with the klogo hook for the prism-wheel hover spin', () => {
+    renderAt('/archive');
+    const home = screen.getByRole('link', { name: /home/i });
+    expect(home.querySelector('svg.klogo')).toBeTruthy();
+  });
+
   it('marks the active section with aria-current', () => {
     renderAt('/recipes/pho');
     expect(screen.getByRole('link', { name: /Recipes/ }).getAttribute('aria-current')).toBe('page');

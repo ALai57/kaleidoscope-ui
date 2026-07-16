@@ -26,6 +26,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
   const mono = tokens?.typography.mono ?? 'monospace';
   const rSm = tokens?.radius.sm ?? 6;
   const durBase = tokens?.motion.duration.base ?? 250;
+  const settle = tokens?.motion.easing.springSettle ?? 'ease';
 
   const userIsWriter = isWriter(user);
   const userIsAdmin = isSiteAdmin(user);
@@ -107,9 +108,11 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
           color: 'text.primary',
           borderBottom: '1px solid',
           borderColor: 'divider',
+          '& .klogo': { transition: `transform ${tokens?.motion.duration.slow ?? 400}ms ${settle}` },
+          '&:hover .klogo': { transform: 'rotate(120deg)' },
         }}
       >
-        <KaleidoscopeMark size={26} />
+        <KaleidoscopeMark size={26} className="klogo" />
         <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' }, fontFamily: mono, fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.16em' }}>
           andrewlai
         </Box>
