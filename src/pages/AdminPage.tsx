@@ -3,23 +3,12 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { Button } from '../components/layout/Button';
 import { SurfaceCard } from '../components/common/SurfaceCard';
-import { PrismThemeProvider } from '../components/prism';
 import { useAuth } from '../auth/useAuth';
 
-// ── Eyebrow header ──────────────────────────────────────────────────────────
-
-const eyebrowSx = (t: import('@mui/material/styles').Theme) => ({
-  m: 0,
-  fontFamily: t.tokens?.typography.mono ?? 'monospace',
-  fontSize: '11px',
-  fontWeight: 600,
-  letterSpacing: '0.22em',
-  textTransform: 'uppercase' as const,
-  color: 'primary.main',
-});
+// ── Panel heading ────────────────────────────────────────────────────────────
 
 const PanelHeading: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Typography
@@ -72,43 +61,18 @@ const AdminPage: React.FC = () => {
     : undefined;
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <PrismThemeProvider>
-        <Box id="primary-content" sx={{ flex: 1, bgcolor: 'background.default', py: 4 }}>
-          <Container>
-            <Box component="p" sx={eyebrowSx}>
-              SESSION
-            </Box>
-            <Typography
-              component="h1"
-              sx={(t) => ({
-                m: 0,
-                mt: 0.5,
-                fontFamily: t.tokens?.typography.mono ?? 'monospace',
-                fontWeight: 700,
-                fontSize: '1.6rem',
-                letterSpacing: '-0.01em',
-              })}
-            >
-              Admin
-            </Typography>
-            <Box sx={{ mt: 3 }}>
-              {!isLoading &&
-                (isAuthenticated ? (
-                  <AdminPanel
-                    firstName={user?.firstName}
-                    lastName={user?.lastName}
-                    onLogout={logout}
-                  />
-                ) : (
-                  <LoginPanel onLogin={login} />
-                ))}
-            </Box>
-          </Container>
-        </Box>
-      </PrismThemeProvider>
-    </Box>
+    <AdminLayout title="Admin" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <Box id="primary-content">
+        <Container>
+          {!isLoading &&
+            (isAuthenticated ? (
+              <AdminPanel firstName={user?.firstName} lastName={user?.lastName} onLogout={logout} />
+            ) : (
+              <LoginPanel onLogin={login} />
+            ))}
+        </Container>
+      </Box>
+    </AdminLayout>
   );
 };
 

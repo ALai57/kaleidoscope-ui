@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { Button } from '../components/layout/Button';
 import { ColorPicker } from '../components/colors/ColorPicker';
 import { PresetPicker } from '../components/common/PresetPicker';
@@ -29,7 +29,7 @@ function seedToHex(hue: number, saturation: number, lightness: number): string {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const UIManagerPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const { mode, setMode } = useColorScheme();
   const { themeParams, setThemeParams, preset } = useThemeStore();
   // The picker updates its own swatch instantly; defer the (leonardo-driven)
@@ -73,84 +73,76 @@ const UIManagerPage: React.FC = () => {
     }
   };
 
-  const currentColor = seedToHex(
-    themeParams.hue,
-    themeParams.saturation,
-    themeParams.lightness
-  );
+  const currentColor = seedToHex(themeParams.hue, themeParams.saturation, themeParams.lightness);
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <Box sx={{ m: '10px', p: 2 }}>
-        <Typography variant="h4" gutterBottom>
-          UI Manager
-        </Typography>
+    <AdminLayout title="UI Manager" user={user} isAuthenticated={isAuthenticated} login={login}>
+      {/* Design-language preset */}
+      <Typography variant="h6" sx={{ mb: 1 }}>
+        Design language
+      </Typography>
+      <PresetPicker sx={{ mb: 3, maxWidth: 560 }} />
 
-        {/* Design-language preset */}
-        <Typography variant="h6" sx={{ mb: 1 }}>
-          Design language
-        </Typography>
-        <PresetPicker sx={{ mb: 3, maxWidth: 560 }} />
+      {/* Dark mode toggle */}
+      <FormControlLabel
+        control={
+          <Switch
+            checked={mode === 'dark'}
+            onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+            slotProps={{ input: { 'aria-label': 'toggle dark mode' } }}
+          />
+        }
+        label="Dark mode"
+        sx={{ mb: 3 }}
+      />
 
-        {/* Dark mode toggle */}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={mode === 'dark'}
-              onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-              slotProps={{ input: { 'aria-label': 'toggle dark mode' } }}
-            />
-          }
-          label="Dark mode"
-          sx={{ mb: 3 }}
+      {/* Color picker */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 3,
+        }}
+      >
+        <ColorPicker
+          initialColor={currentColor}
+          onChange={(color) => {
+            // Convert the picked hex back into brand seed params so it drives
+            // the live theme (main.tsx builds the theme from the store).
+            const { h, s, l } = toHsl(color);
+            debouncedSetThemeParams({ ...themeParams, hue: h, saturation: s, lightness: l });
+          }}
         />
-
-        {/* Color picker */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            mb: 3
-          }}>
-          <ColorPicker
-            initialColor={currentColor}
-            onChange={(color) => {
-              // Convert the picked hex back into brand seed params so it drives
-              // the live theme (main.tsx builds the theme from the store).
-              const { h, s, l } = toHsl(color);
-              debouncedSetThemeParams({ ...themeParams, hue: h, saturation: s, lightness: l });
-            }}
-          />
-        </Box>
-
-        {/* Save button */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-          <Button
-            text={saveThemeMutation.isPending ? 'Saving…' : 'Save theme'}
-            onClick={handleSave}
-            disabled={saveThemeMutation.isPending}
-          />
-        </Box>
-
-        {saveThemeMutation.isSuccess && (
-          <Typography
-            sx={{
-              color: "success.main",
-              mt: 1,
-              textAlign: 'center'
-            }}>
-            Theme saved!
-          </Typography>
-        )}
       </Box>
-    </Box>
+
+      {/* Save button */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Button
+          text={saveThemeMutation.isPending ? 'Saving…' : 'Save theme'}
+          onClick={handleSave}
+          disabled={saveThemeMutation.isPending}
+        />
+      </Box>
+
+      {saveThemeMutation.isSuccess && (
+        <Typography
+          sx={{
+            color: 'success.main',
+            mt: 1,
+            textAlign: 'center',
+          }}
+        >
+          Theme saved!
+        </Typography>
+      )}
+    </AdminLayout>
   );
 };
 

@@ -6,10 +6,9 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { useTheme, alpha } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { SurfaceCard } from '../components/common/SurfaceCard';
 import { StatTile } from '../components/common/StatTile';
-import { PrismThemeProvider } from '../components/prism';
 import { useAuth } from '../auth/useAuth';
 import { getBranches } from '../api/articles';
 import { getImageMetadata } from '../api/images';
@@ -133,9 +132,10 @@ const ManagerCard: React.FC<{ capability: Capability }> = ({ capability }) => {
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
-            mt: 0.5
-          }}>
+            color: 'text.secondary',
+            mt: 0.5,
+          }}
+        >
           {capability.description}
         </Typography>
       </CardActionArea>
@@ -170,44 +170,10 @@ const HubStats: React.FC<{ token: string | undefined }> = ({ token }) => {
   );
 };
 
-// ── Eyebrow header ──────────────────────────────────────────────────────────
-
-const HubHeader: React.FC = () => (
-  <Box sx={{ mb: 3 }}>
-    <Box
-      component="p"
-      sx={(t) => ({
-        m: 0,
-        fontFamily: t.tokens?.typography.mono ?? 'monospace',
-        fontSize: '11px',
-        fontWeight: 600,
-        letterSpacing: '0.22em',
-        textTransform: 'uppercase',
-        color: 'primary.main',
-      })}
-    >
-      CONTROL
-    </Box>
-    <Typography
-      component="h1"
-      sx={(t) => ({
-        m: 0,
-        mt: 0.5,
-        fontFamily: t.tokens?.typography.mono ?? 'monospace',
-        fontWeight: 700,
-        fontSize: '1.6rem',
-        letterSpacing: '-0.01em',
-      })}
-    >
-      Manager
-    </Typography>
-  </Box>
-);
-
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ManagerPage: React.FC = () => {
-  const { isAuthenticated, token, userProfile, login, logout } = useAuth();
+  const { isAuthenticated, token, userProfile, login } = useAuth();
 
   const user = userProfile
     ? {
@@ -218,28 +184,24 @@ const ManagerPage: React.FC = () => {
     : undefined;
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <PrismThemeProvider>
-        <Box id="primary-content" sx={{ flex: 1, bgcolor: 'background.default', py: 4 }}>
-          <Container>
-            <HubHeader />
-            <HubStats token={token} />
-            <Box
-              sx={{
-                display: 'grid',
-                gap: 2,
-                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-              }}
-            >
-              {CAPABILITIES.map((capability) => (
-                <ManagerCard key={capability.name} capability={capability} />
-              ))}
-            </Box>
-          </Container>
-        </Box>
-      </PrismThemeProvider>
-    </Box>
+    <AdminLayout title="Manager" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <Box id="primary-content">
+        <Container>
+          <HubStats token={token} />
+          <Box
+            sx={{
+              display: 'grid',
+              gap: 2,
+              gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+            }}
+          >
+            {CAPABILITIES.map((capability) => (
+              <ManagerCard key={capability.name} capability={capability} />
+            ))}
+          </Box>
+        </Container>
+      </Box>
+    </AdminLayout>
   );
 };
 

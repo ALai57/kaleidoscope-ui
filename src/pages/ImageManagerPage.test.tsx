@@ -11,6 +11,16 @@ import ImageManagerPage from './ImageManagerPage';
 
 // ── Mocks ──────────────────────────────────────────────────────────────────
 
+// jsdom has no IntersectionObserver; ImageCard's lazy-load hook needs a stub
+// or it throws once real image data mounts.
+class MockIntersectionObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+  constructor(_callback: IntersectionObserverCallback) {}
+}
+vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
+
 vi.mock('../auth/useAuth', () => ({
   useAuth: () => ({
     isAuthenticated: true,
@@ -61,24 +71,18 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 // ── Tests ──────────────────────────────────────────────────────────────────
 
 describe('ImageManagerPage', () => {
-  it('renders heading', () => {
+  it('renders the AdminLayout top-bar title', () => {
     render(<ImageManagerPage />, { wrapper: Wrapper });
-    expect(screen.getByText('Image Manager')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Images' })).toBeTruthy();
   });
 
   it('renders ImageBrowser with mock images', async () => {
     render(<ImageManagerPage />, { wrapper: Wrapper });
 
-    // ImageBrowser should be rendered once images load
+    // ImageBrowser swaps in its gallery grid once the images query resolves
+    // (replacing the LoadingScreen).
     await waitFor(() => {
-      // The browser renders something with the images loaded
-      expect(screen.queryByText('Image Manager')).toBeTruthy();
+      expect(screen.getByTestId('image-gallery')).toBeTruthy();
     });
-  });
-
-  it('renders the Prism eyebrow above the title', () => {
-    render(<ImageManagerPage />, { wrapper: Wrapper });
-    expect(screen.getByText('IMAGES')).toBeTruthy();
-    expect(screen.getByText('Image Manager')).toBeTruthy();
   });
 });

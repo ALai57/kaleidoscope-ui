@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { Snackbar } from '../components/layout/Snackbar';
 import { ImageBrowser } from '../components/images/ImageBrowser';
 import { useAuth } from '../auth/useAuth';
 import { getImageMetadata, addPhoto, editPhoto } from '../api/images';
-import { PrismThemeProvider } from '../components/prism';
 import type { EditPhotoPayload } from '../components/images/EditorPanel';
 
 interface Notification {
@@ -18,7 +15,7 @@ interface Notification {
 }
 
 const ImageManagerPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<Notification | null>(null);
 
@@ -68,57 +65,24 @@ const ImageManagerPage: React.FC = () => {
   });
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <PrismThemeProvider>
-        <Box sx={{ flex: 1, bgcolor: 'background.default', p: '10px' }}>
-          <Box sx={{ mb: 2 }}>
-            <Box
-              component="p"
-              sx={(t) => ({
-                m: 0,
-                fontFamily: t.tokens?.typography.mono ?? 'monospace',
-                fontSize: '11px',
-                fontWeight: 600,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: 'primary.main',
-              })}
-            >
-              IMAGES
-            </Box>
-            <Typography
-              component="h1"
-              sx={(t) => ({
-                m: 0,
-                mt: 0.5,
-                fontFamily: t.tokens?.typography.mono ?? 'monospace',
-                fontWeight: 700,
-                fontSize: '1.6rem',
-                letterSpacing: '-0.01em',
-              })}
-            >
-              Image Manager
-            </Typography>
-          </Box>
+    <>
+      <AdminLayout title="Images" user={user} isAuthenticated={isAuthenticated} login={login}>
+        {isLoading && <LoadingScreen />}
 
-          {isLoading && <LoadingScreen />}
-
-          {!isLoading && (
-            <ImageBrowser
-              images={images}
-              authToken={token ?? null}
-              mode="edit"
-              photoManager={{
-                addPhoto: (e) => addPhotoMutation.mutate(e),
-                editPhoto: (payload) => editPhotoMutation.mutate(payload),
-                isUploading: addPhotoMutation.isPending,
-                isSaving: editPhotoMutation.isPending,
-              }}
-            />
-          )}
-        </Box>
-      </PrismThemeProvider>
+        {!isLoading && (
+          <ImageBrowser
+            images={images}
+            authToken={token ?? null}
+            mode="edit"
+            photoManager={{
+              addPhoto: (e) => addPhotoMutation.mutate(e),
+              editPhoto: (payload) => editPhotoMutation.mutate(payload),
+              isUploading: addPhotoMutation.isPending,
+              isSaving: editPhotoMutation.isPending,
+            }}
+          />
+        )}
+      </AdminLayout>
 
       {notification && (
         <Snackbar
@@ -127,7 +91,7 @@ const ImageManagerPage: React.FC = () => {
           level={notification.level}
         />
       )}
-    </Box>
+    </>
   );
 };
 

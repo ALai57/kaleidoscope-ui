@@ -29,12 +29,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GroupsIcon from '@mui/icons-material/Groups';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
-import { NavBar } from '../components/layout/NavBar';
+import { AdminLayout } from '../components/layout/AdminLayout';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
 import { useAuth } from '../auth/useAuth';
 import { getGroups, addGroup, deleteGroup, addGroupMember, deleteGroupMember } from '../api/groups';
 import { SurfaceCard } from '../components/common/SurfaceCard';
-import { PrismThemeProvider } from '../components/prism';
 import type { Group, Membership } from '../types/group';
 
 // ── Confirm Dialog ─────────────────────────────────────────────────────────
@@ -145,7 +144,9 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
         }}
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography sx={{ flexGrow: 1, fontFamily: mono, fontWeight: 600, letterSpacing: '0.02em' }}>
+          <Typography
+            sx={{ flexGrow: 1, fontFamily: mono, fontWeight: 600, letterSpacing: '0.02em' }}
+          >
             {group.display_name}
           </Typography>
           <Chip
@@ -159,7 +160,12 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
           <Typography
             variant="subtitle2"
             gutterBottom
-            sx={{ fontFamily: mono, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.secondary' }}
+            sx={{
+              fontFamily: mono,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'text.secondary',
+            }}
           >
             Members
           </Typography>
@@ -167,9 +173,10 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
             <Typography
               variant="body2"
               sx={{
-                color: "text.secondary",
-                mb: 1
-              }}>
+                color: 'text.secondary',
+                mb: 1,
+              }}
+            >
               No members yet — add one below.
             </Typography>
           ) : (
@@ -210,7 +217,12 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
           <Typography
             variant="subtitle2"
             gutterBottom
-            sx={{ fontFamily: mono, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.secondary' }}
+            sx={{
+              fontFamily: mono,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'text.secondary',
+            }}
           >
             Add Member
           </Typography>
@@ -218,7 +230,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1}
             sx={{
-              alignItems: { sm: 'flex-start' }
+              alignItems: { sm: 'flex-start' },
             }}
           >
             <TextField
@@ -300,44 +312,10 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
   );
 };
 
-// ── Page header ──────────────────────────────────────────────────────────────
-
-const GroupsHeader: React.FC = () => (
-  <Box sx={{ mb: 3 }}>
-    <Box
-      component="p"
-      sx={(t) => ({
-        m: 0,
-        fontFamily: t.tokens?.typography.mono ?? 'monospace',
-        fontSize: '11px',
-        fontWeight: 600,
-        letterSpacing: '0.22em',
-        textTransform: 'uppercase',
-        color: 'primary.main',
-      })}
-    >
-      AUDIENCES
-    </Box>
-    <Typography
-      component="h1"
-      sx={(t) => ({
-        m: 0,
-        mt: 0.5,
-        fontFamily: t.tokens?.typography.mono ?? 'monospace',
-        fontWeight: 700,
-        fontSize: '1.6rem',
-        letterSpacing: '-0.01em',
-      })}
-    >
-      Groups
-    </Typography>
-  </Box>
-);
-
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const GroupsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login, logout } = useAuth();
+  const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
   const [newGroupName, setNewGroupName] = useState('');
   const [searchFilter, setSearchFilter] = useState('');
@@ -380,124 +358,122 @@ const GroupsPage: React.FC = () => {
   );
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
-      <PrismThemeProvider>
-        <Box sx={{ flex: 1, bgcolor: 'background.default' }}>
-          <Box id="primary-content" sx={{ p: 3, maxWidth: 800, mx: 'auto' }}>
-            <GroupsHeader />
-
-            {/* Create group */}
-            <SurfaceCard sx={{ p: 2, mb: 3 }}>
-              <Typography
-                variant="subtitle2"
-                sx={(t) => ({
-                  fontFamily: t.tokens?.typography.mono ?? 'monospace',
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: 'text.secondary',
-                  mb: 1.5,
-                })}
+    <>
+      <AdminLayout title="Groups" user={user} isAuthenticated={isAuthenticated} login={login}>
+        <Box id="primary-content" sx={{ maxWidth: 800, mx: 'auto' }}>
+          {/* Create group */}
+          <SurfaceCard sx={{ p: 2, mb: 3 }}>
+            <Typography
+              variant="subtitle2"
+              sx={(t) => ({
+                fontFamily: t.tokens?.typography.mono ?? 'monospace',
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: 'text.secondary',
+                mb: 1.5,
+              })}
+            >
+              Create New Group
+            </Typography>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+              <TextField
+                size="small"
+                label="New group name"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleAddGroup();
+                }}
+                sx={{ flex: 1 }}
+              />
+              <Button
+                variant="contained"
+                onClick={handleAddGroup}
+                disabled={!newGroupName || addGroupMutation.isPending}
+                data-testid="add-group-button"
               >
-                Create New Group
-              </Typography>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
-                <TextField
+                Add Group
+              </Button>
+            </Stack>
+          </SurfaceCard>
+
+          {isLoading && <LoadingScreen />}
+
+          {!isLoading && (
+            <>
+              {/* Count chip + search filter */}
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: 'center',
+                  mb: 2,
+                }}
+              >
+                <Chip
+                  label={`${groups.length} ${groups.length === 1 ? 'group' : 'groups'}`}
                   size="small"
-                  label="New group name"
-                  value={newGroupName}
-                  onChange={(e) => setNewGroupName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleAddGroup();
-                  }}
-                  sx={{ flex: 1 }}
+                  sx={(t) => ({ fontFamily: t.tokens?.typography.mono ?? 'monospace' })}
                 />
-                <Button
-                  variant="contained"
-                  onClick={handleAddGroup}
-                  disabled={!newGroupName || addGroupMutation.isPending}
-                  data-testid="add-group-button"
-                >
-                  Add Group
-                </Button>
-              </Stack>
-            </SurfaceCard>
-
-            {isLoading && <LoadingScreen />}
-
-            {!isLoading && (
-              <>
-                {/* Count chip + search filter */}
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  sx={{
-                    alignItems: "center",
-                    mb: 2
-                  }}>
-                  <Chip
-                    label={`${groups.length} ${groups.length === 1 ? 'group' : 'groups'}`}
+                {groups.length > 1 && (
+                  <TextField
                     size="small"
-                    sx={(t) => ({ fontFamily: t.tokens?.typography.mono ?? 'monospace' })}
+                    placeholder="Search groups…"
+                    value={searchFilter}
+                    onChange={(e) => setSearchFilter(e.target.value)}
+                    sx={{ flex: 1 }}
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        ),
+                      },
+                    }}
                   />
-                  {groups.length > 1 && (
-                    <TextField
-                      size="small"
-                      placeholder="Search groups…"
-                      value={searchFilter}
-                      onChange={(e) => setSearchFilter(e.target.value)}
-                      sx={{ flex: 1 }}
-                      slotProps={{
-                        input: {
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <SearchIcon fontSize="small" />
-                            </InputAdornment>
-                          ),
-                        },
-                      }}
-                    />
-                  )}
-                </Stack>
-
-                {/* Empty state */}
-                {groups.length === 0 && (
-                  <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
-                    <GroupsIcon sx={{ fontSize: 56, mb: 1.5, opacity: 0.35 }} />
-                    <Typography variant="h6" gutterBottom>
-                      No groups yet
-                    </Typography>
-                    <Typography variant="body2">Create your first group above.</Typography>
-                  </Box>
                 )}
+              </Stack>
 
-                {/* No search results */}
-                {groups.length > 0 && filteredGroups.length === 0 && (
-                  <Typography sx={{
-                    color: "text.secondary"
-                  }}>
-                    No groups match &ldquo;{searchFilter}&rdquo;
+              {/* Empty state */}
+              {groups.length === 0 && (
+                <Box sx={{ textAlign: 'center', py: 8, color: 'text.secondary' }}>
+                  <GroupsIcon sx={{ fontSize: 56, mb: 1.5, opacity: 0.35 }} />
+                  <Typography variant="h6" gutterBottom>
+                    No groups yet
                   </Typography>
-                )}
-
-                {/* Group list */}
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                  {filteredGroups.map((group: Group) => (
-                    <GroupItem
-                      key={group.group_id}
-                      group={group}
-                      token={token}
-                      onSuccess={(msg) => setSnackbar({ message: msg, severity: 'success' })}
-                      onError={(msg) => setSnackbar({ message: msg, severity: 'error' })}
-                    />
-                  ))}
+                  <Typography variant="body2">Create your first group above.</Typography>
                 </Box>
-              </>
-            )}
-          </Box>
+              )}
+
+              {/* No search results */}
+              {groups.length > 0 && filteredGroups.length === 0 && (
+                <Typography
+                  sx={{
+                    color: 'text.secondary',
+                  }}
+                >
+                  No groups match &ldquo;{searchFilter}&rdquo;
+                </Typography>
+              )}
+
+              {/* Group list */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                {filteredGroups.map((group: Group) => (
+                  <GroupItem
+                    key={group.group_id}
+                    group={group}
+                    token={token}
+                    onSuccess={(msg) => setSnackbar({ message: msg, severity: 'success' })}
+                    onError={(msg) => setSnackbar({ message: msg, severity: 'error' })}
+                  />
+                ))}
+              </Box>
+            </>
+          )}
         </Box>
-      </PrismThemeProvider>
-      {/* Feedback snackbar — intentionally OUTSIDE the Prism wrap (separate P3 row) */}
+      </AdminLayout>
+      {/* Feedback snackbar — intentionally outside AdminLayout (separate P3 row) */}
       <Snackbar
         open={snackbar !== null}
         autoHideDuration={4000}
@@ -513,7 +489,7 @@ const GroupsPage: React.FC = () => {
           {snackbar?.message ?? ''}
         </Alert>
       </Snackbar>
-    </Box>
+    </>
   );
 };
 
