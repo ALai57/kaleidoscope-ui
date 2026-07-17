@@ -21,5 +21,10 @@ export default meta;
 type Story = StoryObj<typeof CookTimeline>;
 
 export const MisoSalmon: Story = {
-  args: { timeline: salmonTimeline, sections: salmonContent.sections },
+  args: {
+    timeline: salmonTimeline,
+    sections: salmonContent.sections,
+    checked: new Set(),
+    onToggleIngredient: () => {},
+  },
 };

@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import type { RecipeSection, Timeline } from '../../../types/recipe';
-import { pickLaneColors, resolvePhaseSteps } from '../../../utils/cookTimeline';
-import { TimelineStats } from './TimelineStats';
+import {
+  pickLaneColors,
+  resolvePhaseSteps,
+  sectionForComponent,
+  effectiveDuration,
+} from '../../../utils/cookTimeline';
 import { TimelineGantt } from './TimelineGantt';
 import { TimelineLegend } from './TimelineLegend';
-import { TimelineDetailPanel } from './TimelineDetailPanel';
+import { TimelineDetailPanel, type PhaseGroup } from './TimelineDetailPanel';
 
 const Board = styled('div')(({ theme }) => ({
   background: theme.tokens.color.surface.base,
@@ -29,34 +33,48 @@ const GanttShell = styled('div')(({ theme }) => ({
 export interface CookTimelineProps {
   timeline: Timeline;
   sections: RecipeSection[];
+  checked: ReadonlySet<string>;
+  onToggleIngredient: (key: string) => void;
 }
 
 const firstPhaseId = (t: Timeline): string | null => t.components[0]?.phases[0]?.id ?? null;
 
-export const CookTimeline: React.FC<CookTimelineProps> = ({ timeline, sections }) => {
+export const CookTimeline: React.FC<CookTimelineProps> = ({
+  timeline,
+  sections,
+  checked,
+  onToggleIngredient,
+}) => {
   const theme = useTheme();
   const laneColors = pickLaneColors(timeline.components.length, theme.tokens.color.categorical);
   const [selectedId, setSelectedId] = React.useState<string | null>(() => firstPhaseId(timeline));
 
-  const selected = React.useMemo(() => {
-    for (let i = 0; i < timeline.components.length; i += 1) {
-      const comp = timeline.components[i];
-      if (!comp) continue;
-      const phase = comp.phases.find((p) => p.id === selectedId);
-      if (phase) {
-        return {
-          phase, componentName: comp.name, laneColor: laneColors[i],
+  const groups = React.useMemo<PhaseGroup[]>(
+    () =>
+      timeline.components.flatMap((comp, ci) => {
+        const sec = sectionForComponent(comp, sections);
+        return comp.phases.map((phase) => ({
+          id: phase.id,
+          label: phase.label,
+          componentName: sec?.section.name ?? comp.name,
+          laneColor: laneColors[ci] ?? theme.tokens.color.brand.primary,
+          kind: phase.kind,
+          start: phase.start ?? 0,
+          dur: effectiveDuration(phase, timeline.overrides),
           steps: resolvePhaseSteps(phase, comp, sections),
-        };
-      }
-    }
-    return null;
-  }, [selectedId, timeline, sections, laneColors]);
+        }));
+      }),
+    [timeline, sections, laneColors, theme]
+  );
+
+  const selectedSection = React.useMemo(() => {
+    const comp = timeline.components.find((c) => c.phases.some((p) => p.id === selectedId));
+    return comp ? sectionForComponent(comp, sections) : null;
+  }, [timeline, sections, selectedId]);
 
   return (
     <Board>
       <Eyebrow>Cook Timeline</Eyebrow>
-      <TimelineStats timeline={timeline} />
       <GanttShell>
         <TimelineGantt
           timeline={timeline}
@@ -67,10 +85,12 @@ export const CookTimeline: React.FC<CookTimelineProps> = ({ timeline, sections }
       </GanttShell>
       <TimelineLegend />
       <TimelineDetailPanel
-        phase={selected?.phase ?? null}
-        componentName={selected?.componentName ?? ''}
-        laneColor={selected?.laneColor ?? theme.tokens.color.brand.primary}
-        steps={selected?.steps ?? []}
+        selectedId={selectedId}
+        groups={groups}
+        ingredients={selectedSection?.section.ingredients ?? []}
+        sectionIndex={selectedSection?.index ?? 0}
+        checked={checked}
+        onToggleIngredient={onToggleIngredient}
       />
     </Board>
   );

@@ -43,6 +43,22 @@ const RecipePage: React.FC = () => {
     queryFn: () => getRecipe(slug, token),
   });
 
+  // Checked-ingredient state, shared across recipe views. Currently only
+  // CookTimeline consumes it; Task 10 lifts it further once the
+  // Timeline/Shopping/Raw view toggle lands.
+  const [checked, setChecked] = React.useState<ReadonlySet<string>>(() => new Set());
+  const toggleIngredient = React.useCallback((key: string) => {
+    setChecked((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }, []);
+
   return (
     <>
       <Container maxWidth="md" sx={{ py: 4 }}>
@@ -107,7 +123,12 @@ const RecipePage: React.FC = () => {
             <RecipeSections content={recipe.content} />
 
             {recipe.timeline && (
-              <CookTimeline timeline={recipe.timeline} sections={recipe.content.sections} />
+              <CookTimeline
+                timeline={recipe.timeline}
+                sections={recipe.content.sections}
+                checked={checked}
+                onToggleIngredient={toggleIngredient}
+              />
             )}
             {!recipe.timeline && isAuthenticated && (
               <Typography
