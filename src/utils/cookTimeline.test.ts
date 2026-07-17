@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { componentId, resolvePhaseSteps, effectiveDuration, backPlanStart, timelineStats, pickLaneColors } from './cookTimeline';
+import { componentId, resolvePhaseSteps, effectiveDuration, backPlanStart, timelineStats, pickLaneColors, ingredientKey, sectionForComponent } from './cookTimeline';
 import type { RecipeSection } from '../types/recipe';
 import type { TimelineComponent, TimelinePhase, Timeline } from '../types/recipe';
 
@@ -111,5 +111,28 @@ describe('pickLaneColors', () => {
   });
   it('returns [] for a zero count', () => {
     expect(pickLaneColors(0, ['#a'])).toEqual([]);
+  });
+});
+
+describe('ingredientKey', () => {
+  it('joins section and ingredient indices', () => {
+    expect(ingredientKey(0, 3)).toBe('0:3');
+    expect(ingredientKey(2, 0)).toBe('2:0');
+  });
+});
+
+describe('sectionForComponent', () => {
+  const sections = [
+    { name: 'Salmon', ingredients: ['2 salmon fillets'], steps: ['s1'] },
+    { name: 'Rice', ingredients: ['1 cup rice'], steps: ['s2'] },
+  ];
+  it('matches a component to its section by componentId (verbatim name)', () => {
+    const comp = { name: 'Rice', steps_hash: 'x', phases: [] };
+    const res = sectionForComponent(comp, sections);
+    expect(res).toEqual({ section: sections[1], index: 1 });
+  });
+  it('returns null when no section matches', () => {
+    const comp = { name: 'Nope', steps_hash: 'x', phases: [] };
+    expect(sectionForComponent(comp, sections)).toBeNull();
   });
 });

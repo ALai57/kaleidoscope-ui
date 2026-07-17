@@ -102,3 +102,23 @@ export function pickLaneColors(count: number, palette: readonly string[]): strin
   if (palette.length === 0) return [];
   return Array.from({ length: count }, (_, i) => palette[i % palette.length]!);
 }
+
+/** Stable key for an ingredient checkbox: its section and ingredient
+ *  indices, joined. */
+export const ingredientKey = (sectionIndex: number, ingredientIndex: number): string =>
+  `${sectionIndex}:${ingredientIndex}`;
+
+/** The recipe section a timeline component belongs to, found by matching
+ *  componentId(section, index) against the component's name. */
+export function sectionForComponent(
+  component: TimelineComponent,
+  sections: RecipeSection[]
+): { section: RecipeSection; index: number } | null {
+  for (let i = 0; i < sections.length; i++) {
+    const section = sections[i];
+    if (section && componentId(section, i) === component.name) {
+      return { section, index: i };
+    }
+  }
+  return null;
+}
