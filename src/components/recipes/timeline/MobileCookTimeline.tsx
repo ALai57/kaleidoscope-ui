@@ -294,7 +294,7 @@ export const MobileCookTimeline: React.FC<CookTimelineProps> = ({
 }) => {
   const theme = useTheme();
   const laneColors = pickLaneColors(timeline.components.length, theme.tokens.color.categorical);
-  const total = timeline.total_minutes;
+  const total = timeline.total_minutes || 1;
 
   const [section, setSection] = React.useState<'all' | string>('all');
   const [openPhaseId, setOpenPhaseId] = React.useState<string | null>(null);

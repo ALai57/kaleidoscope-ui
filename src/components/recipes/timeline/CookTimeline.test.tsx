@@ -3,8 +3,11 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test/testUtils';
 import { PrismThemeProvider } from '../../prism';
+import { makePrismTheme } from '../../../theme';
 import { CookTimeline } from './CookTimeline';
 import { salmonTimeline, salmonContent } from '../../../test/fixtures/salmonTimeline';
+import { pickLaneColors } from '../../../utils/cookTimeline';
+import type { RecipeSection, Timeline } from '../../../types/recipe';
 
 function setup() {
   return render(
@@ -59,4 +62,55 @@ it('renders the legend', () => {
   // Scoped to the legend's own copy, since a bare /hands-on/i match is ambiguous.
   expect(screen.getByText(/Active — hands-on/i)).toBeInTheDocument();
   expect(screen.getByText(/Passive — hands-off/i)).toBeInTheDocument();
+});
+
+it('colors a section by its SECTION index, matching Raw/Shopping — even when the timeline component order differs from the section order', () => {
+  // sections: Alpha (index 0), Bravo (index 1) — but the timeline lists the
+  // Bravo component before Alpha, so component order != section order.
+  const sections: RecipeSection[] = [
+    { name: 'Alpha', ingredients: ['alpha ingredient'], steps: ['alpha step'] },
+    { name: 'Bravo', ingredients: ['bravo ingredient'], steps: ['bravo step'] },
+  ];
+  const timeline: Timeline = {
+    version: 1,
+    generator_version: 1,
+    generated_at: '2026-07-17T00:00:00Z',
+    total_minutes: 10,
+    overrides: [],
+    components: [
+      {
+        name: 'Bravo',
+        steps_hash: 'sha256:bravo',
+        phases: [
+          { id: 'Bravo/Only', label: 'Only', kind: 'active', steps: [0], estimate: 5, deps: [], start: 0 },
+        ],
+      },
+      {
+        name: 'Alpha',
+        steps_hash: 'sha256:alpha',
+        phases: [
+          { id: 'Alpha/Only', label: 'Only', kind: 'active', steps: [0], estimate: 5, deps: [], start: 5 },
+        ],
+      },
+    ],
+  };
+
+  render(
+    <PrismThemeProvider>
+      <CookTimeline
+        timeline={timeline}
+        sections={sections}
+        checked={new Set()}
+        onToggleIngredient={vi.fn()}
+      />
+    </PrismThemeProvider>
+  );
+
+  const theme = makePrismTheme();
+  const sectionColors = pickLaneColors(sections.length, theme.tokens.color.categorical);
+  // Bravo is sections[1] — RawRecipe/ShoppingList would color it sectionColors[1].
+  const bravoGroup = document.querySelector('[data-group="Bravo/Only"]');
+  expect(bravoGroup).not.toBeNull();
+  const bravoDot = bravoGroup!.querySelector('span');
+  expect(bravoDot).toHaveStyle({ backgroundColor: sectionColors[1] });
 });

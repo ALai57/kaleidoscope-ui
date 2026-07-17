@@ -49,7 +49,11 @@ export const CookTimeline: React.FC<CookTimelineProps> = ({
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const laneColors = pickLaneColors(timeline.components.length, theme.tokens.color.categorical);
+  const sectionColors = pickLaneColors(sections.length, theme.tokens.color.categorical);
+  const laneColors = timeline.components.map((comp, ci) => {
+    const secIndex = sectionForComponent(comp, sections)?.index ?? ci;
+    return sectionColors[secIndex] ?? theme.tokens.color.brand.primary;
+  });
   const [selectedId, setSelectedId] = React.useState<string | null>(() => firstPhaseId(timeline));
 
   const groups = React.useMemo<PhaseGroup[]>(

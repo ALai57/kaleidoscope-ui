@@ -244,6 +244,27 @@ describe('RecipePage', () => {
     });
   });
 
+  describe('checked ingredients shared across views', () => {
+    it('keeps an ingredient checked when switching away from Shopping and back', async () => {
+      renderPage('layer-cake');
+      await screen.findByRole('heading', { name: 'Layer Cake' });
+      await userEvent.click(screen.getByRole('button', { name: /shopping/i }));
+
+      expect(screen.getByText(/0\s*\/\s*2/)).toBeInTheDocument();
+      await userEvent.click(screen.getByLabelText('2 cups flour'));
+      expect(screen.getByText(/1\s*\/\s*2/)).toBeInTheDocument();
+
+      // Switching views unmounts ShoppingList — the checked Set must live in
+      // RecipePage, not the view, for it to survive the round trip.
+      await userEvent.click(screen.getByRole('button', { name: /raw recipe/i }));
+      await screen.findByRole('heading', { name: 'Cake' });
+      await userEvent.click(screen.getByRole('button', { name: /shopping/i }));
+
+      expect(screen.getByLabelText('2 cups flour')).toBeChecked();
+      expect(screen.getByText(/1\s*\/\s*2/)).toBeInTheDocument();
+    });
+  });
+
   describe('wake lock button', () => {
     afterEach(() => {
       vi.restoreAllMocks();
