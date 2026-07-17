@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import type { RecipeSection, Timeline } from '../../../types/recipe';
 import {
   pickLaneColors,
@@ -10,6 +11,7 @@ import {
 import { TimelineGantt } from './TimelineGantt';
 import { TimelineLegend } from './TimelineLegend';
 import { TimelineDetailPanel, type PhaseGroup } from './TimelineDetailPanel';
+import { MobileCookTimeline } from './MobileCookTimeline';
 
 const Board = styled('div')(({ theme }) => ({
   background: theme.tokens.color.surface.base,
@@ -46,6 +48,7 @@ export const CookTimeline: React.FC<CookTimelineProps> = ({
   onToggleIngredient,
 }) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const laneColors = pickLaneColors(timeline.components.length, theme.tokens.color.categorical);
   const [selectedId, setSelectedId] = React.useState<string | null>(() => firstPhaseId(timeline));
 
@@ -71,6 +74,17 @@ export const CookTimeline: React.FC<CookTimelineProps> = ({
     const comp = timeline.components.find((c) => c.phases.some((p) => p.id === selectedId));
     return comp ? sectionForComponent(comp, sections) : null;
   }, [timeline, sections, selectedId]);
+
+  if (isMobile) {
+    return (
+      <MobileCookTimeline
+        timeline={timeline}
+        sections={sections}
+        checked={checked}
+        onToggleIngredient={onToggleIngredient}
+      />
+    );
+  }
 
   return (
     <Board>
