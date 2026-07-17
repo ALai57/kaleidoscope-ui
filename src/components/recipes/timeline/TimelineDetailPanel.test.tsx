@@ -1,38 +1,65 @@
-import { it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
-import { render } from '../../../test/testUtils';
-import { PrismThemeProvider } from '../../prism';
+import userEvent from '@testing-library/user-event';
+import { render } from '@/test/testUtils';
+import { PrismThemeProvider } from '@/components/prism';
 import { TimelineDetailPanel } from './TimelineDetailPanel';
-import type { TimelinePhase } from '../../../types/recipe';
 
-const phase: TimelinePhase = {
-  id: 'Salmon/Marinate', label: 'Marinate', kind: 'passive',
-  steps: [0, 1, 2], estimate: 24, deps: [], start: 0,
-};
+const groups = [
+  {
+    id: 'a/mix',
+    label: 'Mix',
+    componentName: 'A',
+    laneColor: '#26A0BC',
+    kind: 'active' as const,
+    start: 0,
+    dur: 5,
+    steps: ['Combine'],
+  },
+  {
+    id: 'a/bake',
+    label: 'Bake',
+    componentName: 'A',
+    laneColor: '#26A0BC',
+    kind: 'passive' as const,
+    start: 5,
+    dur: 20,
+    steps: ['Bake it'],
+  },
+];
 
-it('shows an empty-state prompt when nothing is selected', () => {
-  render(
-    <PrismThemeProvider>
-      <TimelineDetailPanel phase={null} componentName="" laneColor="#45D6E8" steps={[]} />
-    </PrismThemeProvider>
-  );
-  expect(screen.getByText(/pick a block/i)).toBeInTheDocument();
-});
-
-it('renders the selected phase heading, kind, window, and steps', () => {
+const renderPanel = (props: Partial<React.ComponentProps<typeof TimelineDetailPanel>> = {}) =>
   render(
     <PrismThemeProvider>
       <TimelineDetailPanel
-        phase={phase}
-        componentName="Salmon"
-        laneColor="#26A0BC"
-        steps={['Whisk miso', 'Coat the fillets', 'Leave at room temp']}
+        selectedId="a/bake"
+        groups={groups}
+        ingredients={['flour', 'sugar']}
+        sectionIndex={0}
+        checked={new Set()}
+        onToggleIngredient={vi.fn()}
+        {...props}
       />
     </PrismThemeProvider>
   );
-  expect(screen.getByRole('heading', { name: /Salmon · Marinate/ })).toBeInTheDocument();
-  expect(screen.getByText('passive')).toBeInTheDocument();
-  expect(screen.getByText(/\+0–24 min/)).toBeInTheDocument();
-  expect(screen.getByText('Coat the fillets')).toBeInTheDocument();
-  expect(screen.getAllByRole('listitem')).toHaveLength(3);
+
+describe('TimelineDetailPanel', () => {
+  it('shows the focused section ingredients and every phase step', () => {
+    renderPanel();
+    expect(screen.getByText('flour')).toBeInTheDocument();
+    expect(screen.getByText('Combine')).toBeInTheDocument(); // non-selected phase step still present
+    expect(screen.getByText('Bake it')).toBeInTheDocument();
+  });
+
+  it('marks the selected phase group', () => {
+    renderPanel({ ingredients: [] });
+    expect(document.querySelector('[data-group="a/bake"]')).toHaveClass('sel');
+  });
+
+  it('toggles an ingredient via its checkbox', async () => {
+    const onToggle = vi.fn();
+    renderPanel({ onToggleIngredient: onToggle });
+    await userEvent.click(screen.getByLabelText('flour'));
+    expect(onToggle).toHaveBeenCalledWith('0:0'); // ingredientKey(0, 0)
+  });
 });
