@@ -60,6 +60,22 @@ describe('MobileNav', () => {
     expect(within(dialog).queryByRole('link', { name: 'Manager' })).toBeNull();
   });
 
+  it('makes the background nav inert while the drawer is open', () => {
+    renderNav();
+    const nav = screen.getByRole('navigation', { name: /primary/i });
+    expect(nav).not.toHaveAttribute('inert');
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    expect(nav).toHaveAttribute('inert');
+  });
+
+  it('closes the drawer on Escape', () => {
+    renderNav();
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    const dialog = screen.getByRole('dialog', { name: /menu/i });
+    fireEvent.keyDown(dialog, { key: 'Escape' });
+    expect(screen.queryByRole('dialog', { name: /menu/i })).toBeNull();
+  });
+
   it('calls login from the drawer when unauthenticated', () => {
     const login = vi.fn();
     renderNav({ isAuthenticated: false, login });

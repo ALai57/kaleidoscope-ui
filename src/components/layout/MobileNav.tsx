@@ -104,6 +104,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = fa
       {/* top bar */}
       <Box
         component="header"
+        inert={open || undefined}
         sx={{
           position: 'sticky',
           top: 0,
@@ -118,7 +119,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = fa
           borderColor: 'divider',
         }}
       >
-        <Box component={Link} to="/" aria-label="Home — the prism" sx={{ display: 'inline-flex', alignItems: 'center', color: 'text.primary' }}>
+        <Box component={Link} to="/" aria-label="Home — the prism" sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: MIN_TAP, minHeight: MIN_TAP, color: 'text.primary' }}>
           <KaleidoscopeMark size={24} />
         </Box>
         <Box component="span" sx={{ fontFamily: mono, fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.04em' }}>
@@ -152,6 +153,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = fa
       <Box
         component="nav"
         aria-label="Primary"
+        inert={open || undefined}
         sx={{
           position: 'fixed',
           left: 0,
