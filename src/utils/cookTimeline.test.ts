@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { componentId, resolvePhaseSteps, effectiveDuration, backPlanStart, timelineStats, pickLaneColors, ingredientKey, sectionForComponent } from './cookTimeline';
+import { componentId, resolvePhaseSteps, effectiveDuration, pickLaneColors, ingredientKey, sectionForComponent } from './cookTimeline';
 import type { RecipeSection } from '../types/recipe';
-import type { TimelineComponent, TimelinePhase, Timeline } from '../types/recipe';
+import type { TimelineComponent, TimelinePhase } from '../types/recipe';
 
 describe('componentId', () => {
   it('uses a non-blank name', () => {
@@ -59,46 +59,6 @@ describe('effectiveDuration', () => {
   });
   it('prefers a matching override', () => {
     expect(effectiveDuration(phase, [{ phase: 'Salmon/Sear', minutes: 12 }])).toBe(12);
-  });
-});
-
-describe('backPlanStart', () => {
-  it('subtracts total minutes from a serve time and formats 12-hour', () => {
-    expect(backPlanStart('18:30', 50)).toBe('5:40 PM');
-  });
-  it('formats midnight and noon boundaries', () => {
-    expect(backPlanStart('00:20', 30)).toBe('11:50 PM'); // wraps back a day
-    expect(backPlanStart('12:00', 0)).toBe('12:00 PM');
-  });
-  it('returns empty string for an unparseable serve time', () => {
-    expect(backPlanStart('', 50)).toBe('');
-  });
-});
-
-describe('timelineStats', () => {
-  const tl: Timeline = {
-    version: 1, generator_version: 1, generated_at: 'now', total_minutes: 50, overrides: [],
-    components: [
-      { name: 'A', steps_hash: 'x', phases: [
-        { id: 'A/p1', label: 'p1', kind: 'passive', steps: [], estimate: 24, deps: [], start: 0 },
-        { id: 'A/a1', label: 'a1', kind: 'active', steps: [], estimate: 10, deps: [], start: 30 },
-      ] },
-      { name: 'B', steps_hash: 'x', phases: [
-        { id: 'B/a1', label: 'a1', kind: 'active', steps: [], estimate: 6, deps: [], start: 0 },
-        { id: 'B/a2', label: 'a2', kind: 'active', steps: [], estimate: 4, deps: [], start: 46 },
-      ] },
-    ],
-  };
-  it('derives hands-on = sum of active durations and free = total - hands-on', () => {
-    const s = timelineStats(tl);
-    expect(s.totalMinutes).toBe(50);
-    expect(s.handsOnMinutes).toBe(20); // 10 + 6 + 4
-    expect(s.freeMinutes).toBe(30);
-    expect(s.activeCount).toBe(3);
-  });
-  it('counts hands-off windows as gaps in active coverage', () => {
-    // active intervals: [0,6], [30,40], [46,50] -> free gaps [6,30] and [40,46] = 2
-    expect(timelineStats(tl).passiveWindows).toBe(2);
   });
 });
 

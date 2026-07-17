@@ -3,7 +3,6 @@ import type {
   TimelineComponent,
   TimelineOverride,
   TimelinePhase,
-  Timeline,
 } from '../types/recipe';
 
 /** A component's stable id (lane label): its name (verbatim, preserving
@@ -34,66 +33,6 @@ export function resolvePhaseSteps(
 export function effectiveDuration(phase: TimelinePhase, overrides: TimelineOverride[]): number {
   const hit = overrides.find((o) => o.phase === phase.id);
   return hit ? hit.minutes : phase.estimate;
-}
-
-/** Format minutes-since-midnight as "h:mm AM/PM". */
-function fmtClock(mins: number): string {
-  const norm = ((mins % 1440) + 1440) % 1440;
-  let h = Math.floor(norm / 60);
-  const m = norm % 60;
-  const ap = h >= 12 ? 'PM' : 'AM';
-  h = h % 12 || 12;
-  return `${h}:${String(m).padStart(2, '0')} ${ap}`;
-}
-
-/** Back-plan the start clock: serve time (HH:MM) minus the total run. */
-export function backPlanStart(serveTimeHHMM: string, totalMinutes: number): string {
-  const parts = serveTimeHHMM.split(':');
-  if (parts.length !== 2) return '';
-  const h = Number(parts[0]);
-  const m = Number(parts[1]);
-  if (Number.isNaN(h) || Number.isNaN(m)) return '';
-  return fmtClock(h * 60 + m - totalMinutes);
-}
-
-export interface TimelineStats {
-  totalMinutes: number;
-  handsOnMinutes: number;
-  freeMinutes: number;
-  activeCount: number;
-  passiveWindows: number;
-}
-
-/** Stat tiles. Active phases never overlap (packer invariant), so hands-on =
- *  sum of active durations and free windows are the gaps in active coverage. */
-export function timelineStats(timeline: Timeline): TimelineStats {
-  const active = timeline.components
-    .flatMap((c) => c.phases)
-    .filter((p) => p.kind === 'active')
-    .map((p) => {
-      const start = p.start ?? 0;
-      return { start, end: start + effectiveDuration(p, timeline.overrides) };
-    })
-    .sort((a, b) => a.start - b.start);
-
-  const handsOnMinutes = active.reduce((sum, i) => sum + (i.end - i.start), 0);
-  const total = timeline.total_minutes;
-
-  let cursor = 0;
-  let passiveWindows = 0;
-  for (const i of active) {
-    if (i.start > cursor) passiveWindows += 1; // a gap before this active block
-    cursor = Math.max(cursor, i.end);
-  }
-  if (cursor < total) passiveWindows += 1; // trailing free window
-
-  return {
-    totalMinutes: total,
-    handsOnMinutes,
-    freeMinutes: total - handsOnMinutes,
-    activeCount: active.length,
-    passiveWindows,
-  };
 }
 
 /** One color per lane, cycling the categorical palette if a recipe has more

@@ -56,8 +56,7 @@ it('renders every phase as a labeled group in the method', () => {
 
 it('renders the legend', () => {
   setup();
-  // Scoped to the legend's own copy — TimelineStats also rendered a
-  // "Hands-on" tile label historically, so a bare /hands-on/i match is ambiguous.
+  // Scoped to the legend's own copy, since a bare /hands-on/i match is ambiguous.
   expect(screen.getByText(/Active — hands-on/i)).toBeInTheDocument();
   expect(screen.getByText(/Passive — hands-off/i)).toBeInTheDocument();
 });
