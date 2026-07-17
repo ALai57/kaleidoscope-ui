@@ -293,7 +293,13 @@ export const MobileCookTimeline: React.FC<CookTimelineProps> = ({
   onToggleIngredient,
 }) => {
   const theme = useTheme();
-  const laneColors = pickLaneColors(timeline.components.length, theme.tokens.color.categorical);
+  // Color each lane by its resolved SECTION index (not component order) so a
+  // section reads the same color here as in the Raw and Shopping views.
+  const sectionColors = pickLaneColors(sections.length, theme.tokens.color.categorical);
+  const laneColors = timeline.components.map((comp, ci) => {
+    const secIndex = sectionForComponent(comp, sections)?.index ?? ci;
+    return sectionColors[secIndex] ?? theme.tokens.color.brand.primary;
+  });
   const total = timeline.total_minutes || 1;
 
   const [section, setSection] = React.useState<'all' | string>('all');
