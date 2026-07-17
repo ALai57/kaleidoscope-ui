@@ -5,13 +5,18 @@ import { render } from '@/test/testUtils';
 import RefractionHero from './RefractionHero';
 import { PULSE_CONFIG } from './gardenFacets';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 // RefractionHero gates its pulses on prefers-reduced-motion; drive that query.
 vi.mock('@mui/material/useMediaQuery', () => ({ default: vi.fn(() => false) }));
 const mockUseMediaQuery = vi.mocked(useMediaQuery);
 
+vi.mock('@/hooks/useIsMobile', () => ({ useIsMobile: vi.fn(() => false) }));
+const mockUseIsMobile = vi.mocked(useIsMobile);
+
 beforeEach(() => {
   mockUseMediaQuery.mockReturnValue(false); // motion allowed by default
+  mockUseIsMobile.mockReturnValue(false); // desktop scene by default
   PULSE_CONFIG.enabled = true; // restore the shared config between tests
 });
 
@@ -57,5 +62,13 @@ describe('RefractionHero', () => {
     const { container } = render(<RefractionHero />);
     expect(container.querySelectorAll('[data-pulse]')).toHaveLength(0);
     expect(screen.getByRole('link', { name: /Recipes/ })).toBeTruthy();
+  });
+
+  it('renders the mobile optical-bench hero below md', () => {
+    mockUseIsMobile.mockReturnValue(true);
+    render(<RefractionHero />);
+    expect(screen.getByTestId('refraction-hero-mobile')).toBeTruthy();
+    // links still present and correct in the mobile variant
+    expect(screen.getByRole('link', { name: /Writing/ }).getAttribute('href')).toBe('/archive');
   });
 });
