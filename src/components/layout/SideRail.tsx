@@ -81,7 +81,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
       component="nav"
       aria-label="Primary"
       sx={{
-        width: { xs: 64, sm: 214 },
+        width: 214,
         flex: 'none',
         alignSelf: 'stretch',
         borderRight: '1px solid',
@@ -113,7 +113,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
         }}
       >
         <KaleidoscopeMark size={26} className="klogo" />
-        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' }, fontFamily: mono, fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.16em' }}>
+        <Box component="span" sx={{ fontFamily: mono, fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.16em' }}>
           andrewlai
         </Box>
       </Box>
@@ -125,7 +125,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
         return (
           <Box key={f.key} component={Link} to={f.route} aria-label={f.label} aria-current={active ? 'page' : 'false'} sx={itemSx(active, color)}>
             <Box component="span" sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: color, flex: 'none' }} />
-            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{f.label}</Box>
+            <Box component="span">{f.label}</Box>
           </Box>
         );
       })}
@@ -133,14 +133,14 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
       {/* About (essentials tier) */}
       <Box component={Link} to="/about" aria-label="About" aria-current={pathname === '/about' ? 'page' : 'false'} sx={itemSx(pathname === '/about', theme.palette.success.main)}>
         <Box component="span" sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main', flex: 'none' }} />
-        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>About</Box>
+        <Box component="span">About</Box>
       </Box>
 
       <Box sx={{ flex: 1 }} />
 
       {/* writer/admin tools — secondary group */}
       {(userIsWriter || userIsAdmin) && (
-        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 1, display: { xs: 'none', sm: 'block' } }}>
+        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 1 }}>
           {userIsWriter && (
             <Box component={Link} to="/experience" sx={toolSx(pathname === '/experience')}>Experience</Box>
           )}
@@ -154,7 +154,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
       )}
 
       {/* auth */}
-      <Box sx={{ pt: 1, display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
+      <Box sx={{ pt: 1, display: 'flex', justifyContent: 'flex-start' }}>
         {isAuthenticated ? (
           <Tooltip title={`Logged in as ${user?.firstName ?? 'User'}`}>
             <Box component={Link} to="/admin" aria-label="admin" sx={{ display: 'inline-flex', border: '1px solid', borderColor: 'divider', borderRadius: '50%', p: 0.25 }}>
@@ -187,7 +187,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
             }}
           >
             <Avatar sx={{ width: 26, height: 26, fontFamily: mono, fontWeight: 700, color: 'primary.main', bgcolor: alpha(theme.palette.primary.main, 0.14), fontSize: '0.8rem' }}>?</Avatar>
-            <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Login</Box>
+            <Box component="span">Login</Box>
           </Box>
         )}
       </Box>
