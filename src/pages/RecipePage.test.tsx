@@ -1,6 +1,7 @@
 import React from 'react';
 import { describe, it, expect, beforeAll, beforeEach, afterEach, afterAll, vi } from 'vitest';
 import { render as rtlRender, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -168,12 +169,27 @@ function renderPage(slug: string): void {
 }
 
 describe('RecipePage', () => {
-  it('renders each section with its ingredients and steps', async () => {
+  it('renders each section with its ingredients and steps in the raw view', async () => {
     renderPage('layer-cake');
-    expect(await screen.findByRole('heading', { name: 'Cake' })).toBeInTheDocument();
+    await screen.findByRole('heading', { name: 'Layer Cake' });
+    await userEvent.click(screen.getByRole('button', { name: /raw recipe/i }));
+    expect(screen.getByRole('heading', { name: 'Cake' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Frosting' })).toBeInTheDocument();
     expect(screen.getByText('2 cups flour')).toBeInTheDocument();
     expect(screen.getByText('Whip')).toBeInTheDocument();
+  });
+
+  it('defaults to the timeline view and switches to shopping and raw', async () => {
+    renderPage('layer-cake');
+    await screen.findByRole('heading', { name: 'Layer Cake' });
+    expect(screen.getByRole('button', { name: /timeline/i })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    );
+    await userEvent.click(screen.getByRole('button', { name: /shopping/i }));
+    expect(screen.getByText(/ingredients checked/i)).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /raw recipe/i }));
+    expect(screen.getByRole('heading', { name: 'Cake' })).toBeInTheDocument();
   });
 
   describe('import-lineage strip gating', () => {
@@ -186,14 +202,14 @@ describe('RecipePage', () => {
     it('hides the strip for a non-admin even when the recipe has a scrape run', async () => {
       authState.current.userProfile = nonAdminProfile;
       renderPage('scraped-buns');
-      await screen.findByRole('heading', { name: 'Dough' });
+      await screen.findByRole('heading', { name: 'Scraped Buns' });
       expect(screen.queryByText(/import lineage/i)).not.toBeInTheDocument();
     });
 
     it('hides the strip for an admin viewing a manually-created recipe (no run id)', async () => {
       authState.current.userProfile = adminProfile;
       renderPage('layer-cake');
-      await screen.findByRole('heading', { name: 'Cake' });
+      await screen.findByRole('heading', { name: 'Layer Cake' });
       expect(screen.queryByText(/import lineage/i)).not.toBeInTheDocument();
     });
   });
@@ -207,13 +223,13 @@ describe('RecipePage', () => {
 
     it('does not render the timeline for a recipe without one', async () => {
       renderPage('layer-cake');
-      await screen.findByRole('heading', { name: 'Cake' });
+      await screen.findByRole('heading', { name: 'Layer Cake' });
       expect(screen.queryByText('Cook Timeline')).not.toBeInTheDocument();
     });
 
     it('does not show the writer hint for an anonymous reader', async () => {
       renderPage('layer-cake');
-      await screen.findByRole('heading', { name: 'Cake' });
+      await screen.findByRole('heading', { name: 'Layer Cake' });
       expect(
         screen.queryByText('Save this recipe to generate a cook timeline.')
       ).not.toBeInTheDocument();

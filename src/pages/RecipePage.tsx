@@ -9,9 +9,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import { LoadingScreen } from '../components/layout/LoadingScreen';
-import { RecipeSections } from '../components/recipes/RecipeSections';
 import { ImportLineageStrip } from '../components/recipes/lineage/ImportLineageStrip';
 import { CookTimeline } from '../components/recipes/timeline';
+import { RecipeViewToggle, type RecipeView } from '../components/recipes/RecipeViewToggle';
+import { ShoppingList } from '../components/recipes/ShoppingList';
+import { RawRecipe } from '../components/recipes/RawRecipe';
 import { WakeLockButton } from '../components/recipes/WakeLockButton';
 import { useAuth } from '../auth/useAuth';
 import { isSiteAdmin } from '../auth/authHelpers';
@@ -43,9 +45,11 @@ const RecipePage: React.FC = () => {
     queryFn: () => getRecipe(slug, token),
   });
 
-  // Checked-ingredient state, shared across recipe views. Currently only
-  // CookTimeline consumes it; Task 10 lifts it further once the
-  // Timeline/Shopping/Raw view toggle lands.
+  // View toggle: exactly one of Timeline / Shopping list / Raw recipe renders
+  // at a time.
+  const [view, setView] = React.useState<RecipeView>('timeline');
+
+  // Checked-ingredient state, shared across the Timeline and Shopping views.
   const [checked, setChecked] = React.useState<ReadonlySet<string>>(() => new Set());
   const toggleIngredient = React.useCallback((key: string) => {
     setChecked((prev) => {
@@ -58,6 +62,7 @@ const RecipePage: React.FC = () => {
       return next;
     });
   }, []);
+  const clearChecked = React.useCallback(() => setChecked(new Set()), []);
 
   return (
     <>
@@ -120,27 +125,38 @@ const RecipePage: React.FC = () => {
               <ImportLineageStrip slug={slug} token={token} />
             )}
 
-            <RecipeSections content={recipe.content} />
+            <RecipeViewToggle value={view} onChange={setView} />
 
-            {recipe.timeline && (
-              <CookTimeline
-                timeline={recipe.timeline}
-                sections={recipe.content.sections}
+            {view === 'timeline' &&
+              (recipe.timeline ? (
+                <CookTimeline
+                  timeline={recipe.timeline}
+                  sections={recipe.content.sections}
+                  checked={checked}
+                  onToggleIngredient={toggleIngredient}
+                />
+              ) : (
+                isAuthenticated && (
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary',
+                      mt: 4,
+                    }}
+                  >
+                    Save this recipe to generate a cook timeline.
+                  </Typography>
+                )
+              ))}
+            {view === 'shopping' && (
+              <ShoppingList
+                content={recipe.content}
                 checked={checked}
                 onToggleIngredient={toggleIngredient}
+                onClearChecked={clearChecked}
               />
             )}
-            {!recipe.timeline && isAuthenticated && (
-              <Typography
-                variant="body2"
-                sx={{
-                  color: 'text.secondary',
-                  mt: 4,
-                }}
-              >
-                Save this recipe to generate a cook timeline.
-              </Typography>
-            )}
+            {view === 'raw' && <RawRecipe content={recipe.content} />}
           </>
         )}
       </Container>
