@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { LoadingScreen } from '../../components/layout/LoadingScreen';
 import { Button } from '../../components/prism';
 import { useAuth } from '../../auth/useAuth';
@@ -18,6 +19,7 @@ export type LibraryView = 'shelf' | 'acquisitions' | 'taste';
 
 const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ view, canEdit }) => {
   const { tokens } = useTheme();
+  const isMobile = useIsMobile();
   const { token } = useAuth();
   const navigate = useNavigate();
   const { interestId } = useParams<{ interestId: string }>();
@@ -30,16 +32,16 @@ const LibraryPageInner: React.FC<{ view: LibraryView; canEdit: boolean }> = ({ v
   const effectiveView: LibraryView = canEdit ? view : 'shelf';
 
   return (
-    <Box sx={{ display: 'flex', gap: 3, p: 3, minHeight: '70vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 3, p: { xs: 2, md: 3 }, minHeight: '70vh' }}>
       <InterestRail
         interests={interests.data ?? []}
         activeId={interestId}
         onAdd={canEdit ? () => setModal('new') : undefined}
       />
 
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, minWidth: 0 }}>
         {id && canEdit && (
-          <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
             <Link to={`/library/${id}`} style={tabStyle(tokens, effectiveView === 'shelf')}>
               Shelves
             </Link>
