@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterEach, afterAll, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
@@ -19,7 +19,13 @@ vi.mock('../../auth/useAuth', () => ({
   }),
 }));
 
+import { useIsMobile } from '@/hooks/useIsMobile';
+vi.mock('@/hooks/useIsMobile', () => ({ useIsMobile: vi.fn(() => false) }));
+const mockUseIsMobile = vi.mocked(useIsMobile);
+
 const server = setupServer(http.get('/projects', () => HttpResponse.json([])));
+
+beforeEach(() => mockUseIsMobile.mockReturnValue(false));
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
@@ -54,5 +60,12 @@ describe('ProjectsPage', () => {
     // Top-bar action + empty-state CTA.
     expect(screen.getByRole('button', { name: 'New Project' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /create first project/i })).toBeInTheDocument();
+  });
+
+  it('hides the graph/list view toggle on mobile', () => {
+    mockUseIsMobile.mockReturnValue(true);
+    render(<ProjectsPage />, { wrapper: Wrapper });
+    // the "graph view" ToggleButton is only rendered on desktop
+    expect(screen.queryByRole('button', { name: /graph view/i })).toBeNull();
   });
 });

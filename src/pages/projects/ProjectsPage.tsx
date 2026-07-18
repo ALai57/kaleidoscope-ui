@@ -24,6 +24,7 @@ import { ProjectCard } from '../../components/projects/ProjectCard';
 import { ProjectGraph } from '../../components/projects/ProjectGraph';
 import { ProjectInlineDetail } from './ProjectInlineDetail';
 import { useAuth } from '../../auth/useAuth';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { getProjects, createProject } from '../../api/projects';
 type ViewMode = 'list' | 'graph';
 
@@ -99,6 +100,9 @@ const ProjectsPage: React.FC = () => {
   const { token, isAuthenticated, userProfile, login } = useAuth();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
+  const isMobile = useIsMobile();
+  // On phones the graph (fixed 1140px) can't fit — force the list.
+  const effectiveViewMode: ViewMode = isMobile ? 'list' : viewMode;
   const [newDialogOpen, setNewDialogOpen] = useState(false);
 
   // selectedProjectId drives the split-view animation:
@@ -145,6 +149,7 @@ const ProjectsPage: React.FC = () => {
   // top bar carries only page-specific actions (view toggle + New Project).
   const headerActions = !isSplitView ? (
     <>
+      {!isMobile && (
       <ToggleButtonGroup
         value={viewMode}
         exclusive
@@ -164,6 +169,7 @@ const ProjectsPage: React.FC = () => {
           </Tooltip>
         </ToggleButton>
       </ToggleButtonGroup>
+      )}
       <Button variant="contained" startIcon={<AddIcon />} onClick={() => setNewDialogOpen(true)}>
         New Project
       </Button>
@@ -217,10 +223,10 @@ const ProjectsPage: React.FC = () => {
           // card area in AnimatePresence caused exit-opacity to fight layoutId
           // and produced a double-reposition on cards that aren't in column 1.
           (<LayoutGroup>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: isSplitView ? 3 : 0 }}>
+            <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: 'flex-start', gap: isSplitView ? 3 : 0 }}>
 
               {/* ── Card area (no AnimatePresence — let layoutId own the motion) ── */}
-              <Box sx={{ width: isSplitView ? 280 : '100%', flexShrink: 0 }}>
+              <Box sx={{ width: isMobile ? '100%' : (isSplitView ? 280 : '100%'), flexShrink: 0 }}>
                 {isSplitView ? (
                   /* Sidebar: the selected card drifts here via layoutId */
                   (<motion.div
@@ -229,7 +235,7 @@ const ProjectsPage: React.FC = () => {
                   >
                     <ProjectCard project={selectedProject!} />
                   </motion.div>)
-                ) : viewMode === 'list' ? (
+                ) : effectiveViewMode === 'list' ? (
                   /* Grid */
                   (<Grid container spacing={2}>
                     {projects.map((project) => (
