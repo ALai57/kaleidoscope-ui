@@ -72,7 +72,8 @@ const RecipePage: React.FC = () => {
         {recipe && (
           <>
             <Stack
-              direction="row"
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1}
               sx={{
                 justifyContent: 'space-between',
                 alignItems: 'flex-start',
