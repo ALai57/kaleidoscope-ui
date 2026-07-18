@@ -60,23 +60,26 @@ Below `md`, `AdminLayout` drops the persistent rail and renders a top bar with a
 - Consumes: `ADMIN_NAV_ITEMS`, `AdminNavItem` (`./AdminNavRail`); `useIsMobile` (`@/hooks/useIsMobile`); `NavBarUser` (`./navTypes`); `KaleidoscopeMark` (`./KaleidoscopeMark`).
 - Produces: `AdminTopBarProps` gains `onMenuClick?: () => void`; `AdminMobileDrawer: React.FC<AdminMobileDrawerProps>` where `AdminMobileDrawerProps = { open: boolean; onClose: () => void; items?: AdminNavItem[]; user?: NavBarUser; isAuthenticated?: boolean; login?: () => void }`.
 
-- [ ] **Step 1: Write the failing AdminTopBar test** — add to `src/components/layout/AdminTopBar.test.tsx` (match the file's existing render/import style; it renders under a theme). Add:
+- [ ] **Step 1: Write the failing AdminTopBar test** — in `src/components/layout/AdminTopBar.test.tsx` (the file already defines a `Wrapper` that renders under `ThemeProvider theme={makeTheme(BASE_THEME, 'prism')}`).
 
+Extend the imports:
+- `import { describe, it, expect } from 'vitest';` → `import { describe, it, expect, vi } from 'vitest';`
+- `import { render, screen } from '@testing-library/react';` → `import { render, screen, fireEvent } from '@testing-library/react';`
+
+Add these tests inside `describe('AdminTopBar', …)`:
 ```tsx
-import { fireEvent } from '@testing-library/react';
-// … within the existing describe:
-it('renders a menu button that fires onMenuClick when provided', () => {
-  const onMenuClick = vi.fn();
-  renderTopBar(<AdminTopBar title="Manager" onMenuClick={onMenuClick} />);
-  fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
-  expect(onMenuClick).toHaveBeenCalledTimes(1);
-});
-it('renders no menu button when onMenuClick is omitted', () => {
-  renderTopBar(<AdminTopBar title="Manager" />);
-  expect(screen.queryByRole('button', { name: /open menu/i })).toBeNull();
-});
+  it('renders a menu button that fires onMenuClick when provided', () => {
+    const onMenuClick = vi.fn();
+    render(<AdminTopBar title="Manager" onMenuClick={onMenuClick} />, { wrapper: Wrapper });
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    expect(onMenuClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders no menu button when onMenuClick is omitted', () => {
+    render(<AdminTopBar title="Manager" />, { wrapper: Wrapper });
+    expect(screen.queryByRole('button', { name: /open menu/i })).toBeNull();
+  });
 ```
-(Use the file's existing render helper — if it renders `<AdminTopBar>` directly under a `ThemeProvider`, reuse that; `renderTopBar` above is a placeholder for whatever the file already uses. `vi`/`screen` are already imported there.)
 
 - [ ] **Step 2: Run it, confirm the menu-button test fails**
 
@@ -393,25 +396,37 @@ export const AdminMobileDrawer: React.FC<AdminMobileDrawerProps> = ({
 Run: `npm test -- src/components/layout/AdminMobileDrawer.test.tsx`
 Expected: PASS (4 tests).
 
-- [ ] **Step 9: Write the failing AdminLayout mobile test** — add to `src/components/layout/AdminLayout.test.tsx` (mock `useIsMobile`; match the file's existing render setup). Add the mock near the top:
+- [ ] **Step 9: Write the failing AdminLayout mobile test** — in `src/components/layout/AdminLayout.test.tsx` (the file already defines a `Wrapper` = `MemoryRouter initialEntries={['/projects']}` + `ThemeProvider theme={makeTheme(BASE_THEME, 'prism')}`).
+
+Extend the imports:
+- `import { describe, it, expect } from 'vitest';` → `import { describe, it, expect, vi, beforeEach } from 'vitest';`
+- `import { render, screen } from '@testing-library/react';` → `import { render, screen, fireEvent, within } from '@testing-library/react';`
+
+Add the mock after the imports (before the `theme`/`Wrapper` definitions):
 ```tsx
 import { useIsMobile } from '@/hooks/useIsMobile';
 vi.mock('@/hooks/useIsMobile', () => ({ useIsMobile: vi.fn(() => false) }));
 const mockUseIsMobile = vi.mocked(useIsMobile);
+beforeEach(() => mockUseIsMobile.mockReturnValue(false)); // existing tests exercise the desktop rail
 ```
-and (in a `beforeEach`) `mockUseIsMobile.mockReturnValue(false);` so existing tests stay desktop. Add:
+
+Add this test inside `describe('AdminLayout', …)`:
 ```tsx
-it('renders a hamburger + drawer (not the persistent rail) below md', () => {
-  mockUseIsMobile.mockReturnValue(true);
-  renderAdminLayout({ title: 'Manager', children: <div>content</div> }); // use the file's existing render helper
-  // hamburger present, opens the drawer with labeled admin links
-  fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
-  const dialog = screen.getByRole('dialog', { name: /admin menu/i });
-  expect(within(dialog).getByRole('link', { name: 'Manager' })).toBeTruthy();
-  expect(screen.getByText('content')).toBeTruthy();
-});
+  it('renders a hamburger + drawer (not the persistent rail) below md', () => {
+    mockUseIsMobile.mockReturnValue(true);
+    render(
+      <AdminLayout title="Manager">
+        <div>page content</div>
+      </AdminLayout>,
+      { wrapper: Wrapper }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    const dialog = screen.getByRole('dialog', { name: /admin menu/i });
+    expect(within(dialog).getByRole('link', { name: 'Manager' })).toBeInTheDocument();
+    expect(screen.getByText('page content')).toBeInTheDocument();
+  });
 ```
-(If `AdminLayout.test` doesn't already have a render helper, render `<AdminLayout title="Manager"><div>content</div></AdminLayout>` under `ThemeProvider` + `MemoryRouter` like `AdminMobileDrawer.test` does. `fireEvent`/`within`/`screen` imports as needed.)
+(The existing tests render `AdminLayout` with `useIsMobile → false`, so they keep exercising the desktop rail unchanged.)
 
 - [ ] **Step 10: Run it, confirm it fails**
 
@@ -578,15 +593,29 @@ Replace:
                 ) : effectiveViewMode === 'list' ? (
 ```
 
-- [ ] **Step 4: Add a focused test** — add to `src/pages/projects/ProjectsPage.test.tsx` if it exists (reuse its data/query harness). If no test file exists, create one using the page's existing test harness pattern (MSW + QueryClient + router) and assert the toggle is gone on mobile:
+- [ ] **Step 4: Add the mobile test** — `src/pages/projects/ProjectsPage.test.tsx` already has an MSW (`/projects` → `[]`) + `QueryClient` + `MemoryRouter` + `ThemeProvider` `Wrapper`, and mocks `../../auth/useAuth` (authenticated). Reuse it.
+
+Add the hook mock after the existing `vi.mock('../../auth/useAuth', …)` block:
 ```tsx
-it('hides the graph/list view toggle on mobile', () => {
-  mockUseIsMobile.mockReturnValue(true); // vi.mock('@/hooks/useIsMobile') as in other tests
-  renderProjectsPage(); // the harness that provides QueryClient + router + project data
-  expect(screen.queryByRole('button', { name: /graph view/i })).toBeNull();
-});
+import { useIsMobile } from '@/hooks/useIsMobile';
+vi.mock('@/hooks/useIsMobile', () => ({ useIsMobile: vi.fn(() => false) }));
+const mockUseIsMobile = vi.mocked(useIsMobile);
 ```
-If ProjectsPage has no testable harness without significant setup, STOP and report — do not invent heavy scaffolding; instead rely on the Task 4 e2e (`/projects` at 390px) plus the desktop test staying green, and note the gap in your report.
+Add `beforeEach` to the vitest import (`import { describe, it, expect, beforeAll, afterEach, afterAll, beforeEach, vi } from 'vitest';`) and a reset so the existing tests stay desktop:
+```tsx
+beforeEach(() => mockUseIsMobile.mockReturnValue(false));
+```
+
+Add this test inside `describe('ProjectsPage', …)`:
+```tsx
+  it('hides the graph/list view toggle on mobile', () => {
+    mockUseIsMobile.mockReturnValue(true);
+    render(<ProjectsPage />, { wrapper: Wrapper });
+    // the "graph view" ToggleButton is only rendered on desktop
+    expect(screen.queryByRole('button', { name: /graph view/i })).toBeNull();
+  });
+```
+(The existing tests assert the desktop rail nav, so the `false` default keeps them green.)
 
 - [ ] **Step 5: Run tests + typecheck + lint**
 
