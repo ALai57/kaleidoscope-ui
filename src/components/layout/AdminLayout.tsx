@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import { PrismThemeProvider } from '../prism';
 import { AdminNavRail } from './AdminNavRail';
 import { AdminTopBar } from './AdminTopBar';
+import { AdminMobileDrawer } from './AdminMobileDrawer';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import type { AdminNavItem } from './AdminNavRail';
 import type { NavBarUser } from './navTypes';
 
@@ -41,6 +43,31 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   disablePrismTheme = false,
   children,
 }) => {
+  const isMobile = useIsMobile();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  if (isMobile) {
+    const mobileShell = (
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+        <Box inert={drawerOpen || undefined} sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+          <AdminTopBar title={title} actions={actions} onMenuClick={() => setDrawerOpen(true)} />
+          <Box component="main" sx={{ flex: 1, p: 2 }}>
+            {children}
+          </Box>
+        </Box>
+        <AdminMobileDrawer
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          {...(navItems ? { items: navItems } : {})}
+          user={user}
+          isAuthenticated={isAuthenticated}
+          login={login}
+        />
+      </Box>
+    );
+    return disablePrismTheme ? mobileShell : <PrismThemeProvider>{mobileShell}</PrismThemeProvider>;
+  }
+
   const shell = (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
       <AdminNavRail

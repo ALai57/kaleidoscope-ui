@@ -1,11 +1,16 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { AdminLayout } from './AdminLayout';
 import { makeTheme, BASE_THEME } from '../../theme';
 import { render as testRender } from '../../test/testUtils';
+
+import { useIsMobile } from '@/hooks/useIsMobile';
+vi.mock('@/hooks/useIsMobile', () => ({ useIsMobile: vi.fn(() => false) }));
+const mockUseIsMobile = vi.mocked(useIsMobile);
+beforeEach(() => mockUseIsMobile.mockReturnValue(false)); // existing tests exercise the desktop rail
 
 const theme = makeTheme(BASE_THEME, 'prism');
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -53,5 +58,19 @@ describe('AdminLayout', () => {
       </AdminLayout>,
     );
     expect(screen.getByTestId('admin-mode')).toHaveTextContent('light');
+  });
+
+  it('renders a hamburger + drawer (not the persistent rail) below md', () => {
+    mockUseIsMobile.mockReturnValue(true);
+    render(
+      <AdminLayout title="Manager">
+        <div>page content</div>
+      </AdminLayout>,
+      { wrapper: Wrapper }
+    );
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    const dialog = screen.getByRole('dialog', { name: /admin menu/i });
+    expect(within(dialog).getByRole('link', { name: 'Manager' })).toBeInTheDocument();
+    expect(screen.getByText('page content')).toBeInTheDocument();
   });
 });
