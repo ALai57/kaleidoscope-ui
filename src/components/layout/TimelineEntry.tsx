@@ -32,6 +32,8 @@ export interface TimelineEntryProps {
   connectorHeight?: number | undefined;
   /** The current role — gets an accent border, a "Current" badge, and a heavier dot. */
   featured?: boolean | undefined;
+  /** Below md: hide the left date column and render the date as a chip in the card. */
+  mobile?: boolean | undefined;
 }
 
 // ── Component ──────────────────────────────────────────────────────────────
@@ -40,6 +42,7 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
   entry,
   connectorHeight = 80,
   featured = false,
+  mobile = false,
 }) => {
   const { year, since, until, iconSrc, iconAlt, heading, orgUrl, body, bullets, link } = entry;
   const theme = useTheme();
@@ -51,7 +54,8 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
 
   return (
     <MuiTimelineItem>
-      {/* Left column — dates in the heading voice */}
+      {/* Left column — dates in the heading voice (desktop only; mobile shows a chip in the card) */}
+      {!mobile && (
       <TimelineOppositeContent sx={{ flex: 0.3 }}>
         <Typography
           component="div"
@@ -77,6 +81,7 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
           </Typography>
         )}
       </TimelineOppositeContent>
+      )}
       {/* Middle — dot + connector (token palette, no hardcoded black) */}
       <TimelineSeparator>
         <TimelineDot
@@ -93,16 +98,39 @@ export const TimelineEntry: React.FC<TimelineEntryProps> = ({
         <TimelineConnector sx={{ height: `${connectorHeight}px`, bgcolor: 'divider' }} />
       </TimelineSeparator>
       {/* Right column — content on the shared card surface */}
-      <TimelineContent sx={{ py: 0, pr: 0 }}>
+      <TimelineContent sx={{ py: 0, pr: 0, minWidth: 0 }}>
         <SurfaceCard
           sx={{
             p: 2,
             mb: 1,
+            minWidth: 0,
             ...(featured
               ? { borderColor: 'primary.main', borderWidth: 2, boxShadow: 2 }
               : {}),
           }}
         >
+          {mobile && (
+            <Box
+              component="span"
+              data-testid="timeline-date-mobile"
+              sx={{
+                display: 'inline-block',
+                mb: 1,
+                px: 1,
+                py: 0.25,
+                borderRadius: '999px',
+                border: '1px solid',
+                borderColor: 'divider',
+                color: 'text.secondary',
+                fontFamily: mono,
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                letterSpacing: '0.06em',
+              }}
+            >
+              {since ? `${since} — ${until ?? year}` : String(until ?? year)}
+            </Box>
+          )}
           <Box sx={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: 1 }}>
             <Typography
               component="h3"
