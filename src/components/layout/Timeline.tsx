@@ -173,7 +173,7 @@ export const Timeline: React.FC<TimelineProps> = ({ entries = TIMELINE_ENTRIES }
                     padding: '0px',
                     m: 0,
                     ...(isMobile && {
-                      [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 },
+                      [`&& .${timelineItemClasses.root}::before`]: { display: 'none' },
                     }),
                   }}
                 >
