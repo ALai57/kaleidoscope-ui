@@ -91,6 +91,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "./scripts/deployment/deploy-kaleidoscope-client",
+    "ephemeral:deploy": "./scripts/deployment/deploy-ephemeral",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook",

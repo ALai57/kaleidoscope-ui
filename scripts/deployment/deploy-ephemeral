@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Build this SPA and deploy it to an ephemeral Fly.io env's S3 prefix.
+#
+#   npm run ephemeral:deploy                 # auto-detect + pick from deployed apps
+#   npm run ephemeral:deploy -- --name=pr-42 # target a specific env, no prompt
+#
+# With --name the build syncs to that env's prefix directly. Without it, the
+# deployed kal-eph-* Fly apps are listed and you pick one (auto-selected when
+# there's exactly one). `vite build --mode ephemeral` writes index.html + hashed
+# assets/* to resources/kaleidoscope.client/static/dist/; syncing that to
+# s3://kal-ephemeral/eph-<slug>/ lands it exactly where the backend's prefixed
+# kaleidoscope.client adapter (KALEIDOSCOPE_CLIENT_PREFIX=eph-<slug>/) serves it.
+# Whatever is currently checked out is what ships.
+#
+# Credentials: ambient AWS creds only — same as `npm run deploy`. You need creds
+# with access to the kal-ephemeral bucket.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/../.." &>/dev/null && pwd)"
+# shellcheck source=scripts/deployment/ephemeral-lib.sh
+source "$SCRIPT_DIR/ephemeral-lib.sh"
+
+SLUG="$(resolve_slug_or_select "$@")"
+[ -n "$SLUG" ] || die "Could not resolve an ephemeral env slug."
+PREFIX="$(s3_prefix "$SLUG")"
+
+require_cmd npm
+require_cmd aws
+
+log "Building SPA (npm run build -- --mode ephemeral) for '$SLUG'..."
+( cd "$REPO_ROOT" && npm run build -- --mode ephemeral )
+
+DIST="$REPO_ROOT/resources/kaleidoscope.client/static/dist"
+[ -f "$DIST/index.html" ] || die "Expected build output at $DIST/index.html — did Vite's outDir change?"
+
+log "Syncing $DIST/ -> s3://$EPHEMERAL_BUCKET/$PREFIX ..."
+aws s3 sync "$DIST/" "s3://$EPHEMERAL_BUCKET/$PREFIX" --delete
+
+log "Deployed to s3://$EPHEMERAL_BUCKET/$PREFIX"
