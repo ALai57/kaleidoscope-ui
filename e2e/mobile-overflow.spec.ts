@@ -3,7 +3,12 @@ import { test, expect } from '@playwright/test';
 // iPhone-12-class portrait width — the viewport where the audit found the breakage.
 test.use({ viewport: { width: 390, height: 844 } });
 
-const routes = ['/', '/about', '/recipes', '/experience', '/library'];
+const routes = [
+  // public reader
+  '/', '/about', '/recipes', '/experience', '/library',
+  // admin shell (render a stable shell without a backend)
+  '/admin', '/manager', '/workflows', '/agents', '/projects', '/score-definitions', '/workspace-roots',
+];
 
 for (const route of routes) {
   test(`no horizontal overflow at 390px: ${route}`, async ({ page }) => {
