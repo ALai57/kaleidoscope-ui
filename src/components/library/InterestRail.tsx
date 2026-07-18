@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { Button } from '../prism';
 import type { Interest } from '../../types/interest';
 
@@ -12,8 +13,17 @@ interface Props {
 
 export const InterestRail: React.FC<Props> = ({ interests, activeId, onAdd }) => {
   const { tokens } = useTheme();
+  const isMobile = useIsMobile();
   return (
-    <nav style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 220 }}>
+    <nav
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 6,
+        minWidth: isMobile ? 0 : 220,
+        width: isMobile ? '100%' : undefined,
+      }}
+    >
       <div style={{
         fontFamily: tokens.typography.mono, fontSize: 11, letterSpacing: '0.1em',
         color: tokens.color.text.secondary, marginBottom: 8,

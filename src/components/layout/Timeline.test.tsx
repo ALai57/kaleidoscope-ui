@@ -40,6 +40,20 @@ describe('TimelineEntry', () => {
     expect(screen.getByText('Built a thing')).toBeTruthy();
     expect(screen.getByText('Fixed a bug')).toBeTruthy();
   });
+
+  it('shows the date as a chip inside the card on mobile', () => {
+    render(<TimelineEntry entry={mockEntry} mobile />, { wrapper: Wrapper });
+    const chip = screen.getByTestId('timeline-date-mobile');
+    expect(chip).toBeTruthy();
+    expect(chip.textContent).toContain('Dec, 2024');
+    expect(screen.getByText('Senior Engineer @ Acme Corp')).toBeTruthy();
+  });
+
+  it('renders no mobile date chip on desktop (date stays in the opposite column)', () => {
+    render(<TimelineEntry entry={mockEntry} mobile={false} />, { wrapper: Wrapper });
+    expect(screen.queryByTestId('timeline-date-mobile')).toBeNull();
+    expect(screen.getByText('Dec, 2024')).toBeTruthy();
+  });
 });
 
 describe('Timeline', () => {

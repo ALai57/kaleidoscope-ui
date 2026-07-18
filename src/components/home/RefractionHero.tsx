@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { useIsMobile } from '@/hooks/useIsMobile';
+import RefractionHeroMobile from './RefractionHeroMobile';
 import { GARDEN_FACETS, facetColor, PULSE_CONFIG, pulseTimeline } from './gardenFacets';
 import type { PulseSpan } from './gardenFacets';
 
@@ -55,6 +57,8 @@ const RefractionHero: React.FC = () => {
   const border = tokens?.color.border.strong ?? theme.palette.divider;
   const accent = tokens?.color.brand.primary ?? theme.palette.primary.main;
   const reduce = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const isMobile = useIsMobile();
+  if (isMobile) return <RefractionHeroMobile />;
 
   // Facet card y positions in the 1000x480 viewBox.
   const rowY = [80, 198, 316];

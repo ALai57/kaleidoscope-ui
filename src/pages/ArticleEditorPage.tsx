@@ -286,10 +286,10 @@ const ArticleEditorPage: React.FC = () => {
       {!slug && (
         <>
           <Stack
-            direction="row"
+            direction={{ xs: 'column', sm: 'row' }}
             spacing={2}
             sx={{
-              alignItems: "center",
+              alignItems: { xs: 'stretch', sm: 'center' },
               mb: 2
             }}>
             <TextField
@@ -297,7 +297,7 @@ const ArticleEditorPage: React.FC = () => {
               label="Article title"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              sx={{ minWidth: 300 }}
+              sx={{ minWidth: { xs: 0, sm: 300 } }}
             />
             <Button
               variant="contained"
@@ -325,13 +325,13 @@ const ArticleEditorPage: React.FC = () => {
         <>
           {/* Branch selector */}
           <Stack
-            direction="row"
+            direction={{ xs: 'column', sm: 'row' }}
             spacing={2}
             sx={{
-              alignItems: "center",
+              alignItems: { xs: 'stretch', sm: 'center' },
               mb: 2
             }}>
-            <FormControl size="small" sx={{ minWidth: 200 }}>
+            <FormControl size="small" sx={{ minWidth: { xs: 0, sm: 200 } }}>
               <InputLabel>Branch</InputLabel>
               <Select
                 value={selectedBranch?.branch_id ?? ''}

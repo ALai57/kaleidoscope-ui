@@ -45,7 +45,7 @@ export const Table: React.FC<TableProps> = ({
   rowHeight = 40,
   Toolbar,
 }) => (
-  <Box sx={{ maxWidth, mx: 'auto' }}>
+  <Box sx={{ maxWidth, mx: 'auto', width: '100%', overflowX: 'auto' }}>
     <DataGrid
       rows={rows}
       columns={columns}

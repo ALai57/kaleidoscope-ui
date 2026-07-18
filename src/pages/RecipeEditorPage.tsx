@@ -216,7 +216,7 @@ const RecipeEditorPage: React.FC = () => {
             onChange={(e) => setField({ title: e.target.value })}
             fullWidth
           />
-          <Stack direction="row" spacing={2}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
               label="Servings"
               value={form.servings}

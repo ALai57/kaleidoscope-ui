@@ -1,7 +1,31 @@
 import * as React from 'react';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import type { TimelinePhase } from '../../../types/recipe';
-import { effectiveDuration } from '../../../utils/cookTimeline';
+import { alpha } from '../../../theme/alpha';
+import { animateScrollTo } from '../../../utils/animateScroll';
+import { ingredientKey } from '../../../utils/cookTimeline';
+
+export interface PhaseGroup {
+  id: string;
+  label: string;
+  componentName: string;
+  laneColor: string;
+  kind: 'active' | 'passive';
+  start: number;
+  dur: number;
+  steps: string[];
+}
+
+export interface TimelineDetailPanelProps {
+  selectedId: string | null;
+  /** ALL phases, reading order (built by CookTimeline). */
+  groups: PhaseGroup[];
+  /** The selected phase's section ingredients. */
+  ingredients: string[];
+  sectionIndex: number;
+  checked: ReadonlySet<string>;
+  onToggleIngredient: (key: string) => void;
+}
 
 const Panel = styled('div')(({ theme }) => {
   const { color, radius, typography } = theme.tokens;
@@ -11,76 +35,180 @@ const Panel = styled('div')(({ theme }) => {
     border: `1px solid ${color.border.subtle}`,
     borderRadius: radius.lg,
     padding: '18px 20px',
-    minHeight: 96,
     fontFamily: typography.mono,
     color: color.text.primary,
+    display: 'grid',
+    gridTemplateColumns: 'minmax(180px, 260px) 1fr',
+    gap: 20,
+    alignItems: 'start',
   };
 });
 
-const Head = styled('div')({ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' });
-const Badge = styled('span', { shouldForwardProp: (p) => p !== 'c' })<{ c: string }>(({ c }) => ({
-  width: 11, height: 11, borderRadius: 3, flex: 'none', background: c,
+const Col = styled('div')({ display: 'flex', flexDirection: 'column', minWidth: 0 });
+const ColTitle = styled('h3')(({ theme }) => ({
+  margin: '0 0 10px',
+  fontSize: 11,
+  letterSpacing: '.16em',
+  textTransform: 'uppercase',
+  color: theme.tokens.color.text.secondary,
 }));
-const Kind = styled('span')(({ theme }) => ({
-  fontSize: 9.5, letterSpacing: '.12em', textTransform: 'uppercase',
-  padding: '2px 8px', borderRadius: 999,
-  border: `1px solid ${theme.tokens.color.border.strong}`, color: theme.tokens.color.text.secondary,
+
+const Hint = styled('p')(({ theme }) => ({
+  margin: 0,
+  color: theme.tokens.color.text.secondary,
+  fontSize: 13,
 }));
-const When = styled('span')(({ theme }) => ({
-  fontSize: 11.5, color: theme.tokens.color.text.secondary, marginLeft: 'auto',
-  fontVariantNumeric: 'tabular-nums',
-}));
-const Steps = styled('ol')({
-  margin: '14px 0 0', padding: 0, listStyle: 'none',
-  display: 'flex', flexDirection: 'column', gap: 9, counterReset: 'step',
+
+const IngredientList = styled('div')({ display: 'flex', flexDirection: 'column' });
+
+const Window = styled('div')({
+  maxHeight: 320,
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 10,
+  paddingRight: 4,
 });
-const Step = styled('li')(({ theme }) => ({
-  position: 'relative', paddingLeft: 30, fontSize: 14, color: theme.tokens.color.text.primary,
-  '&::before': {
-    counterIncrement: 'step', content: 'counter(step)',
-    position: 'absolute', left: 0, top: -1, width: 20, height: 20, borderRadius: 6,
-    background: theme.tokens.color.surface.raised,
-    border: `1px solid ${theme.tokens.color.border.strong}`,
-    fontSize: 11, color: theme.tokens.color.text.secondary,
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
+
+// The custom "c" prop must not land on the DOM element.
+const Dot = styled('span', { shouldForwardProp: (p) => p !== 'c' })<{ c: string }>(({ c }) => ({
+  width: 10,
+  height: 10,
+  borderRadius: 3,
+  flex: 'none',
+  background: c,
+}));
+
+const InstrGroup = styled('div')(({ theme }) => ({
+  padding: '10px 12px',
+  borderRadius: theme.tokens.radius.md,
+  border: `1px solid ${theme.tokens.color.border.subtle}`,
+  background: theme.tokens.color.surface.base,
+  '&.sel': {
+    borderColor: theme.tokens.color.brand.primary,
+    background: alpha(theme.tokens.color.brand.primary, 0.1),
   },
 }));
-const Hint = styled('p')(({ theme }) => ({
-  marginTop: 12, color: theme.tokens.color.text.secondary, fontSize: 13,
+
+const GroupHead = styled('div')({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: 8,
+  flexWrap: 'wrap',
+});
+const Name = styled('span')(({ theme }) => ({
+  fontSize: 13.5,
+  fontWeight: 600,
+  color: theme.tokens.color.text.primary,
+}));
+const Meta = styled('small')(({ theme }) => ({
+  fontSize: 11,
+  color: theme.tokens.color.text.secondary,
+  fontVariantNumeric: 'tabular-nums',
+}));
+const KindPill = styled('span')(({ theme }) => ({
+  fontSize: 9.5,
+  letterSpacing: '.1em',
+  textTransform: 'uppercase',
+  padding: '1px 7px',
+  borderRadius: 999,
+  border: `1px solid ${theme.tokens.color.border.strong}`,
+  color: theme.tokens.color.text.secondary,
+  marginLeft: 'auto',
 }));
 
-export interface TimelineDetailPanelProps {
-  phase: TimelinePhase | null;
-  componentName: string;
-  laneColor: string;
-  steps: string[];
-}
+const StepList = styled('ol')({
+  margin: '8px 0 0',
+  padding: '0 0 0 18px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+});
+const StepItem = styled('li')(({ theme }) => ({
+  fontSize: 13,
+  color: theme.tokens.color.text.primary,
+}));
 
 export const TimelineDetailPanel: React.FC<TimelineDetailPanelProps> = ({
-  phase, componentName, laneColor, steps,
+  selectedId,
+  groups,
+  ingredients,
+  sectionIndex,
+  checked,
+  onToggleIngredient,
 }) => {
-  if (!phase) {
-    return (
-      <Panel>
-        <Head>
-          <Badge c={laneColor} />
-          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>Pick a block to see its steps</h3>
-        </Head>
-        <Hint>Each block expands into the exact steps for that part of the recipe.</Hint>
-      </Panel>
-    );
-  }
-  const start = phase.start ?? 0;
-  const end = start + effectiveDuration(phase, []);
+  const winRef = React.useRef<HTMLDivElement>(null);
+  const reduced = React.useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    []
+  );
+
+  React.useEffect(() => {
+    const win = winRef.current;
+    if (!win || !selectedId) return;
+    const tgt = win.querySelector<HTMLElement>(`[data-group="${selectedId}"]`);
+    if (!tgt) return;
+    const top =
+      win.scrollTop + (tgt.getBoundingClientRect().top - win.getBoundingClientRect().top) - 8;
+    animateScrollTo(win, top, { reduced });
+  }, [selectedId, reduced]);
+
   return (
-    <Panel style={{ borderColor: laneColor }}>
-      <Head>
-        <Badge c={laneColor} />
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600 }}>{componentName} · {phase.label}</h3>
-        <Kind>{phase.kind}</Kind>
-        <When>+{start}–{end} min · {end - start} min</When>
-      </Head>
-      <Steps>{steps.map((s, i) => <Step key={i}>{s}</Step>)}</Steps>
+    <Panel>
+      <Col>
+        <ColTitle>Ingredients</ColTitle>
+        {ingredients.length === 0 ? (
+          <Hint>Pick a block to see its ingredients.</Hint>
+        ) : (
+          <IngredientList>
+            {ingredients.map((ing, j) => {
+              const key = ingredientKey(sectionIndex, j);
+              return (
+                <FormControlLabel
+                  key={j}
+                  control={
+                    <Checkbox
+                      checked={checked.has(key)}
+                      onChange={() => onToggleIngredient(key)}
+                      slotProps={{ input: { 'aria-label': ing } }}
+                    />
+                  }
+                  label={ing}
+                />
+              );
+            })}
+          </IngredientList>
+        )}
+      </Col>
+      <Col>
+        <ColTitle>Full method</ColTitle>
+        <Window ref={winRef}>
+          {groups.map((g) => (
+            <InstrGroup
+              key={g.id}
+              data-group={g.id}
+              className={g.id === selectedId ? 'instr-group sel' : 'instr-group'}
+            >
+              <GroupHead>
+                <Dot c={g.laneColor} />
+                <Name className="ig-name">{g.label}</Name>
+                <Meta>
+                  {g.componentName} · +{g.start}–{g.start + g.dur} min
+                </Meta>
+                <KindPill>{g.kind}</KindPill>
+              </GroupHead>
+              <StepList>
+                {g.steps.map((s, i) => (
+                  <StepItem key={i}>{s}</StepItem>
+                ))}
+              </StepList>
+            </InstrGroup>
+          ))}
+        </Window>
+      </Col>
     </Panel>
   );
 };

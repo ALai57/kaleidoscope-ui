@@ -5,7 +5,9 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import MuiTimeline from '@mui/lab/Timeline';
+import { timelineItemClasses } from '@mui/lab/TimelineItem';
 import { TimelineEntry } from './TimelineEntry';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { TIMELINE_ENTRIES } from '../../data/timeline';
 import type {
   TimelineCategory,
@@ -125,6 +127,7 @@ export const Timeline: React.FC<TimelineProps> = ({ entries = TIMELINE_ENTRIES }
   const theme = useTheme();
   const mono = theme.tokens?.typography.mono ?? 'monospace';
   const headingFamily = theme.tokens?.typography.headingFamily === 'mono' ? mono : 'inherit';
+  const isMobile = useIsMobile();
 
   const groups = groupByCategory(entries);
   const [openGroups, setOpenGroups] = useState<Partial<Record<TimelineCategory, boolean>>>({});
@@ -164,13 +167,23 @@ export const Timeline: React.FC<TimelineProps> = ({ entries = TIMELINE_ENTRIES }
                 onToggle={() => toggle(group.category)}
               />
               {open && (
-                <MuiTimeline position="right" sx={{ padding: '0px', m: 0 }}>
+                <MuiTimeline
+                  position="right"
+                  sx={{
+                    padding: '0px',
+                    m: 0,
+                    ...(isMobile && {
+                      [`&& .${timelineItemClasses.root}::before`]: { display: 'none' },
+                    }),
+                  }}
+                >
                   {entriesWithDeltas.map((entry, i) => (
                     <TimelineEntry
                       key={String(entry.year) + entry.heading}
                       entry={entry}
                       connectorHeight={entry.connectorHeight}
                       featured={group.category === 'work' && groupIdx === 0 && i === 0}
+                      mobile={isMobile}
                     />
                   ))}
                 </MuiTimeline>
