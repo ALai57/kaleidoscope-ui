@@ -20,16 +20,8 @@ import type { SkillStatus } from '../../types/project';
 const ProjectSkillsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: project } = useQuery({
     queryKey: ['projects', id],
@@ -65,7 +57,7 @@ const ProjectSkillsPage: React.FC = () => {
   const totalCount = allSkills.length;
 
   return (
-    <AdminLayout title="Skills" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Skills">
       <Box sx={{ maxWidth: 900, mx: 'auto' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Button

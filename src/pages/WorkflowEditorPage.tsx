@@ -35,7 +35,7 @@ const STATUS_OPTIONS: { value: WorkflowStatus; label: string; color: string }[] 
 const WorkflowEditorPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
 
   const isNew = !id;
@@ -48,14 +48,6 @@ const WorkflowEditorPage: React.FC = () => {
   const [savedSnack, setSavedSnack] = useState(false);
 
   const nameRef = useRef<HTMLInputElement>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: workflow, isLoading } = useQuery({
     queryKey: ['workflows', id],
@@ -141,7 +133,7 @@ const WorkflowEditorPage: React.FC = () => {
 
 
   return (
-    <AdminLayout title="Workflow Editor" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Workflow Editor">
       <Box sx={{ maxWidth: 720, mx: 'auto', pb: 8 }}>
 
         {/* ── Breadcrumb ── */}

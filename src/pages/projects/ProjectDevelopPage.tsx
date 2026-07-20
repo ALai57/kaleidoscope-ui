@@ -35,16 +35,8 @@ const AGENTS: { type: AgentType; label: string; description: string }[] = [
 const ProjectDevelopPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const [agentTab, setAgentTab] = useState(0);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: project } = useQuery({
     queryKey: ['projects', id],
@@ -55,7 +47,7 @@ const ProjectDevelopPage: React.FC = () => {
   const selectedAgent = AGENTS[agentTab];
 
   return (
-    <AdminLayout title="Develop" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Develop">
       <Box sx={{ maxWidth: 900, mx: 'auto', width: '100%', flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* Back + heading */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>

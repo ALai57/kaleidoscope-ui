@@ -315,7 +315,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ group, token, onSuccess, onError 
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const GroupsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const [newGroupName, setNewGroupName] = useState('');
   const [searchFilter, setSearchFilter] = useState('');
@@ -323,14 +323,6 @@ const GroupsPage: React.FC = () => {
     message: string;
     severity: 'success' | 'error';
   } | null>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ['groups'],
@@ -359,7 +351,7 @@ const GroupsPage: React.FC = () => {
 
   return (
     <>
-      <AdminLayout title="Groups" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <AdminLayout title="Groups">
         <Box id="primary-content" sx={{ maxWidth: 800, mx: 'auto' }}>
           {/* Create group */}
           <SurfaceCard sx={{ p: 2, mb: 3 }}>

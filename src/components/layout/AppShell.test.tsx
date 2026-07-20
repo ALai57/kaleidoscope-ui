@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { makeTheme, BASE_THEME } from '@/theme';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { AppShell } from './AppShell';
+import { AdminLayout } from './AdminLayout';
 
 vi.mock('@/auth/useAuth', () => ({
   useAuth: () => ({ isAuthenticated: false, isLoading: false, token: undefined, userProfile: null, login: vi.fn(), logout: vi.fn() }),
@@ -44,5 +45,30 @@ describe('AppShell', () => {
     expect(nav.querySelectorAll('a').length).toBe(4); // four bottom tabs
     expect(screen.getByRole('button', { name: /open menu/i })).toBeTruthy();
     expect(screen.getByText('recipes content')).toBeTruthy();
+  });
+
+  it('renders exactly one primary rail on an admin route (no admin duplicate)', () => {
+    mockUseIsMobile.mockReturnValue(false);
+    rtlRender(
+      <ThemeProvider theme={theme}>
+        <MemoryRouter initialEntries={['/manager']}>
+          <Routes>
+            <Route element={<AppShell />}>
+              <Route
+                path="/manager"
+                element={
+                  <AdminLayout title="Manager">
+                    <div>manager content</div>
+                  </AdminLayout>
+                }
+              />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+    // AdminLayout no longer renders a rail of its own — only AppShell's SideRail does.
+    expect(screen.getAllByRole('navigation', { name: /primary/i })).toHaveLength(1);
+    expect(screen.getByText('manager content')).toBeTruthy();
   });
 });

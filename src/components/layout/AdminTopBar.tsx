@@ -2,15 +2,13 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import MenuIcon from '@mui/icons-material/Menu';
+import { MOBILE_TOPBAR_H } from './MobileNav';
 
 export interface AdminTopBarProps {
   /** The current section title, rendered in the heading voice. */
   title: string;
   /** Right-aligned page actions (buttons, toggles, …). */
   actions?: React.ReactNode;
-  /** When set, a hamburger button appears left of the title (mobile shell). */
-  onMenuClick?: (() => void) | undefined;
 }
 
 /**
@@ -18,7 +16,7 @@ export interface AdminTopBarProps {
  * right. Sticks to the top of the content column while the rail holds the left
  * edge. Token-driven (heading voice + surface/divider) with a bare-MUI fallback.
  */
-export const AdminTopBar: React.FC<AdminTopBarProps> = ({ title, actions, onMenuClick }) => {
+export const AdminTopBar: React.FC<AdminTopBarProps> = ({ title, actions }) => {
   const theme = useTheme();
   const tokens = theme.tokens;
   const mono = tokens?.typography.mono ?? 'monospace';
@@ -29,7 +27,7 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({ title, actions, onMenu
       component="header"
       sx={{
         position: 'sticky',
-        top: 0,
+        top: { xs: `${MOBILE_TOPBAR_H}px`, md: 0 },
         zIndex: 2,
         display: 'flex',
         alignItems: 'center',
@@ -44,29 +42,6 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({ title, actions, onMenu
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
-        {onMenuClick && (
-          <Box
-            component="button"
-            type="button"
-            onClick={onMenuClick}
-            aria-label="Open menu"
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 44,
-              height: 44,
-              ml: -1,
-              border: 'none',
-              bgcolor: 'transparent',
-              color: 'text.primary',
-              cursor: 'pointer',
-              borderRadius: 1,
-            }}
-          >
-            <MenuIcon />
-          </Box>
-        )}
         <Typography
           component="h1"
           sx={{

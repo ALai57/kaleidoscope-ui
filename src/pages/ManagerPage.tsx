@@ -173,18 +173,10 @@ const HubStats: React.FC<{ token: string | undefined }> = ({ token }) => {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ManagerPage: React.FC = () => {
-  const { isAuthenticated, token, userProfile, login } = useAuth();
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
+  const { token } = useAuth();
 
   return (
-    <AdminLayout title="Manager" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Manager">
       <Box id="primary-content">
         <Container>
           <HubStats token={token} />

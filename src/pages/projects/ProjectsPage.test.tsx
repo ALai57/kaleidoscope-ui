@@ -44,12 +44,11 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('ProjectsPage', () => {
-  it('renders inside the AdminLayout shell (top-bar title + rail nav)', () => {
+  it('renders inside the AdminLayout content shell (top-bar title)', () => {
+    // Navigation now lives in the shared AppShell rail, not AdminLayout — see
+    // AppShell.test.tsx / SideRail.test.tsx for rail-link assertions.
     render(<ProjectsPage />, { wrapper: Wrapper });
     expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument();
-    // Rail section links — Projects is the active route.
-    expect(screen.getByRole('link', { name: 'Workflows' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('aria-current', 'page');
   });
 
   it('shows the empty state and its New Project actions', async () => {

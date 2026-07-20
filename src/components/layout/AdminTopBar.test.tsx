@@ -1,6 +1,6 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { AdminTopBar } from './AdminTopBar';
 import { makeTheme, BASE_THEME } from '../../theme';
@@ -21,14 +21,7 @@ describe('AdminTopBar', () => {
     expect(screen.getByRole('button', { name: 'New' })).toBeInTheDocument();
   });
 
-  it('renders a menu button that fires onMenuClick when provided', () => {
-    const onMenuClick = vi.fn();
-    render(<AdminTopBar title="Manager" onMenuClick={onMenuClick} />, { wrapper: Wrapper });
-    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
-    expect(onMenuClick).toHaveBeenCalledTimes(1);
-  });
-
-  it('renders no menu button when onMenuClick is omitted', () => {
+  it('renders no menu button (the shell owns navigation now)', () => {
     render(<AdminTopBar title="Manager" />, { wrapper: Wrapper });
     expect(screen.queryByRole('button', { name: /open menu/i })).toBeNull();
   });

@@ -82,7 +82,7 @@ const RecipeEditorPage: React.FC = () => {
   const isEdit = Boolean(slug);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { token, userProfile, isAuthenticated, login } = useAuth();
+  const { token } = useAuth();
 
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [original, setOriginal] = useState<RecipeContent | null>(null);
@@ -191,12 +191,7 @@ const RecipeEditorPage: React.FC = () => {
   if (isEdit && isLoading) return <LoadingScreen />;
 
   return (
-    <AdminLayout
-      title="Recipe Editor"
-      user={userProfile ?? undefined}
-      isAuthenticated={isAuthenticated}
-      login={login}
-    >
+    <AdminLayout title="Recipe Editor">
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Typography variant="h3" gutterBottom>
           {isEdit ? 'Edit recipe' : 'New recipe'}

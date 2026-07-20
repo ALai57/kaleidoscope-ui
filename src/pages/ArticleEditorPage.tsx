@@ -137,7 +137,7 @@ const AudienceManager: React.FC<AudienceManagerProps> = ({ articleId, token, ope
 const ArticleEditorPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token, userProfile } = useAuth();
   const queryClient = useQueryClient();
   const { editorBranchId, setEditorBranchId } = useEditorStore();
   const [audienceModalOpen, setAudienceModalOpen] = useState(false);
@@ -145,14 +145,6 @@ const ArticleEditorPage: React.FC = () => {
 
   // Capture current editor HTML via ref callback
   const editorHtmlRef = useRef<string>('');
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   // ── Fetch branches ─────────────────────────────────────────────────────
 
@@ -275,13 +267,7 @@ const ArticleEditorPage: React.FC = () => {
     ) : undefined;
 
   return (
-    <AdminLayout
-      title="Article Editor"
-      user={user}
-      isAuthenticated={isAuthenticated}
-      login={login}
-      actions={headerActions}
-    >
+    <AdminLayout title="Article Editor" actions={headerActions}>
       {/* ── New article mode ── */}
       {!slug && (
         <>

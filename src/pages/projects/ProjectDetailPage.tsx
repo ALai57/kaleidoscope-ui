@@ -307,7 +307,7 @@ const EDITOR_CONTENT_SX = {
 const ProjectDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
 
   const [tab, setTab] = useState(0);
@@ -330,14 +330,6 @@ const ProjectDetailPage: React.FC = () => {
   const skipNextUpdate = useRef(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   // ── Queries ──────────────────────────────────────────────────────────────
 
@@ -521,7 +513,7 @@ const ProjectDetailPage: React.FC = () => {
   const scores = project.scores ?? [];
 
   return (
-    <AdminLayout title="Project" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Project">
       <Box sx={{ maxWidth: 1100, mx: 'auto' }}>
         {/* ── Title + status ── */}
         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 1 }}>

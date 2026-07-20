@@ -52,12 +52,12 @@ describe('MobileNav', () => {
     expect(within(dialog).getByRole('link', { name: 'Manager' })).toBeTruthy();
   });
 
-  it('shows only Experience for a writer (no admin links)', () => {
+  it('shows writer-level Studio items but not admin-only ones for a writer', () => {
     renderNav({ user: { realm_access: { roles: [getWriterRole()] } } });
     fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
     const dialog = screen.getByRole('dialog', { name: /menu/i });
     expect(within(dialog).getByRole('link', { name: 'Experience' })).toBeTruthy();
-    expect(within(dialog).queryByRole('link', { name: 'Manager' })).toBeNull();
+    expect(within(dialog).queryByRole('link', { name: 'Projects' })).toBeNull();
   });
 
   it('makes the background nav inert while the drawer is open', () => {
@@ -82,5 +82,14 @@ describe('MobileNav', () => {
     fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
     fireEvent.click(screen.getByRole('button', { name: /login/i }));
     expect(login).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders the shared Studio items for an admin and exposes Logout', () => {
+    const logout = vi.fn();
+    renderNav({ isAuthenticated: true, user: { firstName: 'Andrew', realm_access: { roles: ['localhost:admin'] } }, logout });
+    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
+    expect(screen.getByRole('link', { name: /agents/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /logout/i }));
+    expect(logout).toHaveBeenCalledTimes(1);
   });
 });

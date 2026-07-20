@@ -68,20 +68,12 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({ definition, onClose, onConf
 );
 
 const ScoreDefinitionsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<ScoreDefinition | null>(null);
   const [deleting, setDeleting] = useState<ScoreDefinition | null>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: definitions = [], isLoading } = useQuery({
     queryKey: ['score-definitions'],
@@ -130,9 +122,6 @@ const ScoreDefinitionsPage: React.FC = () => {
   return (
     <AdminLayout
       title="Score Definitions"
-      user={user}
-      isAuthenticated={isAuthenticated}
-      login={login}
       actions={
         <Button
           variant="contained"

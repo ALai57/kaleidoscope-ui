@@ -97,7 +97,7 @@ const CARD_SPRING = { type: 'spring' as const, stiffness: 280, damping: 28 };
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const ProjectsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const isMobile = useIsMobile();
@@ -110,14 +110,6 @@ const ProjectsPage: React.FC = () => {
   // string → slide selected card to sidebar, reveal inline editor
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedProjectId = searchParams.get('project');
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: projects = [], isLoading } = useQuery({
     queryKey: ['projects'],
@@ -178,13 +170,7 @@ const ProjectsPage: React.FC = () => {
 
   return (
     <>
-      <AdminLayout
-        title="Projects"
-        actions={headerActions}
-        user={user}
-        isAuthenticated={isAuthenticated}
-        login={login}
-      >
+      <AdminLayout title="Projects" actions={headerActions}>
         <Box sx={{ maxWidth: isSplitView ? 1400 : 1200, mx: 'auto', transition: 'max-width 0.4s ease' }}>
         {/* ── Loading / empty states ── */}
         {isLoading && (

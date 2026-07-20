@@ -15,17 +15,9 @@ import { getWorkflows, getWorkflow, updateWorkflow } from '../api/workflows';
 
 const WorkflowsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const [archivingId, setArchivingId] = useState<string | null>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: workflows = [], isLoading, error } = useQuery({
     queryKey: ['workflows'],
@@ -59,7 +51,7 @@ const WorkflowsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <AdminLayout title="Workflows" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <AdminLayout title="Workflows">
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
           <CircularProgress />
         </Box>
@@ -78,13 +70,7 @@ const WorkflowsPage: React.FC = () => {
   );
 
   return (
-    <AdminLayout
-      title="Workflows"
-      actions={headerActions}
-      user={user}
-      isAuthenticated={isAuthenticated}
-      login={login}
-    >
+    <AdminLayout title="Workflows" actions={headerActions}>
       <Box sx={{ maxWidth: 900, mx: 'auto' }}>
         <Typography
           variant="body2"

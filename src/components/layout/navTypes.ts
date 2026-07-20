@@ -1,5 +1,5 @@
 /**
- * Shared user shape for the app's navigation shells (SideRail, AdminNavRail,
+ * Shared user shape for the app's navigation shells (SideRail, MobileNav,
  * AdminLayout). Extracted from the legacy NavBar so that component can be
  * deleted while consumers keep a stable import.
  */

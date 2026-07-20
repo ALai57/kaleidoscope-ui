@@ -7,18 +7,10 @@ import { WorkspaceRootsSettings } from '../../components/settings/WorkspaceRoots
 import { useAuth } from '../../auth/useAuth';
 
 const WorkspaceRootsPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
+  const { token } = useAuth();
 
   return (
-    <AdminLayout title="Workspace Roots" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Workspace Roots">
       <Box sx={{ maxWidth: 700, mx: 'auto', pb: 5 }}>
         <Typography
           variant="body2"

@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render as rtlRender, screen } from '@testing-library/react';
+import { render as rtlRender, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { makeTheme, BASE_THEME } from '@/theme';
@@ -16,6 +16,9 @@ function renderAt(path: string, props = {}) {
       </MemoryRouter>
     </ThemeProvider>
   );
+}
+function renderSideRail(props = {}) {
+  return renderAt('/archive', props);
 }
 
 describe('SideRail', () => {
@@ -63,5 +66,28 @@ describe('SideRail', () => {
     const user = { realm_access: { roles: [getWriterRole()] } };
     renderAt('/archive', { user, isAuthenticated: true });
     expect(screen.getByRole('link', { name: /Experience/ })).toBeTruthy();
+  });
+
+  it('shows no Studio section when logged out', () => {
+    renderSideRail({ isAuthenticated: false });
+    expect(screen.queryByRole('button', { name: /studio/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /login/i })).toBeInTheDocument();
+  });
+
+  it('shows the Studio disclosure with admin items when an admin is logged in', () => {
+    renderSideRail({ isAuthenticated: true, user: { realm_access: { roles: ['localhost:admin'] } } });
+    const toggle = screen.getByRole('button', { name: /studio/i });
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('link', { name: 'Agents' })).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('exposes Logout in the account menu and calls logout', () => {
+    const logout = vi.fn();
+    renderSideRail({ isAuthenticated: true, user: { firstName: 'Andrew', realm_access: { roles: ['localhost:admin'] } }, logout });
+    fireEvent.click(screen.getByRole('button', { name: /account/i }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /logout/i }));
+    expect(logout).toHaveBeenCalledTimes(1);
   });
 });
