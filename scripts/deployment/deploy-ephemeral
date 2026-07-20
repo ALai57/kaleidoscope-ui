@@ -37,4 +37,7 @@ DIST="$REPO_ROOT/resources/kaleidoscope.client/static/dist"
 log "Syncing $DIST/ -> s3://$EPHEMERAL_BUCKET/$PREFIX ..."
 aws s3 sync "$DIST/" "s3://$EPHEMERAL_BUCKET/$PREFIX" --delete
 
+log "Syncing shared static chrome -> s3://$EPHEMERAL_BUCKET/${PREFIX}static ..."
+( cd "$REPO_ROOT" && aws s3 sync resources/andrewslai.com/static "s3://$EPHEMERAL_BUCKET/${PREFIX}static" --exclude "*/shareable_stories/*" )
+
 log "Deployed to s3://$EPHEMERAL_BUCKET/$PREFIX"

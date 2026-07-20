@@ -44,4 +44,7 @@ echo "Deploying frontend to kaleidoscope bucket..."
 aws s3 sync "$DIST_DIR/assets" s3://kaleidoscope.client/assets --delete
 aws s3 cp "$DIST_DIR/index.html" s3://kaleidoscope.client/index.html
 
+echo "Deploying shared static chrome to kaleidoscope.client..."
+aws s3 sync resources/andrewslai.com/static s3://kaleidoscope.client/static --delete --exclude "*/shareable_stories/*"
+
 popd
