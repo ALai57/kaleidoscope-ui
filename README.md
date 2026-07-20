@@ -67,16 +67,16 @@ is a template for the production equivalents).
 `resources/kaleidoscope.client/static/dist/`, emptying the output directory and not copying
 `public/`. That bundle is the single SPA shell served for every tenant.
 
-Static site chrome (images, CSS, favicon) lives under `resources/andrewslai.com/static/` — the
-canonical source for all tenants — and is deployed separately via the scripts in
-`scripts/deployment/`:
+Static site chrome (images, CSS, favicon) lives under `resources/kaleidoscope.client/static/` —
+the single canonical source for all tenants, alongside the `dist/` build output — and is deployed
+separately via the scripts in `scripts/deployment/`:
 
 - `deploy-kaleidoscope-client` — the SPA bundle + shared static chrome, to `kaleidoscope.client` (`npm run deploy`)
 - `deploy-ephemeral` — SPA bundle + shared static chrome, to an ephemeral env's S3 prefix (`npm run ephemeral:deploy`)
-- `deploy-kaleidoscope-pub` — the separate `kaleidoscope.pub` shared-assets bucket
 
-The formerly per-tenant deploy scripts and resource folders (one per hostname) have been retired —
-`resources/andrewslai.com/static/` is now the single canonical source shipped to every tenant.
+The formerly per-tenant deploy scripts and resource folders (one per hostname, including the
+`kaleidoscope.pub` bucket) have been retired — `resources/kaleidoscope.client/static/` is now the
+single canonical source shipped to every tenant.
 
 See `scripts/deployment/deployment.md` for details.
 

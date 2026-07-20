@@ -45,6 +45,9 @@ aws s3 sync "$DIST_DIR/assets" s3://kaleidoscope.client/assets --delete
 aws s3 cp "$DIST_DIR/index.html" s3://kaleidoscope.client/index.html
 
 echo "Deploying shared static chrome to kaleidoscope.client..."
-aws s3 sync resources/andrewslai.com/static s3://kaleidoscope.client/static --delete --exclude "*/shareable_stories/*"
+# Chrome lives alongside the build output under kaleidoscope.client/static; exclude
+# the SPA bundle (dist/, synced above) and any legacy compiled js from the chrome sync.
+aws s3 sync resources/kaleidoscope.client/static s3://kaleidoscope.client/static --delete \
+    --exclude "dist/*" --exclude "js/*" --exclude "*/shareable_stories/*"
 
 popd

@@ -12,7 +12,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   plugins: [react()],
-  publicDir: 'resources/andrewslai.com',
+  publicDir: 'resources/kaleidoscope.client',
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },
   },

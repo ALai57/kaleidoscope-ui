@@ -75,11 +75,13 @@ is the template):
 bundle — the SPA shell — is the single artifact served for **every** tenant; the backend hardcodes
 `/` and `static/*` to the shared `kaleidoscope.client` S3 bucket regardless of Host.
 
-Static site chrome (images, CSS, favicon) lives under `resources/andrewslai.com/static/` — the
-canonical source for **all** tenants now (the per-tenant `caheriaguilar.com`/`sahiltalkingcents.com`
-folders and their deploy scripts were retired). `deploy-kaleidoscope-client` (prod, `npm run deploy`)
-and `deploy-ephemeral` (ephemeral envs) both sync it into the shared `kaleidoscope.client` store
-alongside the SPA bundle; it is **not** produced by `vite build`.
+Static site chrome (images, CSS, favicon) lives under `resources/kaleidoscope.client/static/` —
+the single canonical source for **all** tenants (the per-tenant `andrewslai.com`,
+`caheriaguilar.com`, `sahiltalkingcents.com`, and `kaleidoscope.pub` asset folders and their deploy
+scripts were retired now that assets aren't multi-tenant). It sits alongside the `dist/` build
+output in the same folder. `deploy-kaleidoscope-client` (prod, `npm run deploy`) and
+`deploy-ephemeral` (ephemeral envs) both sync it into the shared `kaleidoscope.client` store
+alongside the SPA bundle (excluding `dist/` and `js/`); it is **not** produced by `vite build`.
 
 ---
 
@@ -99,7 +101,7 @@ src/
   utils/       Small helpers (url).
   test/        Vitest setup, MSW server, fixtures, mockEditor.
 e2e/           Playwright specs.
-resources/     Per-tenant static assets + Vite build output (kaleidoscope.client/static/dist).
+resources/     Shared static chrome + Vite build output, both under kaleidoscope.client/static/.
 ```
 
 The domain types under `src/types/` (projects, workflows, tasks, agents, articles) mirror the
@@ -131,7 +133,9 @@ backend's AI-workflow and CMS data model — keep them in sync with `../kaleidos
 
 1. **`vite build` empties the output dir** (`emptyOutDir`) and **does not copy `publicDir`**
    (`copyPublicDir: false`) — the shared static chrome is deployed by `deploy-kaleidoscope-client` /
-   `deploy-ephemeral`, not the build.
+   `deploy-ephemeral`, not the build. `publicDir` (`resources/kaleidoscope.client`) is the *parent*
+   of `outDir` (`.../static/dist`); `copyPublicDir: false` is what keeps the chrome and the nested
+   build output from stepping on each other.
 2. **`npm run deploy` mutates git** — it runs `npm version patch`, bumping and committing the version.
 3. **Install quirks**: `legacy-peer-deps=true` + `engine-strict=true` in `.npmrc`; use Node 22.
 4. The dev API proxy rewrites the `Host` header to `andrewslai.com.localhost` — other tenants aren't
