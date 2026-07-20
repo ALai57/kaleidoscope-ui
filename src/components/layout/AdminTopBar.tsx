@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
+import { MOBILE_TOPBAR_H } from './MobileNav';
 
 export interface AdminTopBarProps {
   /** The current section title, rendered in the heading voice. */
@@ -26,7 +27,7 @@ export const AdminTopBar: React.FC<AdminTopBarProps> = ({ title, actions }) => {
       component="header"
       sx={{
         position: 'sticky',
-        top: 0,
+        top: { xs: `${MOBILE_TOPBAR_H}px`, md: 0 },
         zIndex: 2,
         display: 'flex',
         alignItems: 'center',

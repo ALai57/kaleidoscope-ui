@@ -71,8 +71,8 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 describe('UIManagerPage', () => {
   it('renders heading', () => {
     render(<UIManagerPage />, { wrapper: Wrapper });
-    // Target the AdminTopBar <h1> specifically — "UI Manager" also appears as an
-    // AdminNavRail section link.
+    // Target the AdminTopBar <h1> specifically, in case "UI Manager" appears
+    // elsewhere on the page (e.g. body copy).
     expect(screen.getByRole('heading', { name: 'UI Manager' })).toBeTruthy();
   });
 
