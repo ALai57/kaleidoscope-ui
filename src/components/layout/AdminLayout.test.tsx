@@ -1,16 +1,11 @@
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider, useTheme } from '@mui/material/styles';
 import { AdminLayout } from './AdminLayout';
 import { makeTheme, BASE_THEME } from '../../theme';
 import { render as testRender } from '../../test/testUtils';
-
-import { useIsMobile } from '@/hooks/useIsMobile';
-vi.mock('@/hooks/useIsMobile', () => ({ useIsMobile: vi.fn(() => false) }));
-const mockUseIsMobile = vi.mocked(useIsMobile);
-beforeEach(() => mockUseIsMobile.mockReturnValue(false)); // existing tests exercise the desktop rail
 
 const theme = makeTheme(BASE_THEME, 'prism');
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -26,17 +21,19 @@ const ModeProbe = () => {
 };
 
 describe('AdminLayout', () => {
-  it('renders the top-bar title, the rail nav, and the content', () => {
+  it('renders title + actions and no nav rail/drawer', () => {
     render(
-      <AdminLayout title="Projects" actions={<button>New Project</button>}>
+      <AdminLayout title="Manager" actions={<button>Act</button>}>
         <div>page content</div>
       </AdminLayout>,
       { wrapper: Wrapper }
     );
-    expect(screen.getByRole('heading', { name: 'Projects' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Workflows' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'New Project' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Manager' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Act' })).toBeInTheDocument();
     expect(screen.getByText('page content')).toBeInTheDocument();
+    // the rail lives in AppShell now — AdminLayout must not render one
+    expect(screen.queryByRole('navigation', { name: /admin sections/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /open menu/i })).not.toBeInTheDocument();
   });
 
   it('renders its subtree under the Prism (dark) theme, overriding the ambient light app theme', () => {
@@ -58,19 +55,5 @@ describe('AdminLayout', () => {
       </AdminLayout>,
     );
     expect(screen.getByTestId('admin-mode')).toHaveTextContent('light');
-  });
-
-  it('renders a hamburger + drawer (not the persistent rail) below md', () => {
-    mockUseIsMobile.mockReturnValue(true);
-    render(
-      <AdminLayout title="Manager">
-        <div>page content</div>
-      </AdminLayout>,
-      { wrapper: Wrapper }
-    );
-    fireEvent.click(screen.getByRole('button', { name: /open menu/i }));
-    const dialog = screen.getByRole('dialog', { name: /admin menu/i });
-    expect(within(dialog).getByRole('link', { name: 'Manager' })).toBeInTheDocument();
-    expect(screen.getByText('page content')).toBeInTheDocument();
   });
 });
