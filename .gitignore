@@ -33,3 +33,7 @@ resources/*/media
 # in __image_snapshots__/, generated per-environment — see docs/visual-regression.md)
 __image_snapshots__/**/__diff_output__/
 storybook-static/
+
+# Playwright e2e artifacts
+playwright-report/
+test-results/
