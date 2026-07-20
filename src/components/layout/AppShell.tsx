@@ -15,7 +15,7 @@ import { useAuth } from '@/auth/useAuth';
  */
 export const AppShell: React.FC = () => {
   const isMobile = useIsMobile();
-  const { isAuthenticated, userProfile, login } = useAuth();
+  const { isAuthenticated, userProfile, login, logout } = useAuth();
   const user = userProfile
     ? { firstName: userProfile.firstName ?? undefined, lastName: userProfile.lastName ?? undefined, realm_access: userProfile.realm_access }
     : undefined;
@@ -33,7 +33,7 @@ export const AppShell: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: 'background.default' }}>
-      <SideRail user={user} isAuthenticated={isAuthenticated} login={login} />
+      <SideRail user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
       <Box component="main" sx={{ flex: 1, minWidth: 0 }}>
         <Outlet />
       </Box>
