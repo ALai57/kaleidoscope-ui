@@ -93,6 +93,7 @@ export const SideRail: React.FC<SideRailProps> = ({ user, isAuthenticated = fals
       component="nav"
       aria-label="Primary"
       sx={{
+        position: 'sticky', top: 0, height: '100vh',
         width: 216, flex: 'none', alignSelf: 'stretch',
         borderRight: '1px solid', borderColor: 'divider', bgcolor: 'background.paper',
         display: 'flex', flexDirection: 'column', gap: 0.5, p: 1.5,
