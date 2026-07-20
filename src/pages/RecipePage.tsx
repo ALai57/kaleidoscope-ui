@@ -14,7 +14,7 @@ import { CookTimeline } from '../components/recipes/timeline';
 import { RecipeViewToggle, type RecipeView } from '../components/recipes/RecipeViewToggle';
 import { ShoppingList } from '../components/recipes/ShoppingList';
 import { RawRecipe } from '../components/recipes/RawRecipe';
-import { WakeLockButton } from '../components/recipes/WakeLockButton';
+import { WakeLockOverlay } from '../components/recipes/WakeLockOverlay';
 import { useAuth } from '../auth/useAuth';
 import { isSiteAdmin } from '../auth/authHelpers';
 import { getRecipe, qualifiedLabelName } from '../api/recipes';
@@ -71,6 +71,9 @@ const RecipePage: React.FC = () => {
         {!isLoading && !recipe && <Typography>Recipe not found.</Typography>}
         {recipe && (
           <>
+            {/* Floating wake-lock control — stacked above the global dark-mode
+                icon; renders nothing on browsers without the Wake Lock API. */}
+            <WakeLockOverlay />
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
               spacing={1}
@@ -82,9 +85,8 @@ const RecipePage: React.FC = () => {
               <Typography variant="h3" gutterBottom>
                 {recipe.content.title}
               </Typography>
-              <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
-                <WakeLockButton />
-                {isAuthenticated && (
+              {isAuthenticated && (
+                <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
                   <Button
                     component={RouterLink}
                     to={`/recipes/${recipe.recipe_url}/edit`}
@@ -93,8 +95,8 @@ const RecipePage: React.FC = () => {
                   >
                     Edit
                   </Button>
-                )}
-              </Stack>
+                </Stack>
+              )}
             </Stack>
 
             <Typography
