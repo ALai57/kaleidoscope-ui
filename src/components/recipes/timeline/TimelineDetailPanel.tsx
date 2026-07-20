@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { alpha } from '../../../theme/alpha';
 import { animateScrollTo } from '../../../utils/animateScroll';
 import { ingredientKey } from '../../../utils/cookTimeline';
+import { ingredientLabelSlotProps } from '../ingredientLabelSlotProps';
 
 export interface PhaseGroup {
   id: string;
@@ -47,10 +48,11 @@ const Panel = styled('div')(({ theme }) => {
 const Col = styled('div')({ display: 'flex', flexDirection: 'column', minWidth: 0 });
 const ColTitle = styled('h3')(({ theme }) => ({
   margin: '0 0 10px',
-  fontSize: 11,
-  letterSpacing: '.16em',
+  fontSize: 12,
+  fontWeight: 600,
+  letterSpacing: '.2em',
   textTransform: 'uppercase',
-  color: theme.tokens.color.text.secondary,
+  color: theme.tokens.color.brand.primary,
 }));
 
 const Hint = styled('p')(({ theme }) => ({
@@ -97,7 +99,7 @@ const GroupHead = styled('div')({
   flexWrap: 'wrap',
 });
 const Name = styled('span')(({ theme }) => ({
-  fontSize: 13.5,
+  fontSize: 14,
   fontWeight: 600,
   color: theme.tokens.color.text.primary,
 }));
@@ -125,7 +127,8 @@ const StepList = styled('ol')({
   gap: 4,
 });
 const StepItem = styled('li')(({ theme }) => ({
-  fontSize: 13,
+  fontSize: 15,
+  lineHeight: 1.6,
   color: theme.tokens.color.text.primary,
 }));
 
@@ -177,6 +180,7 @@ export const TimelineDetailPanel: React.FC<TimelineDetailPanelProps> = ({
                     />
                   }
                   label={ing}
+                  slotProps={ingredientLabelSlotProps}
                 />
               );
             })}

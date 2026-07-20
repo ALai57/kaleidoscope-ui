@@ -62,4 +62,23 @@ describe('TimelineDetailPanel', () => {
     await userEvent.click(screen.getByLabelText('flour'));
     expect(onToggle).toHaveBeenCalledWith('0:0'); // ingredientKey(0, 0)
   });
+
+  // Resolve a CSS font-size string ('14px' | '1.3rem') to px. jsdom's root is 16px.
+  const pxOf = (el: Element) => {
+    const raw = getComputedStyle(el).fontSize;
+    return raw.endsWith('rem') ? parseFloat(raw) * 16 : parseFloat(raw);
+  };
+
+  it('does not render the method smaller than the ingredient checklist', () => {
+    // Regression guard: ingredient labels used to inherit MUI body1 (1.3rem ≈
+    // 20.8px) while instruction steps were fixed at 13px, so the text you cook
+    // from read *smaller* than the shopping list. Instructions must stay at
+    // least as large as ingredients.
+    renderPanel();
+    const ingredientPx = pxOf(screen.getByText('flour'));
+    const stepPx = pxOf(screen.getByText('Bake it'));
+    expect(stepPx).toBeGreaterThanOrEqual(ingredientPx);
+    // And the ingredient must no longer be the oversized default body1.
+    expect(ingredientPx).toBeLessThanOrEqual(16);
+  });
 });

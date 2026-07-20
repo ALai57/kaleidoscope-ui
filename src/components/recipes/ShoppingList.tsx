@@ -3,6 +3,7 @@ import { Button, Checkbox, FormControlLabel } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import type { RecipeContent } from '@/types/recipe';
 import { componentId, ingredientKey, pickLaneColors } from '@/utils/cookTimeline';
+import { ingredientLabelSlotProps } from './ingredientLabelSlotProps';
 
 const Summary = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -108,6 +109,7 @@ export const ShoppingList: React.FC<ShoppingListProps> = ({
                         />
                       }
                       label={ing}
+                      slotProps={ingredientLabelSlotProps}
                     />
                   );
                 })}

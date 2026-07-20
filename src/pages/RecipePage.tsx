@@ -82,7 +82,7 @@ const RecipePage: React.FC = () => {
                 alignItems: 'flex-start',
               }}
             >
-              <Typography variant="h3" gutterBottom>
+              <Typography variant="h3" gutterBottom sx={{ fontWeight: 700 }}>
                 {recipe.content.title}
               </Typography>
               {isAuthenticated && (
@@ -103,12 +103,13 @@ const RecipePage: React.FC = () => {
               variant="subtitle1"
               sx={{
                 color: 'text.secondary',
+                fontSize: '0.9rem',
               }}
             >
               {metaLine(recipe)}
             </Typography>
             {recipe.source_url && (
-              <Typography variant="body2" sx={{ mb: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, fontSize: '0.9rem' }}>
                 Source:{' '}
                 <Link href={recipe.source_url} target="_blank" rel="noopener noreferrer">
                   {recipe.source_url}

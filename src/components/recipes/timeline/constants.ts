@@ -7,5 +7,6 @@ export const ROW_H = 52;
 /** Vertical gap between lanes, px. */
 export const ROW_GAP = 12;
 /** Sticky left gutter that holds lane labels, px. Kept compact so the
- *  bars get the horizontal space (timeline-first redesign). */
-export const GUTTER = 132;
+ *  bars get the horizontal space (timeline-first redesign) and the short
+ *  component names in 12px mono don't out-shout the bars they label. */
+export const GUTTER = 100;

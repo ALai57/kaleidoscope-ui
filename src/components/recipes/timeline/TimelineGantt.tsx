@@ -25,7 +25,7 @@ const LaneLabel = styled('div')(({ theme }) => ({
   position: 'sticky', left: 0, zIndex: 5, width: GUTTER, height: '100%',
   display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, padding: '0 14px 0 22px',
   background: `linear-gradient(90deg, ${theme.tokens.color.surface.raised} 82%, transparent)`,
-  fontFamily: theme.tokens.typography.mono,
+  fontFamily: theme.tokens.typography.mono, fontSize: 12,
 }));
 const Swatch = styled('span')<{ c: string }>(({ c }) => ({ width: 9, height: 9, borderRadius: 2, background: c, flex: 'none' }));
 const Track = styled('div')({ position: 'absolute', left: GUTTER, top: 0, bottom: 0, right: 0 });

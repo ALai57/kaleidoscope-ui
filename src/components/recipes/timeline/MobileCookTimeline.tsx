@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { alpha } from '../../../theme/alpha';
+import { ingredientLabelSlotProps } from '../ingredientLabelSlotProps';
 import type { RecipeSection, TimelineComponent, TimelinePhase } from '../../../types/recipe';
 import {
   pickLaneColors,
@@ -431,6 +432,7 @@ export const MobileCookTimeline: React.FC<CookTimelineProps> = ({
                           />
                         }
                         label={ing}
+                        slotProps={ingredientLabelSlotProps}
                       />
                     );
                   })}
