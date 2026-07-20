@@ -3,8 +3,9 @@
 The frontend for **Kaleidoscope** — a single React SPA that serves multiple tenant sites
 (andrewslai.com, caheriaguilar.com, sahiltalkingcents.com, kaleidoscope.pub). The same bundle is
 served everywhere; the backend (a separate Clojure CMS repo) inspects the HTTP `Host` header to
-decide which tenant's data and static assets to serve. This repo builds and deploys only the
-client; it does not run the API.
+decide which tenant's data to serve. Static chrome (`/static/*`, `/favicon.ico`) is shared across
+all tenants from one store, not resolved by Host — see "Build → deploy" below. This repo builds
+and deploys only the client; it does not run the API.
 
 ## Stack
 
@@ -66,14 +67,16 @@ is a template for the production equivalents).
 `resources/kaleidoscope.client/static/dist/`, emptying the output directory and not copying
 `public/`. That bundle is the single SPA shell served for every tenant.
 
-Per-tenant static assets (images, CSS) live under `resources/<host>/static` and are deployed
-separately via the scripts in `scripts/deployment/`:
+Static site chrome (images, CSS, favicon) lives under `resources/andrewslai.com/static/` — the
+canonical source for all tenants — and is deployed separately via the scripts in
+`scripts/deployment/`:
 
-- `deploy-kaleidoscope-client` — the SPA bundle (`npm run deploy`)
-- `deploy-to-andrewslai`
-- `deploy-caheriaguilar-to-s3`
-- `deploy-sahiltalkingcents-to-s3`
-- `deploy-kaleidoscope-pub`
+- `deploy-kaleidoscope-client` — the SPA bundle + shared static chrome, to `kaleidoscope.client` (`npm run deploy`)
+- `deploy-ephemeral` — SPA bundle + shared static chrome, to an ephemeral env's S3 prefix (`npm run ephemeral:deploy`)
+- `deploy-kaleidoscope-pub` — the separate `kaleidoscope.pub` shared-assets bucket
+
+The formerly per-tenant deploy scripts and resource folders (one per hostname) have been retired —
+`resources/andrewslai.com/static/` is now the single canonical source shipped to every tenant.
 
 See `scripts/deployment/deployment.md` for details.
 

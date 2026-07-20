@@ -3,8 +3,9 @@
 The frontend for **Kaleidoscope** — a single React SPA that serves multiple tenant sites
 (andrewslai.com, caheriaguilar.com, sahiltalkingcents.com, kaleidoscope.pub). The same bundle is
 served everywhere; the backend (`../kaleidoscope`, a Clojure CMS) inspects the HTTP `Host` header to
-decide which tenant's data and static assets to serve. This repo builds and deploys only the client;
-it does not run the API.
+decide which tenant's data to serve. Static chrome (`/static/*`, `/favicon.ico`) is shared across
+all tenants from one store, not resolved by Host — see "Build → deploy pipeline" below. This repo
+builds and deploys only the client; it does not run the API.
 
 ---
 
@@ -74,10 +75,11 @@ is the template):
 bundle — the SPA shell — is the single artifact served for **every** tenant; the backend hardcodes
 `/` and `static/*` to the shared `kaleidoscope.client` S3 bucket regardless of Host.
 
-Per-site static *assets* (images, CSS) are separate and live under `resources/<host>/static`; each has
-its own deploy script in `scripts/deployment/` (`deploy-to-andrewslai`, `deploy-kaleidoscope-pub`,
-`deploy-caheriaguilar-to-s3`, `deploy-sahiltalkingcents-to-s3`) syncing to that host's bucket. These
-are **not** produced by `vite build`.
+Static site chrome (images, CSS, favicon) lives under `resources/andrewslai.com/static/` — the
+canonical source for **all** tenants now (the per-tenant `caheriaguilar.com`/`sahiltalkingcents.com`
+folders and their deploy scripts were retired). `deploy-kaleidoscope-client` (prod, `npm run deploy`)
+and `deploy-ephemeral` (ephemeral envs) both sync it into the shared `kaleidoscope.client` store
+alongside the SPA bundle; it is **not** produced by `vite build`.
 
 ---
 
@@ -128,7 +130,8 @@ backend's AI-workflow and CMS data model — keep them in sync with `../kaleidos
 ## Sharp edges
 
 1. **`vite build` empties the output dir** (`emptyOutDir`) and **does not copy `publicDir`**
-   (`copyPublicDir: false`) — per-tenant static assets are deployed by their own scripts, not the build.
+   (`copyPublicDir: false`) — the shared static chrome is deployed by `deploy-kaleidoscope-client` /
+   `deploy-ephemeral`, not the build.
 2. **`npm run deploy` mutates git** — it runs `npm version patch`, bumping and committing the version.
 3. **Install quirks**: `legacy-peer-deps=true` + `engine-strict=true` in `.npmrc`; use Node 22.
 4. The dev API proxy rewrites the `Host` header to `andrewslai.com.localhost` — other tenants aren't
