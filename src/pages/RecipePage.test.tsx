@@ -88,7 +88,15 @@ const server = setupServer(
             name: 'Salmon',
             steps_hash: 'x',
             phases: [
-              { id: 'Salmon/Prep', label: 'Prep', kind: 'active', steps: [0, 1], estimate: 10, deps: [], start: 0 },
+              {
+                id: 'Salmon/Prep',
+                label: 'Prep',
+                kind: 'active',
+                steps: [0, 1],
+                estimate: 10,
+                deps: [],
+                start: 0,
+              },
             ],
           },
         ],
@@ -105,8 +113,17 @@ const server = setupServer(
         outcome: 'success',
         'error-detail': null,
         techniques: { acquire: 'direct', parse: 'json-ld', normalize: 'llm-grouping' },
-        facts: { title: 'Scraped Buns', ingredients: ['flour'], steps: ['mix'], 'section-signals': [], labels: [] },
-        content: { title: 'Scraped Buns', sections: [{ name: 'Dough', ingredients: ['flour'], steps: ['mix'] }] },
+        facts: {
+          title: 'Scraped Buns',
+          ingredients: ['flour'],
+          steps: ['mix'],
+          'section-signals': [],
+          labels: [],
+        },
+        content: {
+          title: 'Scraped Buns',
+          sections: [{ name: 'Dough', ingredients: ['flour'], steps: ['mix'] }],
+        },
         'llm-calls': [
           {
             purpose: 'normalize',
@@ -265,12 +282,12 @@ describe('RecipePage', () => {
     });
   });
 
-  describe('wake lock button', () => {
+  describe('wake lock overlay', () => {
     afterEach(() => {
       vi.restoreAllMocks();
     });
 
-    it('shows the keep-screen-on button in the header', async () => {
+    it('mounts the floating keep-screen-on control when supported', async () => {
       vi.spyOn(wakeLockHook, 'useWakeLock').mockReturnValue({
         isSupported: true,
         isActive: false,
