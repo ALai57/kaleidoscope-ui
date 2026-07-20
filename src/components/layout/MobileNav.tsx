@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { KaleidoscopeMark } from './KaleidoscopeMark';
 import type { NavBarUser } from './navTypes';
-import { isSiteAdmin, isWriter } from '@/auth/authHelpers';
+import { visibleStudioItems } from './navConfig';
 import { GARDEN_FACETS, facetColor } from '@/components/home/gardenFacets';
 
 export const MOBILE_TOPBAR_H = 52;
@@ -22,6 +22,7 @@ export interface MobileNavProps {
   user?: NavBarUser | undefined;
   isAuthenticated?: boolean | undefined;
   login?: (() => void) | undefined;
+  logout?: (() => void) | undefined;
 }
 
 interface Dest {
@@ -47,7 +48,7 @@ const studioLinkSx = (mono: string, rSm: number): SxProps<Theme> => ({
   '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
 });
 
-export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = false, login }) => {
+export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = false, login, logout }) => {
   const theme = useTheme();
   const tokens = theme.tokens;
   const { pathname } = useLocation();
@@ -56,8 +57,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = fa
   const mono = tokens?.typography.mono ?? 'monospace';
   const rSm = tokens?.radius.sm ?? 6;
 
-  const userIsWriter = isWriter(user);
-  const userIsAdmin = isSiteAdmin(user);
+  const studioItems = visibleStudioItems(user);
 
   const dests: Dest[] = [
     ...GARDEN_FACETS.map((f, i) => ({
@@ -241,20 +241,16 @@ export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = fa
               </Box>
             ))}
 
-            {(userIsWriter || userIsAdmin) && (
+            {studioItems.length > 0 && (
               <>
                 <Box sx={{ borderTop: '1px solid', borderColor: 'divider', mt: 1, pt: 1 }}>
                   <Box component="span" sx={{ fontFamily: mono, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'text.secondary' }}>Studio</Box>
                 </Box>
-                {userIsWriter && (
-                  <Box component={Link} to="/experience" sx={studioLinkSx(mono, rSm)}>Experience</Box>
-                )}
-                {userIsAdmin && (
-                  <>
-                    <Box component={Link} to="/projects" sx={studioLinkSx(mono, rSm)}>Projects</Box>
-                    <Box component={Link} to="/manager" sx={studioLinkSx(mono, rSm)}>Manager</Box>
-                  </>
-                )}
+                {studioItems.map((item) => (
+                  <Box key={item.to} component={Link} to={item.to} sx={studioLinkSx(mono, rSm)}>
+                    {item.label}
+                  </Box>
+                ))}
               </>
             )}
 
@@ -262,10 +258,21 @@ export const MobileNav: React.FC<MobileNavProps> = ({ user, isAuthenticated = fa
 
             <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 1 }}>
               {isAuthenticated ? (
-                <Box component={Link} to="/admin" aria-label="admin" sx={{ display: 'flex', alignItems: 'center', gap: 1, minHeight: MIN_TAP, textDecoration: 'none', color: 'text.primary', fontFamily: mono, fontSize: '0.85rem' }}>
-                  <Avatar alt={user?.firstName ?? 'User'} src="/static/images/nav-bar/user.svg" sx={{ width: 30, height: 30 }} />
-                  {user?.firstName ?? 'Account'}
-                </Box>
+                <>
+                  <Box component={Link} to="/admin" aria-label="admin" sx={{ display: 'flex', alignItems: 'center', gap: 1, minHeight: MIN_TAP, textDecoration: 'none', color: 'text.primary', fontFamily: mono, fontSize: '0.85rem' }}>
+                    <Avatar alt={user?.firstName ?? 'User'} src="/static/images/nav-bar/user.svg" sx={{ width: 30, height: 30 }} />
+                    {user?.firstName ?? 'Account'}
+                  </Box>
+                  <Box
+                    component="button"
+                    type="button"
+                    onClick={() => logout?.()}
+                    aria-label="Logout"
+                    sx={{ display: 'flex', alignItems: 'center', minHeight: MIN_TAP, mt: 0.5, width: '100%', border: 'none', bgcolor: 'transparent', color: 'text.secondary', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', px: 1, cursor: 'pointer', '&:hover': { color: 'primary.main' } }}
+                  >
+                    Logout
+                  </Box>
+                </>
               ) : (
                 <Box
                   component="button"

@@ -23,7 +23,7 @@ export const AppShell: React.FC = () => {
   if (isMobile) {
     return (
       <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default' }}>
-        <MobileNav user={user} isAuthenticated={isAuthenticated} login={login} />
+        <MobileNav user={user} isAuthenticated={isAuthenticated} login={login} logout={logout} />
         <Box component="main" sx={{ minWidth: 0, pb: `${MOBILE_BOTTOMBAR_H}px` }}>
           <Outlet />
         </Box>
