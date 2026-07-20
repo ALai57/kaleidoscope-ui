@@ -52,21 +52,17 @@ const LoginPanel: React.FC<{ onLogin: () => void }> = ({ onLogin }) => (
 const AdminPage: React.FC = () => {
   const { isAuthenticated, isLoading, userProfile, login, logout } = useAuth();
 
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
-
   return (
-    <AdminLayout title="Admin" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Admin">
       <Box id="primary-content">
         <Container>
           {!isLoading &&
             (isAuthenticated ? (
-              <AdminPanel firstName={user?.firstName} lastName={user?.lastName} onLogout={logout} />
+              <AdminPanel
+                firstName={userProfile?.firstName ?? undefined}
+                lastName={userProfile?.lastName ?? undefined}
+                onLogout={logout}
+              />
             ) : (
               <LoginPanel onLogin={login} />
             ))}

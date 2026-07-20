@@ -184,19 +184,11 @@ const NewAgentDialog: React.FC<NewAgentDialogProps> = ({ open, onClose, onSubmit
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const AgentTeamPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
 
   const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
   const [newDialogOpen, setNewDialogOpen] = useState(false);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: agents = [], isLoading, error } = useQuery({
     queryKey: ['agents'],
@@ -235,13 +227,7 @@ const AgentTeamPage: React.FC = () => {
   );
 
   return (
-    <AdminLayout
-      title="Agent Team"
-      actions={headerActions}
-      user={user}
-      isAuthenticated={isAuthenticated}
-      login={login}
-    >
+    <AdminLayout title="Agent Team" actions={headerActions}>
       <Box sx={{ maxWidth: 900, mx: 'auto', pb: 5 }}>
         <Typography
           variant="body2"

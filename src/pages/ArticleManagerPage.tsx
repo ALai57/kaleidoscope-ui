@@ -163,17 +163,9 @@ const VisibilityModal: React.FC<VisibilityModalProps> = ({ row, token, onClose }
 
 const ArticleManagerPage: React.FC = () => {
   const navigate = useNavigate();
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const [visibilityRow, setVisibilityRow] = useState<BranchRow | null>(null);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: branches = [], isLoading } = useQuery({
     queryKey: ['branches'],
@@ -331,7 +323,7 @@ const ArticleManagerPage: React.FC = () => {
   ];
 
   return (
-    <AdminLayout title="Articles" user={user} isAuthenticated={isAuthenticated} login={login}>
+    <AdminLayout title="Articles">
       <Box id="primary-content">
         {isLoading && <LoadingScreen />}
         {!isLoading && (

@@ -29,20 +29,12 @@ function seedToHex(hue: number, saturation: number, lightness: number): string {
 // ── Page ───────────────────────────────────────────────────────────────────
 
 const UIManagerPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const { mode, setMode } = useColorScheme();
   const { themeParams, setThemeParams, preset } = useThemeStore();
   // The picker updates its own swatch instantly; defer the (leonardo-driven)
   // theme rebuild until the user pauses dragging.
   const debouncedSetThemeParams = useDebouncedCallback(setThemeParams, 120);
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   // Load themes from API (to get the record ID for saving)
   const { data: themes = [] } = useQuery({
@@ -78,13 +70,7 @@ const UIManagerPage: React.FC = () => {
   return (
     // The theme workbench renders under the *live* app theme (not the fixed
     // Prism chrome) so edits to color/preset/mode preview in place.
-    <AdminLayout
-      title="UI Manager"
-      user={user}
-      isAuthenticated={isAuthenticated}
-      login={login}
-      disablePrismTheme
-    >
+    <AdminLayout title="UI Manager" disablePrismTheme>
       {/* Design-language preset */}
       <Typography variant="h6" sx={{ mb: 1 }}>
         Design language

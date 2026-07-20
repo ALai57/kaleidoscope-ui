@@ -2,7 +2,6 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import { PrismThemeProvider } from '../prism';
 import { AdminTopBar } from './AdminTopBar';
-import type { NavBarUser } from './navTypes';
 
 export interface AdminLayoutProps {
   /** Section title for the top bar. */
@@ -15,16 +14,6 @@ export interface AdminLayoutProps {
    */
   disablePrismTheme?: boolean;
   children: React.ReactNode;
-  /**
-   * @deprecated Navigation now lives in the shared shell (AppShell → SideRail /
-   * MobileNav). These props are unused here and kept only so existing call
-   * sites still typecheck; they are removed in a follow-up task.
-   */
-  user?: NavBarUser | undefined;
-  /** @deprecated see `user` */
-  isAuthenticated?: boolean | undefined;
-  /** @deprecated see `user` */
-  login?: (() => void) | undefined;
 }
 
 /**

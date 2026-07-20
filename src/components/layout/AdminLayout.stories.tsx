@@ -24,8 +24,6 @@ type Story = StoryObj<typeof AdminLayout>;
 export const Default: Story = {
   args: {
     title: 'Projects',
-    isAuthenticated: true,
-    user: { firstName: 'Andrew' },
     actions: (
       <Button variant="contained" size="small" startIcon={<AddIcon />}>
         New Project

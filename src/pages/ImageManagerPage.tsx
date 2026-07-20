@@ -15,20 +15,12 @@ interface Notification {
 }
 
 const ImageManagerPage: React.FC = () => {
-  const { token, isAuthenticated, userProfile, login } = useAuth();
+  const { token } = useAuth();
   const queryClient = useQueryClient();
   const [notification, setNotification] = useState<Notification | null>(null);
 
   const notify = (message: string, level: 'success' | 'error'): void =>
     setNotification({ key: Date.now(), message, level });
-
-  const user = userProfile
-    ? {
-        firstName: userProfile.firstName ?? undefined,
-        lastName: userProfile.lastName ?? undefined,
-        realm_access: userProfile.realm_access,
-      }
-    : undefined;
 
   const { data: images = [], isLoading } = useQuery({
     queryKey: ['images'],
@@ -66,7 +58,7 @@ const ImageManagerPage: React.FC = () => {
 
   return (
     <>
-      <AdminLayout title="Images" user={user} isAuthenticated={isAuthenticated} login={login}>
+      <AdminLayout title="Images">
         {isLoading && <LoadingScreen />}
 
         {!isLoading && (
