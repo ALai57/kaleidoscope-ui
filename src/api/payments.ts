@@ -23,6 +23,7 @@ export function getDomainAvailability(
 ): Promise<DomainAvailability> {
   return request<DomainAvailability>(`/check-domain?domain=${encodeURIComponent(domain)}`, {
     token,
+    absolute: true,
   });
 }
 
@@ -34,5 +35,6 @@ export function newPaymentSecret(
     method: 'POST',
     body: payment,
     token,
+    absolute: true,
   });
 }

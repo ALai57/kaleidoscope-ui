@@ -41,7 +41,7 @@ function groupPhotoVersions(entries: PhotoApiEntry[]): Image[] {
 }
 
 export async function getImageMetadata(token?: string): Promise<Image[]> {
-  const entries = await request<PhotoApiEntry[]>('/v2/photos', { token });
+  const entries = await request<PhotoApiEntry[]>('/v2/photos', { token, absolute: true });
   return groupPhotoVersions(entries);
 }
 
@@ -50,7 +50,7 @@ export function addPhoto(files: File[], token?: string): Promise<Image[]> {
   for (const file of files) {
     formData.append(file.name, file);
   }
-  return uploadFile<Image[]>('/v2/photos', formData, token);
+  return uploadFile<Image[]>('/v2/photos', formData, token, true);
 }
 
 export function editPhoto(payload: EditPhotoPayload, token?: string): Promise<Image> {
@@ -59,5 +59,6 @@ export function editPhoto(payload: EditPhotoPayload, token?: string): Promise<Im
     method: 'PUT',
     body: rest,
     token,
+    absolute: true,
   });
 }
