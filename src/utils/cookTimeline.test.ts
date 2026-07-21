@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { componentId, resolvePhaseSteps, effectiveDuration, pickLaneColors, ingredientKey, sectionForComponent } from './cookTimeline';
+import { componentId, resolvePhaseSteps, effectiveDuration, pickLaneColors, ingredientKey, sectionForComponent, phaseLabelRepeatsComponent } from './cookTimeline';
 import type { RecipeSection } from '../types/recipe';
 import type { TimelineComponent, TimelinePhase } from '../types/recipe';
 
@@ -78,6 +78,20 @@ describe('ingredientKey', () => {
   it('joins section and ingredient indices', () => {
     expect(ingredientKey(0, 3)).toBe('0:3');
     expect(ingredientKey(2, 0)).toBe('2:0');
+  });
+});
+
+describe('phaseLabelRepeatsComponent', () => {
+  it('is true when the phase label just repeats the component name', () => {
+    // Single-phase components the generator names after the component:
+    // rendering both would show "Prep broth · Prep broth".
+    expect(phaseLabelRepeatsComponent('Prep broth', 'Prep broth')).toBe(true);
+  });
+  it('ignores case and surrounding whitespace', () => {
+    expect(phaseLabelRepeatsComponent('Cook', ' cook ')).toBe(true);
+  });
+  it('is false when the phase names a distinct step of the component', () => {
+    expect(phaseLabelRepeatsComponent('Salmon', 'Marinate')).toBe(false);
   });
 });
 

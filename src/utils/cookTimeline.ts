@@ -35,6 +35,15 @@ export function effectiveDuration(phase: TimelinePhase, overrides: TimelineOverr
   return hit ? hit.minutes : phase.estimate;
 }
 
+/** True when a phase's label merely repeats its component name. The timeline
+ *  generator names single-phase components after the component itself, so
+ *  rendering the component name and the phase label together would read as a
+ *  duplicate ("Prep broth · Prep broth"). Callers collapse the repetition when
+ *  this is true. Comparison ignores case and surrounding whitespace. */
+export function phaseLabelRepeatsComponent(componentName: string, phaseLabel: string): boolean {
+  return phaseLabel.trim().toLowerCase() === componentName.trim().toLowerCase();
+}
+
 /** One color per lane, cycling the categorical palette if a recipe has more
  *  components than palette entries. */
 export function pickLaneColors(count: number, palette: readonly string[]): string[] {

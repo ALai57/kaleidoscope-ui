@@ -10,6 +10,7 @@ import {
   sectionForComponent,
   effectiveDuration,
   ingredientKey,
+  phaseLabelRepeatsComponent,
 } from '../../../utils/cookTimeline';
 import type { CookTimelineProps } from './CookTimeline';
 
@@ -464,7 +465,11 @@ export const MobileCookTimeline: React.FC<CookTimelineProps> = ({
                 >
                   <STitle>
                     <SLabel>{p.phase.label}</SLabel>
-                    <SComp>{p.displayName}</SComp>
+                    {/* Skip the component subtitle when it just repeats the
+                        phase label, so the card doesn't show "Prep broth" twice. */}
+                    {!phaseLabelRepeatsComponent(p.displayName, p.phase.label) && (
+                      <SComp>{p.displayName}</SComp>
+                    )}
                   </STitle>
                   <SMeta>
                     <KindPill>{p.phase.kind}</KindPill>

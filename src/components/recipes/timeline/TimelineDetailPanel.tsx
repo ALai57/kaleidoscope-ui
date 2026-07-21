@@ -3,7 +3,7 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { alpha } from '../../../theme/alpha';
 import { animateScrollTo } from '../../../utils/animateScroll';
-import { ingredientKey } from '../../../utils/cookTimeline';
+import { ingredientKey, phaseLabelRepeatsComponent } from '../../../utils/cookTimeline';
 import { ingredientLabelSlotProps } from '../ingredientLabelSlotProps';
 
 export interface PhaseGroup {
@@ -200,7 +200,11 @@ export const TimelineDetailPanel: React.FC<TimelineDetailPanelProps> = ({
                 <Dot c={g.laneColor} />
                 <Name className="ig-name">{g.label}</Name>
                 <Meta>
-                  {g.componentName} · +{g.start}–{g.start + g.dur} min
+                  {/* Omit the component name when the heading (g.label) already
+                      is it, so the meta line doesn't repeat "Prep broth". */}
+                  {!phaseLabelRepeatsComponent(g.componentName, g.label) &&
+                    `${g.componentName} · `}
+                  +{g.start}–{g.start + g.dur} min
                 </Meta>
                 <KindPill>{g.kind}</KindPill>
               </GroupHead>

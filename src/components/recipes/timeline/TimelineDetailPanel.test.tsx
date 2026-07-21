@@ -51,6 +51,29 @@ describe('TimelineDetailPanel', () => {
     expect(screen.getByText('Bake it')).toBeInTheDocument();
   });
 
+  it('omits the component name from the meta line when it repeats the phase heading', () => {
+    renderPanel({
+      groups: [
+        {
+          id: 'prep-broth/prep-broth',
+          label: 'Prep broth',
+          componentName: 'Prep broth',
+          laneColor: '#26A0BC',
+          kind: 'active' as const,
+          start: 0,
+          dur: 5,
+          steps: ['Warm the broth'],
+        },
+      ],
+      selectedId: 'prep-broth/prep-broth',
+      ingredients: [],
+    });
+    // Heading already reads "Prep broth"; the meta line shows only the time,
+    // not "Prep broth · +0–5 min".
+    expect(screen.getByText(/^\+0–5 min$/)).toBeInTheDocument();
+    expect(screen.queryByText(/Prep broth · \+/)).not.toBeInTheDocument();
+  });
+
   it('marks the selected phase group', () => {
     renderPanel({ ingredients: [] });
     expect(document.querySelector('[data-group="a/bake"]')).toHaveClass('sel');

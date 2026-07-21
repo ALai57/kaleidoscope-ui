@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import type { Timeline, TimelinePhase } from '../../../types/recipe';
-import { effectiveDuration } from '../../../utils/cookTimeline';
+import { effectiveDuration, phaseLabelRepeatsComponent } from '../../../utils/cookTimeline';
 import { alpha } from '../../../theme/alpha';
 import { PX_PER_MIN, RULER_H, ROW_H, ROW_GAP, GUTTER } from './constants';
 
@@ -126,6 +126,13 @@ export const TimelineGantt: React.FC<TimelineGanttProps> = ({
               {c.phases.map((phase) => {
                 const start = phase.start ?? 0;
                 const dur = effectiveDuration(phase, timeline.overrides);
+                // Drop the component prefix when the phase label just repeats
+                // it (single-phase components), so the bar doesn't read as a
+                // duplicate ("Prep broth · Prep broth"). The lane label already
+                // shows the component name.
+                const barLabel = phaseLabelRepeatsComponent(c.name, phase.label)
+                  ? phase.label
+                  : `${c.name} · ${phase.label}`;
                 return (
                   <Bar
                     key={phase.id}
@@ -134,10 +141,10 @@ export const TimelineGantt: React.FC<TimelineGanttProps> = ({
                     selected={selectedId === phase.id}
                     c={laneColors[laneIndex] ?? fallbackColor}
                     style={{ left: start * PX_PER_MIN, width: dur * PX_PER_MIN - 2 }}
-                    title={`${c.name} · ${phase.label} · +${start}–${start + dur} min`}
+                    title={`${barLabel} · +${start}–${start + dur} min`}
                     onClick={() => onSelect(phase.id)}
                   >
-                    {`${c.name} · ${phase.label}`}
+                    {barLabel}
                   </Bar>
                 );
               })}

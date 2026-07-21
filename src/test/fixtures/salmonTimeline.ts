@@ -65,3 +65,31 @@ export const salmonTimeline: Timeline = {
     ] },
   ],
 };
+
+/** A recipe whose generator gave each single-phase component a phase labeled
+ *  after the component itself — the shape that surfaced the "Prep broth · Prep
+ *  broth" duplicate. Used to test that views collapse the redundant repetition. */
+export const redundantLabelContent: RecipeContent = {
+  title: 'Spanish Vegan Paella',
+  servings: '4',
+  sections: [
+    { name: 'Prep broth', ingredients: ['4 cups broth', 'saffron'], steps: ['Warm the broth', 'Steep the saffron'] },
+    { name: 'Cook', ingredients: ['rice', 'olive oil'], steps: ['Toast the rice', 'Simmer until absorbed'] },
+  ],
+};
+
+export const redundantLabelTimeline: Timeline = {
+  version: 1,
+  generator_version: 1,
+  generated_at: '2026-07-21T00:00:00Z',
+  total_minutes: 25,
+  overrides: [],
+  components: [
+    { name: 'Prep broth', steps_hash: 'sha256:broth', phases: [
+      { id: 'Prep broth/Prep broth', label: 'Prep broth', kind: 'active', steps: [0, 1], estimate: 5, deps: [], start: 0 },
+    ] },
+    { name: 'Cook', steps_hash: 'sha256:cook', phases: [
+      { id: 'Cook/Cook', label: 'Cook', kind: 'active', steps: [0, 1], estimate: 20, deps: ['Prep broth/Prep broth'], start: 5 },
+    ] },
+  ],
+};

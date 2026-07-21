@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { render } from '../../../test/testUtils';
 import { PrismThemeProvider } from '../../prism';
 import { TimelineGantt } from './TimelineGantt';
-import { salmonTimeline } from '../../../test/fixtures/salmonTimeline';
+import { salmonTimeline, redundantLabelTimeline } from '../../../test/fixtures/salmonTimeline';
 import type { Timeline } from '../../../types/recipe';
 
 const colors = ['#26A0BC', '#9085E9', '#C98500', '#2E9E5B'];
@@ -20,6 +20,19 @@ it('renders a bar button per phase and calls onSelect on click', async () => {
   expect(screen.getAllByRole('button')).toHaveLength(9);
   await userEvent.click(screen.getByRole('button', { name: /Salmon · Marinate/ }));
   expect(onSelect).toHaveBeenCalledWith('Salmon/Marinate');
+});
+
+it('does not repeat the component name in the bar when the phase label matches it', () => {
+  render(
+    <PrismThemeProvider>
+      <TimelineGantt timeline={redundantLabelTimeline} laneColors={colors} selectedId={null} onSelect={() => {}} />
+    </PrismThemeProvider>
+  );
+  // The lane is named "Prep broth" and its only phase is also "Prep broth";
+  // the bar shows it once, not "Prep broth · Prep broth".
+  const bar = screen.getByRole('button', { name: 'Prep broth' });
+  expect(bar).toBeInTheDocument();
+  expect(screen.queryByText('Prep broth · Prep broth')).not.toBeInTheDocument();
 });
 
 it('draws a dependency link path for each resolvable dep', () => {
