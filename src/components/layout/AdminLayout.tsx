@@ -1,6 +1,5 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { PrismThemeProvider } from '../prism';
 import { AdminTopBar } from './AdminTopBar';
 
 export interface AdminLayoutProps {
@@ -8,27 +7,21 @@ export interface AdminLayoutProps {
   title: string;
   /** Right-aligned top-bar actions (page-specific). */
   actions?: React.ReactNode;
-  /**
-   * Skip the built-in Prism theming so the content renders under the *live* app
-   * theme (used by the UI Manager theme workbench so edits preview in place).
-   */
-  disablePrismTheme?: boolean;
   children: React.ReactNode;
 }
 
 /**
- * The admin content column: a slim top bar over the scrollable page body, on a
- * Prism (dark) canvas. Navigation now lives in the shared shell (AppShell →
- * SideRail / MobileNav); this component owns only the section chrome.
+ * The admin content column: a slim top bar over the scrollable page body.
+ * Renders under the *ambient* app theme, so Studio pages obey the global
+ * color mode (the dark-mode toggle) and preset exactly like the reader pages.
+ * Navigation lives in the shared shell (AppShell → SideRail / MobileNav); this
+ * component owns only the section chrome.
  */
-export const AdminLayout: React.FC<AdminLayoutProps> = ({ title, actions, disablePrismTheme = false, children }) => {
-  const content = (
-    <Box sx={{ minHeight: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
-      <AdminTopBar title={title} actions={actions} />
-      <Box component="main" sx={{ flex: 1, p: { xs: 2, md: 3 } }}>
-        {children}
-      </Box>
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ title, actions, children }) => (
+  <Box sx={{ minHeight: '100%', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
+    <AdminTopBar title={title} actions={actions} />
+    <Box component="main" sx={{ flex: 1, p: { xs: 2, md: 3 } }}>
+      {children}
     </Box>
-  );
-  return disablePrismTheme ? content : <PrismThemeProvider>{content}</PrismThemeProvider>;
-};
+  </Box>
+);

@@ -68,9 +68,9 @@ const UIManagerPage: React.FC = () => {
   const currentColor = seedToHex(themeParams.hue, themeParams.saturation, themeParams.lightness);
 
   return (
-    // The theme workbench renders under the *live* app theme (not the fixed
-    // Prism chrome) so edits to color/preset/mode preview in place.
-    <AdminLayout title="UI Manager" disablePrismTheme>
+    // The theme workbench renders under the live app theme so edits to
+    // color/preset/mode preview in place.
+    <AdminLayout title="UI Manager">
       {/* Design-language preset */}
       <Typography variant="h6" sx={{ mb: 1 }}>
         Design language
