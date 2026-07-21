@@ -1,10 +1,24 @@
 import { defineConfig } from 'vite';
+import type { ProxyOptions } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { readFileSync } from 'fs';
 
 const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8')) as {
   version: string;
+};
+
+// Forward to the local backend verbatim (no path rewriting) with the tenant
+// host header the backend uses to resolve andrewslai.com locally. Shared by
+// the /api/v1 namespace and the self-versioned root routes.
+const backendProxy: ProxyOptions = {
+  target: 'http://localhost:5000',
+  changeOrigin: true,
+  configure: (proxy) => {
+    proxy.on('proxyReq', (proxyReq) => {
+      proxyReq.setHeader('host', 'andrewslai.com.localhost');
+    });
+  },
 };
 
 export default defineConfig({
@@ -18,16 +32,13 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('host', 'andrewslai.com.localhost');
-          });
-        },
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
+      // Versioned API namespace — backend serves /api/v1/* verbatim
+      // (dual-mounted during the migration).
+      '/api/v1': backendProxy,
+      // Self-versioned backend routes that bypass the /api/v1 base.
+      '/v2': backendProxy,
+      '/v1': backendProxy,
+      '/check-domain': backendProxy,
     },
   },
   build: {
