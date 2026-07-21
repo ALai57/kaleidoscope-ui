@@ -418,4 +418,8 @@ Expected: PASS. (`nav.spec.ts` exercises routing/structure without backend data;
 
 ## Post-plan handoff
 
-This build is safe to merge and deploy on its own (dual-mount window). **After it is deployed**, the backend can retire its root resource mounts — that is a separate, hard-gated plan in the `kaleidoscope` repo (`plans/2026-07-21-root-mount-retirement/PLAN.md`). Do not start that plan until this one has shipped AND the new build is live.
+**Status:** Implemented and merged to `main` 2026-07-21 (ff-merge, commit `cb67603`). CI green 758/758, e2e nav 1/1.
+
+**Deploy prerequisite (do NOT skip):** `VITE_API_BASE_URL=/api/v1` lives only in the gitignored on-disk `.env.development` / `.env.production` — those files hold real secrets and are deliberately untracked (the tracked `.env.production.example` now documents the expected `/api/v1` value). The production deploy environment's `.env.production` **must** carry `VITE_API_BASE_URL=/api/v1`; otherwise the built bundle uses the empty base and keeps hitting root paths (still works during the dual-mount window, but the repoint has no effect). Confirm the deploy env before/at rollout.
+
+This build is safe to merge and deploy on its own (dual-mount window). **After it is deployed and live**, the backend can retire its root resource mounts — that is a separate, hard-gated plan in the `kaleidoscope` repo (`plans/2026-07-21-root-mount-retirement/PLAN.md`). Do not start that plan until this one has shipped AND the new build is live (verify the deploy env base above is actually `/api/v1` first — retiring the root mount while a stale empty-base build is live would break it).
