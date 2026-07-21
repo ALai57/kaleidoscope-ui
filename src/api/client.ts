@@ -38,12 +38,16 @@ export interface RequestOptions {
   method?: string;
   body?: unknown;
   token?: string | undefined;
+  // Bypass API_BASE and use `path` verbatim. For backend routes that carry
+  // their own version prefix (photos at /v2, payments/users at /v1) and are
+  // deliberately NOT mounted under /api/v1.
+  absolute?: boolean;
 }
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, token } = options;
+  const { method = 'GET', body, token, absolute = false } = options;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -61,7 +65,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     fetchInit.body = JSON.stringify(snakeKeysToKebab(body));
   }
 
-  const response = await fetch(`${API_BASE}${path}`, fetchInit);
+  const response = await fetch(absolute ? path : `${API_BASE}${path}`, fetchInit);
 
   if (!response.ok) {
     const text = await response.text().catch(() => response.statusText);
@@ -76,13 +80,18 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   return response.json().then(kebabKeysToSnake) as Promise<T>;
 }
 
-export async function uploadFile<T>(path: string, formData: FormData, token?: string): Promise<T> {
+export async function uploadFile<T>(
+  path: string,
+  formData: FormData,
+  token?: string,
+  absolute = false
+): Promise<T> {
   const headers: Record<string, string> = {};
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetch(absolute ? path : `${API_BASE}${path}`, {
     method: 'POST',
     headers,
     body: formData,
