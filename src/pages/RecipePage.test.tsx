@@ -48,6 +48,25 @@ const server = setupServer(
       modified_at: '2026-01-01T00:00:00Z',
     })
   ),
+  http.get('/recipes/paella', () =>
+    HttpResponse.json({
+      id: 'r3',
+      recipe_url: 'paella',
+      hostname: 'andrewslai.com',
+      content: {
+        title: 'Spanish Vegan Paella',
+        sections: [{ name: 'Base', ingredients: ['rice'], steps: ['cook'] }],
+        servings: '5',
+        prep_time_minutes: 15,
+        cook_time_minutes: 30,
+      },
+      labels: [{ id: 'l1', name: 'main-meal', group_id: 'g1', group_name: 'meal' }],
+      source_url: 'https://veganhuggs.com/vegetable-paella-recipe/#recipe',
+      public_visibility: true,
+      created_at: '2026-01-01T00:00:00Z',
+      modified_at: '2026-01-01T00:00:00Z',
+    })
+  ),
   http.get('/recipes/scraped-buns', () =>
     HttpResponse.json({
       id: 'r2',
@@ -295,6 +314,51 @@ describe('RecipePage', () => {
       });
       renderPage('layer-cake');
       expect(await screen.findByRole('button', { name: /keep screen on/i })).toBeInTheDocument();
+    });
+  });
+
+  describe('header (proposal B)', () => {
+    it('shows serves, prep, cook and a computed total on the header line', async () => {
+      renderPage('paella');
+      await screen.findByRole('heading', { name: 'Spanish Vegan Paella' });
+      expect(screen.getByText('5')).toBeInTheDocument();
+      expect(screen.getByText('15m')).toBeInTheDocument();
+      expect(screen.getByText('30m')).toBeInTheDocument();
+      // Total = prep + cook, which the old header never computed.
+      expect(screen.getByText('45m')).toBeInTheDocument();
+      expect(screen.getByText(/total/i)).toBeInTheDocument();
+    });
+
+    it('keeps the raw source URL and category chip out of the header', async () => {
+      renderPage('paella');
+      await screen.findByRole('heading', { name: 'Spanish Vegan Paella' });
+      // Source is behind the overflow menu now, not printed in full on the page.
+      expect(
+        screen.queryByText('https://veganhuggs.com/vegetable-paella-recipe/#recipe')
+      ).not.toBeInTheDocument();
+      // Category only appears once the menu is opened.
+      expect(screen.queryByText('meal/main-meal')).not.toBeInTheDocument();
+    });
+
+    it('collapses edit, source and category into the overflow menu for an author', async () => {
+      authState.current.isAuthenticated = true;
+      renderPage('paella');
+      await screen.findByRole('heading', { name: 'Spanish Vegan Paella' });
+      // No standalone Edit control on the page — it lives in the menu.
+      expect(screen.queryByRole('link', { name: /^edit$/i })).not.toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: /recipe options/i }));
+      expect(screen.getByRole('menuitem', { name: /edit recipe/i })).toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: /view source/i })).toBeInTheDocument();
+      expect(screen.getByText('meal/main-meal')).toBeInTheDocument();
+    });
+
+    it('omits the edit action from the menu for an anonymous reader', async () => {
+      renderPage('paella');
+      await screen.findByRole('heading', { name: 'Spanish Vegan Paella' });
+      await userEvent.click(screen.getByRole('button', { name: /recipe options/i }));
+      expect(screen.queryByRole('menuitem', { name: /edit recipe/i })).not.toBeInTheDocument();
+      expect(screen.getByRole('menuitem', { name: /view source/i })).toBeInTheDocument();
     });
   });
 });
