@@ -57,11 +57,16 @@ it('renders every phase as a labeled group in the method', () => {
     });
 });
 
-it('renders the legend', () => {
+it('drops the standalone legend — active/passive reads from the per-step method pills instead', () => {
   setup();
-  // Scoped to the legend's own copy, since a bare /hands-on/i match is ambiguous.
-  expect(screen.getByText(/Active — hands-on/i)).toBeInTheDocument();
-  expect(screen.getByText(/Passive — hands-off/i)).toBeInTheDocument();
+  // The old three-item legend row was removed in the timeline-first redesign;
+  // the encoding now lives on each method group's kind pill.
+  expect(screen.queryByText(/Active — hands-on/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/Passive — hands-off/i)).not.toBeInTheDocument();
+  // salmonTimeline has passive phases (Marinate/Simmer/Rest) and active ones —
+  // both kinds surface as pills in the Full method column.
+  expect(screen.getAllByText('passive').length).toBeGreaterThan(0);
+  expect(screen.getAllByText('active').length).toBeGreaterThan(0);
 });
 
 it('colors a section by its SECTION index, matching Raw/Shopping — even when the timeline component order differs from the section order', () => {

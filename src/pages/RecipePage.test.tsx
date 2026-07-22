@@ -253,14 +253,16 @@ describe('RecipePage', () => {
   describe('cook timeline', () => {
     it('renders the cook timeline when the recipe has one', async () => {
       renderPage('timed-dish');
-      expect(await screen.findByText('Cook Timeline')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Salmon · Prep/ })).toBeInTheDocument();
+      // The eyebrow heading is gone (the "Timeline" tab already names the view);
+      // the timeline's presence is the bar + the Full method column.
+      expect(await screen.findByRole('button', { name: /Salmon · Prep/ })).toBeInTheDocument();
+      expect(screen.getByText('Full method')).toBeInTheDocument();
     });
 
     it('does not render the timeline for a recipe without one', async () => {
       renderPage('layer-cake');
       await screen.findByRole('heading', { name: 'Layer Cake' });
-      expect(screen.queryByText('Cook Timeline')).not.toBeInTheDocument();
+      expect(screen.queryByText('Full method')).not.toBeInTheDocument();
     });
 
     it('does not show the writer hint for an anonymous reader', async () => {

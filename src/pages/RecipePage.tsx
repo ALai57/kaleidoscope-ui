@@ -185,65 +185,56 @@ const RecipePage: React.FC = () => {
             {/* Floating wake-lock control — stacked above the global dark-mode
                 icon; renders nothing on browsers without the Wake Lock API. */}
             <WakeLockOverlay />
-            {/* Header line: title + the timings a cook wants, with every
-                secondary field (source, category, edit) tucked into the ⋯ menu
-                so the metadata no longer costs three vertical lines. */}
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  flexWrap: 'wrap',
-                  columnGap: 1.75,
-                  rowGap: 0.5,
-                  flex: 1,
-                  minWidth: 0,
-                }}
-              >
-                <Typography variant="h3" sx={{ fontWeight: 700, m: 0 }}>
-                  {recipe.content.title}
-                </Typography>
+            {/* Header: title and the view tabs share the top line; the timings
+                drop to a small mono subline beneath. Every secondary field
+                (source, category, edit) stays tucked in the ⋯ menu. Keeping the
+                chrome to ~two lines is what lets the recipe method sit near the
+                top of the page rather than 75% down it. */}
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5, mb: 1.5 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75, flex: 1, minWidth: 0 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    columnGap: 2,
+                    rowGap: 1,
+                  }}
+                >
+                  <Typography variant="h3" sx={{ fontWeight: 700, m: 0 }}>
+                    {recipe.content.title}
+                  </Typography>
+                  <RecipeViewToggle value={view} onChange={setView} />
+                </Box>
                 {stats.length > 0 && (
-                  <>
-                    <Box
-                      aria-hidden
-                      sx={(t) => ({
-                        alignSelf: 'center',
-                        width: '1px',
-                        height: '1.15em',
-                        bgcolor: t.tokens.color.border.strong,
-                        display: { xs: 'none', sm: 'block' },
-                      })}
-                    />
-                    <Box
-                      sx={(t) => ({
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 1.75,
-                        fontFamily: t.tokens.typography.mono,
-                        fontSize: '0.82rem',
-                        color: t.tokens.color.text.secondary,
-                        fontVariantNumeric: 'tabular-nums',
-                      })}
-                    >
-                      {stats.map((s) => (
-                        <Box component="span" key={s.label}>
-                          <Box
-                            component="strong"
-                            sx={(t) => ({
-                              fontWeight: 650,
-                              color: s.hero
-                                ? t.tokens.color.brand.primary
-                                : t.tokens.color.text.primary,
-                            })}
-                          >
-                            {s.value}
-                          </Box>{' '}
-                          {s.label}
-                        </Box>
-                      ))}
-                    </Box>
-                  </>
+                  <Box
+                    sx={(t) => ({
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      gap: 1.5,
+                      fontFamily: t.tokens.typography.mono,
+                      fontSize: '0.8rem',
+                      color: t.tokens.color.text.secondary,
+                      fontVariantNumeric: 'tabular-nums',
+                    })}
+                  >
+                    {stats.map((s) => (
+                      <Box component="span" key={s.label}>
+                        <Box
+                          component="strong"
+                          sx={(t) => ({
+                            fontWeight: 650,
+                            color: s.hero
+                              ? t.tokens.color.brand.primary
+                              : t.tokens.color.text.primary,
+                          })}
+                        >
+                          {s.value}
+                        </Box>{' '}
+                        {s.label}
+                      </Box>
+                    ))}
+                  </Box>
                 )}
               </Box>
               <RecipeOverflowMenu recipe={recipe} canEdit={isAuthenticated} />
@@ -252,8 +243,6 @@ const RecipePage: React.FC = () => {
             {isSiteAdmin(userProfile) && recipe.scrape_processing_run_id && (
               <ImportLineageStrip slug={slug} token={token} />
             )}
-
-            <RecipeViewToggle value={view} onChange={setView} />
 
             {view === 'timeline' &&
               (recipe.timeline ? (

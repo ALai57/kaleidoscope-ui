@@ -21,12 +21,16 @@ const TickLabel = styled('span')(({ theme }) => ({
 }));
 
 const Lane = styled('div')({ position: 'relative', height: ROW_H, marginTop: ROW_GAP });
+// Single tight row now that lanes are short (timeline-first redesign): the
+// gutter name truncates rather than wrapping over a tall row, and the full
+// name still shows in the bar itself and on hover (title attr).
 const LaneLabel = styled('div')(({ theme }) => ({
   position: 'sticky', left: 0, zIndex: 5, width: GUTTER, height: '100%',
-  display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3, padding: '0 14px 0 22px',
+  display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px 0 22px', overflow: 'hidden',
   background: `linear-gradient(90deg, ${theme.tokens.color.surface.raised} 82%, transparent)`,
-  fontFamily: theme.tokens.typography.mono, fontSize: 12,
+  fontFamily: theme.tokens.typography.mono, fontSize: 11.5, fontWeight: 600,
 }));
+const LaneName = styled('span')({ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' });
 const Swatch = styled('span')<{ c: string }>(({ c }) => ({ width: 9, height: 9, borderRadius: 2, background: c, flex: 'none' }));
 const Track = styled('div')({ position: 'absolute', left: GUTTER, top: 0, bottom: 0, right: 0 });
 
@@ -117,10 +121,9 @@ export const TimelineGantt: React.FC<TimelineGanttProps> = ({
 
         {timeline.components.map((c, laneIndex) => (
           <Lane key={c.name}>
-            <LaneLabel>
-              <span style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 600 }}>
-                <Swatch c={laneColors[laneIndex] ?? fallbackColor} />{c.name}
-              </span>
+            <LaneLabel title={c.name}>
+              <Swatch c={laneColors[laneIndex] ?? fallbackColor} />
+              <LaneName>{c.name}</LaneName>
             </LaneLabel>
             <Track>
               {c.phases.map((phase) => {

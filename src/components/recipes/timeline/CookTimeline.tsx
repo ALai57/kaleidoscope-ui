@@ -9,21 +9,20 @@ import {
   effectiveDuration,
 } from '../../../utils/cookTimeline';
 import { TimelineGantt } from './TimelineGantt';
-import { TimelineLegend } from './TimelineLegend';
 import { TimelineDetailPanel, type PhaseGroup } from './TimelineDetailPanel';
 import { MobileCookTimeline } from './MobileCookTimeline';
 
+// Tight top margin and padding: this board is the ~20% overview zone, so the
+// old 32px gap + 24px inner padding (which pushed the recipe method most of the
+// way down the page) is deliberately trimmed. No eyebrow heading — the
+// "Timeline" tab already names this view.
 const Board = styled('div')(({ theme }) => ({
   background: theme.tokens.color.surface.base,
   border: `1px solid ${theme.tokens.color.border.subtle}`,
   borderRadius: theme.tokens.radius.lg,
-  padding: '24px 22px',
-  marginTop: 32,
+  padding: '14px 16px',
+  marginTop: 12,
   color: theme.tokens.color.text.primary,
-}));
-const Eyebrow = styled('p')(({ theme }) => ({
-  fontFamily: theme.tokens.typography.mono, fontSize: 11, letterSpacing: '.28em',
-  textTransform: 'uppercase', color: theme.tokens.color.brand.primary, margin: '0 0 12px',
 }));
 const GanttShell = styled('div')(({ theme }) => ({
   background: theme.tokens.color.surface.raised,
@@ -92,7 +91,6 @@ export const CookTimeline: React.FC<CookTimelineProps> = ({
 
   return (
     <Board>
-      <Eyebrow>Cook Timeline</Eyebrow>
       <GanttShell>
         <TimelineGantt
           timeline={timeline}
@@ -101,7 +99,6 @@ export const CookTimeline: React.FC<CookTimelineProps> = ({
           onSelect={setSelectedId}
         />
       </GanttShell>
-      <TimelineLegend />
       <TimelineDetailPanel
         selectedId={selectedId}
         groups={groups}

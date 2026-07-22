@@ -13,7 +13,6 @@ const OPTIONS: { value: RecipeView; label: string }[] = [
 // the active segment lit in the brand accent — visually of a piece with the
 // cook-timeline panel below it. Reads from theme.tokens, so it obeys light/dark.
 const Track = styled(ToggleButtonGroup)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
   gap: 3,
   padding: 3,
   borderRadius: theme.tokens.radius.md,
